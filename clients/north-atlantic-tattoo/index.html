@@ -8,15 +8,181 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* ============================================
+           North Atlantic Tattoo — Full Stylesheet
+           ============================================ */
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --bg-alt: #111111;
+            --bg-card: #161616;
+            --surface: #1a1a1a;
+            --border: #2a2a2a;
+            --text: #e8e8e8;
+            --muted: #999999;
+            --dim: #666666;
+            --accent: #c8a45c;
+            --accent-h: #ddb96e;
+            --white: #ffffff;
+            --heading: 'Cormorant Garamond', Georgia, serif;
+            --body: 'Inter', -apple-system, sans-serif;
+            --max-w: 1200px;
+            --ease: 0.3s ease;
+        }
+
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        body { font-family: var(--body); background: var(--bg); color: var(--text); line-height: 1.7; font-weight: 300; -webkit-font-smoothing: antialiased; }
+        a { color: var(--accent); text-decoration: none; transition: color var(--ease); }
+        a:hover { color: var(--accent-h); }
+        img { max-width: 100%; display: block; }
+        .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+        /* --- Nav --- */
+        .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(10,10,10,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+        .nav-container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 72px; }
+        .nav-logo { display: flex; align-items: center; }
+        .nav-logo svg { height: 48px; width: 48px; }
+        .nav-links { display: flex; align-items: center; list-style: none; gap: 36px; }
+        .nav-links a { color: var(--muted); font-size: 0.85rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; transition: color var(--ease); }
+        .nav-links a:hover { color: var(--white); }
+        .nav-cta { background: var(--accent) !important; color: var(--bg) !important; padding: 10px 24px; border-radius: 2px; font-weight: 500 !important; }
+        .nav-cta:hover { background: var(--accent-h) !important; color: var(--bg) !important; }
+        .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+        .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--text); transition: var(--ease); }
+
+        /* --- Hero --- */
+        .hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; background: var(--bg); overflow: hidden; }
+        .hero-overlay { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(200,164,92,0.04) 0%, transparent 70%); }
+        .hero-content { position: relative; z-index: 1; padding: 24px; }
+        .hero-logo { width: 180px; height: 180px; margin: 0 auto 40px; opacity: 0.9; }
+        .hero h1 { font-family: var(--heading); font-size: clamp(2.5rem,6vw,4.5rem); font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; color: var(--white); margin-bottom: 16px; }
+        .hero-tagline { font-size: 1rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; font-weight: 400; }
+        .hero-sub { font-size: 1.05rem; color: var(--muted); margin-bottom: 48px; font-weight: 300; }
+
+        /* --- Buttons --- */
+        .btn { display: inline-block; padding: 14px 40px; font-family: var(--body); font-size: 0.85rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; border: none; cursor: pointer; transition: all var(--ease); text-align: center; }
+        .btn-primary { background: var(--accent); color: var(--bg); border: 2px solid var(--accent); }
+        .btn-primary:hover { background: transparent; color: var(--accent); }
+        .btn-full { width: 100%; }
+
+        /* --- Sections --- */
+        .section { padding: 120px 0; }
+        .section-title { font-family: var(--heading); font-size: clamp(2rem,4vw,3rem); font-weight: 400; text-align: center; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white); }
+        .section-divider { width: 60px; height: 1px; background: var(--accent); margin: 24px auto 60px; }
+
+        /* --- About --- */
+        .about { background: var(--bg-alt); }
+        .about-content { max-width: 750px; margin: 0 auto; text-align: center; }
+        .about-text { font-size: 1.05rem; color: var(--muted); margin-bottom: 24px; line-height: 1.9; }
+        .about-stats { display: flex; justify-content: center; gap: 64px; margin-top: 60px; padding-top: 60px; border-top: 1px solid var(--border); }
+        .stat { text-align: center; }
+        .stat-number { display: block; font-family: var(--heading); font-size: 2.8rem; font-weight: 400; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+        .stat-label { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+
+        /* --- Artists --- */
+        .artists { background: var(--bg); }
+        .artists-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 48px; max-width: 900px; margin: 0 auto; }
+        .artist-card { background: var(--bg-card); border: 1px solid var(--border); padding: 48px 36px; text-align: center; transition: border-color var(--ease); }
+        .artist-card:hover { border-color: var(--accent); }
+        .artist-icon { width: 72px; height: 72px; margin: 0 auto 24px; border-radius: 50%; border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--heading); font-size: 1.5rem; color: var(--accent); }
+        .artist-card h3 { font-family: var(--heading); font-size: 1.6rem; font-weight: 500; color: var(--white); margin-bottom: 4px; }
+        .artist-role { font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+        .artist-bio { font-size: 0.95rem; color: var(--muted); line-height: 1.8; }
+
+        /* --- Portfolio --- */
+        .portfolio { background: var(--bg-alt); }
+        .portfolio-intro { text-align: center; color: var(--muted); margin-bottom: 48px; margin-top: -24px; }
+        .portfolio-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; }
+        .portfolio-item { position: relative; overflow: hidden; aspect-ratio: 1; background: var(--surface); cursor: pointer; }
+        .portfolio-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease, opacity var(--ease); }
+        .portfolio-item:hover img { transform: scale(1.05); opacity: 0.7; }
+        .portfolio-overlay { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; padding: 24px; opacity: 0; transition: opacity var(--ease); background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%); }
+        .portfolio-item:hover .portfolio-overlay { opacity: 1; }
+        .portfolio-overlay span { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--white); font-weight: 400; }
+
+        /* --- Contact --- */
+        .contact { background: var(--bg); }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+        .contact-text { font-size: 1.05rem; color: var(--muted); line-height: 1.9; margin-bottom: 40px; }
+        .contact-details { display: flex; flex-direction: column; gap: 24px; }
+        .contact-item { display: flex; align-items: flex-start; gap: 16px; }
+        .contact-icon { width: 24px; height: 24px; flex-shrink: 0; color: var(--accent); margin-top: 2px; }
+        .contact-item strong { display: block; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); margin-bottom: 2px; font-weight: 500; }
+        .contact-item p { color: var(--text); font-size: 0.95rem; }
+
+        /* --- Form --- */
+        .contact-form { display: flex; flex-direction: column; gap: 20px; }
+        .form-group label { display: block; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); margin-bottom: 8px; font-weight: 500; }
+        .form-group input, .form-group textarea { width: 100%; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: var(--body); font-size: 0.95rem; font-weight: 300; transition: border-color var(--ease); outline: none; }
+        .form-group input::placeholder, .form-group textarea::placeholder { color: var(--dim); }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--accent); }
+        .form-group textarea { resize: vertical; min-height: 120px; }
+
+        /* --- Footer --- */
+        .footer { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 0; text-align: center; }
+        .footer-logo { height: 60px; width: 60px; margin: 0 auto 20px; opacity: 0.6; }
+        .footer-text { font-size: 0.85rem; color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+        .footer-copyright { font-size: 0.78rem; color: var(--dim); opacity: 0.5; }
+
+        /* --- Responsive --- */
+        @media (max-width: 900px) {
+            .artists-grid { grid-template-columns: 1fr; gap: 32px; }
+            .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+            .about-stats { gap: 36px; }
+        }
+        @media (max-width: 768px) {
+            .nav-toggle { display: flex; }
+            .nav-links { display: none; position: absolute; top: 72px; left: 0; right: 0; flex-direction: column; background: rgba(10,10,10,0.98); border-bottom: 1px solid var(--border); padding: 24px; gap: 20px; text-align: center; }
+            .nav-links.active { display: flex; }
+            .hero-logo { width: 130px; height: 130px; margin-bottom: 32px; }
+            .section { padding: 80px 0; }
+            .portfolio-grid { grid-template-columns: 1fr; gap: 16px; }
+            .about-stats { flex-direction: column; gap: 32px; }
+        }
+        @media (max-width: 480px) {
+            .hero h1 { letter-spacing: 0.06em; }
+            .artist-card { padding: 36px 24px; }
+            .contact-grid { gap: 36px; }
+        }
+    </style>
 </head>
 <body>
+
+    <!-- Inline SVG logo (recreated from the North Atlantic Tattoo circular logo) -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+        <defs>
+            <symbol id="na-logo" viewBox="0 0 200 200">
+                <circle cx="100" cy="100" r="95" fill="none" stroke="#e8e8e8" stroke-width="1.5"/>
+                <circle cx="100" cy="100" r="85" fill="none" stroke="#e8e8e8" stroke-width="0.5"/>
+                <!-- Stylized N/trident mark -->
+                <g fill="none" stroke="#e8e8e8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M70 140 C70 100, 65 75, 72 55 Q76 42, 82 50 C86 56, 84 65, 80 70"/>
+                    <path d="M130 140 C130 100, 135 75, 128 55 Q124 42, 118 50 C114 56, 116 65, 120 70"/>
+                    <path d="M100 140 C100 105, 98 80, 100 55 Q100 42, 100 50"/>
+                </g>
+                <!-- Circular text path -->
+                <path id="topArc" d="M100 15 a85 85 0 0 1 0 170" fill="none"/>
+                <path id="bottomArc" d="M100 185 a85 85 0 0 1 0 -170" fill="none"/>
+                <text font-family="'Cormorant Garamond', Georgia, serif" font-size="13" fill="#e8e8e8" letter-spacing="4">
+                    <textPath href="#topArc" startOffset="50%" text-anchor="middle">NORTH ATLANTIC TATTOO</textPath>
+                </text>
+                <text font-family="'Cormorant Garamond', Georgia, serif" font-size="13" fill="#e8e8e8" letter-spacing="4">
+                    <textPath href="#bottomArc" startOffset="50%" text-anchor="middle">HISTORIC NEW BEDFORD</textPath>
+                </text>
+                <!-- Dots/bullets -->
+                <circle cx="28" cy="100" r="2.5" fill="#e8e8e8"/>
+                <circle cx="172" cy="100" r="2.5" fill="#e8e8e8"/>
+            </symbol>
+        </defs>
+    </svg>
 
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="#hero" class="nav-logo">
-                <img src="images/logo.png" alt="North Atlantic Tattoo Logo" class="logo-img">
+                <svg><use href="#na-logo"/></svg>
             </a>
             <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
                 <span></span>
@@ -36,7 +202,7 @@
     <section class="hero" id="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <img src="images/logo.png" alt="North Atlantic Tattoo" class="hero-logo">
+            <svg class="hero-logo"><use href="#na-logo"/></svg>
             <h1>North Atlantic Tattoo</h1>
             <p class="hero-tagline">Custom Tattoo Studio &middot; Historic New Bedford, MA</p>
             <p class="hero-sub">Timeless contemporary tattoo art &mdash; 45 years of combined experience</p>
@@ -118,25 +284,25 @@
             <p class="portfolio-intro">A selection of recent work from our artists.</p>
             <div class="portfolio-grid">
                 <div class="portfolio-item">
-                    <img src="images/portfolio-1.jpg" alt="Japanese-style dragon sleeve tattoo and demon face tattoo by North Atlantic Tattoo">
+                    <img src="images/portfolio-1.jpg" alt="Japanese-style dragon sleeve and neo-traditional demon face tattoo">
                     <div class="portfolio-overlay">
                         <span>Japanese &amp; Neo-Traditional</span>
                     </div>
                 </div>
                 <div class="portfolio-item">
-                    <img src="images/portfolio-2.jpg" alt="Black and grey praying hands with rosary tattoo by North Atlantic Tattoo">
+                    <img src="images/portfolio-2.jpg" alt="Black and grey praying hands with rosary tattoo">
                     <div class="portfolio-overlay">
                         <span>Black &amp; Grey Realism</span>
                     </div>
                 </div>
                 <div class="portfolio-item">
-                    <img src="images/portfolio-3.jpg" alt="Dark atmospheric landscape tattoo by North Atlantic Tattoo">
+                    <img src="images/portfolio-3.jpg" alt="Dark atmospheric landscape tattoo">
                     <div class="portfolio-overlay">
                         <span>Dark Illustrative</span>
                     </div>
                 </div>
                 <div class="portfolio-item">
-                    <img src="images/portfolio-4.jpg" alt="Color realism tiger tattoo with green leaves by North Atlantic Tattoo">
+                    <img src="images/portfolio-4.jpg" alt="Color realism tiger with green leaves tattoo">
                     <div class="portfolio-overlay">
                         <span>Color Realism</span>
                     </div>
@@ -206,13 +372,69 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <img src="images/logo.png" alt="North Atlantic Tattoo" class="footer-logo">
+                <svg class="footer-logo"><use href="#na-logo"/></svg>
                 <p class="footer-text">Custom Tattoo Studio &middot; Historic New Bedford, MA</p>
                 <p class="footer-copyright">&copy; 2026 North Atlantic Tattoo. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile nav toggle
+            const navToggle = document.getElementById('navToggle');
+            const navLinks = document.getElementById('navLinks');
+            if (navToggle) {
+                navToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+                navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => navLinks.classList.remove('active')));
+            }
+
+            // Smooth scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', (e) => {
+                    const target = document.querySelector(anchor.getAttribute('href'));
+                    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+                });
+            });
+
+            // Navbar scroll effect
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                navbar.style.background = window.scrollY > 50 ? 'rgba(10,10,10,0.98)' : 'rgba(10,10,10,0.92)';
+            });
+
+            // Fade-in on scroll
+            const obs = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+            document.querySelectorAll('.section').forEach(s => {
+                s.style.opacity = '0';
+                s.style.transform = 'translateY(30px)';
+                s.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                obs.observe(s);
+            });
+
+            // Contact form
+            const form = document.getElementById('contactForm');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const btn = form.querySelector('button[type="submit"]');
+                    const orig = btn.textContent;
+                    btn.textContent = "Inquiry Sent — We'll Be in Touch!";
+                    btn.disabled = true;
+                    btn.style.opacity = '0.7';
+                    setTimeout(() => { btn.textContent = orig; btn.disabled = false; btn.style.opacity = '1'; form.reset(); }, 4000);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
