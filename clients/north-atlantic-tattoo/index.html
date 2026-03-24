@@ -56,7 +56,7 @@
         .hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; background: var(--bg); overflow: hidden; }
         .hero-overlay { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(200,164,92,0.04) 0%, transparent 70%); }
         .hero-content { position: relative; z-index: 1; padding: 24px; }
-        .hero-logo { width: 180px; height: 180px; margin: 0 auto 40px; opacity: 0.9; }
+        .hero-logo { width: 180px; height: 180px; margin: 0 auto 40px; opacity: 0.9; filter: invert(1); border-radius: 50%; }
         .hero h1 { font-family: var(--heading); font-size: clamp(2.5rem,6vw,4.5rem); font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; color: var(--white); margin-bottom: 16px; }
         .hero-tagline { font-size: 1rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; font-weight: 400; }
         .hero-sub { font-size: 1.05rem; color: var(--muted); margin-bottom: 48px; font-weight: 300; }
@@ -94,7 +94,7 @@
         /* --- Portfolio --- */
         .portfolio { background: var(--bg-alt); }
         .portfolio-intro { text-align: center; color: var(--muted); margin-bottom: 48px; margin-top: -24px; }
-        .portfolio-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; }
+        .portfolio-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
         .portfolio-item { position: relative; overflow: hidden; aspect-ratio: 1; background: var(--surface); cursor: pointer; }
         .portfolio-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease, opacity var(--ease); }
         .portfolio-item:hover img { transform: scale(1.05); opacity: 0.7; }
@@ -138,7 +138,7 @@
             .nav-links.active { display: flex; }
             .hero-logo { width: 130px; height: 130px; margin-bottom: 32px; }
             .section { padding: 80px 0; }
-            .portfolio-grid { grid-template-columns: 1fr; gap: 16px; }
+            .portfolio-grid { grid-template-columns: 1fr !important; gap: 16px; }
             .about-stats { flex-direction: column; gap: 32px; }
         }
         @media (max-width: 480px) {
@@ -182,7 +182,7 @@
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="#hero" class="nav-logo">
-                <svg><use href="#na-logo"/></svg>
+                <img src="images/logo.png" alt="North Atlantic Tattoo" style="height:48px;width:48px;filter:invert(1);border-radius:50%;">
             </a>
             <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
                 <span></span>
@@ -202,7 +202,7 @@
     <section class="hero" id="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <svg class="hero-logo"><use href="#na-logo"/></svg>
+            <img src="images/logo.png" alt="North Atlantic Tattoo" class="hero-logo">
             <h1>North Atlantic Tattoo</h1>
             <p class="hero-tagline">Custom Tattoo Studio &middot; Historic New Bedford, MA</p>
             <p class="hero-sub">Timeless contemporary tattoo art &mdash; 45 years of combined experience</p>
@@ -284,27 +284,21 @@
             <p class="portfolio-intro">A selection of recent work from our artists.</p>
             <div class="portfolio-grid">
                 <div class="portfolio-item">
-                    <img src="images/portfolio-1.jpg" alt="Japanese-style dragon sleeve and neo-traditional demon face tattoo">
-                    <div class="portfolio-overlay">
-                        <span>Japanese &amp; Neo-Traditional</span>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <img src="images/portfolio-2.jpg" alt="Black and grey praying hands with rosary tattoo">
-                    <div class="portfolio-overlay">
-                        <span>Black &amp; Grey Realism</span>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <img src="images/portfolio-3.jpg" alt="Dark atmospheric landscape tattoo">
-                    <div class="portfolio-overlay">
-                        <span>Dark Illustrative</span>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <img src="images/portfolio-4.jpg" alt="Color realism tiger with green leaves tattoo">
+                    <img src="images/portfolio-1.jpg" alt="Color realism Iron Maiden Eddie tattoo collection by North Atlantic Tattoo">
                     <div class="portfolio-overlay">
                         <span>Color Realism</span>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <img src="images/portfolio-2.jpg" alt="Japanese foo dog sleeve tattoo with red maple leaves by North Atlantic Tattoo">
+                    <div class="portfolio-overlay">
+                        <span>Japanese Traditional</span>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <img src="images/portfolio-3.jpg" alt="Black and grey dark landscape tattoo with Ghost band symbol by North Atlantic Tattoo">
+                    <div class="portfolio-overlay">
+                        <span>Black &amp; Grey Illustrative</span>
                     </div>
                 </div>
             </div>
@@ -372,7 +366,7 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <svg class="footer-logo"><use href="#na-logo"/></svg>
+                <img src="images/logo.png" alt="North Atlantic Tattoo" class="footer-logo" style="filter:invert(1);border-radius:50%;">
                 <p class="footer-text">Custom Tattoo Studio &middot; Historic New Bedford, MA</p>
                 <p class="footer-copyright">&copy; 2026 North Atlantic Tattoo. All rights reserved.</p>
             </div>
