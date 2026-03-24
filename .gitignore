@@ -1,0 +1,25 @@
+# Environment
+.env
+*.pyc
+__pycache__/
+venv/
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Credentials
+credentials.json
+service_account.json
+*.pem
+*.key
+
+# Build
+node_modules/
+dist/
+build/

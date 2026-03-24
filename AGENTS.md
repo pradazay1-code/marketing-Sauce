@@ -63,8 +63,8 @@ marketing-Sauce/
 ├── .env               # Environment variables (API keys, tokens)
 ├── .env.example       # Template for .env
 ├── .gitignore         # Git ignore rules
-├── CLAUDE.md          # This file - agent instructions
-├── AGENTS.md          # Mirror of CLAUDE.md
+├── CLAUDE.md          # Agent instructions
+├── AGENTS.md          # This file - mirror of CLAUDE.md
 └── requirements.txt   # Python dependencies
 ```
 
