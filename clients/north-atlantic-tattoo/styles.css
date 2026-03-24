@@ -1,0 +1,641 @@
+/* ============================================
+   North Atlantic Tattoo — Stylesheet
+   Clean, dark, professional tattoo studio site
+   ============================================ */
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --color-bg: #0a0a0a;
+    --color-bg-alt: #111111;
+    --color-bg-card: #161616;
+    --color-surface: #1a1a1a;
+    --color-border: #2a2a2a;
+    --color-text: #e8e8e8;
+    --color-text-muted: #999999;
+    --color-text-dim: #666666;
+    --color-accent: #c8a45c;
+    --color-accent-hover: #ddb96e;
+    --color-white: #ffffff;
+    --font-heading: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --max-width: 1200px;
+    --transition: 0.3s ease;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.7;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+a:hover {
+    color: var(--color-accent-hover);
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* --- Navigation --- */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(10, 10, 10, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--color-border);
+    transition: background var(--transition);
+}
+
+.nav-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 48px;
+    width: auto;
+    filter: invert(1);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 36px;
+}
+
+.nav-links a {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color var(--transition);
+}
+
+.nav-links a:hover {
+    color: var(--color-white);
+}
+
+.nav-cta {
+    background: var(--color-accent) !important;
+    color: var(--color-bg) !important;
+    padding: 10px 24px;
+    border-radius: 2px;
+    font-weight: 500 !important;
+    letter-spacing: 0.05em !important;
+    transition: background var(--transition), color var(--transition) !important;
+}
+
+.nav-cta:hover {
+    background: var(--color-accent-hover) !important;
+    color: var(--color-bg) !important;
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.nav-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--color-text);
+    transition: var(--transition);
+}
+
+/* --- Hero --- */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: var(--color-bg);
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(200, 164, 92, 0.04) 0%, transparent 70%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    padding: 24px;
+}
+
+.hero-logo {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 40px;
+    filter: invert(1);
+    opacity: 0.9;
+}
+
+.hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-white);
+    margin-bottom: 16px;
+}
+
+.hero-tagline {
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 12px;
+    font-weight: 400;
+}
+
+.hero-sub {
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+    margin-bottom: 48px;
+    font-weight: 300;
+}
+
+/* --- Buttons --- */
+.btn {
+    display: inline-block;
+    padding: 14px 40px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-align: center;
+}
+
+.btn-primary {
+    background: var(--color-accent);
+    color: var(--color-bg);
+    border: 2px solid var(--color-accent);
+}
+
+.btn-primary:hover {
+    background: transparent;
+    color: var(--color-accent);
+}
+
+.btn-full {
+    width: 100%;
+}
+
+/* --- Sections --- */
+.section {
+    padding: 120px 0;
+}
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    text-align: center;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-white);
+}
+
+.section-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--color-accent);
+    margin: 24px auto 60px;
+}
+
+/* --- About --- */
+.about {
+    background: var(--color-bg-alt);
+}
+
+.about-content {
+    max-width: 750px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.about-text {
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+    margin-bottom: 24px;
+    line-height: 1.9;
+}
+
+.about-stats {
+    display: flex;
+    justify-content: center;
+    gap: 64px;
+    margin-top: 60px;
+    padding-top: 60px;
+    border-top: 1px solid var(--color-border);
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    font-weight: 400;
+    color: var(--color-accent);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-dim);
+}
+
+/* --- Artists --- */
+.artists {
+    background: var(--color-bg);
+}
+
+.artists-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 48px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.artist-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    padding: 48px 36px;
+    text-align: center;
+    transition: border-color var(--transition);
+}
+
+.artist-card:hover {
+    border-color: var(--color-accent);
+}
+
+.artist-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    border: 1px solid var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--color-accent);
+}
+
+.artist-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: var(--color-white);
+    margin-bottom: 4px;
+}
+
+.artist-role {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 20px;
+}
+
+.artist-bio {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    line-height: 1.8;
+}
+
+/* --- Portfolio --- */
+.portfolio {
+    background: var(--color-bg-alt);
+}
+
+.portfolio-intro {
+    text-align: center;
+    color: var(--color-text-muted);
+    margin-bottom: 48px;
+    margin-top: -24px;
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.portfolio-item {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1;
+    background: var(--color-surface);
+    cursor: pointer;
+}
+
+.portfolio-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease, opacity var(--transition);
+}
+
+.portfolio-item:hover img {
+    transform: scale(1.05);
+    opacity: 0.7;
+}
+
+.portfolio-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    transition: opacity var(--transition);
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+}
+
+.portfolio-item:hover .portfolio-overlay {
+    opacity: 1;
+}
+
+.portfolio-overlay span {
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-white);
+    font-weight: 400;
+}
+
+/* --- Contact --- */
+.contact {
+    background: var(--color-bg);
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+}
+
+.contact-text {
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+    line-height: 1.9;
+    margin-bottom: 40px;
+}
+
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.contact-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--color-accent);
+    margin-top: 2px;
+}
+
+.contact-item strong {
+    display: block;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-dim);
+    margin-bottom: 2px;
+    font-weight: 500;
+}
+
+.contact-item p {
+    color: var(--color-text);
+    font-size: 0.95rem;
+}
+
+/* --- Form --- */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-dim);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 300;
+    transition: border-color var(--transition);
+    outline: none;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--color-text-dim);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--color-accent);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* --- Footer --- */
+.footer {
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    padding: 60px 0;
+    text-align: center;
+}
+
+.footer-logo {
+    height: 60px;
+    width: auto;
+    margin: 0 auto 20px;
+    filter: invert(1);
+    opacity: 0.6;
+}
+
+.footer-text {
+    font-size: 0.85rem;
+    color: var(--color-text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.footer-copyright {
+    font-size: 0.78rem;
+    color: var(--color-text-dim);
+    opacity: 0.5;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 900px) {
+    .artists-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+    }
+
+    .about-stats {
+        gap: 36px;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-toggle {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: rgba(10, 10, 10, 0.98);
+        border-bottom: 1px solid var(--color-border);
+        padding: 24px;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .hero-logo {
+        width: 130px;
+        height: 130px;
+        margin-bottom: 32px;
+    }
+
+    .section {
+        padding: 80px 0;
+    }
+
+    .portfolio-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .about-stats {
+        flex-direction: column;
+        gap: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        letter-spacing: 0.06em;
+    }
+
+    .artist-card {
+        padding: 36px 24px;
+    }
+
+    .contact-grid {
+        gap: 36px;
+    }
+}
