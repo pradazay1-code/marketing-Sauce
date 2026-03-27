@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "gmail": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@shinzolabs/gmail-mcp"],
+      "env": {
+        "GOOGLE_CREDENTIALS_PATH": "/home/user/gmail-credentials.json"
+      }
+    }
+  }
+}
