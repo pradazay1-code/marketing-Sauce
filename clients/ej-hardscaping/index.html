@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E&J Hardscaping & Landscaping Inc.</title>
+    <meta name="description" content="E&J Hardscaping & Landscaping Inc. — Family-owned hardscaping and landscaping company serving Massachusetts and Rhode Island. Retaining walls, patios, walkways, gravel driveways, and more.">
+    <style>
+        /* === RESET & BASE === */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #2c2c2c;
+            line-height: 1.6;
+            background: #fff;
+        }
+        img { max-width: 100%; height: auto; display: block; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* === COLOR PALETTE === */
+        :root {
+            --green-dark: #1a5c1a;
+            --green-mid: #2d8a2d;
+            --green-light: #3cb043;
+            --green-accent: #5fd35f;
+            --yellow: #f0c929;
+            --charcoal: #1e1e1e;
+            --off-white: #f8f7f2;
+            --warm-gray: #e8e6df;
+            --text-dark: #2c2c2c;
+            --text-light: #f8f7f2;
+        }
+
+        /* === NAVBAR === */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: var(--charcoal);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+        .navbar .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .navbar .logo-container img {
+            height: 55px;
+            width: auto;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-links a:hover {
+            color: var(--green-accent);
+            border-bottom-color: var(--green-accent);
+        }
+        .nav-cta {
+            background: var(--green-mid) !important;
+            color: #fff !important;
+            padding: 0.6rem 1.5rem !important;
+            border-radius: 6px;
+            font-weight: 600 !important;
+            border: none !important;
+            transition: background 0.3s !important;
+        }
+        .nav-cta:hover { background: var(--green-light) !important; }
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        .menu-toggle span {
+            width: 28px;
+            height: 3px;
+            background: #fff;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        /* === HERO === */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--charcoal) 0%, #2a3a2a 50%, var(--green-dark) 100%);
+            overflow: hidden;
+            padding: 120px 2rem 80px;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('images/portfolio-1.jpg') center/cover no-repeat;
+            opacity: 0.15;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+        .hero-logo {
+            width: 280px;
+            margin: 0 auto 2rem;
+            filter: drop-shadow(0 4px 20px rgba(0,0,0,0.5));
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+        .hero h1 span { color: var(--yellow); }
+        .hero p {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.9rem 2.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: var(--green-mid);
+            color: #fff;
+        }
+        .btn-primary:hover { background: var(--green-light); transform: translateY(-2px); }
+        .btn-outline {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+        .btn-outline:hover { border-color: var(--green-accent); color: var(--green-accent); }
+
+        /* === SECTIONS === */
+        section { padding: 5rem 2rem; }
+        .section-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+        .section-header h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: var(--green-dark);
+            margin-bottom: 0.75rem;
+        }
+        .section-header p {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .section-divider {
+            width: 60px;
+            height: 4px;
+            background: var(--green-mid);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* === ABOUT === */
+        .about { background: var(--off-white); }
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            align-items: center;
+        }
+        .about-text h3 {
+            font-size: 1.6rem;
+            color: var(--green-dark);
+            margin-bottom: 1rem;
+        }
+        .about-text p {
+            color: #555;
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+        .about-values {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .value-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .value-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--green-mid);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .value-item span { font-weight: 600; color: var(--text-dark); font-size: 0.9rem; }
+        .about-image {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        .about-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        /* === SERVICES === */
+        .services { background: #fff; }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .service-card {
+            background: var(--off-white);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--warm-gray);
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--green-mid);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.8rem;
+        }
+        .service-card h3 {
+            font-size: 1.2rem;
+            color: var(--green-dark);
+            margin-bottom: 0.75rem;
+        }
+        .service-card p { color: #666; font-size: 0.95rem; line-height: 1.7; }
+
+        /* === PORTFOLIO === */
+        .portfolio { background: var(--charcoal); color: #fff; }
+        .portfolio .section-header h2 { color: #fff; }
+        .portfolio .section-header p { color: rgba(255,255,255,0.6); }
+        .portfolio .section-divider { background: var(--green-accent); }
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .portfolio-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+        }
+        .portfolio-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        .portfolio-item:hover img { transform: scale(1.05); }
+        .portfolio-overlay {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 2rem 1.5rem 1.5rem;
+            transform: translateY(100%);
+            transition: transform 0.4s;
+        }
+        .portfolio-item:hover .portfolio-overlay { transform: translateY(0); }
+        .portfolio-overlay h4 { color: #fff; font-size: 1.1rem; }
+        .portfolio-overlay p { color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 0.25rem; }
+
+        /* === WHY US === */
+        .why-us { background: var(--off-white); }
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .why-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+        .why-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--green-mid);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        .why-card h4 {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+        .why-card p { color: #666; font-size: 0.9rem; }
+
+        /* === TESTIMONIALS === */
+        .testimonials { background: #fff; }
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .testimonial-card {
+            background: var(--off-white);
+            border-radius: 12px;
+            padding: 2rem;
+            border-left: 4px solid var(--green-mid);
+        }
+        .stars { color: var(--yellow); font-size: 1.2rem; margin-bottom: 0.75rem; }
+        .testimonial-card p {
+            color: #555;
+            font-style: italic;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        .testimonial-author {
+            font-weight: 700;
+            color: var(--green-dark);
+        }
+        .testimonial-location { color: #999; font-size: 0.85rem; }
+
+        /* === CONTACT === */
+        .contact {
+            background: linear-gradient(135deg, var(--green-dark) 0%, #1a3a1a 100%);
+            color: #fff;
+        }
+        .contact .section-header h2 { color: #fff; }
+        .contact .section-header p { color: rgba(255,255,255,0.7); }
+        .contact .section-divider { background: var(--yellow); }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .contact-info h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            color: var(--yellow);
+        }
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .contact-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .contact-item strong { display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.6); margin-bottom: 0.25rem; }
+        .contact-item span { font-size: 1.05rem; }
+        .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+        .contact-form input, .contact-form textarea, .contact-form select {
+            padding: 0.9rem 1.2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .contact-form input::placeholder, .contact-form textarea::placeholder { color: rgba(255,255,255,0.4); }
+        .contact-form select option { background: var(--charcoal); color: #fff; }
+        .contact-form textarea { resize: vertical; min-height: 120px; }
+        .contact-form .btn-primary { width: 100%; padding: 1rem; font-size: 1.05rem; }
+
+        /* === FOOTER === */
+        .footer {
+            background: var(--charcoal);
+            color: rgba(255,255,255,0.5);
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.9rem;
+        }
+        .footer a { color: var(--green-accent); }
+
+        /* === MOBILE === */
+        @media (max-width: 768px) {
+            .navbar { padding: 0 1rem; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 80px; left: 0; right: 0;
+                background: var(--charcoal);
+                flex-direction: column;
+                padding: 1.5rem;
+                gap: 1rem;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+            .nav-links.active { display: flex; }
+            .menu-toggle { display: flex; }
+            .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .portfolio-grid { grid-template-columns: 1fr; }
+            .hero-logo { width: 200px; }
+            section { padding: 3.5rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="logo-container">
+        <img src="images/logo.png" alt="E&J Hardscaping & Landscaping Logo">
+    </div>
+    <div class="nav-links" id="navLinks">
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#testimonials">Reviews</a>
+        <a href="#contact" class="nav-cta">Get a Free Quote</a>
+    </div>
+    <div class="menu-toggle" id="menuToggle" onclick="document.getElementById('navLinks').classList.toggle('active')">
+        <span></span><span></span><span></span>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+    <div class="hero-content">
+        <img src="images/logo.png" alt="E&J Hardscaping & Landscaping" class="hero-logo">
+        <h1>Built by <span>Family</span>, Backed by <span>Quality</span></h1>
+        <p>Professional hardscaping and landscaping services for residential and commercial properties across Massachusetts and Rhode Island.</p>
+        <div class="hero-buttons">
+            <a href="#contact" class="btn btn-primary">Get Your Free Estimate</a>
+            <a href="#portfolio" class="btn btn-outline">See Our Work</a>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+    <div class="about-grid">
+        <div class="about-text">
+            <h3>A Family Business Built on Hard Work</h3>
+            <p>E&J Hardscaping & Landscaping Inc. is a family-owned and operated company proudly serving homeowners and businesses across Massachusetts and Rhode Island. We believe that every outdoor space tells a story, and we're here to help you write yours.</p>
+            <p>From retaining walls and paver patios to full landscape transformations, our team brings years of hands-on experience, attention to detail, and genuine care for every project we take on. When you work with E&J, you're not just hiring a contractor — you're becoming part of the family.</p>
+            <div class="about-values">
+                <div class="value-item">
+                    <div class="value-icon">&#10003;</div>
+                    <span>Family Owned</span>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon">&#10003;</div>
+                    <span>Fully Licensed</span>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon">&#10003;</div>
+                    <span>Fully Insured</span>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon">&#10003;</div>
+                    <span>Free Estimates</span>
+                </div>
+            </div>
+        </div>
+        <div class="about-image">
+            <img src="images/portfolio-2.jpg" alt="E&J Hardscaping work — gravel driveway with paver detail">
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+    <div class="section-header">
+        <h2>Our Services</h2>
+        <p>Comprehensive hardscaping and landscaping solutions tailored to your property</p>
+        <div class="section-divider"></div>
+    </div>
+    <div class="services-grid">
+        <div class="service-card">
+            <div class="service-icon">&#9641;</div>
+            <h3>Retaining Walls</h3>
+            <p>Custom-built retaining walls that add structure, prevent erosion, and elevate the look of your property. We work with natural stone, concrete block, and more.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">&#9638;</div>
+            <h3>Paver Patios & Walkways</h3>
+            <p>Beautiful paver installations for patios, walkways, and outdoor living spaces. Designed to last and built with precision craftsmanship.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">&#8962;</div>
+            <h3>Gravel Driveways</h3>
+            <p>Professional gravel driveway installation and grading. Clean, durable, and low-maintenance driveways that make a strong first impression.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">&#9752;</div>
+            <h3>Landscape Design</h3>
+            <p>Full landscape design and installation including plantings, mulch beds, shrubs, trees, and decorative elements to bring your vision to life.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">&#9681;</div>
+            <h3>Outdoor Steps & Stairs</h3>
+            <p>Custom stone and paver steps that blend seamlessly with your landscape. Safe, durable, and built to complement your home's exterior.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">&#9733;</div>
+            <h3>Complete Yard Transformations</h3>
+            <p>From concept to completion, we handle full property makeovers — combining hardscaping, landscaping, and grading into one cohesive project.</p>
+        </div>
+    </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio" id="portfolio">
+    <div class="section-header">
+        <h2>Our Work Speaks for Itself</h2>
+        <p>Browse some of our recent projects across Massachusetts and Rhode Island</p>
+        <div class="section-divider"></div>
+    </div>
+    <div class="portfolio-grid">
+        <div class="portfolio-item">
+            <img src="images/portfolio-1.jpg" alt="Custom retaining wall with stone steps and paver patio">
+            <div class="portfolio-overlay">
+                <h4>Retaining Wall & Patio</h4>
+                <p>Custom stone retaining wall with integrated steps and gravel patio</p>
+            </div>
+        </div>
+        <div class="portfolio-item">
+            <img src="images/portfolio-2.jpg" alt="Gravel driveway with paver accent and landscaping">
+            <div class="portfolio-overlay">
+                <h4>Gravel Driveway & Paver Detail</h4>
+                <p>Full property transformation with gravel driveway, paver accents, and tree plantings</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WHY US -->
+<section class="why-us">
+    <div class="section-header">
+        <h2>Why Choose E&J</h2>
+        <p>We're not the biggest — we're the best at what we do</p>
+        <div class="section-divider"></div>
+    </div>
+    <div class="why-grid">
+        <div class="why-card">
+            <div class="why-number">100%</div>
+            <h4>Customer Satisfaction</h4>
+            <p>We don't consider a job done until you're completely happy with the results</p>
+        </div>
+        <div class="why-card">
+            <div class="why-number">MA & RI</div>
+            <h4>Serving Two States</h4>
+            <p>Proudly serving homeowners across Massachusetts and Rhode Island</p>
+        </div>
+        <div class="why-card">
+            <div class="why-number">FREE</div>
+            <h4>Estimates Always</h4>
+            <p>Every project starts with a free, no-obligation on-site consultation</p>
+        </div>
+        <div class="why-card">
+            <div class="why-number">24/7</div>
+            <h4>Communication</h4>
+            <p>We keep you informed every step of the way from start to finish</p>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+    <div class="section-header">
+        <h2>What Our Clients Say</h2>
+        <p>Real reviews from real homeowners</p>
+        <div class="section-divider"></div>
+    </div>
+    <div class="testimonial-grid">
+        <div class="testimonial-card">
+            <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p>"E&J completely transformed our backyard. The retaining wall and patio are absolutely beautiful. You can tell they take real pride in their work. Highly recommend!"</p>
+            <div class="testimonial-author">Michael R.</div>
+            <div class="testimonial-location">Taunton, MA</div>
+        </div>
+        <div class="testimonial-card">
+            <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p>"Professional, on time, and the quality is outstanding. Our gravel driveway looks incredible and the paver accents really set it apart from anything else in the neighborhood."</p>
+            <div class="testimonial-author">Sarah & Tom D.</div>
+            <div class="testimonial-location">Fall River, MA</div>
+        </div>
+        <div class="testimonial-card">
+            <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p>"Being a family business really shows. They treated our property like it was their own. The whole team was respectful, hardworking, and the finished product exceeded our expectations."</p>
+            <div class="testimonial-author">Jennifer L.</div>
+            <div class="testimonial-location">Warwick, RI</div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+    <div class="section-header">
+        <h2>Get Your Free Estimate</h2>
+        <p>Ready to transform your outdoor space? Reach out today.</p>
+        <div class="section-divider"></div>
+    </div>
+    <div class="contact-grid">
+        <div class="contact-info">
+            <h3>Let's Talk About Your Project</h3>
+            <div class="contact-item">
+                <div class="contact-icon">&#9742;</div>
+                <div>
+                    <strong>Phone</strong>
+                    <span><a href="tel:+15085551234" style="color: #fff;">(508) 555-1234</a></span>
+                </div>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon">&#9993;</div>
+                <div>
+                    <strong>Email</strong>
+                    <span><a href="mailto:info@ejhardscaping.com" style="color: #fff;">info@ejhardscaping.com</a></span>
+                </div>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon">&#9873;</div>
+                <div>
+                    <strong>Service Area</strong>
+                    <span>Massachusetts & Rhode Island</span>
+                </div>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon">&#9200;</div>
+                <div>
+                    <strong>Hours</strong>
+                    <span>Mon - Sat: 7:00 AM - 6:00 PM</span>
+                </div>
+            </div>
+        </div>
+        <form class="contact-form" onsubmit="event.preventDefault(); this.innerHTML='<div style=&apos;text-align:center;padding:3rem 0;&apos;><h3 style=&apos;color:var(--yellow);margin-bottom:0.5rem;&apos;>Thank You!</h3><p>We&apos;ll be in touch within 24 hours.</p></div>'; return false;">
+            <input type="text" placeholder="Your Name" required>
+            <input type="tel" placeholder="Phone Number" required>
+            <input type="email" placeholder="Email Address">
+            <select>
+                <option value="" disabled selected>What service are you interested in?</option>
+                <option>Retaining Walls</option>
+                <option>Paver Patios & Walkways</option>
+                <option>Gravel Driveways</option>
+                <option>Landscape Design</option>
+                <option>Steps & Stairs</option>
+                <option>Full Yard Transformation</option>
+                <option>Other</option>
+            </select>
+            <textarea placeholder="Tell us about your project..."></textarea>
+            <button type="submit" class="btn btn-primary">Send My Request</button>
+        </form>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <p>&copy; 2026 E&J Hardscaping & Landscaping Inc. All rights reserved.</p>
+    <p style="margin-top: 0.5rem;">Proudly serving Massachusetts & Rhode Island</p>
+</footer>
+
+</body>
+</html>
