@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slades Ferry Grille | Somerset, MA</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#333;line-height:1.6}
+/* NAV */
+nav{background:#0d47a1;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
+.logo{font-size:1.5rem;font-weight:800;color:#fff;letter-spacing:1px}
+.logo span{color:#b71c1c}
+nav ul{list-style:none;display:flex;gap:25px}
+nav a{color:#fff;text-decoration:none;font-weight:500;font-size:0.95rem;transition:color 0.3s}
+nav a:hover{color:#b71c1c}
+/* HERO */
+.hero{background:linear-gradient(135deg,#0d47a1 0%,#b71c1c 100%);color:#fff;padding:100px 30px;text-align:center}
+.hero h1{font-size:3rem;margin-bottom:15px;letter-spacing:2px}
+.hero p{font-size:1.3rem;opacity:0.9;max-width:600px;margin:0 auto 30px}
+.btn{display:inline-block;padding:14px 35px;background:#b71c1c;color:#fff;text-decoration:none;border-radius:50px;font-weight:700;font-size:1rem;transition:transform 0.3s,box-shadow 0.3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,0,0,0.3)}
+/* SECTIONS */
+section{padding:70px 30px;max-width:1100px;margin:0 auto}
+.section-title{text-align:center;font-size:2rem;margin-bottom:10px;color:#0d47a1}
+.section-sub{text-align:center;color:#666;margin-bottom:40px;font-size:1.05rem}
+/* ABOUT */
+.about-text{max-width:750px;margin:0 auto;text-align:center;font-size:1.1rem;color:#555}
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px}
+.service-card{background:#e3f2fd;border-radius:12px;padding:30px;text-align:center;border-left:4px solid #b71c1c;transition:transform 0.3s,box-shadow 0.3s}
+.service-card:hover{transform:translateY(-5px);box-shadow:0 10px 25px rgba(0,0,0,0.1)}
+.service-card h3{color:#0d47a1;margin-bottom:8px;font-size:1.15rem}
+/* HOURS */
+.hours-box{background:#0d47a1;color:#fff;border-radius:12px;padding:40px;text-align:center;max-width:600px;margin:0 auto}
+.hours-box h2{margin-bottom:15px;font-size:1.8rem}
+.hours-box p{font-size:1.15rem;opacity:0.9}
+.hours-box .address{margin-top:15px;font-size:1rem;opacity:0.75}
+/* CTA */
+.cta{background:linear-gradient(135deg,#b71c1c 0%,#0d47a1 100%);color:#fff;padding:60px 30px;text-align:center}
+.cta h2{font-size:2rem;margin-bottom:15px}
+.cta p{font-size:1.15rem;opacity:0.9;margin-bottom:25px}
+.btn-light{background:#fff;color:#0d47a1;padding:14px 35px;border-radius:50px;text-decoration:none;font-weight:700;transition:transform 0.3s}
+.btn-light:hover{transform:translateY(-2px)}
+/* FOOTER */
+footer{background:#0d47a1;color:#fff;text-align:center;padding:25px;font-size:0.9rem;opacity:0.8}
+/* MOBILE */
+@media(max-width:768px){
+  .hero h1{font-size:2rem}
+  .hero p{font-size:1rem}
+  nav ul{display:none}
+  section{padding:50px 20px}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">Slades Ferry <span>Grille</span></div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#hours">Hours</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <h1>Slades Ferry Grille</h1>
+  <p>A Somerset Tradition. Reimagined.</p>
+  <a href="#contact" class="btn">Get In Touch</a>
+</div>
+
+<section id="about">
+  <h2 class="section-title">About Us</h2>
+  <p class="section-sub">Restaurant in Somerset, MA</p>
+  <p class="about-text">Slades Ferry Grille honors Somerset's rich history while bringing a fresh, modern dining experience to the iconic space that once housed Magoni's Ferry Landing for over 70 years. After extensive renovations, we're proud to carry on the tradition of great food and warm hospitality on the waterfront.</p>
+</section>
+
+<section id="services">
+  <h2 class="section-title">What We Offer</h2>
+  <p class="section-sub">Quality products and services you can count on</p>
+  <div class="services-grid">
+    <div class="service-card"><h3>Fresh Seafood</h3></div>
+    <div class="service-card"><h3>Steaks & Chops</h3></div>
+    <div class="service-card"><h3>Craft Cocktails & Local Beers</h3></div>
+    <div class="service-card"><h3>Waterfront Dining</h3></div>
+    <div class="service-card"><h3>Sunday Brunch</h3></div>
+    <div class="service-card"><h3>Private Events & Functions</h3></div>
+
+  </div>
+</section>
+
+<section id="hours">
+  <div class="hours-box">
+    <h2>Hours & Location</h2>
+    <p>Tue - Thu: 4PM - 9PM | Fri - Sat: 11:30AM - 10PM | Sun: 10AM - 8PM | Mon: Closed</p>
+    <p class="address">Former Magoni's Ferry Landing, Somerset, MA</p>
+  </div>
+</section>
+
+<div class="cta" id="contact">
+  <h2>Ready to Visit?</h2>
+  <p>Stop by Slades Ferry Grille today. We'd love to see you!</p>
+  <a href="https://maps.google.com/?q=Former+Magoni's+Ferry+Landing%2C+Somerset%2C+MA" class="btn-light" target="_blank">Get Directions</a>
+</div>
+
+<footer>
+  <p>&copy; 2026 Slades Ferry Grille. All rights reserved. | Website by Marketing Sauce</p>
+</footer>
+</body>
+</html>
