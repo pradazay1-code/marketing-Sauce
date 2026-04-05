@@ -48,7 +48,7 @@ All emails represent One Vision Marketing (Bridgewater, MA).
 - NEVER send without user confirmation
 - Keep subject lines under 60 characters
 - Always include a clear but soft CTA
-- Sign off as "Pradazay, One Vision Marketing, Bridgewater, MA"
+- Sign off as "Isaiah Wright, One Vision Marketing, Bridgewater, MA"
 - Never sound money-hungry — focus on helping the business grow
 - Frame services as solutions to their problems, not products to sell
 

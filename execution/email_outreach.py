@@ -24,7 +24,7 @@ TEMPLATES = {
 
 I came across {business_name} and really like what you're doing in {city}. As a fellow Massachusetts business owner, I know how important it is to have a strong online presence — and I think there's a great opportunity for {business_name} to reach even more customers.
 
-My name is Pradazay, and I run One Vision Marketing out of Bridgewater, MA. We're a full-service digital marketing agency that helps small businesses like yours grow through:
+My name is Isaiah Wright, and I run One Vision Marketing out of Bridgewater, MA. We're a full-service digital marketing agency that helps small businesses like yours grow through:
 
 - Professional website creation & hosting
 - Google, Facebook & Instagram advertising
@@ -39,7 +39,7 @@ I'd love to learn more about {business_name} and see how we can help — no pres
 Would you be open to a quick chat this week?
 
 Best regards,
-Pradazay
+Isaiah Wright
 One Vision Marketing
 Bridgewater, MA
 """
@@ -64,7 +64,7 @@ This is just the beginning. Whenever you're ready, we can also look into adverti
 Thanks for trusting One Vision Marketing with your online presence.
 
 Best regards,
-Pradazay
+Isaiah Wright
 One Vision Marketing
 Bridgewater, MA
 """
@@ -82,7 +82,7 @@ We help small businesses across Massachusetts with everything from websites and 
 Feel free to reply whenever it's convenient, or let me know a good time to chat.
 
 Best regards,
-Pradazay
+Isaiah Wright
 One Vision Marketing
 Bridgewater, MA
 """
@@ -110,7 +110,7 @@ I've helped businesses across Massachusetts build their online presence, and I a
 My goal is to make this easy for you — you focus on running your business, and I'll handle the marketing side. Let me know if you'd like to move forward or if you have any questions.
 
 Best regards,
-Pradazay
+Isaiah Wright
 One Vision Marketing
 Bridgewater, MA
 """
