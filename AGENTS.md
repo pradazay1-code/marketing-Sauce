@@ -55,17 +55,34 @@ When the user asks for a website (for any client), always deliver it as:
 
 ```
 marketing-Sauce/
-├── clients/           # Client projects (websites, assets, deliverables)
-├── directives/        # SOPs and task instructions (Markdown)
-├── execution/         # Deterministic scripts (Python, Shell)
-├── scripts/           # Utility scripts
-├── tools/             # Reusable tools and helpers
-├── .env               # Environment variables (API keys, tokens)
-├── .env.example       # Template for .env
-├── .gitignore         # Git ignore rules
-├── CLAUDE.md          # Agent instructions
-├── AGENTS.md          # This file - mirror of CLAUDE.md
-└── requirements.txt   # Python dependencies
+├── .claude/
+│   └── skills/                # Automated workflow skills
+│       ├── find-leads/        # Lead finder skill
+│       │   ├── skill.md       # SOP checklist
+│       │   └── scripts/       # Associated scripts
+│       ├── build-site/        # Website builder skill
+│       │   ├── skill.md
+│       │   └── scripts/
+│       │       └── build_single_site.py
+│       ├── cold-outreach/     # Email outreach skill
+│       │   ├── skill.md
+│       │   └── scripts/
+│       │       └── generate_outreach.py
+│       └── full-pipeline/     # End-to-end automation
+│           └── skill.md
+├── clients/                   # Client projects (websites, assets, deliverables)
+│   └── leads/                 # Lead data, websites, outreach drafts
+│       ├── raw_leads.json     # Structured lead data (pipeline input)
+│       ├── websites/          # Generated HTML sites per lead
+│       └── outreach_drafts.json
+├── directives/                # SOPs and task instructions (Markdown)
+├── execution/                 # Deterministic scripts (Python, Shell)
+├── context/                   # Agency profile, tone, brand info
+├── .env                       # Environment variables (API keys, tokens)
+├── .gitignore
+├── CLAUDE.md                  # This file - agent instructions
+├── AGENTS.md                  # Mirror of CLAUDE.md
+└── requirements.txt           # Python dependencies
 ```
 
 ## Agent Capabilities
@@ -87,6 +104,30 @@ This system has 5 core agents. Each follows the DOE pattern (Directive → Orche
 - **SEO audit:** Run `python execution/seo_audit.py clients/{name}/index.html`
 - **Create ads:** Run `python execution/generate_ad.py --client "Name" --service "Service" --location "City, ST"`
 - **Email a client:** Read `directives/email_client.md`, draft email, send via `mcp__gmail__send_message`
+
+## Skills (Automated Workflows)
+
+Skills live in `.claude/skills/` and connect the full pipeline. Each skill has a `skill.md` (the checklist) and a `scripts/` folder (deterministic code).
+
+| Skill | Path | What It Does |
+|-------|------|-------------|
+| **Find Leads** | `.claude/skills/find-leads/` | Find MA/RI/CT businesses without websites → `raw_leads.json` |
+| **Build Site** | `.claude/skills/build-site/` | Generate self-contained HTML website per lead |
+| **Cold Outreach** | `.claude/skills/cold-outreach/` | Personalized emails → Gmail MCP (with approval) |
+| **Full Pipeline** | `.claude/skills/full-pipeline/` | Find → Build → Email end-to-end |
+
+### How to Run Skills
+
+- **Find leads:** `python execution/find_leads_web.py --state MA --count 15`
+- **Build sites (batch):** `python .claude/skills/build-site/scripts/build_single_site.py --batch clients/leads/raw_leads.json`
+- **Build site (single):** `python .claude/skills/build-site/scripts/build_single_site.py --name "Joe's" --type "Barbershop" --city "Boston" --state "MA"`
+- **Generate outreach:** `python .claude/skills/cold-outreach/scripts/generate_outreach.py --leads clients/leads/raw_leads.json --site-url "https://pradazay1-code.github.io/marketing-Sauce"`
+- **Send emails:** Use `mcp__gmail__send_message` after user approves each draft
+
+### Pipeline Data Flow
+```
+WebSearch → raw_leads.json → build_single_site.py → websites/ → generate_outreach.py → outreach_drafts.json → Gmail MCP
+```
 
 ## Current Clients
 
