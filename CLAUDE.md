@@ -95,7 +95,7 @@ This system has 5 core agents. Each follows the DOE pattern (Directive → Orche
 | **Website Builder** | `directives/build_client_website.md` | Manual (HTML generation) | Build and deploy client websites to GitHub Pages |
 | **SEO Auditor** | `directives/seo_audit.md` | `execution/seo_audit.py` | Audit client sites for SEO issues |
 | **Ad Creator** | `directives/create_ad.md` | `execution/generate_ad.py` | Generate Google/Facebook/Instagram ad copy |
-| **Email Outreach** | `directives/email_client.md` | `execution/email_outreach.py` + Gmail MCP | Draft and send emails to clients |
+| **Email Outreach** | `directives/email_client.md` | `execution/email_outreach.py` + Gmail MCP | Draft and send emails as One Vision Marketing |
 
 ## How to Use Each Agent
 

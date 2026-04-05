@@ -1,47 +1,46 @@
-# Skill: Cold Outreach
+---
+description: Generate and send personalized cold outreach emails to leads via Gmail
+tools: Bash, Read, mcp__gmail__send_message
+---
 
-## Purpose
-Send personalized cold outreach emails to leads offering a free website mockup.
+# Cold Outreach Skill
 
-## When to Use
-- User says "email leads", "send outreach", "cold email", "reach out"
-- Part of the full pipeline after websites are built
+## What This Does
+Generates personalized cold outreach emails for leads and sends them via Gmail MCP. Always requires user approval before sending.
+
+## Generate Drafts
+```bash
+python .claude/skills/cold-outreach/scripts/generate_outreach.py \
+  --leads clients/leads/raw_leads.json \
+  --site-url "https://pradazay1-code.github.io/marketing-Sauce"
+```
 
 ## Steps
 
-1. **Load leads**
-   - Read from `clients/leads/raw_leads.json`
-   - Filter: only leads with status "No Website" and priority "HIGH" or "MEDIUM"
-
-2. **Generate emails**
+1. **Read leads** from `clients/leads/raw_leads.json` or `outreach_drafts.json`
+2. **Generate email** for each lead using the cold-outreach template:
    ```bash
-   python .claude/skills/cold-outreach/scripts/generate_outreach.py \
-     --leads clients/leads/raw_leads.json \
-     --output clients/leads/outreach_drafts.json
+   python execution/email_outreach.py --type cold-outreach \
+     --business "Business Name" --owner "Owner" --city "City"
    ```
-   - Personalizes subject + body per lead
-   - Includes link to their mockup website if available
+3. **Save drafts** to `clients/leads/outreach_drafts.json`
+4. **Show each draft** to user for approval
+5. **Send approved emails** via Gmail MCP:
+   ```
+   mcp__gmail__send_message(to, subject, body)
+   ```
+6. **Update status** in `outreach_drafts.json` from `pending_approval` → `sent`
 
-3. **Show drafts for approval**
-   - Display each email draft to user
-   - User approves, edits, or skips each one
-   - NEVER send without explicit user approval
-
-4. **Send approved emails**
-   - Use `mcp__gmail__send_message` for each approved email
-   - Log sent emails to `clients/leads/outreach_log.json`
-
-5. **Schedule follow-ups**
-   - Mark leads as "contacted" in the log
-   - Follow-up emails go out 5-7 days later (user triggers manually)
-
-## Output
-- `clients/leads/outreach_drafts.json` — generated drafts
-- `clients/leads/outreach_log.json` — sent email log
+## Email Template Info
+- Brand: **One Vision Marketing** (Bridgewater, MA)
+- Signed by: **Isaiah Wright**
+- Tone: Professional, genuine, NOT salesy
+- Services listed: websites, hosting, ads, SEO, social media, growth strategies
+- Mentions: RECNA marketing research experience
+- CTA: Free website mockup, quick chat
 
 ## Rules
-- ALWAYS get user approval before sending ANY email
-- Keep subject lines under 50 characters
-- Use agency tone from `context/agency.md`
-- Include clear CTA (5-minute call)
-- Never attach files — link to the mockup site instead
+- **NEVER send without user approval** — show draft first, wait for confirmation
+- If lead has an email, use it. If not, skip and note "no email found"
+- Track send status in outreach_drafts.json
+- Space emails 30+ seconds apart to avoid spam flags

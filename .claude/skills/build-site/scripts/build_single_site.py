@@ -1,313 +1,255 @@
 #!/usr/bin/env python3
 """
-Build a single self-contained HTML website for a business lead.
-All CSS/JS inline. Mobile responsive. SEO optimized.
+Build single or batch HTML websites for leads.
 
 Usage:
-    python .claude/skills/build-site/scripts/build_single_site.py \
-        --name "Joe's Barbershop" --type "Barbershop" --city "Boston" --state "MA"
-
-    python .claude/skills/build-site/scripts/build_single_site.py \
-        --batch clients/leads/raw_leads.json
+  Single: python .claude/skills/build-site/scripts/build_single_site.py --name "Joe's" --type "Barbershop" --city "Boston" --state "MA"
+  Batch:  python .claude/skills/build-site/scripts/build_single_site.py --batch clients/leads/raw_leads.json
 """
 
 import argparse
 import json
 import os
 import re
-import sys
+import hashlib
 
-# Color schemes by business type
-COLOR_SCHEMES = {
-    "Barbershop":       {"primary": "#1a1a2e", "accent": "#e94560", "light": "#f5f5f5"},
-    "Restaurant":       {"primary": "#2d3436", "accent": "#e17055", "light": "#ffeaa7"},
-    "Mexican Restaurant": {"primary": "#2d3436", "accent": "#d63031", "light": "#ffeaa7"},
-    "Indian Restaurant": {"primary": "#2c3e50", "accent": "#f39c12", "light": "#fdf2e9"},
-    "Seafood Restaurant": {"primary": "#0c2461", "accent": "#0984e3", "light": "#dfe6e9"},
-    "Bakery & Coffee":  {"primary": "#4a2c2a", "accent": "#d4a574", "light": "#fdf2e9"},
-    "Vintage Clothing Shop": {"primary": "#2d132c", "accent": "#c56cf0", "light": "#f8e8f8"},
-    "Jewelry Boutique": {"primary": "#2c2c54", "accent": "#d4af37", "light": "#f9f3e3"},
-    "Cocktail Bar & Restaurant": {"primary": "#1a1a2e", "accent": "#c56cf0", "light": "#f0e6f6"},
-    "Apparel & Accessories": {"primary": "#006266", "accent": "#00b894", "light": "#e0f7f0"},
-    "Comfort Food Restaurant": {"primary": "#4a2c2a", "accent": "#fdcb6e", "light": "#fef9ef"},
-    "Pizza Restaurant": {"primary": "#c0392b", "accent": "#f39c12", "light": "#fef9ef"},
-    "Independent Bookstore": {"primary": "#2c3e50", "accent": "#27ae60", "light": "#eafaf1"},
-    "default":          {"primary": "#2d3436", "accent": "#0984e3", "light": "#dfe6e9"},
+
+# Color palettes by business type
+PALETTES = {
+    "restaurant":  {"color1": "#1a1a2e", "color2": "#e94560", "color3": "#fff3e0"},
+    "barbershop":  {"color1": "#1a1a2e", "color2": "#e94560", "color3": "#f5f5f5"},
+    "bakery":      {"color1": "#4e342e", "color2": "#ff8f00", "color3": "#efebe9"},
+    "retail":      {"color1": "#4a148c", "color2": "#ff6f00", "color3": "#fce4ec"},
+    "salon":       {"color1": "#880e4f", "color2": "#f48fb1", "color3": "#fce4ec"},
+    "contractor":  {"color1": "#263238", "color2": "#ff6f00", "color3": "#eceff1"},
+    "bar":         {"color1": "#263238", "color2": "#c9a96e", "color3": "#efebe9"},
+    "seafood":     {"color1": "#01579b", "color2": "#e65100", "color3": "#e0f7fa"},
+    "bookstore":   {"color1": "#1b5e20", "color2": "#4e342e", "color3": "#f1f8e9"},
+    "default":     {"color1": "#2c3e50", "color2": "#e74c3c", "color3": "#f8f9fa"},
 }
+
+
+def get_palette(business_type):
+    """Pick color palette based on business type keywords."""
+    t = business_type.lower()
+    for key, palette in PALETTES.items():
+        if key in t:
+            return palette
+    # Deterministic fallback based on hash
+    palettes = list(PALETTES.values())
+    idx = int(hashlib.md5(t.encode()).hexdigest(), 16) % len(palettes)
+    return palettes[idx]
+
 
 def slugify(name):
     """Convert business name to URL-friendly slug."""
     slug = name.lower().strip()
-    slug = re.sub(r"[''']s\b", "s", slug)
+    slug = re.sub(r"[''']", "", slug)
     slug = re.sub(r"[^a-z0-9]+", "-", slug)
-    slug = slug.strip("-")
-    return slug
+    return slug.strip("-")
 
-def get_colors(biz_type):
-    """Get color scheme for business type."""
-    return COLOR_SCHEMES.get(biz_type, COLOR_SCHEMES["default"])
 
-def build_html(name, biz_type, city, state, address="", phone="", description="", services=None):
-    """Generate complete self-contained HTML website."""
-    colors = get_colors(biz_type)
-    p = colors["primary"]
-    a = colors["accent"]
-    lt = colors["light"]
-
-    if not description:
-        description = f"Welcome to {name}, your local {biz_type.lower()} in {city}, {state}."
-
-    if not services:
-        services = _default_services(biz_type)
-
-    services_html = ""
-    for svc in services:
-        services_html += f"""
-            <div class="service-card">
-                <h3>{svc['name']}</h3>
-                <p>{svc['desc']}</p>
-            </div>"""
-
-    contact_info = ""
-    if address:
-        contact_info += f"<p><strong>Address:</strong> {address}, {city}, {state}</p>"
+def generate_services(business_type):
+    """Generate generic services based on business type."""
+    t = business_type.lower()
+    if "barber" in t:
+        return ["Classic Haircuts", "Skin Fades", "Beard Trims", "Kids Cuts", "Hot Towel Shaves", "Line-Ups"]
+    elif "restaurant" in t or "food" in t or "kitchen" in t or "grill" in t:
+        return ["Dine-In", "Takeout & Delivery", "Catering", "Private Events", "Daily Specials", "Family Platters"]
+    elif "bakery" in t or "coffee" in t:
+        return ["Fresh Breads", "Pastries", "Espresso & Coffee", "Cakes & Special Orders", "Breakfast", "Seasonal Menu"]
+    elif "salon" in t or "beauty" in t:
+        return ["Haircuts & Styling", "Color & Highlights", "Blowouts", "Bridal Services", "Treatments", "Waxing"]
+    elif "auto" in t or "mechanic" in t:
+        return ["Oil Changes", "Brake Service", "Engine Diagnostics", "Tire Service", "AC Repair", "Inspections"]
+    elif "vintage" in t or "clothing" in t or "apparel" in t:
+        return ["Curated Collections", "Vintage Finds", "Accessories", "Seasonal Drops", "Buy & Trade", "Gift Cards"]
+    elif "jewelry" in t:
+        return ["Handcrafted Pieces", "Custom Orders", "Rings & Bracelets", "Earrings", "Gift Sets", "Bridal"]
+    elif "book" in t:
+        return ["Fiction & Non-Fiction", "Children's Books", "Local Authors", "Book Clubs", "Special Orders", "Gifts"]
+    elif "seafood" in t or "fish" in t:
+        return ["Lobster Rolls", "Fried Clams", "Fish & Chips", "Raw Bar", "Chowder", "Daily Catch"]
+    elif "pizza" in t:
+        return ["Classic Pies", "Specialty Pizza", "Slices", "Calzones", "Salads", "Desserts"]
     else:
-        contact_info += f"<p><strong>Location:</strong> {city}, {state}</p>"
-    if phone and phone != "N/A":
-        contact_info += f'<p><strong>Phone:</strong> <a href="tel:{phone}">{phone}</a></p>'
+        return ["Our Services", "Consultations", "Custom Solutions", "Quality Products", "Customer Support", "Special Requests"]
 
-    html = f"""<!DOCTYPE html>
+
+TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{name} - {biz_type} in {city}, {state}. {description[:120]}">
-    <title>{name} | {biz_type} in {city}, {state}</title>
-    <style>
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; }}
-
-        /* Navigation */
-        nav {{ background: {p}; padding: 1rem 2rem; position: fixed; width: 100%; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }}
-        .logo {{ color: white; font-size: 1.4rem; font-weight: 700; text-decoration: none; }}
-        .logo span {{ color: {a}; }}
-        .nav-links {{ list-style: none; display: flex; gap: 1.5rem; }}
-        .nav-links a {{ color: #ccc; text-decoration: none; font-size: 0.95rem; transition: color 0.3s; }}
-        .nav-links a:hover {{ color: {a}; }}
-        .hamburger {{ display: none; flex-direction: column; cursor: pointer; gap: 5px; }}
-        .hamburger span {{ width: 25px; height: 3px; background: white; border-radius: 3px; transition: 0.3s; }}
-
-        /* Hero */
-        .hero {{ background: linear-gradient(135deg, {p} 0%, {a} 100%); color: white; padding: 8rem 2rem 5rem; text-align: center; min-height: 80vh; display: flex; flex-direction: column; justify-content: center; }}
-        .hero h1 {{ font-size: 3rem; margin-bottom: 1rem; }}
-        .hero p {{ font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem; opacity: 0.9; }}
-        .btn {{ display: inline-block; padding: 0.9rem 2.2rem; background: {a}; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; font-size: 1rem; transition: transform 0.3s, box-shadow 0.3s; border: none; cursor: pointer; }}
-        .btn:hover {{ transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }}
-
-        /* Sections */
-        section {{ padding: 5rem 2rem; }}
-        .section-title {{ text-align: center; font-size: 2rem; margin-bottom: 1rem; color: {p}; }}
-        .section-subtitle {{ text-align: center; color: #666; max-width: 600px; margin: 0 auto 3rem; }}
-
-        /* About */
-        .about {{ background: {lt}; }}
-        .about-content {{ max-width: 800px; margin: 0 auto; text-align: center; font-size: 1.1rem; }}
-
-        /* Services */
-        .services-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; }}
-        .service-card {{ background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s; }}
-        .service-card:hover {{ transform: translateY(-5px); }}
-        .service-card h3 {{ color: {a}; margin-bottom: 0.8rem; font-size: 1.2rem; }}
-        .service-card p {{ color: #666; font-size: 0.95rem; }}
-
-        /* Contact */
-        .contact {{ background: {lt}; }}
-        .contact-info {{ max-width: 600px; margin: 0 auto; text-align: center; }}
-        .contact-info p {{ margin: 0.5rem 0; font-size: 1.05rem; }}
-        .contact-info a {{ color: {a}; }}
-
-        /* CTA */
-        .cta {{ background: linear-gradient(135deg, {p}, {a}); color: white; text-align: center; }}
-        .cta h2 {{ font-size: 2rem; margin-bottom: 1rem; }}
-        .cta p {{ margin-bottom: 2rem; opacity: 0.9; }}
-        .cta .btn {{ background: white; color: {p}; }}
-
-        /* Footer */
-        footer {{ background: {p}; color: #aaa; text-align: center; padding: 2rem; font-size: 0.9rem; }}
-        footer a {{ color: {a}; text-decoration: none; }}
-
-        /* Mobile */
-        @media (max-width: 768px) {{
-            .hamburger {{ display: flex; }}
-            .nav-links {{ display: none; position: absolute; top: 100%; left: 0; width: 100%; background: {p}; flex-direction: column; padding: 1rem 2rem; gap: 1rem; }}
-            .nav-links.active {{ display: flex; }}
-            .hero h1 {{ font-size: 2rem; }}
-            .hero {{ padding: 6rem 1.5rem 3rem; min-height: 60vh; }}
-            section {{ padding: 3rem 1.5rem; }}
-        }}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{name} | {city}, {state}</title>
+<meta name="description" content="{name} — {business_type} in {city}, {state}. Visit us today!">
+<style>
+*{{margin:0;padding:0;box-sizing:border-box}}
+body{{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#333;line-height:1.6}}
+nav{{background:{color1};padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.2)}}
+.logo{{font-size:1.5rem;font-weight:800;color:#fff;letter-spacing:1px}}
+.logo span{{color:{color2}}}
+nav ul{{list-style:none;display:flex;gap:25px}}
+nav a{{color:#fff;text-decoration:none;font-weight:500;font-size:0.95rem;transition:color 0.3s}}
+nav a:hover{{color:{color2}}}
+.hero{{background:linear-gradient(135deg,{color1} 0%,{color2} 100%);color:#fff;padding:100px 30px;text-align:center}}
+.hero h1{{font-size:3rem;margin-bottom:15px;letter-spacing:2px}}
+.hero p{{font-size:1.3rem;opacity:0.9;max-width:600px;margin:0 auto 30px}}
+.btn{{display:inline-block;padding:14px 35px;background:{color2};color:#fff;text-decoration:none;border-radius:50px;font-weight:700;font-size:1rem;transition:transform 0.3s,box-shadow 0.3s}}
+.btn:hover{{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,0,0,0.3)}}
+section{{padding:70px 30px;max-width:1100px;margin:0 auto}}
+.section-title{{text-align:center;font-size:2rem;margin-bottom:10px;color:{color1}}}
+.section-sub{{text-align:center;color:#666;margin-bottom:40px;font-size:1.05rem}}
+.about-text{{max-width:750px;margin:0 auto;text-align:center;font-size:1.1rem;color:#555}}
+.services-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px}}
+.service-card{{background:{color3};border-radius:12px;padding:30px;text-align:center;border-left:4px solid {color2};transition:transform 0.3s,box-shadow 0.3s}}
+.service-card:hover{{transform:translateY(-5px);box-shadow:0 10px 25px rgba(0,0,0,0.1)}}
+.service-card h3{{color:{color1};margin-bottom:8px;font-size:1.15rem}}
+.hours-box{{background:{color1};color:#fff;border-radius:12px;padding:40px;text-align:center;max-width:600px;margin:0 auto}}
+.hours-box h2{{margin-bottom:15px;font-size:1.8rem}}
+.hours-box p{{font-size:1.15rem;opacity:0.9}}
+.hours-box .address{{margin-top:15px;font-size:1rem;opacity:0.75}}
+.cta{{background:linear-gradient(135deg,{color2} 0%,{color1} 100%);color:#fff;padding:60px 30px;text-align:center}}
+.cta h2{{font-size:2rem;margin-bottom:15px}}
+.cta p{{font-size:1.15rem;opacity:0.9;margin-bottom:25px}}
+.btn-light{{background:#fff;color:{color1};padding:14px 35px;border-radius:50px;text-decoration:none;font-weight:700;transition:transform 0.3s}}
+.btn-light:hover{{transform:translateY(-2px)}}
+footer{{background:{color1};color:#fff;text-align:center;padding:25px;font-size:0.9rem;opacity:0.8}}
+@media(max-width:768px){{
+  .hero h1{{font-size:2rem}}
+  .hero p{{font-size:1rem}}
+  nav ul{{display:none}}
+  section{{padding:50px 20px}}
+}}
+</style>
 </head>
 <body>
-    <nav>
-        <a href="#" class="logo">{name.split()[0]}<span>{''.join(name.split()[1:2])}</span></a>
-        <div class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('active')">
-            <span></span><span></span><span></span>
-        </div>
-        <ul class="nav-links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
-
-    <section class="hero">
-        <h1>{name}</h1>
-        <p>{description}</p>
-        <a href="#contact" class="btn">Get In Touch</a>
-    </section>
-
-    <section class="about" id="about">
-        <h2 class="section-title">About Us</h2>
-        <div class="about-content">
-            <p>{description} We're proud to serve the {city}, {state} community with quality {biz_type.lower()} services.</p>
-        </div>
-    </section>
-
-    <section id="services">
-        <h2 class="section-title">What We Offer</h2>
-        <p class="section-subtitle">Quality services tailored to our community.</p>
-        <div class="services-grid">{services_html}
-        </div>
-    </section>
-
-    <section class="contact" id="contact">
-        <h2 class="section-title">Visit Us</h2>
-        <div class="contact-info">
-            {contact_info}
-            <p style="margin-top:1.5rem;color:#666;">Stop by and see us today!</p>
-        </div>
-    </section>
-
-    <section class="cta">
-        <h2>Ready to Visit {name}?</h2>
-        <p>We'd love to see you. Come check us out!</p>
-        <a href="#contact" class="btn">Contact Us</a>
-    </section>
-
-    <footer>
-        <p>&copy; 2026 {name}. All rights reserved.</p>
-        <p style="margin-top:0.5rem;">Website by <a href="#">Marketing Sauce</a></p>
-    </footer>
+<nav>
+  <div class="logo">{logo_first}<span>{logo_second}</span></div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#hours">Hours</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+<div class="hero">
+  <h1>{name}</h1>
+  <p>{tagline}</p>
+  <a href="#contact" class="btn">Get In Touch</a>
+</div>
+<section id="about">
+  <h2 class="section-title">About Us</h2>
+  <p class="section-sub">{business_type} in {city}, {state}</p>
+  <p class="about-text">{about}</p>
+</section>
+<section id="services">
+  <h2 class="section-title">What We Offer</h2>
+  <p class="section-sub">Quality products and services you can count on</p>
+  <div class="services-grid">
+{services_html}
+  </div>
+</section>
+<section id="hours">
+  <div class="hours-box">
+    <h2>Hours & Location</h2>
+    <p>{hours}</p>
+    <p class="address">{city}, {state}</p>
+  </div>
+</section>
+<div class="cta" id="contact">
+  <h2>Ready to Visit?</h2>
+  <p>Stop by {name} today. We'd love to see you!</p>
+  <a href="https://maps.google.com/?q={name_encoded}+{city_encoded}+{state}" class="btn-light" target="_blank">Get Directions</a>
+</div>
+<footer>
+  <p>&copy; 2026 {name}. All rights reserved. | Website by One Vision Marketing</p>
+</footer>
 </body>
 </html>"""
-    return html
 
 
-def _default_services(biz_type):
-    """Return default services based on business type."""
-    defaults = {
-        "Barbershop": [
-            {"name": "Haircuts", "desc": "Classic and modern cuts for all styles."},
-            {"name": "Beard Trims", "desc": "Sharp beard shaping and grooming."},
-            {"name": "Hot Towel Shave", "desc": "Relaxing traditional straight razor shave."},
-        ],
-        "Restaurant": [
-            {"name": "Dine In", "desc": "Enjoy our full menu in a comfortable setting."},
-            {"name": "Takeout", "desc": "Fresh food ready to go when you are."},
-            {"name": "Catering", "desc": "Let us cater your next event."},
-        ],
-        "Mexican Restaurant": [
-            {"name": "Authentic Cuisine", "desc": "Traditional Mexican recipes made fresh daily."},
-            {"name": "Craft Cocktails", "desc": "Margaritas, mezcal, and more."},
-            {"name": "Catering", "desc": "Bring the fiesta to your next event."},
-        ],
-        "Bakery & Coffee": [
-            {"name": "Artisan Breads", "desc": "Freshly baked breads made from scratch."},
-            {"name": "Pastries", "desc": "Croissants, muffins, and sweet treats."},
-            {"name": "Espresso Bar", "desc": "Premium coffee and espresso drinks."},
-        ],
-        "Independent Bookstore": [
-            {"name": "New Releases", "desc": "Latest titles across all genres."},
-            {"name": "Local Authors", "desc": "Curated selection from local writers."},
-            {"name": "Events", "desc": "Book signings, readings, and community events."},
-        ],
-    }
-    return defaults.get(biz_type, [
-        {"name": "Quality Products", "desc": "Carefully selected items for our customers."},
-        {"name": "Expert Service", "desc": "Friendly, knowledgeable staff ready to help."},
-        {"name": "Local Community", "desc": "Proudly serving our local neighborhood."},
-    ])
-
-
-def build_from_lead(lead):
-    """Build site from a lead dict (from raw_leads.json)."""
-    name = lead["business_name"]
+def build_site(name, business_type, city, state, output_dir="clients/leads/websites"):
+    """Build a single website and save to disk."""
     slug = slugify(name)
-    output_dir = f"clients/leads/websites/{slug}"
-    os.makedirs(output_dir, exist_ok=True)
+    palette = get_palette(business_type)
+    services = generate_services(business_type)
 
-    html = build_html(
+    # Logo split
+    parts = name.split()
+    if len(parts) >= 2:
+        logo_first = " ".join(parts[:-1]) + " "
+        logo_second = parts[-1]
+    else:
+        logo_first = name
+        logo_second = ""
+
+    # Services HTML
+    services_html = ""
+    for s in services:
+        services_html += f'    <div class="service-card"><h3>{s}</h3></div>\n'
+
+    # Tagline
+    tagline = f"Your local {business_type.lower()} in {city}."
+
+    # About
+    about = (f"{name} is a {business_type.lower()} proudly serving the {city}, {state} community. "
+             f"We're dedicated to providing quality products and exceptional service to every customer who walks through our doors.")
+
+    html = TEMPLATE.format(
         name=name,
-        biz_type=lead.get("type", "Business"),
-        city=lead.get("city", ""),
-        state=lead.get("state", "MA"),
-        address=lead.get("address", ""),
-        phone=lead.get("phone", ""),
-        description=lead.get("notes", ""),
+        business_type=business_type,
+        city=city,
+        state=state,
+        tagline=tagline,
+        about=about,
+        color1=palette["color1"],
+        color2=palette["color2"],
+        color3=palette["color3"],
+        hours="Call for hours",
+        logo_first=logo_first,
+        logo_second=logo_second,
+        services_html=services_html,
+        name_encoded=name.replace(" ", "+"),
+        city_encoded=city.replace(" ", "+"),
     )
 
-    output_path = os.path.join(output_dir, "index.html")
-    with open(output_path, "w") as f:
+    folder = os.path.join(output_dir, slug)
+    os.makedirs(folder, exist_ok=True)
+    filepath = os.path.join(folder, "index.html")
+    with open(filepath, "w") as f:
         f.write(html)
-    print(f"  Built: {output_path}")
-    return output_path
+    print(f"Built: {filepath}")
+    return filepath
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Build single-page HTML websites")
+    parser = argparse.ArgumentParser(description="One Vision Marketing — Website Builder")
     parser.add_argument("--name", help="Business name")
-    parser.add_argument("--type", default="Business", help="Business type")
-    parser.add_argument("--city", default="", help="City")
+    parser.add_argument("--type", dest="business_type", default="Business", help="Business type")
+    parser.add_argument("--city", default="Boston", help="City")
     parser.add_argument("--state", default="MA", help="State")
-    parser.add_argument("--address", default="", help="Street address")
-    parser.add_argument("--phone", default="", help="Phone number")
-    parser.add_argument("--desc", default="", help="Business description")
-    parser.add_argument("--output", default="", help="Output file path")
-    parser.add_argument("--batch", help="Path to raw_leads.json for batch generation")
+    parser.add_argument("--batch", help="Path to raw_leads.json for batch build")
+    parser.add_argument("--output", default="clients/leads/websites", help="Output directory")
     args = parser.parse_args()
 
     if args.batch:
-        with open(args.batch) as f:
+        with open(args.batch, "r") as f:
             leads = json.load(f)
-        print(f"Building {len(leads)} websites...")
-        paths = []
+        print(f"Building {len(leads)} websites...\n")
         for lead in leads:
-            path = build_from_lead(lead)
-            paths.append(path)
-        print(f"\nDone! Built {len(paths)} websites.")
-        return
-
-    if not args.name:
-        print("ERROR: --name is required (or use --batch)")
-        sys.exit(1)
-
-    slug = slugify(args.name)
-    output = args.output or f"clients/leads/websites/{slug}/index.html"
-    os.makedirs(os.path.dirname(output), exist_ok=True)
-
-    html = build_html(
-        name=args.name,
-        biz_type=args.type,
-        city=args.city,
-        state=args.state,
-        address=args.address,
-        phone=args.phone,
-        description=args.desc,
-    )
-
-    with open(output, "w") as f:
-        f.write(html)
-    print(f"Built: {output}")
+            build_site(
+                name=lead.get("business_name", lead.get("name", "Business")),
+                business_type=lead.get("type", lead.get("business_type", "Business")),
+                city=lead.get("city", "Boston"),
+                state=lead.get("state", "MA"),
+                output_dir=args.output,
+            )
+        print(f"\nDone! {len(leads)} websites built.")
+    elif args.name:
+        build_site(args.name, args.business_type, args.city, args.state, args.output)
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":

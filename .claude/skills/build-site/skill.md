@@ -1,46 +1,47 @@
-# Skill: Build Site
+---
+description: Generate self-contained HTML websites for leads or clients
+tools: Bash, Write, Read
+---
 
-## Purpose
-Generate a self-contained HTML website for a lead or client. Deploy to GitHub Pages.
+# Build Site Skill
 
-## When to Use
-- User says "build site", "create website", "make a site for [business]"
-- Part of the full pipeline after leads are found
+## What This Does
+Generates professional, mobile-friendly, self-contained HTML websites for leads from `raw_leads.json` or for individual clients.
+
+## Single Site
+```bash
+python .claude/skills/build-site/scripts/build_single_site.py \
+  --name "Joe's Barbershop" \
+  --type "Barbershop" \
+  --city "Boston" \
+  --state "MA"
+```
+
+## Batch (All Leads)
+```bash
+python .claude/skills/build-site/scripts/build_single_site.py \
+  --batch clients/leads/raw_leads.json
+```
 
 ## Steps
 
-1. **Get business info**
-   - Read from `clients/leads/raw_leads.json` or accept manual input
-   - Required: business_name, business_type, city, state
-   - Optional: address, phone, description, services list
-
-2. **Generate website**
-   ```bash
-   python .claude/skills/build-site/scripts/build_single_site.py \
-     --name "Business Name" \
-     --type "Restaurant" \
-     --city "Boston" \
-     --state "MA" \
-     --output clients/leads/websites/business-name/index.html
-   ```
-   - Single self-contained HTML file (all CSS/JS inline)
-   - Mobile responsive, SEO optimized
+1. **Read lead data** from `clients/leads/raw_leads.json` or CLI args
+2. **Generate HTML** — single self-contained file with:
+   - All CSS inline (no external stylesheets)
+   - Mobile responsive design
    - Unique color scheme per business type
+   - Sections: Nav, Hero, About, Services, Hours, CTA, Footer
+   - `<img src="images/...">` tags for photos (user adds their own)
+3. **Save to** `clients/leads/websites/{slug}/index.html`
+4. **Deploy** to GitHub Pages (optional, on user request)
 
-3. **Deploy to GitHub Pages** (optional)
-   - Push to `gh-pages` branch under `sites/{slug}/`
-   - Live URL: `https://pradazay1-code.github.io/marketing-Sauce/sites/{slug}/`
-
-4. **Verify**
-   - File exists and is valid HTML
-   - All styles inline (no external dependencies)
+## Website Requirements
+- Single HTML file, fully self-contained
+- Mobile-first responsive design
+- SEO meta tags (title, description)
+- Clean, professional look
+- Contact section with placeholder phone/email
+- Google Maps embed placeholder
 
 ## Output
-- `clients/leads/websites/{slug}/index.html`
-- Optional: live GitHub Pages URL
-
-## Rules
-- ALL CSS must be inline in `<style>` tags
-- ALL JS must be inline in `<script>` tags
-- Use `<img src="images/...">` for portfolio images (user adds their own)
-- No external CDN links
+- `clients/leads/websites/{business-slug}/index.html`

@@ -5,35 +5,38 @@
     "city": "Westborough",
     "state": "MA",
     "address": "72 East Main St, 2nd Floor",
-    "phone": "",
-    "online_presence": "None - just opened May 2025",
+    "phone": "N/A",
+    "owner_name": "Jose",
+    "online_presence": "None",
     "website_status": "No Website",
-    "notes": "Brand new barbershop opened May 2025. Owner Jose Torres has 8 yrs experience in the area. Located above Swanski's Bakery.",
-    "priority": "HIGH"
+    "priority": "HIGH",
+    "notes": "Brand new barbershop opened May 2025. Owner Jose Torres has 8 yrs experience."
   },
   {
     "business_name": "Thela Indian Street Food",
-    "type": "Indian Restaurant",
+    "type": "Restaurant",
     "city": "Westborough",
     "state": "MA",
     "address": "72 East Main St, Lower Level",
-    "phone": "",
-    "online_presence": "None found",
+    "phone": "N/A",
+    "owner_name": "there",
+    "online_presence": "None",
     "website_status": "No Website",
-    "notes": "New Indian street food shop in Westborough, opened 2025. Located below Swanski's Bakery on East Main St.",
-    "priority": "HIGH"
+    "priority": "HIGH",
+    "notes": "New Indian street food shop, opened 2025."
   },
   {
     "business_name": "Rancho Alegre",
     "type": "Mexican Restaurant",
     "city": "Westborough",
     "state": "MA",
-    "address": "Former Kenzo's Steakhouse, East Main St",
-    "phone": "",
-    "online_presence": "None found",
+    "address": "East Main St",
+    "phone": "N/A",
+    "owner_name": "there",
+    "online_presence": "None",
     "website_status": "No Website",
-    "notes": "New Mexican restaurant converting former Kenzo's Steakhouse space. In process of opening 2025.",
-    "priority": "HIGH"
+    "priority": "HIGH",
+    "notes": "New Mexican restaurant, opening 2025."
   },
   {
     "business_name": "Ace of Babes Vintage",
@@ -41,11 +44,12 @@
     "city": "Worcester",
     "state": "MA",
     "address": "Portland Street, Downtown",
-    "phone": "",
-    "online_presence": "Possibly social media only",
+    "phone": "N/A",
+    "owner_name": "there",
+    "online_presence": "Social media only",
     "website_status": "No Website",
-    "notes": "Independently owned vintage clothing shop. Newly opened in downtown Worcester on Portland St.",
-    "priority": "HIGH"
+    "priority": "HIGH",
+    "notes": "Independently owned vintage clothing shop, newly opened."
   },
   {
     "business_name": "Boom Jewels",
@@ -53,35 +57,25 @@
     "city": "Worcester",
     "state": "MA",
     "address": "Main Street, Owl Shop Building",
-    "phone": "",
+    "phone": "N/A",
+    "owner_name": "there",
     "online_presence": "Unknown",
     "website_status": "No Website",
-    "notes": "New jewelry boutique inside the historic Owl Shop Building on Main St downtown Worcester.",
-    "priority": "HIGH"
+    "priority": "HIGH",
+    "notes": "New jewelry boutique in historic Owl Shop Building."
   },
   {
     "business_name": "Monalessa's Kitchen",
-    "type": "Indian Restaurant",
+    "type": "Indian Restaurant & Grill",
     "city": "Fall River",
     "state": "MA",
     "address": "756 Brayton Ave",
-    "phone": "",
-    "online_presence": "None found",
+    "phone": "N/A",
+    "owner_name": "Shahidul",
+    "online_presence": "None",
     "website_status": "No Website",
-    "notes": "New Indian restaurant/grill opening in Fall River South End. Owner Md Shahidul Islam also owns NY Fresh Bagel.",
-    "priority": "HIGH"
-  },
-  {
-    "business_name": "The Counting House",
-    "type": "Cocktail Bar & Restaurant",
-    "city": "Fall River",
-    "state": "MA",
-    "address": "Near Durfee Mills, Downtown",
-    "phone": "",
-    "online_presence": "Possibly social media only",
-    "website_status": "No Website",
-    "notes": "Craft cocktails, espresso martinis, small plates with Italian & Portuguese influences. Opened Jan 2, 2025.",
-    "priority": "MEDIUM"
+    "priority": "HIGH",
+    "notes": "New Indian restaurant, owner Md Shahidul Islam."
   },
   {
     "business_name": "Morgan's Cantina",
@@ -89,23 +83,12 @@
     "city": "Fall River",
     "state": "MA",
     "address": "1 Ferry St, Waterfront",
-    "phone": "",
-    "online_presence": "None found",
+    "phone": "N/A",
+    "owner_name": "Michael",
+    "online_presence": "None",
     "website_status": "No Website",
-    "notes": "Handmade Mexican cuisine & craft cocktails. Waterfront views of Mount Hope Bay. Owners Michael & Nicole Lund.",
-    "priority": "HIGH"
-  },
-  {
-    "business_name": "Slades Ferry Grille",
-    "type": "Restaurant",
-    "city": "Somerset",
-    "state": "MA",
-    "address": "Former Magoni's Ferry Landing",
-    "phone": "",
-    "online_presence": "None found",
-    "website_status": "No Website",
-    "notes": "Reopening iconic 70+ year old restaurant space as Slades Ferry Grille after extensive renovations.",
-    "priority": "MEDIUM"
+    "priority": "HIGH",
+    "notes": "Waterfront Mexican cuisine. Owners Michael & Nicole Lund."
   },
   {
     "business_name": "Surfside Seafood",
@@ -113,11 +96,12 @@
     "city": "Orleans",
     "state": "MA",
     "address": "18 Old Colony Way",
-    "phone": "",
-    "online_presence": "None found",
+    "phone": "N/A",
+    "owner_name": "there",
+    "online_presence": "None",
     "website_status": "No Website",
-    "notes": "Run by two fishermen. Fresh Cape Cod seafood. Newly opened in Orleans on Cape Cod.",
-    "priority": "HIGH"
+    "priority": "HIGH",
+    "notes": "Run by two fishermen. Fresh Cape Cod seafood."
   },
   {
     "business_name": "Liberty Artisanal Bakery",
@@ -125,47 +109,12 @@
     "city": "Chatham",
     "state": "MA",
     "address": "1223 Main St",
-    "phone": "",
+    "phone": "N/A",
+    "owner_name": "there",
     "online_presence": "Unknown",
     "website_status": "No Website",
-    "notes": "Artisan breads, pastries, coffee & espresso bar. Newly opened on Main St in Chatham.",
-    "priority": "HIGH"
-  },
-  {
-    "business_name": "Cape Life Brand Company",
-    "type": "Apparel & Accessories",
-    "city": "Harwich Port",
-    "state": "MA",
-    "address": "537 Main St",
-    "phone": "",
-    "online_presence": "Unknown",
-    "website_status": "No Website",
-    "notes": "Cape-themed apparel and accessories with stylish designs. New retail shop in Harwich Port.",
-    "priority": "MEDIUM"
-  },
-  {
-    "business_name": "Mac Daddies",
-    "type": "Comfort Food Restaurant",
-    "city": "Haverhill",
-    "state": "MA",
-    "address": "72 South Main St",
-    "phone": "",
-    "online_presence": "Possibly Facebook only",
-    "website_status": "No Website",
-    "notes": "Creative mac-n-cheese comfort food. Relocated to bigger space. Opening 2nd location in Amesbury Jan 2026.",
-    "priority": "MEDIUM"
-  },
-  {
-    "business_name": "WCP Slice House",
-    "type": "Pizza Restaurant",
-    "city": "Lowell",
-    "state": "MA",
-    "address": "Central Street, Downtown",
-    "phone": "",
-    "online_presence": "Unknown",
-    "website_status": "No Website",
-    "notes": "South Shore bar pizza, thin crust, Sicilian, New Haven style, GF options. Opened Oct 2025 in downtown Lowell.",
-    "priority": "MEDIUM"
+    "priority": "HIGH",
+    "notes": "Artisan breads, pastries, coffee & espresso bar."
   },
   {
     "business_name": "A New Chapter",
@@ -173,10 +122,11 @@
     "city": "West Springfield",
     "state": "MA",
     "address": "Downtown West Springfield",
-    "phone": "",
-    "online_presence": "None found",
+    "phone": "N/A",
+    "owner_name": "Scott",
+    "online_presence": "None",
     "website_status": "No Website",
-    "notes": "Independent bookstore opened Oct 7, 2025 by Scott Szaban. Grand opening Nov 7-9, 2025.",
-    "priority": "HIGH"
+    "priority": "HIGH",
+    "notes": "Independent bookstore founded by Scott Szaban."
   }
 ]
