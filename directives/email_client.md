@@ -1,64 +1,57 @@
-# Directive: Email Client
+# Directive: Email Client — One Vision Marketing
 
 ## Goal
-Send professional emails to clients — website deliveries, proposals, follow-ups.
+Send professional emails to clients — cold outreach, website deliveries, proposals, follow-ups.
+All emails represent One Vision Marketing (Bridgewater, MA).
 
 ## Inputs
 - Recipient email address
-- Email type: delivery, proposal, follow-up, cold-outreach
-- Client name
-- Attachments or links (optional)
+- Email type: cold-outreach, delivery, follow-up, proposal
+- Business name, owner/client name, city
+- Website URL (for delivery emails)
 
 ## Process
 1. Read client info from `clients/{client-name}/CLIENT_SUMMARY.md` if exists
 2. Read agency tone from `context/agency.md`
-3. Draft email based on type:
-   - **Delivery:** "Your website is live! Here's the link..."
-   - **Proposal:** "We'd love to help your business grow online..."
-   - **Follow-up:** "Just checking in on the website we delivered..."
-   - **Cold-outreach:** "We noticed your business doesn't have a website..."
+3. Generate email draft: `python execution/email_outreach.py --type <type> --business "Name" --owner "Owner" --city "City"`
 4. Show draft to user for approval before sending
 5. Send via Gmail MCP tool (`mcp__gmail__send_message`)
 
-## Email Templates
+## Email Types
 
 ### Cold Outreach
-Subject: Free Website Mockup for {Business Name}
-
-Hi {Owner Name},
-
-I came across {Business Name} and was impressed by your work. I noticed you don't currently have a website — I'd love to help change that.
-
-I run Marketing Sauce, a local digital marketing agency. We build clean, mobile-friendly websites for small businesses in the {State} area.
-
-I'd be happy to put together a free mockup for you — no strings attached. If you like it, we can talk pricing. If not, no worries at all.
-
-Would you be open to a quick 5-minute call this week?
-
-Best,
-Marketing Sauce
+- Subject: "Helping {Business Name} Grow Online"
+- Tone: Genuine, community-focused, NOT salesy
+- Mentions: All services (websites, hosting, ads, client growth, SEO)
+- Mentions: RECNA marketing research experience in Bridgewater
+- Offers: Free website mockup, no strings attached
+- CTA: Quick chat this week
 
 ### Website Delivery
-Subject: Your New Website is Live!
+- Subject: "Your New Website is Live — {Business Name}"
+- Includes: Website URL, what's included, offer to make changes
+- Mentions: Future growth services available
 
-Hi {Client Name},
+### Follow-Up
+- Subject: "Just checking in — {Business Name}"
+- Tone: Relaxed, no pressure
+- Reiterates: Free mockup offer
+- CTA: Reply or schedule a chat
 
-Great news — your website is officially live! You can view it here:
-{Website URL}
+### Proposal
+- Subject: "Growth Plan for {Business Name}"
+- Lists: Website + hosting, ads, SEO, growth strategies
+- Mentions: RECNA experience
+- CTA: Move forward or ask questions
 
-The site is mobile-friendly and optimized for search engines. Here's a quick summary of what's included:
-{Services List}
-
-Let me know if you'd like any changes. We're here to help.
-
-Best,
-Marketing Sauce
+## Rules
+- NEVER send without user confirmation
+- Keep subject lines under 60 characters
+- Always include a clear but soft CTA
+- Sign off as "Pradazay, One Vision Marketing, Bridgewater, MA"
+- Never sound money-hungry — focus on helping the business grow
+- Frame services as solutions to their problems, not products to sell
 
 ## Tools
-- Gmail MCP (`mcp__gmail__send_message`)
-- Always get user approval before sending
-
-## Notes
-- Never send without user confirmation
-- Keep subject lines under 50 characters
-- Always include a clear CTA
+- `python execution/email_outreach.py` — Generate email drafts
+- Gmail MCP (`mcp__gmail__send_message`) — Send emails
