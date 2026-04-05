@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 GitHub Actions email sender for One Vision Marketing.
-Reads outreach_drafts.json, sends pending emails via Outlook SMTP.
+Reads outreach_drafts.json, sends pending emails via Gmail SMTP.
 """
 
 import json
@@ -11,19 +11,19 @@ import time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-SMTP_SERVER = "smtp-mail.outlook.com"
+SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-OUTLOOK_EMAIL = os.environ.get("OUTLOOK_EMAIL", "")
-OUTLOOK_PASSWORD = os.environ.get("OUTLOOK_PASSWORD", "")
+GMAIL_EMAIL = os.environ.get("GMAIL_EMAIL", "")
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
 DRY_RUN = os.environ.get("DRY_RUN", "false").lower() == "true"
 DRAFTS_PATH = "clients/leads/outreach_drafts.json"
 DELAY_BETWEEN_EMAILS = 30  # seconds
 
 
 def send_email(to_email, subject, body):
-    """Send a single email via Outlook SMTP."""
+    """Send a single email via Gmail SMTP."""
     msg = MIMEMultipart()
-    msg["From"] = f"Isaiah Wright - One Vision Marketing <{OUTLOOK_EMAIL}>"
+    msg["From"] = f"Isaiah Wright - One Vision Marketing <{GMAIL_EMAIL}>"
     msg["To"] = to_email
     msg["Subject"] = subject
     msg.attach(MIMEText(body, "plain"))
@@ -32,14 +32,14 @@ def send_email(to_email, subject, body):
     server.ehlo()
     server.starttls()
     server.ehlo()
-    server.login(OUTLOOK_EMAIL, OUTLOOK_PASSWORD)
-    server.sendmail(OUTLOOK_EMAIL, to_email, msg.as_string())
+    server.login(GMAIL_EMAIL, GMAIL_APP_PASSWORD)
+    server.sendmail(GMAIL_EMAIL, to_email, msg.as_string())
     server.quit()
 
 
 def main():
-    if not OUTLOOK_EMAIL or not OUTLOOK_PASSWORD:
-        print("ERROR: OUTLOOK_EMAIL and OUTLOOK_PASSWORD secrets are required.")
+    if not GMAIL_EMAIL or not GMAIL_APP_PASSWORD:
+        print("ERROR: GMAIL_EMAIL and GMAIL_APP_PASSWORD secrets are required.")
         print("Go to your repo Settings > Secrets > Actions and add them.")
         exit(1)
 
@@ -84,8 +84,8 @@ def main():
 
         except smtplib.SMTPAuthenticationError as e:
             print(f"  ERROR: Authentication failed - {e}")
-            print("  You may need an App Password from:")
-            print("  https://account.microsoft.com/security")
+            print("  Make sure GMAIL_APP_PASSWORD is a 16-char app password from:")
+            print("  https://myaccount.google.com/apppasswords")
             exit(1)
         except Exception as e:
             print(f"  ERROR: {e}")
