@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ace of Babes Vintage | Vintage Clothing Shop in Worcester, MA</title>
+<meta name="description" content="Ace of Babes Vintage — Vintage Clothing Shop in Worcester, MA. Timeless Style, One-of-a-Kind Finds. Visit us today!">
+<meta property="og:title" content="Ace of Babes Vintage | Worcester, MA">
+<meta property="og:description" content="Timeless Style, One-of-a-Kind Finds">
+<meta property="og:image" content="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1600&h=900&fit=crop">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#2c1810;--accent:#c97b3d;--light:#faf5ef;--dark:#1a0e08;--text:#2c2c2c}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--text);line-height:1.6;overflow-x:hidden}
+
+/* ── Nav ── */
+.nav{position:fixed;top:0;width:100%;z-index:1000;padding:18px 40px;display:flex;justify-content:space-between;align-items:center;transition:all 0.4s ease}
+.nav.scrolled{background:var(--primary);box-shadow:0 4px 30px rgba(0,0,0,0.15);padding:12px 40px}
+.logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#fff;letter-spacing:1px;text-decoration:none}
+.logo span{color:var(--accent)}
+.nav-links{list-style:none;display:flex;gap:30px}
+.nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-weight:500;font-size:0.9rem;letter-spacing:0.5px;text-transform:uppercase;transition:color 0.3s}
+.nav-links a:hover{color:var(--accent)}
+.menu-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:1001}
+.menu-toggle span{width:25px;height:2px;background:#fff;transition:0.3s}
+
+/* ── Hero ── */
+.hero{position:relative;height:100vh;min-height:600px;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1600&h=900&fit=crop') center/cover no-repeat;transform:scale(1.05)}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.4) 0%,rgba(0,0,0,0.6) 50%,var(--primary) 100%)}
+.hero-content{position:relative;z-index:2;max-width:800px;padding:0 30px}
+.hero-badge{display:inline-block;padding:8px 24px;border:1px solid rgba(255,255,255,0.3);border-radius:50px;font-size:0.8rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:25px;backdrop-filter:blur(5px)}
+.hero h1{font-family:'Playfair Display',serif;font-size:4rem;font-weight:700;line-height:1.1;margin-bottom:20px;text-shadow:0 2px 40px rgba(0,0,0,0.3)}
+.hero p{font-size:1.25rem;opacity:0.9;margin-bottom:35px;max-width:550px;margin-left:auto;margin-right:auto}
+.btn{display:inline-block;padding:16px 40px;border-radius:50px;font-weight:600;font-size:0.95rem;text-decoration:none;letter-spacing:1px;text-transform:uppercase;transition:all 0.4s ease;cursor:pointer}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.3)}
+.btn-outline{border:2px solid #fff;color:#fff;margin-left:15px}
+.btn-outline:hover{background:#fff;color:var(--primary)}
+
+/* ── Sections ── */
+section{padding:100px 40px}
+.container{max-width:1200px;margin:0 auto}
+.section-label{color:var(--accent);font-weight:600;font-size:0.85rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px}
+.section-title{font-family:'Playfair Display',serif;font-size:2.8rem;color:var(--primary);margin-bottom:15px;line-height:1.2}
+.section-sub{color:#666;font-size:1.1rem;max-width:600px}
+
+/* ── About ── */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-top:50px}
+.about-img{border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.12);position:relative}
+.about-img img{width:100%;height:400px;object-fit:cover;display:block}
+.about-img-badge{position:absolute;bottom:-20px;right:30px;background:var(--accent);color:#fff;padding:20px 30px;border-radius:12px;font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,0.15)}
+.about-text{font-size:1.05rem;color:#555;line-height:1.8}
+.about-text p{margin-bottom:20px}
+.about-stats{display:flex;gap:40px;margin-top:30px}
+.stat{text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;color:var(--accent)}
+.stat-label{font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;color:#888;margin-top:5px}
+
+/* ── Services ── */
+.services{background:var(--light)}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:50px}
+.svc-card{background:#fff;border-radius:16px;padding:35px 30px;text-align:center;transition:all 0.4s ease;border:1px solid rgba(0,0,0,0.05);position:relative;overflow:hidden}
+.svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);transition:transform 0.4s ease}
+.svc-card:hover{transform:translateY(-8px);box-shadow:0 20px 40px rgba(0,0,0,0.08)}
+.svc-card:hover::before{transform:scaleX(1)}
+.svc-icon{font-size:2rem;margin-bottom:15px;color:var(--accent)}
+.svc-card h3{font-size:1.1rem;color:var(--primary);margin-bottom:10px;font-weight:600}
+.svc-card p{font-size:0.9rem;color:#666;line-height:1.6}
+
+/* ── Gallery ── */
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-top:50px}
+.gallery-item{border-radius:12px;overflow:hidden;aspect-ratio:3/2;cursor:pointer;position:relative}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease}
+.gallery-item:hover img{transform:scale(1.08)}
+.gallery-item::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.3),transparent);opacity:0;transition:opacity 0.3s}
+.gallery-item:hover::after{opacity:1}
+
+/* ── Testimonials ── */
+.testimonials{background:var(--primary);color:#fff;text-align:center}
+.testimonials .section-label{color:var(--accent)}
+.testimonials .section-title{color:#fff}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:50px}
+.testimonial{background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);border-radius:16px;padding:35px;border:1px solid rgba(255,255,255,0.1);transition:transform 0.3s}
+.testimonial:hover{transform:translateY(-5px)}
+.stars{color:var(--accent);font-size:1.2rem;margin-bottom:15px;letter-spacing:3px}
+.testimonial p{font-size:1rem;line-height:1.7;opacity:0.9;font-style:italic;margin-bottom:15px}
+.author{font-weight:600;font-size:0.9rem;opacity:0.7}
+
+/* ── Contact ── */
+.contact-section{background:var(--light)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;margin-top:50px;align-items:start}
+.contact-info{display:flex;flex-direction:column;gap:20px}
+.contact-item{display:flex;align-items:center;gap:15px;padding:18px 24px;background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+.contact-item a{color:var(--accent);text-decoration:none;font-weight:500}
+.ci-icon{font-size:1.3rem}
+.map-container{border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.1);height:350px}
+.map-container iframe{width:100%;height:100%;border:0}
+
+/* ── CTA Banner ── */
+.cta-banner{background:linear-gradient(135deg,var(--accent),var(--primary));color:#fff;text-align:center;padding:80px 40px}
+.cta-banner h2{font-family:'Playfair Display',serif;font-size:2.5rem;margin-bottom:15px}
+.cta-banner p{font-size:1.15rem;opacity:0.9;margin-bottom:30px;max-width:500px;margin-left:auto;margin-right:auto}
+
+/* ── Footer ── */
+footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:40px;text-align:center}
+footer p{font-size:0.85rem}
+footer a{color:var(--accent);text-decoration:none}
+footer .footer-brand{font-family:'Playfair Display',serif;font-size:1.3rem;color:#fff;margin-bottom:10px}
+
+/* ── Animations ── */
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── Mobile ── */
+@media(max-width:968px){
+  .hero h1{font-size:2.8rem}
+  .about-grid{grid-template-columns:1fr;gap:40px}
+  .svc-grid{grid-template-columns:repeat(2,1fr)}
+  .gallery-grid{grid-template-columns:repeat(2,1fr)}
+  .test-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr}
+  section{padding:70px 25px}
+}
+@media(max-width:768px){
+  .nav-links{position:fixed;top:0;right:-100%;width:70%;height:100vh;background:var(--primary);flex-direction:column;justify-content:center;align-items:center;gap:35px;transition:right 0.4s ease;box-shadow:-5px 0 30px rgba(0,0,0,0.3)}
+  .nav-links.active{right:0}
+  .menu-toggle{display:flex}
+  .hero h1{font-size:2.2rem}
+  .hero p{font-size:1rem}
+  .svc-grid{grid-template-columns:1fr}
+  .section-title{font-size:2rem}
+  .about-img-badge{display:none}
+  .btn-outline{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <a href="#" class="logo">Ace of Babes <span>Vintage</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">&#128090; Vintage Clothing Shop &bull; Worcester, MA</div>
+    <h1>Ace of Babes Vintage</h1>
+    <p>Timeless Style, One-of-a-Kind Finds</p>
+    <a href="#contact" class="btn btn-primary">Visit Us Today</a>
+    <a href="#about" class="btn btn-outline">Learn More</a>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-img reveal">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&h=600&fit=crop" alt="About Ace of Babes Vintage">
+        <div class="about-img-badge">Est. 2024</div>
+      </div>
+      <div class="reveal">
+        <span class="section-label">Our Story</span>
+        <h2 class="section-title">Welcome to Ace of Babes Vintage</h2>
+        <div class="about-text">
+          <p>Ace of Babes Vintage is a proud vintage clothing shop serving the Worcester, MA community. Every piece in our shop has a story. We curate the best vintage finds so you can express your unique style.</p>
+          <p>We believe in quality, community, and creating an experience that keeps you coming back. Whether you're a first-time visitor or a longtime regular, you're always welcome here.</p>
+        </div>
+        <div class="about-stats">
+          <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Locally Owned</div></div>
+          <div class="stat"><div class="stat-num">5&#9733;</div><div class="stat-label">Top Rated</div></div>
+          <div class="stat"><div class="stat-num">Worcester</div><div class="stat-label">Community</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section id="services" class="services">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <span class="section-label">What We Offer</span>
+      <h2 class="section-title">Our Services</h2>
+      <p class="section-sub" style="margin:0 auto 10px">Quality products and services you can count on</p>
+    </div>
+    <div class="svc-grid">
+    <div class="svc-card" style="animation-delay: 0.0s">
+      <div class="svc-icon">&#9733;</div>
+      <h3>Curated Collections</h3>
+      <p>Handpicked vintage pieces from every era</p>
+    </div>
+    <div class="svc-card" style="animation-delay: 0.1s">
+      <div class="svc-icon">&#9733;</div>
+      <h3>Designer Finds</h3>
+      <p>Rare designer items at unbeatable prices</p>
+    </div>
+    <div class="svc-card" style="animation-delay: 0.2s">
+      <div class="svc-icon">&#9733;</div>
+      <h3>Accessories</h3>
+      <p>Vintage bags, jewelry, hats, and more</p>
+    </div>
+    <div class="svc-card" style="animation-delay: 0.30000000000000004s">
+      <div class="svc-icon">&#9733;</div>
+      <h3>Seasonal Drops</h3>
+      <p>New inventory arriving weekly</p>
+    </div>
+    <div class="svc-card" style="animation-delay: 0.4s">
+      <div class="svc-icon">&#9733;</div>
+      <h3>Buy &amp; Trade</h3>
+      <p>Sell or trade your vintage pieces with us</p>
+    </div>
+    <div class="svc-card" style="animation-delay: 0.5s">
+      <div class="svc-icon">&#9733;</div>
+      <h3>Personal Styling</h3>
+      <p>Let us help you find your perfect look</p>
+    </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Gallery -->
+<section id="gallery">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <span class="section-label">See For Yourself</span>
+      <h2 class="section-title">Gallery</h2>
+    </div>
+    <div class="gallery-grid">
+    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=600&h=400&fit=crop" alt="Ace of Babes Vintage photo 1" loading="lazy"></div>
+    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&h=400&fit=crop" alt="Ace of Babes Vintage photo 2" loading="lazy"></div>
+    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?w=600&h=400&fit=crop" alt="Ace of Babes Vintage photo 3" loading="lazy"></div>
+    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=600&h=400&fit=crop" alt="Ace of Babes Vintage photo 4" loading="lazy"></div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section id="reviews" class="testimonials">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-label">What People Say</span>
+      <h2 class="section-title">Customer Reviews</h2>
+    </div>
+    <div class="test-grid">
+    <div class="testimonial">
+      <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p>"Found the most amazing vintage jacket here! Always great finds."</p>
+      <span class="author">— Olivia J.</span>
+    </div>
+    <div class="testimonial">
+      <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p>"Unique pieces you won&#x27;t find anywhere else. Love this shop!"</p>
+      <span class="author">— Mia C.</span>
+    </div>
+    <div class="testimonial">
+      <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p>"The curation is incredible. Every visit I find something special."</p>
+      <span class="author">— Taylor N.</span>
+    </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="contact-section">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <span class="section-label">Get In Touch</span>
+      <h2 class="section-title">Find Us</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <div class="contact-item"><span class="ci-icon">&#128205;</span><span>Portland Street, Downtown</span></div><div class="contact-item"><span class="ci-icon">&#128222;</span><a href="tel:N/A">N/A</a></div><div class="contact-item"><span class="ci-icon">&#128205;</span><span>Worcester, MA</span></div>
+        <a href="https://maps.google.com/?q=Ace+of+Babes+Vintage+Portland+Street,+Downtown+Worcester+MA" class="btn btn-primary" target="_blank" style="text-align:center;margin-top:10px">Get Directions</a>
+      </div>
+      <div class="map-container reveal">
+        <iframe src="https://www.google.com/maps?q=Ace+of+Babes+Vintage+Portland+Street,+Downtown+Worcester+MA&output=embed" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-banner">
+  <h2>Ready to Experience Ace of Babes Vintage?</h2>
+  <p>Stop by today — we'd love to welcome you!</p>
+  <a href="https://maps.google.com/?q=Ace+of+Babes+Vintage+Portland+Street,+Downtown+Worcester+MA" class="btn btn-primary" target="_blank">Get Directions</a>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-brand">Ace of Babes Vintage</div>
+  <p>Portland Street, Downtown &bull; Worcester, MA</p>
+  <p style="margin-top:15px">&copy; 2026 Ace of Babes Vintage. All rights reserved. | Website by <a href="https://pradazay1-code.github.io/marketing-Sauce/" target="_blank">One Vision Marketing</a></p>
+</footer>
+
+<script>
+// Scroll nav effect
+window.addEventListener('scroll',()=>{document.querySelector('.nav').classList.toggle('scrolled',window.scrollY>50)});
+
+// Reveal on scroll
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.15});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// Close mobile menu on link click
+document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>document.querySelector('.nav-links').classList.remove('active')));
+</script>
+</body>
+</html>
