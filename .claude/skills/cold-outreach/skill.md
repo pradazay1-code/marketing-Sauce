@@ -1,12 +1,12 @@
 ---
-description: Generate and send personalized cold outreach emails to leads via Gmail
-tools: Bash, Read, mcp__gmail__send_message
+description: Generate and send personalized cold outreach emails to leads via GitHub Actions
+tools: Bash, Read, mcp__github__push_files, mcp__github__create_or_update_file
 ---
 
 # Cold Outreach Skill
 
 ## What This Does
-Generates personalized cold outreach emails for leads and sends them via Gmail MCP. Always requires user approval before sending.
+Generates personalized cold outreach emails for leads and sends them via GitHub Actions automated workflow. User says "send emails" → agent triggers the pipeline.
 
 ## Generate Drafts
 ```bash
@@ -15,7 +15,32 @@ python .claude/skills/cold-outreach/scripts/generate_outreach.py \
   --site-url "https://pradazay1-code.github.io/marketing-Sauce"
 ```
 
-## Steps
+## How to Send Emails (Automated)
+
+When the user says "send emails":
+
+1. **Update outreach_drafts.json** with pending emails (status: `pending_approval`)
+2. **Push changes** to main branch
+3. **Create trigger file** `.github/triggers/send-emails.json` on main branch with:
+   ```json
+   {"trigger": "send-emails", "timestamp": "<ISO timestamp>"}
+   ```
+4. The GitHub Actions workflow auto-fires on push and sends all pending emails
+5. The workflow commits status updates back to the repo
+
+### Trigger via GitHub MCP:
+```
+mcp__github__create_or_update_file(
+  owner: "pradazay1-code",
+  repo: "marketing-Sauce", 
+  path: ".github/triggers/send-emails.json",
+  content: '{"trigger": "send-emails", "timestamp": "..."}',
+  message: "Trigger email send",
+  branch: "main"
+)
+```
+
+## Steps (Full Flow)
 
 1. **Read leads** from `clients/leads/raw_leads.json` or `outreach_drafts.json`
 2. **Generate email** for each lead using the cold-outreach template:
@@ -25,11 +50,9 @@ python .claude/skills/cold-outreach/scripts/generate_outreach.py \
    ```
 3. **Save drafts** to `clients/leads/outreach_drafts.json`
 4. **Show each draft** to user for approval
-5. **Send approved emails** via Gmail MCP:
-   ```
-   mcp__gmail__send_message(to, subject, body)
-   ```
-6. **Update status** in `outreach_drafts.json` from `pending_approval` → `sent`
+5. **Push outreach_drafts.json** to main via GitHub MCP
+6. **Create trigger file** to fire the GitHub Actions workflow
+7. **Workflow sends emails** and commits status updates automatically
 
 ## Email Template Info
 - Brand: **One Vision Marketing** (Bridgewater, MA)

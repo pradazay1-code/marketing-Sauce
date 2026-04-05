@@ -13,8 +13,8 @@ from email.mime.multipart import MIMEMultipart
 
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-GMAIL_EMAIL = os.environ.get("GMAIL_EMAIL", "")
-GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
+GMAIL_EMAIL = os.environ.get("GMAIL_EMAIL") or os.environ.get("OUTLOOK_EMAIL") or ""
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD") or os.environ.get("OUTLOOK_PASSWORD") or ""
 DRY_RUN = os.environ.get("DRY_RUN", "false").lower() == "true"
 DRAFTS_PATH = "clients/leads/outreach_drafts.json"
 DELAY_BETWEEN_EMAILS = 30  # seconds
