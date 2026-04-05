@@ -13,8 +13,18 @@ from email.mime.multipart import MIMEMultipart
 
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-GMAIL_EMAIL = os.environ.get("GMAIL_EMAIL", "")
-GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
+
+# Accept multiple secret name formats
+EMAIL = (
+    os.environ.get("GMAIL_EMAIL") or
+    os.environ.get("OUTLOOK_EMAIL") or
+    ""
+)
+PASSWORD = (
+    os.environ.get("GMAIL_APP_PASSWORD") or
+    os.environ.get("OUTLOOK_PASSWORD") or
+    ""
+)
 DRY_RUN = os.environ.get("DRY_RUN", "false").lower() == "true"
 DRAFTS_PATH = "clients/leads/outreach_drafts.json"
 DELAY_BETWEEN_EMAILS = 30  # seconds
@@ -23,7 +33,7 @@ DELAY_BETWEEN_EMAILS = 30  # seconds
 def send_email(to_email, subject, body):
     """Send a single email via Gmail SMTP."""
     msg = MIMEMultipart()
-    msg["From"] = f"Isaiah Wright - One Vision Marketing <{GMAIL_EMAIL}>"
+    msg["From"] = f"Isaiah Wright - One Vision Marketing <{EMAIL}>"
     msg["To"] = to_email
     msg["Subject"] = subject
     msg.attach(MIMEText(body, "plain"))
@@ -32,16 +42,23 @@ def send_email(to_email, subject, body):
     server.ehlo()
     server.starttls()
     server.ehlo()
-    server.login(GMAIL_EMAIL, GMAIL_APP_PASSWORD)
-    server.sendmail(GMAIL_EMAIL, to_email, msg.as_string())
+    server.login(EMAIL, PASSWORD)
+    server.sendmail(EMAIL, to_email, msg.as_string())
     server.quit()
 
 
 def main():
-    if not GMAIL_EMAIL or not GMAIL_APP_PASSWORD:
-        print("ERROR: GMAIL_EMAIL and GMAIL_APP_PASSWORD secrets are required.")
-        print("Go to your repo Settings > Secrets > Actions and add them.")
+    if not EMAIL or not PASSWORD:
+        print("ERROR: Email credentials not found.")
+        print("Add these secrets to your repo (Settings > Secrets > Actions):")
+        print("  GMAIL_EMAIL = your-gmail@gmail.com")
+        print("  GMAIL_APP_PASSWORD = your-16-char-app-password")
+        print("  (or OUTLOOK_EMAIL / OUTLOOK_PASSWORD)")
         exit(1)
+
+    print(f"Using email: {EMAIL}")
+    print(f"SMTP server: {SMTP_SERVER}:{SMTP_PORT}")
+    print(f"Password length: {len(PASSWORD)} chars\n")
 
     with open(DRAFTS_PATH, "r") as f:
         drafts = json.load(f)
@@ -84,7 +101,9 @@ def main():
 
         except smtplib.SMTPAuthenticationError as e:
             print(f"  ERROR: Authentication failed - {e}")
-            print("  Make sure GMAIL_APP_PASSWORD is a 16-char app password from:")
+            print(f"  Email used: {EMAIL}")
+            print(f"  Password length: {len(PASSWORD)}")
+            print("  Make sure you're using a Gmail App Password (16 chars, no spaces):")
             print("  https://myaccount.google.com/apppasswords")
             exit(1)
         except Exception as e:
