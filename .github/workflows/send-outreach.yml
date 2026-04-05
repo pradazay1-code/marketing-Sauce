@@ -11,6 +11,10 @@ on:
         options:
           - 'false'
           - 'true'
+  push:
+    branches: [main]
+    paths:
+      - '.github/triggers/send-emails.json'
 
 permissions:
   contents: write
@@ -21,6 +25,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -31,17 +37,16 @@ jobs:
         env:
           GMAIL_EMAIL: ${{ secrets.GMAIL_EMAIL }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          OUTLOOK_EMAIL: ${{ secrets.OUTLOOK_EMAIL }}
-          OUTLOOK_PASSWORD: ${{ secrets.OUTLOOK_PASSWORD }}
-          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
         run: |
           python .github/scripts/send_emails.py
 
       - name: Commit status updates
-        if: ${{ github.event.inputs.dry_run == 'false' }}
         run: |
           git config user.name "One Vision Marketing Bot"
           git config user.email "onevisionmarketing5@gmail.com"
           git add clients/leads/outreach_drafts.json
+          # Remove trigger file after processing
+          git rm -f .github/triggers/send-emails.json 2>/dev/null || true
           git diff --staged --quiet || git commit -m "Update outreach status: emails sent"
           git push
