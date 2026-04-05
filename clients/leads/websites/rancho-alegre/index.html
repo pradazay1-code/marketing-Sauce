@@ -4,47 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rancho Alegre | Westborough, MA</title>
+<meta name="description" content="Rancho Alegre — Mexican Restaurant in Westborough, MA. Visit us today!">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#333;line-height:1.6}
-/* NAV */
-nav{background:#b71c1c;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
+nav{background:#1a1a2e;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
 .logo{font-size:1.5rem;font-weight:800;color:#fff;letter-spacing:1px}
-.logo span{color:#1b5e20}
+.logo span{color:#e94560}
 nav ul{list-style:none;display:flex;gap:25px}
 nav a{color:#fff;text-decoration:none;font-weight:500;font-size:0.95rem;transition:color 0.3s}
-nav a:hover{color:#1b5e20}
-/* HERO */
-.hero{background:linear-gradient(135deg,#b71c1c 0%,#1b5e20 100%);color:#fff;padding:100px 30px;text-align:center}
+nav a:hover{color:#e94560}
+.hero{background:linear-gradient(135deg,#1a1a2e 0%,#e94560 100%);color:#fff;padding:100px 30px;text-align:center}
 .hero h1{font-size:3rem;margin-bottom:15px;letter-spacing:2px}
 .hero p{font-size:1.3rem;opacity:0.9;max-width:600px;margin:0 auto 30px}
-.btn{display:inline-block;padding:14px 35px;background:#1b5e20;color:#fff;text-decoration:none;border-radius:50px;font-weight:700;font-size:1rem;transition:transform 0.3s,box-shadow 0.3s}
+.btn{display:inline-block;padding:14px 35px;background:#e94560;color:#fff;text-decoration:none;border-radius:50px;font-weight:700;font-size:1rem;transition:transform 0.3s,box-shadow 0.3s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,0,0,0.3)}
-/* SECTIONS */
 section{padding:70px 30px;max-width:1100px;margin:0 auto}
-.section-title{text-align:center;font-size:2rem;margin-bottom:10px;color:#b71c1c}
+.section-title{text-align:center;font-size:2rem;margin-bottom:10px;color:#1a1a2e}
 .section-sub{text-align:center;color:#666;margin-bottom:40px;font-size:1.05rem}
-/* ABOUT */
 .about-text{max-width:750px;margin:0 auto;text-align:center;font-size:1.1rem;color:#555}
-/* SERVICES */
 .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px}
-.service-card{background:#fff3e0;border-radius:12px;padding:30px;text-align:center;border-left:4px solid #1b5e20;transition:transform 0.3s,box-shadow 0.3s}
+.service-card{background:#fff3e0;border-radius:12px;padding:30px;text-align:center;border-left:4px solid #e94560;transition:transform 0.3s,box-shadow 0.3s}
 .service-card:hover{transform:translateY(-5px);box-shadow:0 10px 25px rgba(0,0,0,0.1)}
-.service-card h3{color:#b71c1c;margin-bottom:8px;font-size:1.15rem}
-/* HOURS */
-.hours-box{background:#b71c1c;color:#fff;border-radius:12px;padding:40px;text-align:center;max-width:600px;margin:0 auto}
+.service-card h3{color:#1a1a2e;margin-bottom:8px;font-size:1.15rem}
+.hours-box{background:#1a1a2e;color:#fff;border-radius:12px;padding:40px;text-align:center;max-width:600px;margin:0 auto}
 .hours-box h2{margin-bottom:15px;font-size:1.8rem}
 .hours-box p{font-size:1.15rem;opacity:0.9}
 .hours-box .address{margin-top:15px;font-size:1rem;opacity:0.75}
-/* CTA */
-.cta{background:linear-gradient(135deg,#1b5e20 0%,#b71c1c 100%);color:#fff;padding:60px 30px;text-align:center}
+.cta{background:linear-gradient(135deg,#e94560 0%,#1a1a2e 100%);color:#fff;padding:60px 30px;text-align:center}
 .cta h2{font-size:2rem;margin-bottom:15px}
 .cta p{font-size:1.15rem;opacity:0.9;margin-bottom:25px}
-.btn-light{background:#fff;color:#b71c1c;padding:14px 35px;border-radius:50px;text-decoration:none;font-weight:700;transition:transform 0.3s}
+.btn-light{background:#fff;color:#1a1a2e;padding:14px 35px;border-radius:50px;text-decoration:none;font-weight:700;transition:transform 0.3s}
 .btn-light:hover{transform:translateY(-2px)}
-/* FOOTER */
-footer{background:#b71c1c;color:#fff;text-align:center;padding:25px;font-size:0.9rem;opacity:0.8}
-/* MOBILE */
+footer{background:#1a1a2e;color:#fff;text-align:center;padding:25px;font-size:0.9rem;opacity:0.8}
 @media(max-width:768px){
   .hero h1{font-size:2rem}
   .hero p{font-size:1rem}
@@ -63,49 +55,43 @@ footer{background:#b71c1c;color:#fff;text-align:center;padding:25px;font-size:0.
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
-
 <div class="hero">
   <h1>Rancho Alegre</h1>
-  <p>Authentic Mexican Cuisine. Alegre Spirit.</p>
+  <p>Your local mexican restaurant in Westborough.</p>
   <a href="#contact" class="btn">Get In Touch</a>
 </div>
-
 <section id="about">
   <h2 class="section-title">About Us</h2>
   <p class="section-sub">Mexican Restaurant in Westborough, MA</p>
-  <p class="about-text">Rancho Alegre brings the warmth and tradition of Mexican cooking to Westborough. Our kitchen prepares fresh, authentic dishes daily — from hand-rolled tacos and enchiladas to sizzling fajitas and homemade salsas. Come enjoy a taste of Mexico with your family and friends.</p>
+  <p class="about-text">Rancho Alegre is a mexican restaurant proudly serving the Westborough, MA community. We're dedicated to providing quality products and exceptional service to every customer who walks through our doors.</p>
 </section>
-
 <section id="services">
   <h2 class="section-title">What We Offer</h2>
   <p class="section-sub">Quality products and services you can count on</p>
   <div class="services-grid">
-    <div class="service-card"><h3>Tacos & Burritos</h3></div>
-    <div class="service-card"><h3>Enchiladas & Fajitas</h3></div>
-    <div class="service-card"><h3>Fresh Guacamole & Salsas</h3></div>
-    <div class="service-card"><h3>Margaritas & Cocktails</h3></div>
+    <div class="service-card"><h3>Dine-In</h3></div>
+    <div class="service-card"><h3>Takeout & Delivery</h3></div>
+    <div class="service-card"><h3>Catering</h3></div>
+    <div class="service-card"><h3>Private Events</h3></div>
+    <div class="service-card"><h3>Daily Specials</h3></div>
     <div class="service-card"><h3>Family Platters</h3></div>
-    <div class="service-card"><h3>Weekend Brunch</h3></div>
 
   </div>
 </section>
-
 <section id="hours">
   <div class="hours-box">
     <h2>Hours & Location</h2>
-    <p>Mon - Thu: 11AM - 9PM | Fri - Sat: 11AM - 10PM | Sun: 12PM - 8PM</p>
-    <p class="address">East Main St, Westborough, MA</p>
+    <p>Call for hours</p>
+    <p class="address">Westborough, MA</p>
   </div>
 </section>
-
 <div class="cta" id="contact">
   <h2>Ready to Visit?</h2>
   <p>Stop by Rancho Alegre today. We'd love to see you!</p>
-  <a href="https://maps.google.com/?q=East+Main+St%2C+Westborough%2C+MA" class="btn-light" target="_blank">Get Directions</a>
+  <a href="https://maps.google.com/?q=Rancho+Alegre+Westborough+MA" class="btn-light" target="_blank">Get Directions</a>
 </div>
-
 <footer>
-  <p>&copy; 2026 Rancho Alegre. All rights reserved. | Website by Marketing Sauce</p>
+  <p>&copy; 2026 Rancho Alegre. All rights reserved. | Website by One Vision Marketing</p>
 </footer>
 </body>
 </html>

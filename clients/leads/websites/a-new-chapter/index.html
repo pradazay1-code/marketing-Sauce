@@ -4,47 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A New Chapter | West Springfield, MA</title>
+<meta name="description" content="A New Chapter — Independent Bookstore in West Springfield, MA. Visit us today!">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#333;line-height:1.6}
-/* NAV */
 nav{background:#1b5e20;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
 .logo{font-size:1.5rem;font-weight:800;color:#fff;letter-spacing:1px}
 .logo span{color:#4e342e}
 nav ul{list-style:none;display:flex;gap:25px}
 nav a{color:#fff;text-decoration:none;font-weight:500;font-size:0.95rem;transition:color 0.3s}
 nav a:hover{color:#4e342e}
-/* HERO */
 .hero{background:linear-gradient(135deg,#1b5e20 0%,#4e342e 100%);color:#fff;padding:100px 30px;text-align:center}
 .hero h1{font-size:3rem;margin-bottom:15px;letter-spacing:2px}
 .hero p{font-size:1.3rem;opacity:0.9;max-width:600px;margin:0 auto 30px}
 .btn{display:inline-block;padding:14px 35px;background:#4e342e;color:#fff;text-decoration:none;border-radius:50px;font-weight:700;font-size:1rem;transition:transform 0.3s,box-shadow 0.3s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,0,0,0.3)}
-/* SECTIONS */
 section{padding:70px 30px;max-width:1100px;margin:0 auto}
 .section-title{text-align:center;font-size:2rem;margin-bottom:10px;color:#1b5e20}
 .section-sub{text-align:center;color:#666;margin-bottom:40px;font-size:1.05rem}
-/* ABOUT */
 .about-text{max-width:750px;margin:0 auto;text-align:center;font-size:1.1rem;color:#555}
-/* SERVICES */
 .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px}
 .service-card{background:#f1f8e9;border-radius:12px;padding:30px;text-align:center;border-left:4px solid #4e342e;transition:transform 0.3s,box-shadow 0.3s}
 .service-card:hover{transform:translateY(-5px);box-shadow:0 10px 25px rgba(0,0,0,0.1)}
 .service-card h3{color:#1b5e20;margin-bottom:8px;font-size:1.15rem}
-/* HOURS */
 .hours-box{background:#1b5e20;color:#fff;border-radius:12px;padding:40px;text-align:center;max-width:600px;margin:0 auto}
 .hours-box h2{margin-bottom:15px;font-size:1.8rem}
 .hours-box p{font-size:1.15rem;opacity:0.9}
 .hours-box .address{margin-top:15px;font-size:1rem;opacity:0.75}
-/* CTA */
 .cta{background:linear-gradient(135deg,#4e342e 0%,#1b5e20 100%);color:#fff;padding:60px 30px;text-align:center}
 .cta h2{font-size:2rem;margin-bottom:15px}
 .cta p{font-size:1.15rem;opacity:0.9;margin-bottom:25px}
 .btn-light{background:#fff;color:#1b5e20;padding:14px 35px;border-radius:50px;text-decoration:none;font-weight:700;transition:transform 0.3s}
 .btn-light:hover{transform:translateY(-2px)}
-/* FOOTER */
 footer{background:#1b5e20;color:#fff;text-align:center;padding:25px;font-size:0.9rem;opacity:0.8}
-/* MOBILE */
 @media(max-width:768px){
   .hero h1{font-size:2rem}
   .hero p{font-size:1rem}
@@ -63,49 +55,43 @@ footer{background:#1b5e20;color:#fff;text-align:center;padding:25px;font-size:0.
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
-
 <div class="hero">
   <h1>A New Chapter</h1>
-  <p>Every Book Starts a New Chapter.</p>
+  <p>Your local independent bookstore in West Springfield.</p>
   <a href="#contact" class="btn">Get In Touch</a>
 </div>
-
 <section id="about">
   <h2 class="section-title">About Us</h2>
   <p class="section-sub">Independent Bookstore in West Springfield, MA</p>
-  <p class="about-text">A New Chapter is an independent bookstore in West Springfield, Massachusetts, founded by book lover Scott Szaban. We carry a thoughtfully curated selection of fiction, non-fiction, children's books, and local authors. Stop in, browse the shelves, and find your next great read in a warm, welcoming space.</p>
+  <p class="about-text">A New Chapter is a independent bookstore proudly serving the West Springfield, MA community. We're dedicated to providing quality products and exceptional service to every customer who walks through our doors.</p>
 </section>
-
 <section id="services">
   <h2 class="section-title">What We Offer</h2>
   <p class="section-sub">Quality products and services you can count on</p>
   <div class="services-grid">
     <div class="service-card"><h3>Fiction & Non-Fiction</h3></div>
-    <div class="service-card"><h3>Children's & Young Adult</h3></div>
-    <div class="service-card"><h3>Local & Regional Authors</h3></div>
-    <div class="service-card"><h3>Book Clubs & Events</h3></div>
+    <div class="service-card"><h3>Children's Books</h3></div>
+    <div class="service-card"><h3>Local Authors</h3></div>
+    <div class="service-card"><h3>Book Clubs</h3></div>
     <div class="service-card"><h3>Special Orders</h3></div>
-    <div class="service-card"><h3>Gift Cards & Bookish Gifts</h3></div>
+    <div class="service-card"><h3>Gifts</h3></div>
 
   </div>
 </section>
-
 <section id="hours">
   <div class="hours-box">
     <h2>Hours & Location</h2>
-    <p>Tue - Sat: 10AM - 7PM | Sun: 11AM - 5PM | Mon: Closed</p>
-    <p class="address">Downtown West Springfield, MA</p>
+    <p>Call for hours</p>
+    <p class="address">West Springfield, MA</p>
   </div>
 </section>
-
 <div class="cta" id="contact">
   <h2>Ready to Visit?</h2>
   <p>Stop by A New Chapter today. We'd love to see you!</p>
-  <a href="https://maps.google.com/?q=Downtown+West+Springfield%2C+MA" class="btn-light" target="_blank">Get Directions</a>
+  <a href="https://maps.google.com/?q=A+New+Chapter+West+Springfield+MA" class="btn-light" target="_blank">Get Directions</a>
 </div>
-
 <footer>
-  <p>&copy; 2026 A New Chapter. All rights reserved. | Website by Marketing Sauce</p>
+  <p>&copy; 2026 A New Chapter. All rights reserved. | Website by One Vision Marketing</p>
 </footer>
 </body>
 </html>

@@ -1,17 +1,23 @@
-# Marketing Sauce — Agency Profile
+# One Vision Marketing — Agency Profile
 
 ## Business
-- **Name:** Marketing Sauce
-- **Type:** Digital Marketing Agency
-- **Services:** Website Design, SEO, Advertising, Lead Generation
+- **Name:** One Vision Marketing
+- **Location:** Bridgewater, Massachusetts
+- **Type:** Full-Service Digital Marketing Agency
+- **Services:** Website Creation, Website Hosting, Client Growth Strategy, Advertisements (Google/Facebook/Instagram), SEO, Lead Generation, Social Media Management, Brand Development
 - **Service Area:** Massachusetts, Rhode Island, Connecticut
 - **Target Clients:** Small businesses, startups, local service providers
 
+## Experience & Credibility
+- Marketing research experience with **RECNA** (Regional Economic Center for New Americans) in Bridgewater, MA — conducted marketing research to help them grow their reach and impact
+- Proven track record helping local businesses establish and grow their online presence
+
 ## Tone & Voice
-- Professional but approachable
-- Family-friendly, community-focused
-- Confident without being pushy
-- Clear and simple language
+- Professional and genuine — never salesy or pushy
+- Community-focused, relationship-first approach
+- Confident but humble — let the work speak for itself
+- Clear and simple language, no jargon
+- Frame everything as helping the business grow, not selling services
 
 ## Current Clients
 - North Atlantic Tattoo (New Bedford, MA)
