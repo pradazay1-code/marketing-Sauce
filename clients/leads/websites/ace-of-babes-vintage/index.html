@@ -2,96 +2,211 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ace of Babes Vintage | Worcester, MA</title>
-<meta name="description" content="Ace of Babes Vintage — Vintage Clothing Shop in Worcester, MA. Visit us today!">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ace of Babes Vintage | Vintage Clothing Shop in Worcester, MA</title>
+<meta name="description" content="Ace of Babes Vintage is a vintage clothing shop in Worcester, MA. Timeless style, curated for you.">
+<meta property="og:title" content="Ace of Babes Vintage | Worcester, MA">
+<meta property="og:description" content="Timeless style, curated for you. Visit us in Worcester, MA.">
+<meta property="og:image" content="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1200&h=600&fit=crop">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#333;line-height:1.6}
-nav{background:#1a1a2e;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
-.logo{font-size:1.5rem;font-weight:800;color:#fff;letter-spacing:1px}
-.logo span{color:#e94560}
-nav ul{list-style:none;display:flex;gap:25px}
-nav a{color:#fff;text-decoration:none;font-weight:500;font-size:0.95rem;transition:color 0.3s}
-nav a:hover{color:#e94560}
-.hero{background:linear-gradient(135deg,#1a1a2e 0%,#e94560 100%);color:#fff;padding:100px 30px;text-align:center}
-.hero h1{font-size:3rem;margin-bottom:15px;letter-spacing:2px}
-.hero p{font-size:1.3rem;opacity:0.9;max-width:600px;margin:0 auto 30px}
-.btn{display:inline-block;padding:14px 35px;background:#e94560;color:#fff;text-decoration:none;border-radius:50px;font-weight:700;font-size:1rem;transition:transform 0.3s,box-shadow 0.3s}
-.btn:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,0,0,0.3)}
-section{padding:70px 30px;max-width:1100px;margin:0 auto}
-.section-title{text-align:center;font-size:2rem;margin-bottom:10px;color:#1a1a2e}
-.section-sub{text-align:center;color:#666;margin-bottom:40px;font-size:1.05rem}
-.about-text{max-width:750px;margin:0 auto;text-align:center;font-size:1.1rem;color:#555}
-.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px}
-.service-card{background:#fff3e0;border-radius:12px;padding:30px;text-align:center;border-left:4px solid #e94560;transition:transform 0.3s,box-shadow 0.3s}
-.service-card:hover{transform:translateY(-5px);box-shadow:0 10px 25px rgba(0,0,0,0.1)}
-.service-card h3{color:#1a1a2e;margin-bottom:8px;font-size:1.15rem}
-.hours-box{background:#1a1a2e;color:#fff;border-radius:12px;padding:40px;text-align:center;max-width:600px;margin:0 auto}
-.hours-box h2{margin-bottom:15px;font-size:1.8rem}
-.hours-box p{font-size:1.15rem;opacity:0.9}
-.hours-box .address{margin-top:15px;font-size:1rem;opacity:0.75}
-.cta{background:linear-gradient(135deg,#e94560 0%,#1a1a2e 100%);color:#fff;padding:60px 30px;text-align:center}
-.cta h2{font-size:2rem;margin-bottom:15px}
-.cta p{font-size:1.15rem;opacity:0.9;margin-bottom:25px}
-.btn-light{background:#fff;color:#1a1a2e;padding:14px 35px;border-radius:50px;text-decoration:none;font-weight:700;transition:transform 0.3s}
-.btn-light:hover{transform:translateY(-2px)}
-footer{background:#1a1a2e;color:#fff;text-align:center;padding:25px;font-size:0.9rem;opacity:0.8}
+:root{--p:#4a148c;--s:#ff6f00;--bg:#fce4ec;--txt:#311b92}
+body{font-family:'Segoe UI',system-ui,sans-serif;color:var(--txt);line-height:1.7;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+
+/* NAV */
+nav{background:var(--p);padding:0 40px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:999;height:70px;box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.logo{font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:1px}.logo span{color:var(--s)}
+nav ul{list-style:none;display:flex;gap:30px}
+nav a{color:rgba(255,255,255,.85);text-decoration:none;font-weight:500;font-size:.95rem;transition:.3s;position:relative}
+nav a:hover{color:var(--s)}
+nav a::after{content:"";position:absolute;bottom:-5px;left:0;width:0;height:2px;background:var(--s);transition:.3s}
+nav a:hover::after{width:100%}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:5px}
+.hamburger span{width:25px;height:2px;background:#fff;transition:.3s}
+
+/* HERO */
+.hero{position:relative;height:85vh;min-height:500px;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1200&h=600&fit=crop') center/cover no-repeat}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.7),rgba(0,0,0,.4))}
+.hero-content{position:relative;z-index:2;padding:20px;max-width:800px}
+.hero h1{font-size:clamp(2.2rem,6vw,4rem);font-weight:900;margin-bottom:15px;text-shadow:2px 2px 10px rgba(0,0,0,.5);letter-spacing:2px}
+.hero p{font-size:clamp(1rem,2.5vw,1.4rem);opacity:.95;margin-bottom:35px;font-weight:300}
+.btn{display:inline-block;padding:16px 40px;border-radius:50px;font-weight:700;font-size:1rem;text-decoration:none;transition:.3s;cursor:pointer}
+.btn-primary{background:var(--s);color:#fff;box-shadow:0 4px 15px rgba(0,0,0,.3)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,.4)}
+.btn-outline{border:2px solid #fff;color:#fff;margin-left:15px}
+.btn-outline:hover{background:#fff;color:var(--p)}
+
+/* SECTIONS */
+section{padding:80px 30px}
+.container{max-width:1100px;margin:0 auto}
+.section-label{text-transform:uppercase;letter-spacing:3px;color:var(--s);font-size:.85rem;font-weight:700;text-align:center;margin-bottom:8px}
+.section-title{text-align:center;font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:15px;color:var(--p);font-weight:800}
+.section-sub{text-align:center;color:#666;margin-bottom:50px;font-size:1.05rem;max-width:600px;margin-left:auto;margin-right:auto}
+.alt-bg{background:var(--bg)}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+.about-img img{border-radius:16px;box-shadow:0 15px 40px rgba(0,0,0,.15)}
+.about-text h2{font-size:2rem;margin-bottom:20px;color:var(--p)}
+.about-text p{color:#555;font-size:1.05rem;margin-bottom:15px}
+.about-stats{display:flex;gap:30px;margin-top:25px}
+.stat{text-align:center}.stat .num{font-size:2rem;font-weight:900;color:var(--s)}.stat .label{font-size:.85rem;color:#777}
+
+/* SERVICES */
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:25px}
+.svc{background:#fff;border-radius:16px;padding:35px 25px;text-align:center;box-shadow:0 5px 20px rgba(0,0,0,.06);transition:.3s;border-bottom:4px solid transparent}
+.svc:hover{transform:translateY(-8px);box-shadow:0 15px 40px rgba(0,0,0,.12);border-bottom-color:var(--s)}
+.svc-icon{font-size:2.5rem;margin-bottom:15px;display:block;color:var(--s)}
+.svc h3{color:var(--p);margin-bottom:8px;font-size:1.2rem}.svc p{color:#777;font-size:.95rem}
+
+/* GALLERY */
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:20px}
+.gal-item{border-radius:16px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,.1);transition:.3s}
+.gal-item:hover{transform:scale(1.03);box-shadow:0 15px 40px rgba(0,0,0,.2)}
+.gal-item img{width:100%;height:300px;object-fit:cover}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.contact-info{background:var(--p);color:#fff;padding:50px 40px;border-radius:16px}
+.contact-info h3{font-size:1.5rem;margin-bottom:25px}
+.contact-item{display:flex;align-items:flex-start;gap:15px;margin-bottom:20px}
+.contact-item .icon{font-size:1.5rem;color:var(--s);min-width:30px}
+.contact-item p{font-size:1rem;opacity:.9}
+.map-wrap{border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.1);height:100%;min-height:350px}
+.map-wrap iframe{width:100%;height:100%;min-height:350px;border:none}
+
+/* CTA */
+.cta-section{background:linear-gradient(135deg,var(--p),var(--s));color:#fff;text-align:center;padding:80px 30px}
+.cta-section h2{font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:15px}.cta-section p{font-size:1.1rem;opacity:.9;margin-bottom:30px;max-width:600px;margin-left:auto;margin-right:auto}
+
+/* FOOTER */
+footer{background:var(--p);color:rgba(255,255,255,.7);text-align:center;padding:30px;font-size:.9rem}
+footer a{color:var(--s);text-decoration:none}
+
+/* SCROLL ANIM */
+.reveal{opacity:0;transform:translateY(30px);transition:.8s ease}.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* MOBILE */
 @media(max-width:768px){
-  .hero h1{font-size:2rem}
-  .hero p{font-size:1rem}
-  nav ul{display:none}
-  section{padding:50px 20px}
+  nav ul{position:fixed;top:70px;left:0;right:0;background:var(--p);flex-direction:column;align-items:center;padding:30px;gap:20px;transform:translateY(-150%);transition:.4s;z-index:998}
+  nav ul.open{transform:translateY(0)}
+  .hamburger{display:flex}
+  .about-grid,.contact-grid{grid-template-columns:1fr}
+  .hero{height:70vh;min-height:400px}
+  section{padding:60px 20px}
+  .gal-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 <nav>
-  <div class="logo">Ace of Babes <span>Vintage</span></div>
-  <ul>
+  <div class="logo">Ace<span>of Babes Vintage</span></div>
+  <ul id="navMenu">
     <li><a href="#about">About</a></li>
     <li><a href="#services">Services</a></li>
-    <li><a href="#hours">Hours</a></li>
+    <li><a href="#gallery">Gallery</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <button class="hamburger" onclick="document.getElementById('navMenu').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
-<div class="hero">
-  <h1>Ace of Babes Vintage</h1>
-  <p>Your local vintage clothing shop in Worcester.</p>
-  <a href="#contact" class="btn">Get In Touch</a>
-</div>
-<section id="about">
-  <h2 class="section-title">About Us</h2>
-  <p class="section-sub">Vintage Clothing Shop in Worcester, MA</p>
-  <p class="about-text">Ace of Babes Vintage is a vintage clothing shop proudly serving the Worcester, MA community. We're dedicated to providing quality products and exceptional service to every customer who walks through our doors.</p>
-</section>
-<section id="services">
-  <h2 class="section-title">What We Offer</h2>
-  <p class="section-sub">Quality products and services you can count on</p>
-  <div class="services-grid">
-    <div class="service-card"><h3>Curated Collections</h3></div>
-    <div class="service-card"><h3>Vintage Finds</h3></div>
-    <div class="service-card"><h3>Accessories</h3></div>
-    <div class="service-card"><h3>Seasonal Drops</h3></div>
-    <div class="service-card"><h3>Buy & Trade</h3></div>
-    <div class="service-card"><h3>Gift Cards</h3></div>
 
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>Ace of Babes Vintage</h1>
+    <p>Timeless style, curated for you &mdash; Worcester, MA</p>
+    <a href="#contact" class="btn btn-primary">Visit Us</a>
+    <a href="tel:N/A" class="btn btn-outline">Call Now</a>
   </div>
 </section>
-<section id="hours">
-  <div class="hours-box">
-    <h2>Hours & Location</h2>
-    <p>Call for hours</p>
-    <p class="address">Worcester, MA</p>
+
+<section id="about" class="alt-bg">
+  <div class="container">
+    <div class="about-grid reveal">
+      <div class="about-img"><img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=500&fit=crop" alt="Ace of Babes Vintage interior"></div>
+      <div class="about-text">
+        <p class="section-label">Our Story</p>
+        <h2>Welcome to Ace of Babes Vintage</h2>
+        <p>Ace of Babes Vintage is a vintage clothing shop proudly serving Worcester, MA and the surrounding communities. We believe in quality, community, and creating memorable experiences for every customer.</p>
+        <p>Independently owned vintage clothing shop, newly opened.</p>
+        <div class="about-stats">
+          <div class="stat"><div class="num">5&#9733;</div><div class="label">Rated</div></div>
+          <div class="stat"><div class="num">100%</div><div class="label">Local</div></div>
+          <div class="stat"><div class="num">Worcester</div><div class="label">Based</div></div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
-<div class="cta" id="contact">
-  <h2>Ready to Visit?</h2>
-  <p>Stop by Ace of Babes Vintage today. We'd love to see you!</p>
-  <a href="https://maps.google.com/?q=Ace+of+Babes+Vintage+Worcester+MA" class="btn-light" target="_blank">Get Directions</a>
-</div>
+
+<section id="services">
+  <div class="container">
+    <p class="section-label">What We Offer</p>
+    <h2 class="section-title">Our Services</h2>
+    <p class="section-sub">Everything you need, all in one place.</p>
+    <div class="svc-grid reveal">
+<div class="svc"><span class="svc-icon">&#9733;</span><h3>Curated Vintage</h3><p>Quality service you can trust.</p></div>
+<div class="svc"><span class="svc-icon">&#9830;</span><h3>Designer Consignment</h3><p>Quality service you can trust.</p></div>
+<div class="svc"><span class="svc-icon">&#9827;</span><h3>Accessories</h3><p>Quality service you can trust.</p></div>
+<div class="svc"><span class="svc-icon">&#10047;</span><h3>Seasonal Drops</h3><p>Quality service you can trust.</p></div>
+<div class="svc"><span class="svc-icon">&#9752;</span><h3>Buy & Trade</h3><p>Quality service you can trust.</p></div>
+<div class="svc"><span class="svc-icon">&#10024;</span><h3>Gift Cards</h3><p>Quality service you can trust.</p></div>
+
+    </div>
+  </div>
+</section>
+
+<section id="gallery" class="alt-bg">
+  <div class="container">
+    <p class="section-label">Take a Look</p>
+    <h2 class="section-title">Gallery</h2>
+    <p class="section-sub">A glimpse of what we have to offer.</p>
+    <div class="gal-grid reveal">
+<div class="gal-item"><img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=500&fit=crop" alt="Ace of Babes Vintage" loading="lazy"></div><div class="gal-item"><img src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=800&h=500&fit=crop" alt="Ace of Babes Vintage" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Ready to Experience Ace of Babes Vintage?</h2>
+  <p>Come visit us in Worcester — we'd love to welcome you.</p>
+  <a href="https://maps.google.com/?q=Ace+of+Babes+Vintage+Worcester+MA" class="btn btn-primary" target="_blank" style="background:#fff;color:var(--p)">Get Directions</a>
+</section>
+
+<section id="contact">
+  <div class="container">
+    <p class="section-label">Get In Touch</p>
+    <h2 class="section-title">Contact Us</h2>
+    <p class="section-sub">We'd love to hear from you.</p>
+    <div class="contact-grid reveal">
+      <div class="contact-info">
+        <h3>Ace of Babes Vintage</h3>
+        <div class="contact-item"><span class="icon">&#128205;</span><p>Portland Street, Downtown, Worcester, MA</p></div>
+        <div class="contact-item"><span class="icon">&#128222;</span><p><a href="tel:N/A" style="color:#fff;text-decoration:none">N/A</a></p></div>
+        <div class="contact-item"><span class="icon">&#128336;</span><p>Call for current hours</p></div>
+      </div>
+      <div class="map-wrap">
+        <iframe src="https://maps.google.com/maps?q=Ace+of+Babes+Vintage+Worcester+MA&output=embed" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
-  <p>&copy; 2026 Ace of Babes Vintage. All rights reserved. | Website by One Vision Marketing</p>
+  <p>&copy; 2026 Ace of Babes Vintage. All rights reserved. | Website by <a href="https://pradazay1-code.github.io/marketing-Sauce/" target="_blank">One Vision Marketing</a></p>
 </footer>
+
+<script>
+// Scroll reveal
+const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'});document.getElementById('navMenu').classList.remove('open');});});
+</script>
 </body>
 </html>
