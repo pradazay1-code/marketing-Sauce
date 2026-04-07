@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>One Vision Marketing | Client Pitch Deck</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1a1a2e;--accent:#4361ee;--accent2:#7209b7;--light:#f8f9fa;--dark:#16213e;--gold:#f7b731}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
+body{font-family:'Inter',system-ui,sans-serif;background:#000;overflow:hidden;height:100vh;width:100vw}
+
+/* SLIDE CONTAINER */
+.deck{position:relative;width:100vw;height:100vh}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .6s ease,transform .6s ease;transform:scale(.95);padding:60px}
+.slide.active{opacity:1;pointer-events:auto;transform:scale(1)}
+
+/* NAV */
+.nav{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);display:flex;gap:12px;z-index:999;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);padding:12px 24px;border-radius:50px}
+.nav button{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.5);background:transparent;cursor:pointer;transition:.3s}
+.nav button.active{background:var(--accent);border-color:var(--accent);transform:scale(1.3)}
+.arrows{position:fixed;bottom:30px;right:40px;display:flex;gap:10px;z-index:999}
+.arrows button{background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border:none;color:#fff;width:45px;height:45px;border-radius:50%;font-size:1.2rem;cursor:pointer;transition:.3s}
+.arrows button:hover{background:var(--accent)}
+.slide-count{position:fixed;bottom:38px;left:40px;color:rgba(255,255,255,.4);font-size:.85rem;z-index:999}
+
+/* SLIDE 1 - TITLE */
+.s1{background:linear-gradient(135deg,var(--primary) 0%,var(--dark) 50%,var(--accent2) 100%)}
+.s1-content{text-align:center;color:#fff;max-width:900px}
+.s1-content .badge{display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:8px 24px;border-radius:50px;font-size:.85rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:30px;color:rgba(255,255,255,.8)}
+.s1-content h1{font-size:clamp(3rem,7vw,5.5rem);font-weight:900;line-height:1.1;margin-bottom:20px;background:linear-gradient(135deg,#fff,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.s1-content p{font-size:1.3rem;opacity:.7;font-weight:300;max-width:600px;margin:0 auto 40px}
+.s1-content .tagline{font-size:1.1rem;color:var(--gold);font-weight:600;letter-spacing:1px}
+
+/* SLIDE 2 - PROBLEM */
+.s2{background:var(--light)}
+.s2-inner{max-width:1000px;width:100%}
+.s2-inner .label{color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:3px;font-size:.8rem;margin-bottom:12px}
+.s2-inner h2{font-size:clamp(2rem,4vw,3rem);color:var(--primary);font-weight:800;margin-bottom:40px;line-height:1.2}
+.problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.problem-card{background:#fff;border-radius:16px;padding:35px;box-shadow:0 4px 20px rgba(0,0,0,.06);border-left:4px solid #e74c3c;transition:.3s}
+.problem-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,.1)}
+.problem-card .num{font-size:2.5rem;font-weight:900;color:#e74c3c;margin-bottom:10px}
+.problem-card h3{color:var(--primary);margin-bottom:8px;font-size:1.1rem}
+.problem-card p{color:#666;font-size:.95rem;line-height:1.6}
+
+/* SLIDE 3 - SOLUTION */
+.s3{background:linear-gradient(135deg,var(--primary),var(--accent2))}
+.s3-inner{max-width:1000px;width:100%;color:#fff}
+.s3-inner .label{color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:3px;font-size:.8rem;margin-bottom:12px}
+.s3-inner h2{font-size:clamp(2rem,4vw,3rem);font-weight:800;margin-bottom:15px}
+.s3-inner .sub{opacity:.7;font-size:1.1rem;margin-bottom:40px;max-width:700px}
+.solution-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:25px}
+.sol-card{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:30px;transition:.3s}
+.sol-card:hover{background:rgba(255,255,255,.18);transform:translateY(-3px)}
+.sol-card .icon{font-size:2rem;margin-bottom:12px}
+.sol-card h3{font-size:1.15rem;margin-bottom:8px;font-weight:700}
+.sol-card p{opacity:.75;font-size:.9rem;line-height:1.6}
+
+/* SLIDE 4 - SERVICES DEEP DIVE */
+.s4{background:var(--light)}
+.s4-inner{max-width:1100px;width:100%}
+.s4-inner .label{color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:3px;font-size:.8rem;margin-bottom:12px}
+.s4-inner h2{font-size:clamp(2rem,4vw,2.8rem);color:var(--primary);font-weight:800;margin-bottom:40px}
+.svc-list{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.svc-item{background:#fff;border-radius:16px;padding:30px 25px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,.05);transition:.3s;border-bottom:4px solid transparent}
+.svc-item:hover{border-bottom-color:var(--accent);transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,.1)}
+.svc-item .svc-icon{font-size:2.5rem;margin-bottom:15px}
+.svc-item h3{color:var(--primary);font-size:1.05rem;margin-bottom:8px}
+.svc-item p{color:#777;font-size:.85rem;line-height:1.5}
+
+/* SLIDE 5 - PROCESS */
+.s5{background:linear-gradient(180deg,var(--primary) 0%,#0f3460 100%)}
+.s5-inner{max-width:1000px;width:100%;color:#fff}
+.s5-inner .label{color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:3px;font-size:.8rem;margin-bottom:12px;text-align:center}
+.s5-inner h2{text-align:center;font-size:clamp(2rem,4vw,2.8rem);font-weight:800;margin-bottom:50px}
+.process-steps{display:flex;gap:20px;justify-content:center}
+.step{flex:1;text-align:center;position:relative;padding:0 15px}
+.step-num{width:60px;height:60px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;margin:0 auto 20px;box-shadow:0 5px 20px rgba(67,97,238,.4)}
+.step h3{font-size:1.05rem;margin-bottom:10px}
+.step p{opacity:.6;font-size:.9rem;line-height:1.5}
+.step::after{content:"";position:absolute;top:30px;right:-12px;width:24px;height:2px;background:rgba(255,255,255,.2)}
+.step:last-child::after{display:none}
+
+/* SLIDE 6 - WHY US */
+.s6{background:var(--light)}
+.s6-inner{max-width:1000px;width:100%}
+.s6-inner .label{color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:3px;font-size:.8rem;margin-bottom:12px}
+.s6-inner h2{font-size:clamp(2rem,4vw,2.8rem);color:var(--primary);font-weight:800;margin-bottom:40px}
+.why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:25px}
+.why-card{display:flex;gap:20px;background:#fff;padding:30px;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,.05);transition:.3s}
+.why-card:hover{box-shadow:0 10px 30px rgba(0,0,0,.1);transform:translateY(-3px)}
+.why-card .why-icon{font-size:2rem;min-width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:12px;color:#fff}
+.why-card h3{color:var(--primary);font-size:1.05rem;margin-bottom:6px}
+.why-card p{color:#666;font-size:.9rem;line-height:1.5}
+
+/* SLIDE 7 - PRICING */
+.s7{background:linear-gradient(135deg,var(--primary),var(--accent2))}
+.s7-inner{max-width:1000px;width:100%;color:#fff}
+.s7-inner .label{color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:3px;font-size:.8rem;margin-bottom:12px;text-align:center}
+.s7-inner h2{text-align:center;font-size:clamp(2rem,4vw,2.8rem);font-weight:800;margin-bottom:15px}
+.s7-inner .sub{text-align:center;opacity:.7;margin-bottom:40px;font-size:1.05rem}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:25px}
+.price-card{background:rgba(255,255,255,.08);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:35px 25px;text-align:center;transition:.3s}
+.price-card.featured{background:rgba(255,255,255,.15);border-color:var(--gold);transform:scale(1.05)}
+.price-card:hover{transform:translateY(-5px)}
+.price-card.featured:hover{transform:scale(1.05) translateY(-5px)}
+.price-card .tier{font-size:.85rem;text-transform:uppercase;letter-spacing:2px;opacity:.7;margin-bottom:10px}
+.price-card .price{font-size:2.5rem;font-weight:900;margin-bottom:5px}
+.price-card .period{opacity:.5;font-size:.9rem;margin-bottom:25px}
+.price-card ul{list-style:none;text-align:left;margin-bottom:25px}
+.price-card li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:.9rem;opacity:.85}
+.price-card li::before{content:"&#10003; ";color:var(--gold);font-weight:700}
+.price-btn{display:inline-block;padding:12px 30px;border-radius:50px;font-weight:700;text-decoration:none;transition:.3s;font-size:.95rem}
+.price-btn-outline{border:2px solid rgba(255,255,255,.4);color:#fff}
+.price-btn-filled{background:var(--gold);color:var(--primary)}
+
+/* SLIDE 8 - CTA */
+.s8{background:linear-gradient(135deg,var(--primary) 0%,var(--dark) 50%,var(--accent) 100%)}
+.s8-content{text-align:center;color:#fff;max-width:800px}
+.s8-content h2{font-size:clamp(2.5rem,5vw,4rem);font-weight:900;margin-bottom:20px;line-height:1.1}
+.s8-content p{font-size:1.2rem;opacity:.75;margin-bottom:40px;font-weight:300}
+.contact-cards{display:flex;gap:25px;justify-content:center;flex-wrap:wrap}
+.cc{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);padding:25px 35px;border-radius:16px;text-align:center;min-width:200px}
+.cc .cc-icon{font-size:2rem;margin-bottom:10px}
+.cc h3{font-size:1rem;margin-bottom:5px}
+.cc p{opacity:.7;font-size:.9rem}
+.s8-content .footer-brand{margin-top:50px;font-size:.85rem;opacity:.4}
+
+@media(max-width:900px){
+  .problem-grid,.solution-grid,.svc-list,.why-grid,.pricing-grid{grid-template-columns:1fr}
+  .process-steps{flex-direction:column;align-items:center}
+  .step::after{display:none}
+  .slide{padding:30px}
+  .price-card.featured{transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- SLIDE 1: TITLE -->
+<div class="slide s1 active">
+<div class="s1-content">
+  <div class="badge">Client Partnership Proposal</div>
+  <h1>One Vision Marketing</h1>
+  <p>Full-scale digital marketing solutions for businesses ready to grow.</p>
+  <div class="tagline">Bridgewater, Massachusetts</div>
+</div>
+</div>
+
+<!-- SLIDE 2: THE PROBLEM -->
+<div class="slide s2">
+<div class="s2-inner">
+  <div class="label">The Challenge</div>
+  <h2>Why Most Small Businesses Struggle Online</h2>
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="num">70%</div>
+      <h3>No Professional Website</h3>
+      <p>Most small businesses either have no website or one that's outdated, slow, and not mobile-friendly &mdash; losing customers daily.</p>
+    </div>
+    <div class="problem-card">
+      <div class="num">85%</div>
+      <h3>Invisible on Google</h3>
+      <p>Without SEO, your business doesn't show up when customers search. Your competitors are getting the calls instead.</p>
+    </div>
+    <div class="problem-card">
+      <div class="num">60%</div>
+      <h3>Wasted Ad Spend</h3>
+      <p>Businesses run ads without strategy, burning money on clicks that don't convert into paying customers.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 3: OUR SOLUTION -->
+<div class="slide s3">
+<div class="s3-inner">
+  <div class="label">Our Solution</div>
+  <h2>We Handle Everything So You Can Focus on Your Business</h2>
+  <p class="sub">One Vision Marketing is your all-in-one growth partner. We don't just build websites &mdash; we build revenue.</p>
+  <div class="solution-grid">
+    <div class="sol-card"><div class="icon">&#127760;</div><h3>Website Creation & Hosting</h3><p>Professional, fast, mobile-first websites that convert visitors into customers. Fully hosted and maintained.</p></div>
+    <div class="sol-card"><div class="icon">&#128200;</div><h3>SEO & Google Visibility</h3><p>Get found when people search for your services. We optimize your online presence to rank higher and drive traffic.</p></div>
+    <div class="sol-card"><div class="icon">&#127919;</div><h3>Paid Advertising</h3><p>Strategic Google, Facebook & Instagram ads that target the right audience and maximize your return on investment.</p></div>
+    <div class="sol-card"><div class="icon">&#128640;</div><h3>Growth Strategy</h3><p>Social media management, brand development, and client acquisition strategies tailored to your business goals.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 4: SERVICES DEEP DIVE -->
+<div class="slide s4">
+<div class="s4-inner">
+  <div class="label">What We Deliver</div>
+  <h2>Full-Scale Marketing Services</h2>
+  <div class="svc-list">
+    <div class="svc-item"><div class="svc-icon">&#128187;</div><h3>Custom Websites</h3><p>Designed from scratch to match your brand. Mobile responsive, fast loading, SEO-optimized.</p></div>
+    <div class="svc-item"><div class="svc-icon">&#9729;&#65039;</div><h3>Reliable Hosting</h3><p>We handle all the technical stuff. Your site stays online, secure, and updated 24/7.</p></div>
+    <div class="svc-item"><div class="svc-icon">&#128270;</div><h3>SEO Optimization</h3><p>Keyword research, local SEO, Google Business setup. Get found by customers searching for you.</p></div>
+    <div class="svc-item"><div class="svc-icon">&#128225;</div><h3>Google Ads</h3><p>Pay-per-click campaigns that put your business at the top of search results instantly.</p></div>
+    <div class="svc-item"><div class="svc-icon">&#128247;</div><h3>Social Media Ads</h3><p>Facebook & Instagram campaigns targeted to your ideal customers by location, interest, and behavior.</p></div>
+    <div class="svc-item"><div class="svc-icon">&#128200;</div><h3>Brand Development</h3><p>Logo refinement, brand voice, social media management. Build a brand people remember.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 5: OUR PROCESS -->
+<div class="slide s5">
+<div class="s5-inner">
+  <div class="label">How We Work</div>
+  <h2>Our Simple 4-Step Process</h2>
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Discovery Call</h3>
+      <p>We learn about your business, goals, and challenges. No pressure &mdash; just a conversation.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Custom Strategy</h3>
+      <p>We build a tailored marketing plan designed specifically for your industry and budget.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Launch & Execute</h3>
+      <p>We build your website, set up ads, optimize SEO, and get everything live and running.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Grow & Optimize</h3>
+      <p>We track results, refine strategy, and continuously improve to maximize your growth.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 6: WHY US -->
+<div class="slide s6">
+<div class="s6-inner">
+  <div class="label">Why One Vision</div>
+  <h2>What Sets Us Apart</h2>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">&#127968;</div>
+      <div><h3>Local to Massachusetts</h3><p>Based in Bridgewater, MA. We understand the local market and care about our community's businesses.</p></div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">&#127891;</div>
+      <div><h3>Proven Experience</h3><p>Marketing research experience with RECNA in Bridgewater, helping organizations expand their reach and grow.</p></div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">&#128176;</div>
+      <div><h3>Affordable & Transparent</h3><p>No hidden fees. No long-term contracts. Just honest pricing and real results you can see.</p></div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">&#129309;</div>
+      <div><h3>Personal Attention</h3><p>You're not a number. You get direct access to your marketing team and a strategy built just for you.</p></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 7: PACKAGES -->
+<div class="slide s7">
+<div class="s7-inner">
+  <div class="label">Packages</div>
+  <h2>Flexible Plans That Grow With You</h2>
+  <p class="sub">No long-term contracts. Cancel anytime.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="tier">Starter</div>
+      <div class="price">$499</div>
+      <div class="period">one-time setup</div>
+      <ul>
+        <li>Professional website (5 pages)</li>
+        <li>Mobile responsive design</li>
+        <li>Basic SEO setup</li>
+        <li>Google Business profile</li>
+        <li>1 month free hosting</li>
+      </ul>
+      <a class="price-btn price-btn-outline">Get Started</a>
+    </div>
+    <div class="price-card featured">
+      <div class="tier">Growth</div>
+      <div class="price">$299</div>
+      <div class="period">/month</div>
+      <ul>
+        <li>Everything in Starter</li>
+        <li>Hosting & maintenance</li>
+        <li>Monthly SEO optimization</li>
+        <li>Social media management</li>
+        <li>Monthly performance report</li>
+      </ul>
+      <a class="price-btn price-btn-filled">Most Popular</a>
+    </div>
+    <div class="price-card">
+      <div class="tier">Scale</div>
+      <div class="price">$599</div>
+      <div class="period">/month</div>
+      <ul>
+        <li>Everything in Growth</li>
+        <li>Google & Facebook ads</li>
+        <li>Ad spend management</li>
+        <li>Brand development</li>
+        <li>Priority support</li>
+      </ul>
+      <a class="price-btn price-btn-outline">Let's Talk</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 8: CTA -->
+<div class="slide s8">
+<div class="s8-content">
+  <h2>Let's Grow Your Business Together</h2>
+  <p>Ready to take the next step? Let's have a conversation &mdash; no pressure, no obligations. Just a vision for your growth.</p>
+  <div class="contact-cards">
+    <div class="cc"><div class="cc-icon">&#128231;</div><h3>Email</h3><p>onevisionmarketing5@gmail.com</p></div>
+    <div class="cc"><div class="cc-icon">&#128205;</div><h3>Location</h3><p>Bridgewater, MA</p></div>
+    <div class="cc"><div class="cc-icon">&#128100;</div><h3>Owner</h3><p>Isaiah Wright</p></div>
+  </div>
+  <p class="footer-brand">One Vision Marketing &copy; 2026</p>
+</div>
+</div>
+
+</div>
+
+<!-- NAVIGATION -->
+<div class="slide-count" id="slideCount">1 / 8</div>
+<div class="nav" id="nav"></div>
+<div class="arrows">
+  <button onclick="go(-1)">&#8592;</button>
+  <button onclick="go(1)">&#8594;</button>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide'),nav=document.getElementById('nav'),count=document.getElementById('slideCount');
+let cur=0;
+slides.forEach((_,i)=>{const b=document.createElement('button');b.onclick=()=>goTo(i);nav.appendChild(b);});
+function goTo(n){slides[cur].classList.remove('active');cur=Math.max(0,Math.min(n,slides.length-1));slides[cur].classList.add('active');count.textContent=`${cur+1} / ${slides.length}`;nav.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('active',i===cur));}
+function go(d){goTo(cur+d);}
+goTo(0);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(1);if(e.key==='ArrowLeft')go(-1);});
+let tx=0;document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);
+document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50)go(d>0?1:-1);});
+</script>
+</body>
+</html>
