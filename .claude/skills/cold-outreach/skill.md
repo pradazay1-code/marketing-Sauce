@@ -64,6 +64,10 @@ mcp__github__create_or_update_file(
 
 ## Rules
 - **NEVER send without user approval** — show draft first, wait for confirmation
+- **ALWAYS build a custom website for each lead BEFORE drafting the email** — use `build_single_site.py` with the lead's name, type, city, state. Every email MUST include a link to that lead's unique site (not the generic agency homepage).
+- **NEVER use `https://pradazay1-code.github.io/marketing-Sauce/` as the website link in an email** — that is the agency homepage, not a lead's custom site.
+- The correct URL format is: `https://pradazay1-code.github.io/marketing-Sauce/clients/leads/websites/{slug}/`
+- After building the site, set `website_built: true`, `website_path`, and `website_url` in `outreach_drafts.json` before writing the email body.
 - If lead has an email, use it. If not, skip and note "no email found"
 - Track send status in outreach_drafts.json
 - Space emails 30+ seconds apart to avoid spam flags

@@ -3,6 +3,9 @@
 import argparse, json, os, re, hashlib, urllib.parse
 
 PHOTOS = {
+    "real_estate": ["https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&h=500&fit=crop",
+                    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=500&fit=crop"],
     "barbershop": ["https://images.unsplash.com/photo-1585747860019-8e78f4937c39?w=1200&h=600&fit=crop",
                    "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&h=500&fit=crop",
                    "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800&h=500&fit=crop"],
@@ -36,6 +39,7 @@ PHOTOS = {
 }
 
 PALETTES = {
+    "real_estate":{"p":"#0f172a","s":"#3b82f6","bg":"#f8fafc","txt":"#0f172a"},
     "restaurant":{"p":"#1a1a2e","s":"#e94560","bg":"#fff8f0","txt":"#2d2d2d"},
     "barbershop":{"p":"#1c1c1c","s":"#c9a96e","bg":"#faf9f6","txt":"#1c1c1c"},
     "bakery":{"p":"#3e2723","s":"#e65100","bg":"#fff8e1","txt":"#3e2723"},
@@ -49,6 +53,7 @@ PALETTES = {
 }
 
 SERVICES = {
+    "real_estate":["Buyer Representation","Seller Representation","Market Analysis","Property Valuations","First-Time Buyers","Investment Properties"],
     "barber":["Classic Cuts","Skin Fades","Beard Grooming","Hot Towel Shaves","Kids Cuts","Line-Ups"],
     "restaurant":["Dine-In","Takeout & Delivery","Catering","Private Events","Daily Specials","Family Platters"],
     "bakery":["Artisan Breads","Pastries & Croissants","Espresso Bar","Wedding Cakes","Breakfast","Seasonal Specials"],
@@ -61,6 +66,7 @@ SERVICES = {
 }
 
 TAGLINES = {
+    "real_estate":"Your trusted guide to finding home",
     "barber":"Where tradition meets style","restaurant":"Flavors that bring people together",
     "bakery":"Baked fresh daily with love","seafood":"Fresh from the ocean to your plate",
     "vintage":"Timeless style, curated for you","jewelry":"Handcrafted elegance",
@@ -70,6 +76,8 @@ TAGLINES = {
 
 def match_key(btype):
     t = btype.lower()
+    if any(w in t for w in ["real estate", "realtor", "realty", "real_estate"]):
+        return "real_estate"
     for k in PHOTOS:
         if k in t:
             return k
@@ -80,12 +88,18 @@ def slugify(name):
     return re.sub(r"[^a-z0-9]+","-",s).strip("-")
 
 def get_services(btype):
+    key = match_key(btype)
+    if key in SERVICES:
+        return SERVICES[key]
     t = btype.lower()
     for k,v in SERVICES.items():
         if k in t: return v
     return ["Our Services","Consultations","Custom Solutions","Quality Products","Support","Special Requests"]
 
 def get_tagline(btype):
+    key = match_key(btype)
+    if key in TAGLINES:
+        return TAGLINES[key]
     t = btype.lower()
     for k,v in TAGLINES.items():
         if k in t: return v
