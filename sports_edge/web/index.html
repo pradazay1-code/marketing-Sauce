@@ -6,100 +6,77 @@
 <title>Sports Edge — Daily Top 15</title>
 <style>
   :root {
-    --bg: #0b0d12;
-    --panel: #141821;
-    --panel-2: #1b2030;
-    --line: #232a3b;
-    --text: #e8ecf3;
-    --muted: #8893a8;
-    --accent: #6cf3a3;
-    --accent-2: #ffcc66;
-    --bad: #ff6b6b;
-    --warn: #ffaa55;
+    --bg: #0b0d12; --panel: #141821; --panel-2: #1b2030;
+    --line: #232a3b; --text: #e8ecf3; --muted: #8893a8;
+    --accent: #6cf3a3; --accent-2: #ffcc66; --bad: #ff6b6b; --warn: #ffaa55;
   }
   * { box-sizing: border-box; }
   body {
-    margin: 0;
-    background: linear-gradient(180deg, #090b10 0%, #0b0d12 100%);
+    margin: 0; background: linear-gradient(180deg,#090b10 0%,#0b0d12 100%);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display","Inter",system-ui,sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   header {
-    padding: 28px 32px 20px;
-    border-bottom: 1px solid var(--line);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    align-items: center;
-    justify-content: space-between;
+    padding: 28px 32px 20px; border-bottom: 1px solid var(--line);
+    display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between;
   }
   h1 { margin: 0; font-size: 24px; letter-spacing: -0.01em; }
   h1 .pill {
-    margin-left: 10px;
-    padding: 3px 10px;
-    background: var(--accent);
-    color: #062014;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-    vertical-align: middle;
+    margin-left: 10px; padding: 3px 10px; background: var(--accent);
+    color: #062014; border-radius: 999px; font-size: 12px; font-weight: 700; vertical-align: middle;
   }
-  .meta {
-    display: flex; gap: 20px; flex-wrap: wrap;
-    color: var(--muted); font-size: 13px;
-  }
+  .meta { display: flex; gap: 20px; flex-wrap: wrap; color: var(--muted); font-size: 13px; }
   .meta .stat strong { color: var(--text); display: block; font-size: 18px; }
-  main { padding: 22px 32px 80px; max-width: 1400px; margin: 0 auto; }
-  .tabs {
-    display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 20px;
-    border-bottom: 1px solid var(--line);
+  main { padding: 22px 32px 80px; max-width: 1500px; margin: 0 auto; }
+  .status {
+    display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px;
+    background: var(--panel); border-radius: 10px; margin-bottom: 16px;
+    border: 1px solid var(--line); font-size: 12px;
   }
+  .status .src { padding: 3px 8px; border-radius: 999px; }
+  .status .src.ok { background: rgba(108,243,163,0.15); color: var(--accent); }
+  .status .src.fail { background: rgba(255,107,107,0.15); color: var(--bad); }
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid var(--line); }
   .tab {
-    padding: 10px 16px;
-    cursor: pointer;
-    color: var(--muted);
-    border-bottom: 2px solid transparent;
-    font-size: 14px;
-    font-weight: 500;
-    user-select: none;
+    padding: 10px 16px; cursor: pointer; color: var(--muted);
+    border-bottom: 2px solid transparent; font-size: 14px; font-weight: 500; user-select: none;
   }
   .tab:hover { color: var(--text); }
   .tab.active { color: var(--text); border-bottom-color: var(--accent); }
-  .tab .count {
-    margin-left: 6px;
-    font-size: 11px; color: var(--muted);
-    background: var(--panel-2); padding: 1px 7px; border-radius: 999px;
-  }
-  table {
-    width: 100%; border-collapse: collapse; background: var(--panel);
-    border-radius: 12px; overflow: hidden;
-  }
-  th, td {
-    padding: 12px 14px; text-align: left; font-size: 13px;
-    border-bottom: 1px solid var(--line);
-  }
-  th { color: var(--muted); font-weight: 500; background: var(--panel-2); text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; }
+  .tab .count { margin-left: 6px; font-size: 11px; color: var(--muted);
+    background: var(--panel-2); padding: 1px 7px; border-radius: 999px; }
+  table { width: 100%; border-collapse: collapse; background: var(--panel);
+    border-radius: 12px; overflow: hidden; }
+  th, td { padding: 12px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 500; background: var(--panel-2);
+    text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: rgba(255,255,255,0.02); }
-  .side {
-    display: inline-block; padding: 2px 8px; border-radius: 6px;
-    font-size: 11px; font-weight: 700; text-transform: uppercase;
-  }
-  .side.over { background: rgba(108, 243, 163, 0.15); color: var(--accent); }
-  .side.under { background: rgba(255, 107, 107, 0.15); color: var(--bad); }
-  .side.team_a, .side.team_b { background: rgba(255, 204, 102, 0.15); color: var(--accent-2); }
+  .side { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+  .side.over, .pick-kind.value { background: rgba(108,243,163,0.15); color: var(--accent); }
+  .side.under { background: rgba(255,107,107,0.15); color: var(--bad); }
+  .side.team_a, .side.team_b { background: rgba(255,204,102,0.15); color: var(--accent-2); }
+  .pick-kind { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-left: 4px; }
+  .pick-kind.watch { background: rgba(255,204,102,0.15); color: var(--accent-2); }
+  .pick-kind.fade  { background: rgba(136,147,168,0.15); color: var(--muted); }
   .conf { font-size: 11px; padding: 2px 8px; border-radius: 999px; }
   .conf.high { background: rgba(108,243,163,0.15); color: var(--accent); }
   .conf.medium { background: rgba(255,204,102,0.15); color: var(--accent-2); }
-  .conf.low { background: rgba(136, 147, 168, 0.15); color: var(--muted); }
-  .pos { color: var(--accent); }
-  .neg { color: var(--bad); }
-  .mono { font-variant-numeric: tabular-nums; font-family: "SF Mono", Menlo, Consolas, monospace; }
+  .conf.low { background: rgba(136,147,168,0.15); color: var(--muted); }
+  .pos { color: var(--accent); }  .neg { color: var(--bad); }
+  .mono { font-variant-numeric: tabular-nums; font-family: "SF Mono",Menlo,Consolas,monospace; }
   .empty { padding: 60px 0; text-align: center; color: var(--muted); }
   .footer { padding: 32px; color: var(--muted); font-size: 12px; text-align: center; }
-  .footer a { color: var(--muted); }
   .badge { font-size: 11px; color: var(--muted); padding: 2px 6px; background: var(--panel-2); border-radius: 4px; }
+  .live-card {
+    background: var(--panel); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px;
+    display: grid; grid-template-columns: 1fr auto auto auto; gap: 16px; align-items: center; border: 1px solid var(--line);
+  }
+  .live-card .teams { font-weight: 600; }
+  .live-card .meta-row { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .live-card .line { font-size: 12px; color: var(--muted); }
+  .live-card .line strong { color: var(--text); }
 </style>
 </head>
 <body>
@@ -108,7 +85,7 @@
   <div>
     <h1>Sports Edge <span class="pill" id="refreshed">live</span></h1>
     <div style="color:var(--muted); margin-top:6px; font-size:13px;">
-      Top 15 model edges per market, updated daily. Lines pulled from DraftKings.
+      Top 15 model edges per market + every live game today. Updated 3× daily.
     </div>
   </div>
   <div class="meta">
@@ -120,55 +97,53 @@
 </header>
 
 <main>
+  <div class="status" id="status_bar"></div>
   <div class="tabs" id="tabs"></div>
   <div id="content"></div>
 </main>
 
 <div class="footer">
   Predictions are for entertainment / research. Not financial advice.
-  Model self-grades nightly and is recalibrated weekly from logged outcomes.
+  Model self-grades nightly; weights recalibrate from logged outcomes.
 </div>
 
 <script>
+const REPO = "pradazay1-code/marketing-Sauce";
+const BRANCH = "claude/add-sports-betting-odds-4TIbZ";
+const RAW = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/sports_edge/data/public`;
+
 const CATEGORY_LABELS = {
-  player_points: "NBA Points",
-  player_rebounds: "NBA Rebounds",
-  player_threes: "NBA 3-Pointers",
-  game_total: "NBA Team Total",
-  player_hits: "MLB Hits",
-  pitcher_strikeouts: "MLB Strikeouts",
+  player_points: "NBA Points", player_rebounds: "NBA Rebounds",
+  player_threes: "NBA 3-Pointers", game_total: "NBA Team Total",
+  player_hits: "MLB Hits", pitcher_strikeouts: "MLB Strikeouts",
   moneyline: "MLB Moneyline",
 };
 const CATEGORY_ORDER = [
   "player_points","player_rebounds","player_threes","game_total",
   "player_hits","pitcher_strikeouts","moneyline",
 ];
+const LIVE_TAB = "live_lines";
 
 let TODAY = null;
 let activeTab = null;
 
-// Data source: pulls straight from the GitHub branch the cron is updating.
-// No hosting required — opens locally, refreshes every 5 minutes.
-const REPO = "pradazay1-code/marketing-Sauce";
-const BRANCH = "claude/add-sports-betting-odds-4TIbZ";
-const RAW = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/sports_edge/data/public`;
-
 async function load() {
   try {
-    const cb = "?_=" + Date.now();  // cache-bust
+    const cb = "?_=" + Date.now();
     const [today, cal] = await Promise.all([
       fetch(`${RAW}/today.json${cb}`, {cache:"no-store"}).then(r => r.json()),
       fetch(`${RAW}/calibration.json${cb}`, {cache:"no-store"}).then(r => r.json()).catch(() => null),
     ]);
     TODAY = today;
     renderHeader(cal);
+    renderStatus();
     renderTabs();
     renderContent();
   } catch (e) {
     document.getElementById("content").innerHTML =
       `<div class="empty">
-        Couldn't load picks.<br><br>
-        Either the daily pipeline hasn't run yet, or you're offline.<br>
+        Couldn't load data from GitHub.<br><br>
+        Either you're offline, or the daily pipeline has not pushed any data yet.<br>
         <small style="color:var(--muted)">${String(e).slice(0,200)}</small>
       </div>`;
     console.error(e);
@@ -177,7 +152,7 @@ async function load() {
 
 function renderHeader(cal) {
   document.getElementById("refreshed").textContent =
-    TODAY ? new Date(TODAY.generated_at).toLocaleString(undefined, {dateStyle:"short", timeStyle:"short"}) : "—";
+    TODAY ? new Date(TODAY.generated_at).toLocaleString(undefined,{dateStyle:"short",timeStyle:"short"}) : "—";
   if (!cal) return;
   const o = cal.overall || {};
   const fmtPct = v => v == null ? "—" : (v*100).toFixed(1) + "%";
@@ -185,28 +160,53 @@ function renderHeader(cal) {
   document.getElementById("hitrate").textContent = fmtPct(o.hit_rate);
   document.getElementById("roi").textContent = fmtUnit(o.roi);
   document.getElementById("picks_n").textContent = o.n != null ? o.n : "—";
-  // Show overall brier from any market
-  let brier = null, bn = 0;
+  let brier = 0, bn = 0;
   for (const m of Object.values(cal.by_market || {})) {
-    if (m.brier != null) { brier = (brier||0) + m.brier * (m.n||0); bn += (m.n||0); }
+    if (m.brier != null) { brier += m.brier * (m.n||0); bn += (m.n||0); }
   }
   document.getElementById("brier").textContent = bn ? (brier/bn).toFixed(3) : "—";
+}
+
+function renderStatus() {
+  const bar = document.getElementById("status_bar");
+  const status = (TODAY && TODAY.status) || {};
+  const counts = (TODAY && TODAY.raw_pick_counts) || {};
+  const totals = (TODAY && TODAY.totals) || {};
+  const liveN = TODAY && TODAY.live_lines
+    ? Object.values(TODAY.live_lines).reduce((s,a) => s + (a?.length || 0), 0)
+    : 0;
+
+  const parts = [];
+  parts.push(`<span class="src ok">live games tracked: ${liveN}</span>`);
+  parts.push(`<span class="src ${counts.nba_total ? 'ok' : 'fail'}">NBA model picks: ${counts.nba_total ?? 0}</span>`);
+  parts.push(`<span class="src ${counts.mlb_total ? 'ok' : 'fail'}">MLB model picks: ${counts.mlb_total ?? 0}</span>`);
+  for (const [k, v] of Object.entries(status)) {
+    parts.push(`<span class="src ${v.ok ? 'ok' : 'fail'}" title="${escape(v.error || ('n='+(v.n??'?')))}">${k}: ${v.ok ? 'OK' : 'fail'}</span>`);
+  }
+  bar.innerHTML = parts.join("");
 }
 
 function renderTabs() {
   const tabs = document.getElementById("tabs");
   tabs.innerHTML = "";
-  const cats = TODAY?.categories || {};
-  const order = CATEGORY_ORDER.filter(c => cats[c]?.length);
-  if (!order.length) {
-    tabs.innerHTML = `<div class="empty" style="padding:20px;">No picks available for today.</div>`;
-    return;
-  }
+  const cats = (TODAY && TODAY.categories) || {};
+  const live = (TODAY && TODAY.live_lines) || {};
+  const liveN = Object.values(live).reduce((s,a) => s + (a?.length || 0), 0);
+
+  const order = [...CATEGORY_ORDER];
+  // Always include Live Lines tab if we have any games
+  if (liveN > 0) order.unshift(LIVE_TAB);
+
   if (!activeTab || !order.includes(activeTab)) activeTab = order[0];
+
   for (const cat of order) {
+    let count;
+    if (cat === LIVE_TAB) count = liveN;
+    else count = (cats[cat] || []).length;
     const el = document.createElement("div");
     el.className = "tab" + (cat === activeTab ? " active" : "");
-    el.innerHTML = `${CATEGORY_LABELS[cat] || cat}<span class="count">${cats[cat].length}</span>`;
+    const label = cat === LIVE_TAB ? "Live Lines (all games)" : (CATEGORY_LABELS[cat] || cat);
+    el.innerHTML = `${label}<span class="count">${count}</span>`;
     el.onclick = () => { activeTab = cat; renderTabs(); renderContent(); };
     tabs.appendChild(el);
   }
@@ -215,45 +215,56 @@ function renderTabs() {
 function renderContent() {
   const c = document.getElementById("content");
   if (!TODAY || !activeTab) { c.innerHTML = `<div class="empty">No data.</div>`; return; }
-  const rows = (TODAY.categories || {})[activeTab] || [];
-  if (!rows.length) { c.innerHTML = `<div class="empty">No edges in this market today.</div>`; return; }
+
+  if (activeTab === LIVE_TAB) {
+    renderLiveLines(c);
+    return;
+  }
+
+  const rows = ((TODAY.categories || {})[activeTab] || []);
+  if (!rows.length) {
+    c.innerHTML = `<div class="empty">
+      No model picks in this market right now.<br><br>
+      <small>This usually means the odds source didn't return data for this market today,
+      or the player stats fetch failed. Check the status bar above.</small>
+    </div>`;
+    return;
+  }
 
   const isML = activeTab === "moneyline";
   const isTotal = activeTab === "game_total";
 
   let head;
   if (isML) {
-    head = `<tr><th>#</th><th>Game</th><th>Pick</th><th>Model %</th><th>Book Odds</th><th>Edge</th><th>EV</th><th>Conf</th></tr>`;
+    head = `<tr><th>#</th><th>Game</th><th>Pick</th><th>Kind</th><th>Model %</th><th>Odds</th><th>Edge</th><th>EV</th><th>Conf</th></tr>`;
   } else if (isTotal) {
-    head = `<tr><th>#</th><th>Game</th><th>Side</th><th>Line</th><th>Proj</th><th>Model %</th><th>Odds</th><th>Edge</th><th>EV</th><th>Conf</th></tr>`;
+    head = `<tr><th>#</th><th>Game</th><th>Side</th><th>Kind</th><th>Line</th><th>Proj</th><th>Model %</th><th>Odds</th><th>Edge</th><th>EV</th><th>Conf</th></tr>`;
   } else {
-    head = `<tr><th>#</th><th>Player</th><th>Matchup</th><th>Side</th><th>Line</th><th>Proj</th><th>Model %</th><th>Odds</th><th>Edge</th><th>EV</th><th>Conf</th></tr>`;
+    head = `<tr><th>#</th><th>Player</th><th>Matchup</th><th>Side</th><th>Kind</th><th>Line</th><th>Proj</th><th>Model %</th><th>Odds</th><th>Edge</th><th>EV</th><th>Conf</th></tr>`;
   }
 
   const fmtPct = v => v == null ? "—" : (v*100).toFixed(1) + "%";
-  const fmtEdge = v => {
+  const fmtSigned = (v, scale=100) => {
     if (v == null) return "—";
     const cls = v >= 0 ? "pos" : "neg";
-    return `<span class="${cls}">${(v*100>=0?"+":"")}${(v*100).toFixed(1)}%</span>`;
-  };
-  const fmtEv = v => {
-    if (v == null) return "—";
-    const cls = v >= 0 ? "pos" : "neg";
-    return `<span class="${cls}">${(v>=0?"+":"")}${(v*100).toFixed(1)}%</span>`;
+    return `<span class="${cls}">${(v*scale>=0?"+":"")}${(v*scale).toFixed(1)}%</span>`;
   };
   const fmtOdds = v => v == null ? "—" : (v > 0 ? `+${v}` : v);
+  const kind = k => k ? `<span class="pick-kind ${k}">${k}</span>` : "";
 
-  const body = rows.map((r, i) => {
+  const body = rows.map((r,i) => {
     const conf = `<span class="conf ${r.confidence||'low'}">${r.confidence||'low'}</span>`;
+    const k = kind(r.pick_kind);
     if (isML) {
       return `<tr>
         <td class="mono">${i+1}</td>
         <td>${escape(r.event_name||'')}</td>
         <td><span class="side ${r.side}">${escape(r.pick||'')}</span></td>
+        <td>${k}</td>
         <td class="mono">${fmtPct(r.model_prob)}</td>
         <td class="mono">${fmtOdds(r.odds)}</td>
-        <td class="mono">${fmtEdge(r.edge)}</td>
-        <td class="mono">${fmtEv(r.ev)}</td>
+        <td class="mono">${fmtSigned(r.edge)}</td>
+        <td class="mono">${fmtSigned(r.ev)}</td>
         <td>${conf}</td>
       </tr>`;
     }
@@ -262,12 +273,13 @@ function renderContent() {
         <td class="mono">${i+1}</td>
         <td>${escape(r.event_name||'')}</td>
         <td><span class="side ${r.side}">${r.side}</span></td>
+        <td>${k}</td>
         <td class="mono">${r.line}</td>
         <td class="mono">${r.model_mu}</td>
         <td class="mono">${fmtPct(r.model_prob)}</td>
         <td class="mono">${fmtOdds(r.odds)}</td>
-        <td class="mono">${fmtEdge(r.edge)}</td>
-        <td class="mono">${fmtEv(r.ev)}</td>
+        <td class="mono">${fmtSigned(r.edge)}</td>
+        <td class="mono">${fmtSigned(r.ev)}</td>
         <td>${conf}</td>
       </tr>`;
     }
@@ -276,17 +288,49 @@ function renderContent() {
       <td>${escape(r.player||'')}</td>
       <td style="color:var(--muted)">${escape(r.event_name||'')}</td>
       <td><span class="side ${r.side}">${r.side}</span></td>
+      <td>${k}</td>
       <td class="mono">${r.line}</td>
       <td class="mono">${r.model_mu ?? '—'}</td>
       <td class="mono">${fmtPct(r.model_prob)}</td>
       <td class="mono">${fmtOdds(r.odds)}</td>
-      <td class="mono">${fmtEdge(r.edge)}</td>
-      <td class="mono">${fmtEv(r.ev)}</td>
+      <td class="mono">${fmtSigned(r.edge)}</td>
+      <td class="mono">${fmtSigned(r.ev)}</td>
       <td>${conf}</td>
     </tr>`;
   }).join("");
 
   c.innerHTML = `<table><thead>${head}</thead><tbody>${body}</tbody></table>`;
+}
+
+function renderLiveLines(c) {
+  const live = (TODAY && TODAY.live_lines) || {};
+  const sections = [];
+  for (const league of ["nba", "mlb"]) {
+    const games = live[league] || [];
+    if (!games.length) {
+      sections.push(`<h3 style="margin:20px 0 10px;color:var(--muted);">${league.toUpperCase()} — no games today</h3>`);
+      continue;
+    }
+    sections.push(`<h3 style="margin:24px 0 10px;">${league.toUpperCase()} <span class="badge">${games.length} games</span></h3>`);
+    for (const g of games) {
+      const start = g.start_time ? new Date(g.start_time).toLocaleString(undefined,{weekday:"short",hour:"numeric",minute:"2-digit"}) : "";
+      const status = g.status || "";
+      const score = (g.home_score != null && g.away_score != null && (Number(g.home_score)+Number(g.away_score) > 0))
+        ? `<strong>${g.away_score} – ${g.home_score}</strong>` : "";
+      const spread = g.spread ? `Spread <strong>${escape(g.spread)}</strong>` : "Spread —";
+      const ou = g.over_under != null ? `O/U <strong>${g.over_under}</strong>` : "O/U —";
+      sections.push(`<div class="live-card">
+        <div>
+          <div class="teams">${escape(g.away_team||'?')} @ ${escape(g.home_team||'?')}</div>
+          <div class="meta-row">${escape(start)} · ${escape(status)} ${score}</div>
+        </div>
+        <div class="line">${spread}</div>
+        <div class="line">${ou}</div>
+        <div class="line">${g.favorite ? `Fav <strong>${escape(g.favorite)}</strong>` : ""}</div>
+      </div>`);
+    }
+  }
+  c.innerHTML = sections.join("");
 }
 
 function escape(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }

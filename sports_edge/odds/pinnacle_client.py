@@ -40,22 +40,28 @@ HEADERS = {
 
 LEAGUE_IDS = {"nba": 487, "mlb": 246}
 
-# Map Pinnacle "units" string -> our market key.
-UNITS_TO_MARKET = {
-    "(Points)": "player_points",
-    "Points": "player_points",
-    "Total Points": "player_points",
-    "(Rebounds)": "player_rebounds",
-    "Rebounds": "player_rebounds",
-    "Total Rebounds": "player_rebounds",
-    "3 Point FG": "player_threes",
-    "3 Point Field Goals": "player_threes",
-    "(3 Point FG)": "player_threes",
-    "Hits": "player_hits",
-    "(Hits)": "player_hits",
-    "Strikeouts": "pitcher_strikeouts",
-    "(Strikeouts)": "pitcher_strikeouts",
-}
+
+def _classify_units(units: str) -> str | None:
+    """Fuzzy-match a Pinnacle special's units descriptor to our market key.
+
+    Pinnacle uses many variants ("Points", "(Points)", "Total Points",
+    "Player Points O/U", etc.) and the strings change. We match by keyword
+    in priority order.
+    """
+    if not units:
+        return None
+    s = units.lower()
+    if "3 point" in s or "three point" in s or "threes" in s or "3pt" in s:
+        return "player_threes"
+    if "rebound" in s:
+        return "player_rebounds"
+    if "strikeout" in s or "k's" in s:
+        return "pitcher_strikeouts"
+    if "hit" in s and "no hit" not in s:
+        return "player_hits"
+    if "point" in s:  # must come AFTER 3-point check
+        return "player_points"
+    return None
 
 
 def _get(url: str, retries: int = 3) -> Any:
@@ -118,7 +124,7 @@ def build_props(league: str) -> list[dict]:
     for mu in matchups:
         mu_type = mu.get("type")
         units = (mu.get("units") or "").strip()
-        market_key = UNITS_TO_MARKET.get(units)
+        market_key = _classify_units(units)
         parent = (mu.get("parent") or {}).get("id")
 
         # Player prop (special) lookup

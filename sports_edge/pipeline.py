@@ -12,7 +12,7 @@ import pathlib
 import sys
 import traceback
 
-from .odds import fetch_nba_props, fetch_mlb_props, pinnacle_client
+from .odds import fetch_nba_props, fetch_mlb_props, pinnacle_client, espn_client
 from .stats import nba_stats, mlb_stats
 from .models import nba_projections, mlb_projections, ranker
 from .grading import grader
@@ -21,30 +21,39 @@ DATA = pathlib.Path(__file__).resolve().parent / "data"
 PUBLIC = DATA / "public"
 PUBLIC.mkdir(parents=True, exist_ok=True)
 
+# Tracks per-step health to expose in the status panel on the dashboard.
+STATUS: dict[str, dict] = {}
+
 
 def _safe(name: str, fn, *args, **kwargs):
     try:
-        return fn(*args, **kwargs)
+        result = fn(*args, **kwargs)
+        STATUS[name] = {"ok": True, "n": (len(result) if hasattr(result, "__len__") else None)}
+        return result
     except Exception as e:
         traceback.print_exc()
+        STATUS[name] = {"ok": False, "error": str(e)[:200]}
         print(f"[pipeline] {name} failed: {e}", file=sys.stderr)
         return None
 
 
 def run_nba(today: str) -> list[dict]:
-    odds = _safe("nba odds (DK)", fetch_nba_props.fetch_all) or []
+    odds = _safe("nba_odds_dk", fetch_nba_props.fetch_all) or []
     if not odds:
-        print("[pipeline] DK NBA empty/failed; trying Pinnacle...")
-        odds = _safe("nba odds (Pinnacle)", pinnacle_client.build_props, "nba") or []
+        odds = _safe("nba_odds_pinnacle", pinnacle_client.build_props, "nba") or []
     if not odds:
         return []
-    odds_path = DATA / "odds" / f"nba_{today}.json"
-    odds_path.parent.mkdir(parents=True, exist_ok=True)
-    odds_path.write_text(json.dumps(odds, indent=2))
+    (DATA / "odds").mkdir(parents=True, exist_ok=True)
+    (DATA / "odds" / f"nba_{today}.json").write_text(json.dumps(odds, indent=2))
 
-    nba_stats.refresh_all()
-    gamelog = json.loads((DATA / "stats" / f"nba_player_gamelog_{today}.json").read_text())
-    team_adv = json.loads((DATA / "stats" / f"nba_team_advanced_{today}.json").read_text())
+    refreshed = _safe("nba_stats", nba_stats.refresh_all)
+    if not refreshed:
+        return []
+    try:
+        gamelog = json.loads((DATA / "stats" / f"nba_player_gamelog_{today}.json").read_text())
+        team_adv = json.loads((DATA / "stats" / f"nba_team_advanced_{today}.json").read_text())
+    except FileNotFoundError:
+        return []
 
     player_picks = nba_projections.project_props(odds, gamelog, team_adv)
     total_picks = nba_projections.project_team_totals(odds, team_adv)
@@ -52,17 +61,17 @@ def run_nba(today: str) -> list[dict]:
 
 
 def run_mlb(today: str) -> list[dict]:
-    odds = _safe("mlb odds (DK)", fetch_mlb_props.fetch_all) or []
+    odds = _safe("mlb_odds_dk", fetch_mlb_props.fetch_all) or []
     if not odds:
-        print("[pipeline] DK MLB empty/failed; trying Pinnacle...")
-        odds = _safe("mlb odds (Pinnacle)", pinnacle_client.build_props, "mlb") or []
+        odds = _safe("mlb_odds_pinnacle", pinnacle_client.build_props, "mlb") or []
     if not odds:
         return []
-    odds_path = DATA / "odds" / f"mlb_{today}.json"
-    odds_path.parent.mkdir(parents=True, exist_ok=True)
-    odds_path.write_text(json.dumps(odds, indent=2))
+    (DATA / "odds").mkdir(parents=True, exist_ok=True)
+    (DATA / "odds" / f"mlb_{today}.json").write_text(json.dumps(odds, indent=2))
 
-    schedule_path = mlb_stats.refresh_schedule()
+    schedule_path = _safe("mlb_schedule", mlb_stats.refresh_schedule)
+    if not schedule_path:
+        return []
     schedule = json.loads(schedule_path.read_text())
 
     return (
@@ -72,15 +81,26 @@ def run_mlb(today: str) -> list[dict]:
     )
 
 
+def collect_live_lines() -> dict[str, list[dict]]:
+    """Today's games + ESPN consensus lines per league. Always populated when
+    ESPN works, regardless of whether Pinnacle/DK gave us odds."""
+    out = {}
+    for league in ("nba", "mlb"):
+        rows = _safe(f"{league}_espn", espn_client.live_lines, league) or []
+        out[league] = rows
+    return out
+
+
 def main() -> int:
     today = dt.date.today().isoformat()
 
     print(f"[pipeline] grading pending predictions...")
-    _safe("grade", grader.grade_pending)
+    _safe("grader", grader.grade_pending)
 
     print(f"[pipeline] generating picks for {today}...")
-    nba_picks = _safe("nba run", run_nba, today) or []
-    mlb_picks = _safe("mlb run", run_mlb, today) or []
+    nba_picks = _safe("nba_run", run_nba, today) or []
+    mlb_picks = _safe("mlb_run", run_mlb, today) or []
+    live = collect_live_lines()
 
     all_picks = nba_picks + mlb_picks
     top = ranker.top_n(all_picks, n=15)
@@ -98,13 +118,21 @@ def main() -> int:
         "generated_at": pred_doc["generated_at"],
         "categories": top,
         "totals": {m: len(rows) for m, rows in top.items()},
+        "live_lines": live,
+        "status": STATUS,
+        "raw_pick_counts": {
+            "nba_total": len(nba_picks),
+            "mlb_total": len(mlb_picks),
+        },
     }
     (PUBLIC / "today.json").write_text(json.dumps(public, indent=2))
 
     calibration = grader.aggregate_calibration()
     (PUBLIC / "calibration.json").write_text(json.dumps(calibration, indent=2))
 
-    print(f"[pipeline] wrote {sum(len(v) for v in top.values())} picks across {len(top)} markets")
+    n_picks = sum(len(v) for v in top.values())
+    n_games = sum(len(v) for v in live.values())
+    print(f"[pipeline] wrote {n_picks} ranked picks, {n_games} live games tracked")
     print(f"[pipeline] hit rate so far: {calibration.get('overall', {}).get('hit_rate')}")
     return 0
 

@@ -31,24 +31,26 @@ def top_n(picks: list[dict], n: int = 15) -> dict[str, list[dict]]:
 
     out: dict[str, list[dict]] = {}
     for market, rows in by_market.items():
-        # Filter to positive-EV. Drop rows with absurd EV / odds — those are
-        # almost always parsing artifacts (alt-line markets, partial-game lines,
-        # stale specials), not real edges. A real prop edge of >50% EV does not
-        # exist on a regulated market.
+        # Sanity-clean first: drop obviously-bad parsing artifacts.
         cleaned = []
         for r in rows:
-            ev = r.get("ev") or 0
+            ev = r.get("ev")
             odds = r.get("odds")
             mp = r.get("model_prob")
-            if ev <= 0 or ev > 0.50:
+            if ev is not None and (ev > 0.50 or ev < -0.50):
                 continue
             if odds is not None and (odds > 1000 or odds < -1000):
                 continue
             if mp is not None and (mp <= 0.02 or mp >= 0.98):
                 continue
             cleaned.append(r)
-        cleaned.sort(key=lambda r: r.get("ev") or 0, reverse=True)
+        # Rank by EV first (highest), then by absolute edge magnitude as a
+        # backstop so the dashboard always has something to show even when
+        # nothing is strictly +EV today.
+        cleaned.sort(key=lambda r: (r.get("ev") or 0, abs(r.get("edge") or 0)), reverse=True)
         for r in cleaned:
             r["confidence"] = _confidence_band(r.get("model_prob") or 0.5, r.get("n_games"))
+            ev = r.get("ev") or 0
+            r["pick_kind"] = "value" if ev > 0.02 else ("watch" if ev > -0.05 else "fade")
         out[market] = cleaned[:n]
     return out
