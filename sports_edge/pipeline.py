@@ -12,7 +12,7 @@ import pathlib
 import sys
 import traceback
 
-from .odds import fetch_nba_props, fetch_mlb_props
+from .odds import fetch_nba_props, fetch_mlb_props, pinnacle_client
 from .stats import nba_stats, mlb_stats
 from .models import nba_projections, mlb_projections, ranker
 from .grading import grader
@@ -32,7 +32,10 @@ def _safe(name: str, fn, *args, **kwargs):
 
 
 def run_nba(today: str) -> list[dict]:
-    odds = _safe("nba odds", fetch_nba_props.fetch_all) or []
+    odds = _safe("nba odds (DK)", fetch_nba_props.fetch_all) or []
+    if not odds:
+        print("[pipeline] DK NBA empty/failed; trying Pinnacle...")
+        odds = _safe("nba odds (Pinnacle)", pinnacle_client.build_props, "nba") or []
     if not odds:
         return []
     odds_path = DATA / "odds" / f"nba_{today}.json"
@@ -49,7 +52,10 @@ def run_nba(today: str) -> list[dict]:
 
 
 def run_mlb(today: str) -> list[dict]:
-    odds = _safe("mlb odds", fetch_mlb_props.fetch_all) or []
+    odds = _safe("mlb odds (DK)", fetch_mlb_props.fetch_all) or []
+    if not odds:
+        print("[pipeline] DK MLB empty/failed; trying Pinnacle...")
+        odds = _safe("mlb odds (Pinnacle)", pinnacle_client.build_props, "mlb") or []
     if not odds:
         return []
     odds_path = DATA / "odds" / f"mlb_{today}.json"
