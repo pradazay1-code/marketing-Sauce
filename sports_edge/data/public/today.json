@@ -1,6 +1,6 @@
 {
   "date": "2026-04-27",
-  "generated_at": "2026-04-27T20:08:35.816242Z",
+  "generated_at": "2026-04-27T20:11:42.524867Z",
   "categories": {
     "moneyline": [
       {
@@ -15,7 +15,7 @@
         "edge": 0.3594,
         "ev": 93.8004,
         "odds": 26000,
-        "captured_at": "2026-04-27T20:08:34Z",
+        "captured_at": "2026-04-27T20:11:39Z",
         "book": "pinnacle",
         "confidence": "high"
       },
@@ -31,7 +31,7 @@
         "edge": 0.4293,
         "ev": 62.255,
         "odds": 14400,
-        "captured_at": "2026-04-27T20:08:34Z",
+        "captured_at": "2026-04-27T20:11:39Z",
         "book": "pinnacle",
         "confidence": "medium"
       },
@@ -47,7 +47,7 @@
         "edge": 0.5021,
         "ev": 60.76,
         "odds": 12000,
-        "captured_at": "2026-04-27T20:08:34Z",
+        "captured_at": "2026-04-27T20:11:39Z",
         "book": "pinnacle",
         "confidence": "low"
       },
@@ -63,7 +63,7 @@
         "edge": 0.4902,
         "ev": 59.8063,
         "odds": 12100,
-        "captured_at": "2026-04-27T20:08:34Z",
+        "captured_at": "2026-04-27T20:11:39Z",
         "book": "pinnacle",
         "confidence": "low"
       },
@@ -79,7 +79,7 @@
         "edge": 0.494,
         "ev": 56.8071,
         "odds": 11400,
-        "captured_at": "2026-04-27T20:08:34Z",
+        "captured_at": "2026-04-27T20:11:39Z",
         "book": "pinnacle",
         "confidence": "low"
       },
@@ -95,7 +95,7 @@
         "edge": 0.5108,
         "ev": 52.6084,
         "odds": 10200,
-        "captured_at": "2026-04-27T20:08:34Z",
+        "captured_at": "2026-04-27T20:11:39Z",
         "book": "pinnacle",
         "confidence": "low"
       },
@@ -111,7 +111,7 @@
         "edge": 0.4049,
         "ev": 43.3284,
         "odds": 10600,
-        "captured_at": "2026-04-27T20:08:34Z",
+        "captured_at": "2026-04-27T20:11:39Z",
         "book": "pinnacle",
         "confidence": "medium"
       }

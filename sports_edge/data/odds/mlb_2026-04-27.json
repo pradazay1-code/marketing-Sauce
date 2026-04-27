@@ -10,7 +10,7 @@
     "team_b": "Boston Red Sox",
     "team_b_odds": 12000,
     "team_b_prob": 0.008264462809917356,
-    "captured_at": "2026-04-27T20:08:34Z",
+    "captured_at": "2026-04-27T20:11:39Z",
     "book": "pinnacle"
   },
   {
@@ -24,7 +24,7 @@
     "team_b": "Chicago Cubs",
     "team_b_odds": 10200,
     "team_b_prob": 0.009708737864077669,
-    "captured_at": "2026-04-27T20:08:34Z",
+    "captured_at": "2026-04-27T20:11:39Z",
     "book": "pinnacle"
   },
   {
@@ -38,7 +38,7 @@
     "team_b": "New York Yankees",
     "team_b_odds": null,
     "team_b_prob": null,
-    "captured_at": "2026-04-27T20:08:34Z",
+    "captured_at": "2026-04-27T20:11:39Z",
     "book": "pinnacle"
   },
   {
@@ -52,7 +52,7 @@
     "team_b": "Away Runs (16 Games)",
     "team_b_odds": 13500,
     "team_b_prob": 0.007352941176470588,
-    "captured_at": "2026-04-27T20:08:34Z",
+    "captured_at": "2026-04-27T20:11:39Z",
     "book": "pinnacle"
   },
   {
@@ -66,7 +66,7 @@
     "team_b": "St. Louis Cardinals",
     "team_b_odds": 10600,
     "team_b_prob": 0.009345794392523364,
-    "captured_at": "2026-04-27T20:08:34Z",
+    "captured_at": "2026-04-27T20:11:39Z",
     "book": "pinnacle"
   },
   {
@@ -80,7 +80,7 @@
     "team_b": "Away Runs (8 Games)",
     "team_b_odds": 11000,
     "team_b_prob": 0.009009009009009009,
-    "captured_at": "2026-04-27T20:08:34Z",
+    "captured_at": "2026-04-27T20:11:39Z",
     "book": "pinnacle"
   },
   {
@@ -94,7 +94,7 @@
     "team_b": "Miami Marlins",
     "team_b_odds": 26000,
     "team_b_prob": 0.0038314176245210726,
-    "captured_at": "2026-04-27T20:08:34Z",
+    "captured_at": "2026-04-27T20:11:39Z",
     "book": "pinnacle"
   },
   {
@@ -108,7 +108,7 @@
     "team_b": "Tampa Bay Rays",
     "team_b_odds": 12100,
     "team_b_prob": 0.00819672131147541,
-    "captured_at": "2026-04-27T20:08:34Z",
+    "captured_at": "2026-04-27T20:11:39Z",
     "book": "pinnacle"
   },
   {
@@ -122,7 +122,7 @@
     "team_b": "Seattle Mariners",
     "team_b_odds": null,
     "team_b_prob": null,
-    "captured_at": "2026-04-27T20:08:34Z",
+    "captured_at": "2026-04-27T20:11:39Z",
     "book": "pinnacle"
   },
   {
@@ -136,7 +136,7 @@
     "team_b": "Los Angeles Angels",
     "team_b_odds": null,
     "team_b_prob": null,
-    "captured_at": "2026-04-27T20:08:34Z",
+    "captured_at": "2026-04-27T20:11:39Z",
     "book": "pinnacle"
   }
 ]
