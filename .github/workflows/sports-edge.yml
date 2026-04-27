@@ -8,13 +8,8 @@ on:
     - cron: "0 23 * * *"
   workflow_dispatch: {}
 
-# Note: deliberately NOT triggering on push to sports_edge/**, because the job
-# commits results back to that path and would create an infinite loop.
-
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
   group: sports-edge
@@ -48,9 +43,8 @@ jobs:
         run: |
           set -e
           mkdir -p site sports_edge/data/public
-          # Make sure there's always a today.json so the dashboard renders.
           if [ ! -s sports_edge/data/public/today.json ]; then
-            echo '{"date":"'"$(date -u +%Y-%m-%d)"'","generated_at":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'","categories":{},"totals":{},"note":"Pipeline produced no picks this run (likely odds source unavailable)."}' \
+            echo '{"date":"'"$(date -u +%Y-%m-%d)"'","generated_at":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'","categories":{},"totals":{},"note":"No picks this run."}' \
               > sports_edge/data/public/today.json
           fi
           if [ ! -s sports_edge/data/public/calibration.json ]; then
@@ -59,8 +53,10 @@ jobs:
           fi
           cp sports_edge/web/index.html site/index.html
           cp sports_edge/data/public/*.json site/
+          # Disable Jekyll so files starting with _ are served as-is.
+          touch site/.nojekyll
 
-      - name: Commit data updates
+      - name: Commit data updates back to source branch
         run: |
           git config user.name "sports-edge-bot"
           git config user.email "sports-edge-bot@users.noreply.github.com"
@@ -72,17 +68,14 @@ jobs:
             git push origin HEAD:claude/add-sports-betting-odds-4TIbZ || echo "Push failed (non-fatal)."
           fi
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
-
-  deploy:
-    needs: pipeline
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Publish site to gh-pages branch
+        run: |
+          set -e
+          cd site
+          git init -q -b gh-pages
+          git config user.name "sports-edge-bot"
+          git config user.email "sports-edge-bot@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Deploy $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -f -q "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages:gh-pages
+          echo "Published to gh-pages branch."
