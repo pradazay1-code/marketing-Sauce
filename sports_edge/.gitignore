@@ -1,0 +1,6 @@
+# Daily stat caches are big and reproducible - don't commit
+data/stats/
+
+# Per-pyc
+__pycache__/
+*.pyc

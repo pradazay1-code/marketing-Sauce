@@ -1,0 +1,76 @@
+name: Sports Edge daily pipeline
+
+on:
+  schedule:
+    # 11:00 UTC = 7am ET. Runs again at 17:00 UTC = 1pm ET to refresh lines.
+    - cron: "0 11 * * *"
+    - cron: "0 17 * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [claude/add-sports-betting-odds-4TIbZ]
+    paths:
+      - "sports_edge/**"
+      - ".github/workflows/sports-edge.yml"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: sports-edge
+  cancel-in-progress: false
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/add-sports-betting-odds-4TIbZ
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r sports_edge/requirements.txt
+
+      - name: Run pipeline
+        run: python -m sports_edge.pipeline
+
+      - name: Stage site bundle
+        run: |
+          mkdir -p site
+          cp sports_edge/web/index.html site/index.html
+          cp -r sports_edge/data/public/. site/ 2>/dev/null || true
+
+      - name: Commit data updates
+        run: |
+          git config user.name "sports-edge-bot"
+          git config user.email "sports-edge-bot@users.noreply.github.com"
+          git add sports_edge/data/predictions sports_edge/data/results sports_edge/data/public sports_edge/data/odds || true
+          if git diff --cached --quiet; then
+            echo "No data changes."
+          else
+            git commit -m "Auto: pipeline run $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push origin HEAD:claude/add-sports-betting-odds-4TIbZ
+          fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: pipeline
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

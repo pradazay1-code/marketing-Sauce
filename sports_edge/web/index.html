@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sports Edge — Daily Top 15</title>
+<style>
+  :root {
+    --bg: #0b0d12;
+    --panel: #141821;
+    --panel-2: #1b2030;
+    --line: #232a3b;
+    --text: #e8ecf3;
+    --muted: #8893a8;
+    --accent: #6cf3a3;
+    --accent-2: #ffcc66;
+    --bad: #ff6b6b;
+    --warn: #ffaa55;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, #090b10 0%, #0b0d12 100%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    padding: 28px 32px 20px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  h1 { margin: 0; font-size: 24px; letter-spacing: -0.01em; }
+  h1 .pill {
+    margin-left: 10px;
+    padding: 3px 10px;
+    background: var(--accent);
+    color: #062014;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    vertical-align: middle;
+  }
+  .meta {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    color: var(--muted); font-size: 13px;
+  }
+  .meta .stat strong { color: var(--text); display: block; font-size: 18px; }
+  main { padding: 22px 32px 80px; max-width: 1400px; margin: 0 auto; }
+  .tabs {
+    display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .tab {
+    padding: 10px 16px;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+    font-weight: 500;
+    user-select: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+  .tab .count {
+    margin-left: 6px;
+    font-size: 11px; color: var(--muted);
+    background: var(--panel-2); padding: 1px 7px; border-radius: 999px;
+  }
+  table {
+    width: 100%; border-collapse: collapse; background: var(--panel);
+    border-radius: 12px; overflow: hidden;
+  }
+  th, td {
+    padding: 12px 14px; text-align: left; font-size: 13px;
+    border-bottom: 1px solid var(--line);
+  }
+  th { color: var(--muted); font-weight: 500; background: var(--panel-2); text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .side {
+    display: inline-block; padding: 2px 8px; border-radius: 6px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+  }
+  .side.over { background: rgba(108, 243, 163, 0.15); color: var(--accent); }
+  .side.under { background: rgba(255, 107, 107, 0.15); color: var(--bad); }
+  .side.team_a, .side.team_b { background: rgba(255, 204, 102, 0.15); color: var(--accent-2); }
+  .conf { font-size: 11px; padding: 2px 8px; border-radius: 999px; }
+  .conf.high { background: rgba(108,243,163,0.15); color: var(--accent); }
+  .conf.medium { background: rgba(255,204,102,0.15); color: var(--accent-2); }
+  .conf.low { background: rgba(136, 147, 168, 0.15); color: var(--muted); }
+  .pos { color: var(--accent); }
+  .neg { color: var(--bad); }
+  .mono { font-variant-numeric: tabular-nums; font-family: "SF Mono", Menlo, Consolas, monospace; }
+  .empty { padding: 60px 0; text-align: center; color: var(--muted); }
+  .footer { padding: 32px; color: var(--muted); font-size: 12px; text-align: center; }
+  .footer a { color: var(--muted); }
+  .badge { font-size: 11px; color: var(--muted); padding: 2px 6px; background: var(--panel-2); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Sports Edge <span class="pill" id="refreshed">live</span></h1>
+    <div style="color:var(--muted); margin-top:6px; font-size:13px;">
+      Top 15 model edges per market, updated daily. Lines pulled from DraftKings.
+    </div>
+  </div>
+  <div class="meta">
+    <div class="stat"><strong id="hitrate">—</strong>hit rate</div>
+    <div class="stat"><strong id="roi">—</strong>roi / pick</div>
+    <div class="stat"><strong id="picks_n">—</strong>picks graded</div>
+    <div class="stat"><strong id="brier">—</strong>brier</div>
+  </div>
+</header>
+
+<main>
+  <div class="tabs" id="tabs"></div>
+  <div id="content"></div>
+</main>
+
+<div class="footer">
+  Predictions are for entertainment / research. Not financial advice.
+  Model self-grades nightly and is recalibrated weekly from logged outcomes.
+</div>
+
+<script>
+const CATEGORY_LABELS = {
+  player_points: "NBA Points",
+  player_rebounds: "NBA Rebounds",
+  player_threes: "NBA 3-Pointers",
+  game_total: "NBA Team Total",
+  player_hits: "MLB Hits",
+  pitcher_strikeouts: "MLB Strikeouts",
+  moneyline: "MLB Moneyline",
+};
+const CATEGORY_ORDER = [
+  "player_points","player_rebounds","player_threes","game_total",
+  "player_hits","pitcher_strikeouts","moneyline",
+];
+
+let TODAY = null;
+let activeTab = null;
+
+async function load() {
+  try {
+    const [today, cal] = await Promise.all([
+      fetch("./today.json", {cache:"no-store"}).then(r => r.json()),
+      fetch("./calibration.json", {cache:"no-store"}).then(r => r.json()).catch(() => null),
+    ]);
+    TODAY = today;
+    renderHeader(cal);
+    renderTabs();
+    renderContent();
+  } catch (e) {
+    document.getElementById("content").innerHTML =
+      `<div class="empty">No predictions available yet. Check back after the pipeline runs.</div>`;
+    console.error(e);
+  }
+}
+
+function renderHeader(cal) {
+  document.getElementById("refreshed").textContent =
+    TODAY ? new Date(TODAY.generated_at).toLocaleString(undefined, {dateStyle:"short", timeStyle:"short"}) : "—";
+  if (!cal) return;
+  const o = cal.overall || {};
+  const fmtPct = v => v == null ? "—" : (v*100).toFixed(1) + "%";
+  const fmtUnit = v => v == null ? "—" : (v>=0?"+":"") + v.toFixed(3) + "u";
+  document.getElementById("hitrate").textContent = fmtPct(o.hit_rate);
+  document.getElementById("roi").textContent = fmtUnit(o.roi);
+  document.getElementById("picks_n").textContent = o.n != null ? o.n : "—";
+  // Show overall brier from any market
+  let brier = null, bn = 0;
+  for (const m of Object.values(cal.by_market || {})) {
+    if (m.brier != null) { brier = (brier||0) + m.brier * (m.n||0); bn += (m.n||0); }
+  }
+  document.getElementById("brier").textContent = bn ? (brier/bn).toFixed(3) : "—";
+}
+
+function renderTabs() {
+  const tabs = document.getElementById("tabs");
+  tabs.innerHTML = "";
+  const cats = TODAY?.categories || {};
+  const order = CATEGORY_ORDER.filter(c => cats[c]?.length);
+  if (!order.length) {
+    tabs.innerHTML = `<div class="empty" style="padding:20px;">No picks available for today.</div>`;
+    return;
+  }
+  if (!activeTab || !order.includes(activeTab)) activeTab = order[0];
+  for (const cat of order) {
+    const el = document.createElement("div");
+    el.className = "tab" + (cat === activeTab ? " active" : "");
+    el.innerHTML = `${CATEGORY_LABELS[cat] || cat}<span class="count">${cats[cat].length}</span>`;
+    el.onclick = () => { activeTab = cat; renderTabs(); renderContent(); };
+    tabs.appendChild(el);
+  }
+}
+
+function renderContent() {
+  const c = document.getElementById("content");
+  if (!TODAY || !activeTab) { c.innerHTML = `<div class="empty">No data.</div>`; return; }
+  const rows = (TODAY.categories || {})[activeTab] || [];
+  if (!rows.length) { c.innerHTML = `<div class="empty">No edges in this market today.</div>`; return; }
+
+  const isML = activeTab === "moneyline";
+  const isTotal = activeTab === "game_total";
+
+  let head;
+  if (isML) {
+    head = `<tr><th>#</th><th>Game</th><th>Pick</th><th>Model %</th><th>Book Odds</th><th>Edge</th><th>EV</th><th>Conf</th></tr>`;
+  } else if (isTotal) {
+    head = `<tr><th>#</th><th>Game</th><th>Side</th><th>Line</th><th>Proj</th><th>Model %</th><th>Odds</th><th>Edge</th><th>EV</th><th>Conf</th></tr>`;
+  } else {
+    head = `<tr><th>#</th><th>Player</th><th>Matchup</th><th>Side</th><th>Line</th><th>Proj</th><th>Model %</th><th>Odds</th><th>Edge</th><th>EV</th><th>Conf</th></tr>`;
+  }
+
+  const fmtPct = v => v == null ? "—" : (v*100).toFixed(1) + "%";
+  const fmtEdge = v => {
+    if (v == null) return "—";
+    const cls = v >= 0 ? "pos" : "neg";
+    return `<span class="${cls}">${(v*100>=0?"+":"")}${(v*100).toFixed(1)}%</span>`;
+  };
+  const fmtEv = v => {
+    if (v == null) return "—";
+    const cls = v >= 0 ? "pos" : "neg";
+    return `<span class="${cls}">${(v>=0?"+":"")}${(v*100).toFixed(1)}%</span>`;
+  };
+  const fmtOdds = v => v == null ? "—" : (v > 0 ? `+${v}` : v);
+
+  const body = rows.map((r, i) => {
+    const conf = `<span class="conf ${r.confidence||'low'}">${r.confidence||'low'}</span>`;
+    if (isML) {
+      return `<tr>
+        <td class="mono">${i+1}</td>
+        <td>${escape(r.event_name||'')}</td>
+        <td><span class="side ${r.side}">${escape(r.pick||'')}</span></td>
+        <td class="mono">${fmtPct(r.model_prob)}</td>
+        <td class="mono">${fmtOdds(r.odds)}</td>
+        <td class="mono">${fmtEdge(r.edge)}</td>
+        <td class="mono">${fmtEv(r.ev)}</td>
+        <td>${conf}</td>
+      </tr>`;
+    }
+    if (isTotal) {
+      return `<tr>
+        <td class="mono">${i+1}</td>
+        <td>${escape(r.event_name||'')}</td>
+        <td><span class="side ${r.side}">${r.side}</span></td>
+        <td class="mono">${r.line}</td>
+        <td class="mono">${r.model_mu}</td>
+        <td class="mono">${fmtPct(r.model_prob)}</td>
+        <td class="mono">${fmtOdds(r.odds)}</td>
+        <td class="mono">${fmtEdge(r.edge)}</td>
+        <td class="mono">${fmtEv(r.ev)}</td>
+        <td>${conf}</td>
+      </tr>`;
+    }
+    return `<tr>
+      <td class="mono">${i+1}</td>
+      <td>${escape(r.player||'')}</td>
+      <td style="color:var(--muted)">${escape(r.event_name||'')}</td>
+      <td><span class="side ${r.side}">${r.side}</span></td>
+      <td class="mono">${r.line}</td>
+      <td class="mono">${r.model_mu ?? '—'}</td>
+      <td class="mono">${fmtPct(r.model_prob)}</td>
+      <td class="mono">${fmtOdds(r.odds)}</td>
+      <td class="mono">${fmtEdge(r.edge)}</td>
+      <td class="mono">${fmtEv(r.ev)}</td>
+      <td>${conf}</td>
+    </tr>`;
+  }).join("");
+
+  c.innerHTML = `<table><thead>${head}</thead><tbody>${body}</tbody></table>`;
+}
+
+function escape(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+load();
+setInterval(load, 5*60*1000);
+</script>
+
+</body>
+</html>
