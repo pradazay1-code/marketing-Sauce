@@ -171,6 +171,9 @@ def build_props(league: str) -> list[dict]:
             })
 
         # Game lines: moneyline (MLB) and totals (game_total)
+        # Filter to FULL-GAME markets only — Pinnacle returns alt lines, partial-
+        # game (1H, 1Q, etc.), and special markets in the same response. Their
+        # `key` encoding is "s;<period>;<type>;<param>"; period=0 is full game.
         if mu_type == "matchup" and league in ("nba", "mlb"):
             mkts = markets_by_matchup.get(mu["id"], [])
             parts = mu.get("participants") or []
@@ -178,22 +181,30 @@ def build_props(league: str) -> list[dict]:
             event_name = f"{names[0]} @ {names[1]}" if len(names) >= 2 else None
 
             for mk in mkts:
+                key = mk.get("key") or ""
+                if not key.startswith("s;0;"):
+                    continue  # skip alt periods / partial-game lines
+
                 if mk.get("type") == "moneyline" and league == "mlb":
                     prices = mk.get("prices") or []
                     if len(prices) != 2:
                         continue
                     a, b = prices[0], prices[1]
+                    a_dec = a.get("price"); b_dec = b.get("price")
+                    # Sanity: ignore obviously stale / novelty lines
+                    if not (1.05 < float(a_dec or 0) < 50 and 1.05 < float(b_dec or 0) < 50):
+                        continue
                     out.append({
                         "market": "moneyline",
                         "event_id": mu["id"],
                         "event_name": event_name,
                         "start_time": mu.get("startTime"),
                         "team_a": next((p.get("name") for p in parts if (p.get("alignment") or "").lower() == (a.get("designation") or "").lower()), names[0] if names else None),
-                        "team_a_odds": decimal_to_american(a.get("price")),
-                        "team_a_prob": implied_prob(a.get("price")),
+                        "team_a_odds": decimal_to_american(a_dec),
+                        "team_a_prob": implied_prob(a_dec),
                         "team_b": next((p.get("name") for p in parts if (p.get("alignment") or "").lower() == (b.get("designation") or "").lower()), names[1] if len(names) > 1 else None),
-                        "team_b_odds": decimal_to_american(b.get("price")),
-                        "team_b_prob": implied_prob(b.get("price")),
+                        "team_b_odds": decimal_to_american(b_dec),
+                        "team_b_prob": implied_prob(b_dec),
                         "captured_at": captured,
                         "book": "pinnacle",
                     })
@@ -203,7 +214,8 @@ def build_props(league: str) -> list[dict]:
                     if not (over and under):
                         continue
                     line = over.get("points") or under.get("points")
-                    if line is None:
+                    o_dec = over.get("price"); u_dec = under.get("price")
+                    if line is None or not (1.5 < float(o_dec or 0) < 3.0 and 1.5 < float(u_dec or 0) < 3.0):
                         continue
                     out.append({
                         "market": "game_total",
@@ -211,10 +223,10 @@ def build_props(league: str) -> list[dict]:
                         "event_name": event_name,
                         "start_time": mu.get("startTime"),
                         "line": float(line),
-                        "over_odds": decimal_to_american(over.get("price")),
-                        "under_odds": decimal_to_american(under.get("price")),
-                        "over_prob": implied_prob(over.get("price")),
-                        "under_prob": implied_prob(under.get("price")),
+                        "over_odds": decimal_to_american(o_dec),
+                        "under_odds": decimal_to_american(u_dec),
+                        "over_prob": implied_prob(o_dec),
+                        "under_prob": implied_prob(u_dec),
                         "captured_at": captured,
                         "book": "pinnacle",
                     })
