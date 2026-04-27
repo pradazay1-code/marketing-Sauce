@@ -2,15 +2,14 @@ name: Sports Edge daily pipeline
 
 on:
   schedule:
-    # 11:00 UTC = 7am ET. Runs again at 17:00 UTC = 1pm ET to refresh lines.
+    # 11:00 UTC = 7am ET, 17:00 UTC = 1pm ET, 23:00 UTC = 7pm ET
     - cron: "0 11 * * *"
     - cron: "0 17 * * *"
+    - cron: "0 23 * * *"
   workflow_dispatch: {}
-  push:
-    branches: [claude/add-sports-betting-odds-4TIbZ]
-    paths:
-      - "sports_edge/**"
-      - ".github/workflows/sports-edge.yml"
+
+# Note: deliberately NOT triggering on push to sports_edge/**, because the job
+# commits results back to that path and would create an infinite loop.
 
 permissions:
   contents: write
@@ -28,6 +27,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: claude/add-sports-betting-odds-4TIbZ
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:
@@ -40,24 +41,35 @@ jobs:
           pip install -r sports_edge/requirements.txt
 
       - name: Run pipeline
+        continue-on-error: true
         run: python -m sports_edge.pipeline
 
-      - name: Stage site bundle
+      - name: Stage site bundle (always)
         run: |
-          mkdir -p site
+          set -e
+          mkdir -p site sports_edge/data/public
+          # Make sure there's always a today.json so the dashboard renders.
+          if [ ! -s sports_edge/data/public/today.json ]; then
+            echo '{"date":"'"$(date -u +%Y-%m-%d)"'","generated_at":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'","categories":{},"totals":{},"note":"Pipeline produced no picks this run (likely odds source unavailable)."}' \
+              > sports_edge/data/public/today.json
+          fi
+          if [ ! -s sports_edge/data/public/calibration.json ]; then
+            echo '{"overall":{"n":0,"wins":0,"hit_rate":null,"roi":null},"by_market":{}}' \
+              > sports_edge/data/public/calibration.json
+          fi
           cp sports_edge/web/index.html site/index.html
-          cp -r sports_edge/data/public/. site/ 2>/dev/null || true
+          cp sports_edge/data/public/*.json site/
 
       - name: Commit data updates
         run: |
           git config user.name "sports-edge-bot"
           git config user.email "sports-edge-bot@users.noreply.github.com"
-          git add sports_edge/data/predictions sports_edge/data/results sports_edge/data/public sports_edge/data/odds || true
+          git add sports_edge/data/predictions sports_edge/data/results sports_edge/data/public sports_edge/data/odds 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "No data changes."
           else
-            git commit -m "Auto: pipeline run $(date -u +%Y-%m-%dT%H:%MZ)"
-            git push origin HEAD:claude/add-sports-betting-odds-4TIbZ
+            git commit -m "[skip ci] Auto: pipeline run $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push origin HEAD:claude/add-sports-betting-odds-4TIbZ || echo "Push failed (non-fatal)."
           fi
 
       - name: Upload Pages artifact
