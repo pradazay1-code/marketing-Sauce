@@ -147,11 +147,18 @@ const CATEGORY_ORDER = [
 let TODAY = null;
 let activeTab = null;
 
+// Data source: pulls straight from the GitHub branch the cron is updating.
+// No hosting required — opens locally, refreshes every 5 minutes.
+const REPO = "pradazay1-code/marketing-Sauce";
+const BRANCH = "claude/add-sports-betting-odds-4TIbZ";
+const RAW = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/sports_edge/data/public`;
+
 async function load() {
   try {
+    const cb = "?_=" + Date.now();  // cache-bust
     const [today, cal] = await Promise.all([
-      fetch("./today.json", {cache:"no-store"}).then(r => r.json()),
-      fetch("./calibration.json", {cache:"no-store"}).then(r => r.json()).catch(() => null),
+      fetch(`${RAW}/today.json${cb}`, {cache:"no-store"}).then(r => r.json()),
+      fetch(`${RAW}/calibration.json${cb}`, {cache:"no-store"}).then(r => r.json()).catch(() => null),
     ]);
     TODAY = today;
     renderHeader(cal);
@@ -159,7 +166,11 @@ async function load() {
     renderContent();
   } catch (e) {
     document.getElementById("content").innerHTML =
-      `<div class="empty">No predictions available yet. Check back after the pipeline runs.</div>`;
+      `<div class="empty">
+        Couldn't load picks.<br><br>
+        Either the daily pipeline hasn't run yet, or you're offline.<br>
+        <small style="color:var(--muted)">${String(e).slice(0,200)}</small>
+      </div>`;
     console.error(e);
   }
 }
