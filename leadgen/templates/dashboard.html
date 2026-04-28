@@ -67,15 +67,26 @@
         .upload-area:hover { border-color: #60a5fa; }
         .upload-area input { display: none; }
 
+        .mobile-nav { display: none; position: fixed; top: 0; left: 0; right: 0; background: #1e293b; border-bottom: 1px solid #334155; padding: 12px 16px; z-index: 100; }
+        .mobile-nav h1 { font-size: 16px; font-weight: 700; color: #f8fafc; display: inline; }
+        .mobile-nav a { color: #60a5fa; text-decoration: none; font-size: 13px; margin-left: 16px; }
+
         @media (max-width: 768px) {
             .sidebar { display: none; }
-            .main { margin-left: 0; padding: 16px; }
+            .mobile-nav { display: flex; align-items: center; }
+            .main { margin-left: 0; padding: 16px; padding-top: 56px; }
             .two-col { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
+    <div class="mobile-nav">
+        <h1>One Vision</h1>
+        <a href="/">Dashboard</a>
+        <a href="/leads">Leads</a>
+        <a href="/api/export">Export</a>
+    </div>
     <div class="sidebar">
         <h1>One Vision</h1>
         <div class="subtitle">Lead Generation System</div>

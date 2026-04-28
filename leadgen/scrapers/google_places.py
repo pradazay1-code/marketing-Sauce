@@ -2,13 +2,13 @@
 Google Places API scraper for finding businesses without websites.
 Requires GOOGLE_PLACES_API_KEY in .env file.
 
-Free tier: 200 requests/day = ~200 leads/day minimum.
-$200/month credit covers ~7,000 requests.
+Free tier: $200/month credit covers ~7,000 requests = ~230/day.
 """
 
 import os
 import requests
 import time
+from collections import defaultdict
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -76,7 +76,7 @@ def search_places(query, lat, lng, radius=8000):
         resp = requests.get(url, params=params, timeout=15)
         data = resp.json()
 
-        if data.get("status") != "OK":
+        if data.get("status") not in ("OK", "ZERO_RESULTS"):
             return [], data.get("status", "Unknown error")
 
         leads = []
@@ -103,10 +103,6 @@ def search_places(query, lat, lng, radius=8000):
                 "phone": phone,
                 "has_website": int(has_website),
                 "website_url": website_url,
-                "lat": place.get("geometry", {}).get("location", {}).get("lat", 0),
-                "lng": place.get("geometry", {}).get("location", {}).get("lng", 0),
-                "rating": place.get("rating", 0),
-                "place_id": place_id,
             })
 
         return leads, ""
@@ -138,7 +134,7 @@ def get_place_details(place_id):
 
 def find_businesses_without_websites(state="MA", categories=None, max_per_city=10):
     """
-    Main function: search each city for each category, return only businesses without websites.
+    Search each city for each category, return only businesses without websites.
     """
     if categories is None:
         categories = SEARCH_CATEGORIES[:5]
@@ -146,9 +142,13 @@ def find_businesses_without_websites(state="MA", categories=None, max_per_city=1
     cities = TARGET_CITIES.get(state, TARGET_CITIES["MA"])
     all_leads = []
     seen_names = set()
+    city_counts = defaultdict(int)
 
     for city_name, lat, lng in cities:
         for category in categories:
+            if city_counts[city_name] >= max_per_city:
+                break
+
             results, error = search_places(category, lat, lng)
             if error:
                 continue
@@ -156,20 +156,20 @@ def find_businesses_without_websites(state="MA", categories=None, max_per_city=1
             for lead in results:
                 if lead["has_website"]:
                     continue
-                if lead["business_name"] in seen_names:
+                if lead["business_name"].lower() in seen_names:
                     continue
+                if city_counts[city_name] >= max_per_city:
+                    break
 
-                seen_names.add(lead["business_name"])
+                seen_names.add(lead["business_name"].lower())
+                city_counts[city_name] += 1
                 lead["city"] = city_name
                 lead["state"] = state
                 lead["category"] = category.title()
                 lead["source"] = "Google Places API"
-                lead["marketing_score"] = 1 if lead.get("rating") else 0
-                lead["priority"] = "high" if not lead["has_website"] and lead.get("phone") else "medium"
+                lead["marketing_score"] = 0
+                lead["priority"] = "high" if lead.get("phone") else "medium"
                 all_leads.append(lead)
-
-                if len([l for l in all_leads if l["city"] == city_name]) >= max_per_city:
-                    break
 
             time.sleep(0.2)
 

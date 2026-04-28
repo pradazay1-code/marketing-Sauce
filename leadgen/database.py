@@ -4,6 +4,14 @@ from datetime import datetime, date
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "leads.db")
 
+ALLOWED_COLUMNS = {
+    "business_name", "owner_name", "category", "business_type", "phone", "email",
+    "address", "city", "state", "zip_code", "has_website", "website_url",
+    "website_score", "has_social_media", "social_links", "marketing_score",
+    "filing_date", "date_found", "source", "status", "notes", "priority",
+    "contacted", "contact_date", "created_at", "updated_at",
+}
+
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -77,23 +85,32 @@ def init_db():
     conn.close()
 
 
+def _sanitize_keys(data):
+    return {k: v for k, v in data.items() if k in ALLOWED_COLUMNS}
+
+
 def add_lead(lead_data):
     conn = get_db()
+    biz_name = (lead_data.get("business_name") or "").strip()
+    city = (lead_data.get("city") or "").strip()
+    state = (lead_data.get("state") or "").strip()
+
     existing = conn.execute(
-        "SELECT id FROM leads WHERE business_name = ? AND city = ? AND state = ?",
-        (lead_data.get("business_name", ""), lead_data.get("city", ""), lead_data.get("state", ""))
+        "SELECT id FROM leads WHERE LOWER(business_name) = LOWER(?) AND LOWER(city) = LOWER(?) AND state = ?",
+        (biz_name, city, state)
     ).fetchone()
     if existing:
         conn.close()
         return None
 
-    lead_data.setdefault("date_found", date.today().isoformat())
-    lead_data.setdefault("created_at", datetime.now().isoformat())
-    lead_data.setdefault("updated_at", datetime.now().isoformat())
+    safe_data = _sanitize_keys(lead_data)
+    safe_data.setdefault("date_found", date.today().isoformat())
+    safe_data["created_at"] = datetime.now().isoformat()
+    safe_data["updated_at"] = datetime.now().isoformat()
 
-    columns = ", ".join(lead_data.keys())
-    placeholders = ", ".join(["?"] * len(lead_data))
-    values = list(lead_data.values())
+    columns = ", ".join(safe_data.keys())
+    placeholders = ", ".join(["?"] * len(safe_data))
+    values = list(safe_data.values())
 
     cursor = conn.execute(f"INSERT INTO leads ({columns}) VALUES ({placeholders})", values)
     lead_id = cursor.lastrowid
@@ -105,7 +122,7 @@ def add_lead(lead_data):
 def add_leads_bulk(leads_list):
     added = 0
     for lead in leads_list:
-        result = add_lead(lead)
+        result = add_lead(dict(lead))
         if result:
             added += 1
     return added
@@ -136,9 +153,9 @@ def get_leads(filters=None, limit=200, offset=0, sort_by="date_found", sort_dir=
             query += " AND priority = ?"
             params.append(filters["priority"])
         if filters.get("search"):
-            query += " AND (business_name LIKE ? OR owner_name LIKE ? OR notes LIKE ?)"
+            query += " AND (business_name LIKE ? OR owner_name LIKE ? OR notes LIKE ? OR phone LIKE ?)"
             s = f"%{filters['search']}%"
-            params.extend([s, s, s])
+            params.extend([s, s, s, s])
         if filters.get("min_score") is not None:
             query += " AND marketing_score <= ?"
             params.append(int(filters["min_score"]))
@@ -149,7 +166,7 @@ def get_leads(filters=None, limit=200, offset=0, sort_by="date_found", sort_dir=
             query += " AND date_found <= ?"
             params.append(filters["date_to"])
 
-    allowed_sorts = {"date_found", "business_name", "city", "state", "marketing_score", "priority", "created_at"}
+    allowed_sorts = {"date_found", "business_name", "city", "state", "marketing_score", "priority", "created_at", "category"}
     if sort_by not in allowed_sorts:
         sort_by = "date_found"
     sort_dir = "ASC" if sort_dir.upper() == "ASC" else "DESC"
@@ -169,10 +186,13 @@ def get_lead_by_id(lead_id):
 
 
 def update_lead(lead_id, updates):
+    safe_updates = _sanitize_keys(updates)
+    if not safe_updates:
+        return
     conn = get_db()
-    updates["updated_at"] = datetime.now().isoformat()
-    set_clause = ", ".join([f"{k} = ?" for k in updates.keys()])
-    values = list(updates.values()) + [lead_id]
+    safe_updates["updated_at"] = datetime.now().isoformat()
+    set_clause = ", ".join([f"{k} = ?" for k in safe_updates.keys()])
+    values = list(safe_updates.values()) + [lead_id]
     conn.execute(f"UPDATE leads SET {set_clause} WHERE id = ?", values)
     conn.commit()
     conn.close()
@@ -194,11 +214,12 @@ def get_stats():
         "SELECT COUNT(*) FROM leads WHERE date_found = ?", (date.today().isoformat(),)
     ).fetchone()[0]
     stats["contacted"] = conn.execute("SELECT COUNT(*) FROM leads WHERE contacted = 1").fetchone()[0]
+    stats["high_priority"] = conn.execute("SELECT COUNT(*) FROM leads WHERE priority = 'high'").fetchone()[0]
     stats["by_state"] = {}
-    for row in conn.execute("SELECT state, COUNT(*) as cnt FROM leads GROUP BY state ORDER BY cnt DESC"):
+    for row in conn.execute("SELECT state, COUNT(*) as cnt FROM leads WHERE state != '' GROUP BY state ORDER BY cnt DESC"):
         stats["by_state"][row[0]] = row[1]
     stats["by_category"] = {}
-    for row in conn.execute("SELECT category, COUNT(*) as cnt FROM leads GROUP BY category ORDER BY cnt DESC LIMIT 10"):
+    for row in conn.execute("SELECT category, COUNT(*) as cnt FROM leads WHERE category != '' GROUP BY category ORDER BY cnt DESC LIMIT 10"):
         stats["by_category"][row[0]] = row[1]
     stats["by_priority"] = {}
     for row in conn.execute("SELECT priority, COUNT(*) as cnt FROM leads GROUP BY priority"):
@@ -237,8 +258,8 @@ def export_csv(filters=None):
     for lead in leads:
         row = []
         for h in headers:
-            val = str(lead.get(h, "")).replace('"', '""')
-            if "," in val or '"' in val:
+            val = str(lead.get(h, "")).replace("\n", " ").replace("\r", " ").replace('"', '""')
+            if "," in val or '"' in val or "\n" in val:
                 val = f'"{val}"'
             row.append(val)
         lines.append(",".join(row))

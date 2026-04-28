@@ -12,15 +12,17 @@ from datetime import datetime, timedelta
 from urllib.parse import quote_plus
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
 }
 
 EXCLUDED_KEYWORDS = [
     "holding", "holdings", "investment", "investments", "capital", "ventures",
-    "management", "consulting", "advisors", "advisory", "partners", "fund",
-    "trust", "trustees", "estate", "realty trust", "nominee",
+    "management group", "consulting group", "advisors", "advisory", "fund",
+    "trust", "trustees", "realty trust", "nominee", "fiduciary",
     "mcdonald", "subway", "dunkin", "starbucks", "walmart", "target",
-    "amazon", "google", "microsoft", "apple inc",
+    "amazon", "google", "microsoft", "apple inc", "cvs", "walgreens",
+    "7-eleven", "burger king", "wendy", "chipotle", "domino",
+    "shell", "exxon", "bp ", "chevron",
 ]
 
 LOCAL_BUSINESS_KEYWORDS = [
@@ -37,6 +39,9 @@ LOCAL_BUSINESS_KEYWORDS = [
     "moving", "hauling", "junk", "disposal",
     "real estate", "realty", "property", "homes",
     "law", "attorney", "legal", "lawyer",
+    "bar ", "pub ", "tavern", "brewery", "distillery",
+    "yoga", "pilates", "crossfit", "boxing",
+    "hvac", "heating", "cooling", "insulation",
 ]
 
 
@@ -48,13 +53,13 @@ def is_local_business(name):
     for keyword in LOCAL_BUSINESS_KEYWORDS:
         if keyword in name_lower:
             return True
-    return True
+    return False
 
 
 def categorize_business(name):
     name_lower = name.lower()
     categories = {
-        "Restaurant/Food": ["restaurant", "cafe", "bakery", "grill", "pizza", "taco", "sushi", "kitchen", "food", "catering", "truck", "bar & grill", "diner"],
+        "Restaurant/Food": ["restaurant", "cafe", "bakery", "grill", "pizza", "taco", "sushi", "kitchen", "food", "catering", "truck", "bar & grill", "diner", "bistro"],
         "Salon/Beauty": ["salon", "beauty", "hair", "nail", "lash", "brow", "wax", "spa", "aesthetic"],
         "Barbershop": ["barber"],
         "Gym/Fitness": ["gym", "fitness", "training", "crossfit", "yoga", "pilates", "boxing"],
@@ -63,7 +68,7 @@ def categorize_business(name):
         "Landscaping": ["landscaping", "lawn", "tree", "garden"],
         "Cleaning Services": ["cleaning", "maid", "janitorial", "pressure wash"],
         "Tattoo/Piercing": ["tattoo", "piercing", "ink"],
-        "Photography": ["photography", "photo", "studio", "videograph"],
+        "Photography": ["photography", "photo", "videograph"],
         "Retail/Boutique": ["boutique", "shop", "store", "market", "retail"],
         "Pet Services": ["pet", "grooming", "veterinar", "kennel", "dog", "cat"],
         "Healthcare/Wellness": ["dental", "chiropractic", "therapy", "massage", "wellness", "health", "medical", "clinic"],
@@ -71,7 +76,8 @@ def categorize_business(name):
         "Lawyer/Attorney": ["law", "attorney", "legal", "lawyer", "esq"],
         "Childcare/Education": ["daycare", "childcare", "tutoring", "academy", "school", "learning"],
         "Events/Entertainment": ["event", "planning", "dj", "entertainment", "party", "wedding"],
-        "Home Services": ["plumbing", "plumber", "electric", "electrician", "hvac", "handyman", "moving", "hauling"],
+        "Home Services": ["plumbing", "plumber", "electric", "electrician", "hvac", "handyman", "moving", "hauling", "heating", "cooling"],
+        "Bar/Brewery": ["bar ", "pub ", "tavern", "brewery", "distillery"],
     }
     for category, keywords in categories.items():
         for kw in keywords:
@@ -82,13 +88,19 @@ def categorize_business(name):
 
 def check_website_exists(business_name, city="", state=""):
     clean_name = re.sub(r'[^a-zA-Z0-9\s]', '', business_name).strip()
-    domain_guess = clean_name.lower().replace(" ", "") + ".com"
-    try:
-        socket.setdefaulttimeout(3)
-        socket.getaddrinfo(domain_guess, 80)
-        return True, f"http://{domain_guess}"
-    except (socket.gaierror, socket.timeout, OSError):
-        pass
+    slug = clean_name.lower().replace(" ", "")
+
+    for suffix in [".com", ".net", ".biz"]:
+        domain = slug + suffix
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(2)
+            s.connect((domain, 80))
+            s.close()
+            return True, f"http://{domain}"
+        except (socket.gaierror, socket.timeout, OSError, ConnectionRefusedError):
+            continue
+
     return False, ""
 
 
@@ -115,12 +127,8 @@ def calculate_priority(marketing_score, has_website, phone):
 
 
 def scrape_ma_new_filings(days_back=7, max_results=100):
-    """
-    Scrape Massachusetts Secretary of State for new business filings.
-    Uses the Corporation Search API.
-    """
+    """Scrape Massachusetts Secretary of State for new business filings."""
     leads = []
-    base_url = "https://corp.sec.state.ma.us/CorpWeb/CorpSearch/CorpSearchResults.aspx"
 
     end_date = datetime.now()
     start_date = end_date - timedelta(days=days_back)
@@ -276,39 +284,6 @@ def scrape_ct_new_filings(days_back=7, max_results=100):
 
     except Exception as e:
         return leads, str(e)
-
-
-def scrape_google_maps(query, location, max_results=20):
-    """
-    Search Google Maps for businesses matching query in location.
-    Falls back to basic search when Places API key is not available.
-    """
-    leads = []
-    search_query = quote_plus(f"{query} {location}")
-
-    try:
-        resp = requests.get(
-            f"https://www.google.com/search?q={search_query}&tbm=lcl",
-            headers=HEADERS,
-            timeout=15,
-        )
-        if resp.status_code == 200:
-            soup = BeautifulSoup(resp.text, "html.parser")
-            results = soup.find_all("div", class_="VkpGBb")
-            for r in results[:max_results]:
-                name_el = r.find("div", class_="dbg0pd")
-                if name_el:
-                    name = name_el.get_text(strip=True)
-                    if is_local_business(name):
-                        leads.append({
-                            "business_name": name,
-                            "category": categorize_business(name),
-                            "source": "Google Maps Search",
-                        })
-    except Exception as e:
-        return leads, str(e)
-
-    return leads, ""
 
 
 if __name__ == "__main__":
