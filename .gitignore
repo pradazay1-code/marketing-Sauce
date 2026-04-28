@@ -23,3 +23,7 @@ service_account.json
 node_modules/
 dist/
 build/
+
+# Lead Gen Database (regenerated from CSVs)
+leadgen/leads.db
+leadgen/daily.log

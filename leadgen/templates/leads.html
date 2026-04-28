@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leads — One Vision Marketing</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+
+        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 240px; background: #1e293b; border-right: 1px solid #334155; padding: 24px 16px; z-index: 100; }
+        .sidebar h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+        .sidebar .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 32px; }
+        .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: #cbd5e1; text-decoration: none; font-size: 14px; margin-bottom: 4px; transition: all 0.15s; }
+        .sidebar nav a:hover, .sidebar nav a.active { background: #334155; color: #f8fafc; }
+        .sidebar nav a svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .main { margin-left: 240px; padding: 24px; }
+
+        .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
+        .filters input, .filters select { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
+        .filters input:focus, .filters select:focus { outline: none; border-color: #3b82f6; }
+        .filters input[type="text"] { width: 220px; }
+
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .toolbar .info { font-size: 13px; color: #94a3b8; }
+
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-outline { background: transparent; border: 1px solid #475569; color: #cbd5e1; }
+        .btn-outline:hover { border-color: #60a5fa; color: #60a5fa; }
+
+        .leads-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .leads-table th { text-align: left; padding: 10px 8px; color: #94a3b8; border-bottom: 2px solid #334155; font-weight: 500; position: sticky; top: 0; background: #0f172a; cursor: pointer; user-select: none; white-space: nowrap; }
+        .leads-table th:hover { color: #f8fafc; }
+        .leads-table td { padding: 10px 8px; border-bottom: 1px solid #1e293b; vertical-align: middle; }
+        .leads-table tr:hover { background: #1e293b; }
+        .leads-table input[type="checkbox"] { accent-color: #3b82f6; }
+
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .badge-high { background: #7f1d1d; color: #fca5a5; }
+        .badge-medium { background: #713f12; color: #fde047; }
+        .badge-low { background: #14532d; color: #86efac; }
+        .badge-new { background: #1e3a5f; color: #93c5fd; }
+        .badge-contacted { background: #166534; color: #4ade80; }
+        .badge-qualified { background: #581c87; color: #d8b4fe; }
+        .badge-lost { background: #44403c; color: #a8a29e; }
+        .badge-nosite { background: #7f1d1d; color: #fca5a5; }
+        .badge-basic { background: #713f12; color: #fde047; }
+        .badge-yes { background: #14532d; color: #86efac; }
+
+        .phone-link { color: #60a5fa; text-decoration: none; }
+        .phone-link:hover { text-decoration: underline; }
+
+        .pagination { display: flex; gap: 8px; justify-content: center; margin-top: 20px; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: none; align-items: center; justify-content: center; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; width: 500px; max-height: 80vh; overflow-y: auto; }
+        .modal h3 { font-size: 18px; margin-bottom: 16px; color: #f8fafc; }
+        .modal label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 4px; margin-top: 12px; }
+        .modal input, .modal select, .modal textarea { width: 100%; background: #0f172a; border: 1px solid #334155; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
+        .modal textarea { height: 60px; resize: vertical; }
+        .modal .actions { display: flex; gap: 8px; margin-top: 20px; justify-content: flex-end; }
+
+        .bulk-bar { background: #1e3a5f; border: 1px solid #2563eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: none; align-items: center; gap: 12px; }
+        .bulk-bar.show { display: flex; }
+        .bulk-bar span { font-size: 13px; color: #93c5fd; }
+
+        #toast { position: fixed; bottom: 24px; right: 24px; background: #22c55e; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; z-index: 1000; }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>One Vision</h1>
+        <div class="subtitle">Lead Generation System</div>
+        <nav>
+            <a href="/">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Dashboard
+            </a>
+            <a href="/leads" class="active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                All Leads
+            </a>
+            <a href="/api/export">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+            </a>
+        </nav>
+    </div>
+
+    <div class="main">
+        <div class="filters">
+            <input type="text" id="search" placeholder="Search leads..." onkeyup="if(event.key==='Enter')loadLeads()">
+            <select id="filterState" onchange="loadLeads()">
+                <option value="">All States</option>
+                <option value="MA">Massachusetts</option>
+                <option value="RI">Rhode Island</option>
+                <option value="CT">Connecticut</option>
+            </select>
+            <select id="filterWebsite" onchange="loadLeads()">
+                <option value="">Any Website Status</option>
+                <option value="0">No Website</option>
+                <option value="1">Has Website</option>
+            </select>
+            <select id="filterPriority" onchange="loadLeads()">
+                <option value="">Any Priority</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+            <select id="filterStatus" onchange="loadLeads()">
+                <option value="">Any Status</option>
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="qualified">Qualified</option>
+                <option value="lost">Lost</option>
+            </select>
+            <select id="filterCategory" onchange="loadLeads()">
+                <option value="">Any Category</option>
+                <option value="Restaurant">Restaurant/Food</option>
+                <option value="Salon">Salon/Beauty</option>
+                <option value="Barbershop">Barbershop</option>
+                <option value="Gym">Gym/Fitness</option>
+                <option value="Auto">Auto Services</option>
+                <option value="Construction">Construction</option>
+                <option value="Landscaping">Landscaping</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Tattoo">Tattoo/Piercing</option>
+                <option value="Real Estate">Real Estate</option>
+                <option value="Lawyer">Lawyer/Attorney</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Retail">Retail/Boutique</option>
+                <option value="Other">Other</option>
+            </select>
+            <button class="btn btn-primary" onclick="loadLeads()">Search</button>
+            <button class="btn btn-outline" onclick="resetFilters()">Reset</button>
+        </div>
+
+        <div class="bulk-bar" id="bulkBar">
+            <span id="bulkCount">0 selected</span>
+            <button class="btn btn-sm btn-success" onclick="bulkUpdate('status','contacted')">Mark Contacted</button>
+            <button class="btn btn-sm btn-primary" onclick="bulkUpdate('priority','high')">Set High Priority</button>
+            <button class="btn btn-sm btn-danger" onclick="bulkDelete()">Delete Selected</button>
+        </div>
+
+        <div class="toolbar">
+            <div class="info" id="resultsInfo">Loading...</div>
+            <div style="display:flex;gap:8px">
+                <button class="btn btn-sm btn-outline" onclick="addLead()">+ Add Lead</button>
+                <button class="btn btn-sm btn-outline" onclick="window.location='/api/export?'+buildQuery()">Export Filtered</button>
+            </div>
+        </div>
+
+        <div style="overflow-x:auto">
+            <table class="leads-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                        <th onclick="sortBy('business_name')">Business</th>
+                        <th onclick="sortBy('category')">Category</th>
+                        <th onclick="sortBy('city')">City</th>
+                        <th onclick="sortBy('state')">State</th>
+                        <th>Phone</th>
+                        <th>Website</th>
+                        <th onclick="sortBy('priority')">Priority</th>
+                        <th>Status</th>
+                        <th onclick="sortBy('date_found')">Found</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="leadsBody"></tbody>
+            </table>
+        </div>
+
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <h3 id="modalTitle">Edit Lead</h3>
+            <input type="hidden" id="editId">
+            <label>Business Name</label>
+            <input type="text" id="editName">
+            <label>Owner Name</label>
+            <input type="text" id="editOwner">
+            <label>Category</label>
+            <input type="text" id="editCategory">
+            <label>Phone</label>
+            <input type="text" id="editPhone">
+            <label>Email</label>
+            <input type="text" id="editEmail">
+            <label>City</label>
+            <input type="text" id="editCity">
+            <label>State</label>
+            <select id="editState"><option value="MA">MA</option><option value="RI">RI</option><option value="CT">CT</option></select>
+            <label>Priority</label>
+            <select id="editPriority"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+            <label>Status</label>
+            <select id="editStatus"><option value="new">New</option><option value="contacted">Contacted</option><option value="qualified">Qualified</option><option value="lost">Lost</option></select>
+            <label>Notes</label>
+            <textarea id="editNotes"></textarea>
+            <div class="actions">
+                <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveLead()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        let currentSort = 'date_found';
+        let currentDir = 'DESC';
+        let currentOffset = 0;
+        const pageSize = 100;
+        let selectedIds = new Set();
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        function buildQuery() {
+            const params = new URLSearchParams();
+            const search = document.getElementById('search').value;
+            const state = document.getElementById('filterState').value;
+            const website = document.getElementById('filterWebsite').value;
+            const priority = document.getElementById('filterPriority').value;
+            const status = document.getElementById('filterStatus').value;
+            const category = document.getElementById('filterCategory').value;
+
+            if (search) params.set('search', search);
+            if (state) params.set('state', state);
+            if (website !== '') params.set('has_website', website);
+            if (priority) params.set('priority', priority);
+            if (status) params.set('status', status);
+            if (category) params.set('category', category);
+            params.set('sort_by', currentSort);
+            params.set('sort_dir', currentDir);
+            params.set('limit', pageSize);
+            params.set('offset', currentOffset);
+            return params.toString();
+        }
+
+        async function loadLeads() {
+            const resp = await fetch('/api/leads?' + buildQuery());
+            const data = await resp.json();
+            const tbody = document.getElementById('leadsBody');
+            tbody.innerHTML = '';
+
+            data.leads.forEach(lead => {
+                const websiteBadge = lead.has_website
+                    ? '<span class="badge badge-basic">Basic</span>'
+                    : '<span class="badge badge-nosite">None</span>';
+                const priorityBadge = `<span class="badge badge-${lead.priority}">${lead.priority}</span>`;
+                const statusBadge = `<span class="badge badge-${lead.status}">${lead.status}</span>`;
+                const phone = lead.phone ? `<a class="phone-link" href="tel:${lead.phone}">${lead.phone}</a>` : '-';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="checkbox" class="lead-cb" data-id="${lead.id}" onchange="updateSelection()" ${selectedIds.has(lead.id)?'checked':''}></td>
+                    <td><strong>${esc(lead.business_name)}</strong>${lead.owner_name ? '<br><small style="color:#94a3b8">'+esc(lead.owner_name)+'</small>' : ''}</td>
+                    <td>${esc(lead.category || lead.business_type || '-')}</td>
+                    <td>${esc(lead.city || '-')}</td>
+                    <td>${lead.state || '-'}</td>
+                    <td>${phone}</td>
+                    <td>${websiteBadge}</td>
+                    <td>${priorityBadge}</td>
+                    <td>${statusBadge}</td>
+                    <td>${lead.date_found || '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline" onclick="editLead(${lead.id})">Edit</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('resultsInfo').textContent = `Showing ${data.leads.length} leads (offset ${currentOffset})`;
+            updateBulkBar();
+            buildPagination(data.count);
+        }
+
+        function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+        function sortBy(field) {
+            if (currentSort === field) currentDir = currentDir === 'ASC' ? 'DESC' : 'ASC';
+            else { currentSort = field; currentDir = 'ASC'; }
+            currentOffset = 0;
+            loadLeads();
+        }
+
+        function resetFilters() {
+            document.getElementById('search').value = '';
+            document.getElementById('filterState').value = '';
+            document.getElementById('filterWebsite').value = '';
+            document.getElementById('filterPriority').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterCategory').value = '';
+            currentOffset = 0;
+            currentSort = 'date_found';
+            currentDir = 'DESC';
+            loadLeads();
+        }
+
+        function buildPagination(count) {
+            const div = document.getElementById('pagination');
+            div.innerHTML = '';
+            if (currentOffset > 0) {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-sm btn-outline';
+                btn.textContent = 'Previous';
+                btn.onclick = () => { currentOffset = Math.max(0, currentOffset - pageSize); loadLeads(); };
+                div.appendChild(btn);
+            }
+            if (count >= pageSize) {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-sm btn-outline';
+                btn.textContent = 'Next';
+                btn.onclick = () => { currentOffset += pageSize; loadLeads(); };
+                div.appendChild(btn);
+            }
+        }
+
+        function toggleSelectAll() {
+            const checked = document.getElementById('selectAll').checked;
+            document.querySelectorAll('.lead-cb').forEach(cb => {
+                cb.checked = checked;
+                const id = parseInt(cb.dataset.id);
+                if (checked) selectedIds.add(id); else selectedIds.delete(id);
+            });
+            updateBulkBar();
+        }
+
+        function updateSelection() {
+            selectedIds.clear();
+            document.querySelectorAll('.lead-cb:checked').forEach(cb => selectedIds.add(parseInt(cb.dataset.id)));
+            updateBulkBar();
+        }
+
+        function updateBulkBar() {
+            const bar = document.getElementById('bulkBar');
+            const count = selectedIds.size;
+            bar.classList.toggle('show', count > 0);
+            document.getElementById('bulkCount').textContent = `${count} selected`;
+        }
+
+        async function bulkUpdate(field, value) {
+            if (!selectedIds.size) return;
+            const updates = {}; updates[field] = value;
+            await fetch('/api/leads/bulk-update', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ids: [...selectedIds], updates})
+            });
+            showToast(`Updated ${selectedIds.size} leads`);
+            selectedIds.clear();
+            loadLeads();
+        }
+
+        async function bulkDelete() {
+            if (!selectedIds.size || !confirm(`Delete ${selectedIds.size} leads?`)) return;
+            for (const id of selectedIds) {
+                await fetch(`/api/leads/${id}`, {method: 'DELETE'});
+            }
+            showToast(`Deleted ${selectedIds.size} leads`);
+            selectedIds.clear();
+            loadLeads();
+        }
+
+        async function editLead(id) {
+            const resp = await fetch(`/api/leads/${id}`);
+            const lead = await resp.json();
+            document.getElementById('editId').value = id;
+            document.getElementById('editName').value = lead.business_name || '';
+            document.getElementById('editOwner').value = lead.owner_name || '';
+            document.getElementById('editCategory').value = lead.category || '';
+            document.getElementById('editPhone').value = lead.phone || '';
+            document.getElementById('editEmail').value = lead.email || '';
+            document.getElementById('editCity').value = lead.city || '';
+            document.getElementById('editState').value = lead.state || 'MA';
+            document.getElementById('editPriority').value = lead.priority || 'medium';
+            document.getElementById('editStatus').value = lead.status || 'new';
+            document.getElementById('editNotes').value = lead.notes || '';
+            document.getElementById('modalTitle').textContent = 'Edit Lead';
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        function addLead() {
+            document.getElementById('editId').value = '';
+            document.getElementById('editName').value = '';
+            document.getElementById('editOwner').value = '';
+            document.getElementById('editCategory').value = '';
+            document.getElementById('editPhone').value = '';
+            document.getElementById('editEmail').value = '';
+            document.getElementById('editCity').value = '';
+            document.getElementById('editState').value = 'MA';
+            document.getElementById('editPriority').value = 'high';
+            document.getElementById('editStatus').value = 'new';
+            document.getElementById('editNotes').value = '';
+            document.getElementById('modalTitle').textContent = 'Add Lead';
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('show');
+        }
+
+        async function saveLead() {
+            const id = document.getElementById('editId').value;
+            const data = {
+                business_name: document.getElementById('editName').value,
+                owner_name: document.getElementById('editOwner').value,
+                category: document.getElementById('editCategory').value,
+                phone: document.getElementById('editPhone').value,
+                email: document.getElementById('editEmail').value,
+                city: document.getElementById('editCity').value,
+                state: document.getElementById('editState').value,
+                priority: document.getElementById('editPriority').value,
+                status: document.getElementById('editStatus').value,
+                notes: document.getElementById('editNotes').value,
+            };
+
+            if (id) {
+                await fetch(`/api/leads/${id}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                showToast('Lead updated');
+            } else {
+                await fetch('/api/leads', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                showToast('Lead added');
+            }
+            closeModal();
+            loadLeads();
+        }
+
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        loadLeads();
+    </script>
+</body>
+</html>
