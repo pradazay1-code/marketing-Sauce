@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: onevision-leads
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn leadgen.app:app --bind 0.0.0.0:$PORT --workers 2
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: GOOGLE_PLACES_API_KEY
+        sync: false
+    plan: free

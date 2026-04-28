@@ -28,6 +28,9 @@ from database import (
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
+with app.app_context():
+    init_db()
+
 
 @app.route("/")
 def dashboard():
