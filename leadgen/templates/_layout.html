@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}One Vision — Leads{% endblock %}</title>
+    <title>{% block title %}LeadPilot{% endblock %}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
@@ -63,7 +63,7 @@
 </head>
 <body>
     <div class="mobile-nav">
-        <h1>One Vision</h1>
+        <h1>✈ LeadPilot</h1>
         <a href="/" class="{% if active=='dashboard' %}active{% endif %}">Home</a>
         <a href="/leads" class="{% if active=='leads' %}active{% endif %}">Leads</a>
         <a href="/pipeline" class="{% if active=='pipeline' %}active{% endif %}">Pipeline</a>
@@ -71,8 +71,8 @@
         <a href="/reports" class="{% if active=='reports' %}active{% endif %}">Reports</a>
     </div>
     <div class="sidebar">
-        <h1>One Vision</h1>
-        <div class="subtitle">Lead Generation System</div>
+        <h1 style="display:flex;align-items:center;gap:8px"><span style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:white;font-weight:800">L</span> LeadPilot</h1>
+        <div class="subtitle">Elite Lead Generation</div>
         <nav>
             <a href="/" class="{% if active=='dashboard' %}active{% endif %}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>

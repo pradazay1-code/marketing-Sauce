@@ -82,6 +82,21 @@ def init_db():
             error TEXT DEFAULT ''
         );
 
+        CREATE TABLE IF NOT EXISTS scrape_status (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            running INTEGER DEFAULT 0,
+            source TEXT DEFAULT '',
+            state TEXT DEFAULT '',
+            current_step TEXT DEFAULT '',
+            progress_pct INTEGER DEFAULT 0,
+            leads_so_far INTEGER DEFAULT 0,
+            started_at TEXT DEFAULT '',
+            updated_at TEXT DEFAULT '',
+            last_message TEXT DEFAULT ''
+        );
+
+        INSERT OR IGNORE INTO scrape_status (id, running) VALUES (1, 0);
+
         CREATE TABLE IF NOT EXISTS saved_searches (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -426,6 +441,52 @@ def log_scrape(source, state, leads_found=0, leads_added=0, status="completed", 
     )
     conn.commit()
     conn.close()
+
+
+def update_scrape_status(running=None, source=None, state=None, current_step=None,
+                          progress_pct=None, leads_so_far=None, last_message=None,
+                          starting=False):
+    """Update the live scrape status row used by the UI for progress polling."""
+    conn = get_db()
+    fields = []
+    values = []
+    if running is not None:
+        fields.append("running = ?")
+        values.append(int(running))
+    if source is not None:
+        fields.append("source = ?")
+        values.append(source)
+    if state is not None:
+        fields.append("state = ?")
+        values.append(state)
+    if current_step is not None:
+        fields.append("current_step = ?")
+        values.append(current_step)
+    if progress_pct is not None:
+        fields.append("progress_pct = ?")
+        values.append(int(progress_pct))
+    if leads_so_far is not None:
+        fields.append("leads_so_far = ?")
+        values.append(int(leads_so_far))
+    if last_message is not None:
+        fields.append("last_message = ?")
+        values.append(last_message)
+    if starting:
+        fields.append("started_at = ?")
+        values.append(datetime.now().isoformat())
+    fields.append("updated_at = ?")
+    values.append(datetime.now().isoformat())
+    values.append(1)
+    conn.execute(f"UPDATE scrape_status SET {', '.join(fields)} WHERE id = ?", values)
+    conn.commit()
+    conn.close()
+
+
+def get_scrape_status():
+    conn = get_db()
+    row = conn.execute("SELECT * FROM scrape_status WHERE id = 1").fetchone()
+    conn.close()
+    return dict(row) if row else {"running": 0}
 
 
 def save_search(name, filters):

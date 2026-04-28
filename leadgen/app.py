@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-One Vision Marketing — Lead Generation Dashboard
+LeadPilot — Lead Generation Dashboard
 Full-featured Flask app: dashboard, leads, pipeline, map, reports, activities.
 """
 
@@ -21,7 +21,8 @@ from database import (
     init_db, get_leads, count_leads, get_lead_by_id, add_lead, update_lead,
     delete_lead, get_stats, get_scrape_logs, export_csv, add_leads_bulk,
     add_activity, get_activities, get_recent_activities, get_pipeline_data,
-    save_search, get_saved_searches, delete_saved_search, PIPELINE_STAGES
+    save_search, get_saved_searches, delete_saved_search, PIPELINE_STAGES,
+    update_scrape_status, get_scrape_status,
 )
 from utils import enrich_lead, normalize_phone, is_valid_phone, is_valid_email, calculate_lead_score
 
@@ -44,7 +45,7 @@ def check_auth(f):
             return f(*args, **kwargs)
         return Response(
             "Login required", 401,
-            {"WWW-Authenticate": 'Basic realm="One Vision Leads"'}
+            {"WWW-Authenticate": 'Basic realm="LeadPilot"'}
         )
     return decorated
 
@@ -257,7 +258,7 @@ def api_export():
     return Response(
         csv_data,
         mimetype="text/csv",
-        headers={"Content-Disposition": f"attachment; filename=leads_export_{date.today()}.csv"}
+        headers={"Content-Disposition": f"attachment; filename=leadpilot_export_{date.today()}.csv"}
     )
 
 
@@ -268,25 +269,108 @@ def api_run_scraper():
     source = data.get("source", "all")
     state = data.get("state")
 
-    allowed_sources = {"all", "overpass", "yp", "sos"}
+    allowed_sources = {"all", "overpass", "nominatim", "yp", "sos"}
     allowed_states = {"MA", "RI", "CT", None}
     if source not in allowed_sources or state not in allowed_states:
         return jsonify({"error": "Invalid source or state"}), 400
 
+    # Refuse to start if one is already running
+    current = get_scrape_status()
+    if current.get("running"):
+        return jsonify({
+            "error": "Scraper already running",
+            "current_step": current.get("current_step"),
+            "leads_so_far": current.get("leads_so_far"),
+        }), 409
+
+    update_scrape_status(running=1, starting=True, source=source,
+                         state=state or "ALL", current_step="Initializing...",
+                         progress_pct=0, leads_so_far=0)
+
     def run_in_background():
-        cmd = [sys.executable, os.path.join(os.path.dirname(__file__), "daily_runner.py")]
+        cmd = [sys.executable, "-u",
+               os.path.join(os.path.dirname(__file__), "daily_runner.py")]
         if source != "all":
             cmd.extend(["--source", source])
         if state:
             cmd.extend(["--state", state])
         if data.get("only_no_website"):
             cmd.append("--only-no-website")
-        subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
+        try:
+            subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
+        except subprocess.TimeoutExpired:
+            update_scrape_status(running=0,
+                                 current_step="Timeout after 30 minutes",
+                                 progress_pct=100)
+        except Exception as e:
+            update_scrape_status(running=0,
+                                 current_step=f"Error: {str(e)[:100]}",
+                                 progress_pct=100)
 
     thread = Thread(target=run_in_background, daemon=True)
     thread.start()
 
-    return jsonify({"success": True, "message": "Scraper started — refresh in 1-2 minutes"})
+    return jsonify({"success": True, "message": "Scraper started"})
+
+
+@app.route("/api/scraper-status")
+@check_auth
+def api_scraper_status():
+    """Live status of the running scraper. UI polls this every 2s."""
+    return jsonify(get_scrape_status())
+
+
+@app.route("/api/test-scrape", methods=["POST"])
+@check_auth
+def api_test_scrape():
+    """Synchronous quick test — returns sample leads inline without saving.
+    Used to verify scrapers work and give the user immediate feedback."""
+    from scrapers.overpass_scraper import scrape_overpass
+    from scrapers.nominatim_scraper import scrape_nominatim
+
+    data = request.get_json() or {}
+    source = data.get("source", "overpass")
+    state = data.get("state", "MA")
+
+    try:
+        if source == "nominatim":
+            leads, error = scrape_nominatim(state, max_per_query=3)
+            leads = leads[:10]
+        else:
+            # default: overpass with a small sample (1 city only)
+            from scrapers.overpass_scraper import CITIES, build_query, query_overpass, parse_element
+            cities = CITIES.get(state, CITIES["MA"])[:1]  # just first city
+            leads = []
+            error = ""
+            for city_name, lat, lng in cities:
+                query = build_query(lat, lng)
+                d, err = query_overpass(query)
+                if err:
+                    error = f"{city_name}: {err}"
+                    continue
+                if d:
+                    for el in d.get("elements", [])[:30]:
+                        lead = parse_element(el, city_name, state)
+                        if lead and (lead["phone"] or lead["email"]):
+                            leads.append(lead)
+                            if len(leads) >= 10:
+                                break
+
+        return jsonify({
+            "success": True,
+            "source": source,
+            "state": state,
+            "leads": leads,
+            "count": len(leads),
+            "error": error,
+        })
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)[:300],
+            "leads": [],
+            "count": 0,
+        }), 500
 
 
 @app.route("/api/import-csv", methods=["POST"])
@@ -351,7 +435,7 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=5000)
     parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
-    print(f"\n  One Vision Marketing — Lead Dashboard")
+    print(f"\n  LeadPilot — Lead Generation Dashboard")
     print(f"  http://localhost:{args.port}")
     print(f"  Auth: {'ON' if DASHBOARD_PASSWORD else 'OFF (set DASHBOARD_PASSWORD env var)'}")
     print()

@@ -1,6 +1,6 @@
 {% extends "_layout.html" %}
 {% set active = "dashboard" %}
-{% block title %}Dashboard — One Vision{% endblock %}
+{% block title %}Dashboard — LeadPilot{% endblock %}
 
 {% block extra_css %}
 .page-header { margin-bottom: 32px; }
@@ -23,12 +23,24 @@
 .breakdown-list li:last-child { border-bottom: none; }
 .breakdown-list .count { font-weight: 600; color: #60a5fa; }
 
-.actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 32px; }
-.action-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; cursor: pointer; transition: all 0.2s; }
+.actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.action-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; cursor: pointer; transition: all 0.2s; position: relative; }
 .action-card:hover { border-color: #60a5fa; transform: translateY(-1px); }
 .action-card h4 { font-size: 14px; font-weight: 600; color: #f8fafc; margin-bottom: 4px; }
 .action-card p { font-size: 12px; color: #94a3b8; }
 .action-card .free { background: #14532d; color: #86efac; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; margin-left: 6px; }
+
+.live-progress { background: #1e293b; border: 1px solid #3b82f6; border-radius: 12px; padding: 20px; margin-bottom: 24px; display: none; }
+.live-progress.active { display: block; }
+.live-progress .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.live-progress h3 { font-size: 14px; color: #60a5fa; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.live-progress .pulse { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.live-progress .step { font-size: 13px; color: #cbd5e1; margin-bottom: 8px; min-height: 18px; }
+.live-progress .stats-row { display: flex; gap: 24px; font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
+.live-progress .stats-row strong { color: #f8fafc; font-size: 16px; display: block; margin-top: 2px; }
+.progress-bar { height: 8px; background: #0f172a; border-radius: 4px; overflow: hidden; }
+.progress-bar .fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); transition: width 0.3s; width: 0; }
 
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
@@ -44,11 +56,23 @@
 .activity-item:last-child { border-bottom: none; }
 .activity-item .time { color: #64748b; font-size: 11px; }
 .activity-item .biz { color: #60a5fa; font-weight: 500; }
+
+.scrape-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; }
+.scrape-controls label { font-size: 12px; color: #94a3b8; }
+.scrape-controls select { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 6px 10px; border-radius: 6px; font-size: 13px; }
+
+.preview-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+.preview-modal.active { display: flex; }
+.preview-modal .box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; max-width: 800px; width: 100%; max-height: 80vh; overflow-y: auto; }
+.preview-modal h3 { color: #f8fafc; margin-bottom: 12px; }
+.preview-modal .row { padding: 10px 0; border-bottom: 1px solid #334155; font-size: 13px; }
+.preview-modal .name { color: #60a5fa; font-weight: 600; }
+.preview-modal .meta { color: #94a3b8; font-size: 12px; margin-top: 2px; }
 {% endblock %}
 
 {% block content %}
 <div class="page-header">
-    <h2>Dashboard</h2>
+    <h2>Mission Control</h2>
     <p>{{ stats.total }} leads · {{ stats.no_website }} without websites · {{ stats.with_phone }} with phone</p>
 </div>
 
@@ -61,30 +85,61 @@
     <div class="stat-card"><div class="label">Followups Due</div><div class="value red">{{ stats.needs_followup }}</div></div>
 </div>
 
-<div class="actions-grid">
-    <div class="action-card" onclick="runScraper('overpass')">
-        <h4>OpenStreetMap <span class="free">FREE</span></h4>
-        <p>Find businesses w/ phone + website status. No API key.</p>
+<div class="live-progress" id="liveProgress">
+    <div class="header">
+        <h3><span class="pulse"></span> <span id="lpTitle">Scraper running</span></h3>
+        <span style="font-size:12px;color:#94a3b8" id="lpPct">0%</span>
     </div>
-    <div class="action-card" onclick="runScraper('yp')">
-        <h4>Yellow Pages <span class="free">FREE</span></h4>
-        <p>Scrape YP.com — best for finding no-website leads.</p>
+    <div class="step" id="lpStep">Initializing...</div>
+    <div class="stats-row">
+        <div>Source<strong id="lpSource">—</strong></div>
+        <div>State<strong id="lpState">—</strong></div>
+        <div>Leads found<strong id="lpLeads">0</strong></div>
+        <div>Started<strong id="lpStarted">—</strong></div>
     </div>
-    <div class="action-card" onclick="runScraper('sos')">
-        <h4>State Filings <span class="free">FREE</span></h4>
-        <p>Brand new MA/RI LLC and DBA registrations.</p>
+    <div class="progress-bar"><div class="fill" id="lpFill"></div></div>
+</div>
+
+<div class="card" style="padding:16px;margin-bottom:16px">
+    <h3 style="margin-bottom:8px">Find Live Leads</h3>
+    <p style="color:#94a3b8;font-size:13px;margin-bottom:12px">All sources are 100% free with no API keys. Live data pulled directly from the web.</p>
+    <div class="scrape-controls">
+        <label>State:</label>
+        <select id="scrapeState">
+            <option value="">All (MA, RI, CT)</option>
+            <option value="MA">Massachusetts</option>
+            <option value="RI">Rhode Island</option>
+            <option value="CT">Connecticut</option>
+        </select>
+        <label style="margin-left:12px"><input type="checkbox" id="onlyNoWebsite"> Only no-website</label>
+        <button class="btn btn-outline btn-sm" onclick="testScraper('overpass')" style="margin-left:auto">⚡ Quick Test</button>
     </div>
-    <div class="action-card" onclick="runScraper('all')">
-        <h4>Run Everything <span class="free">FREE</span></h4>
-        <p>All free sources. May take 5-10 min to complete.</p>
-    </div>
-    <div class="action-card" onclick="document.getElementById('csvUpload').click()">
-        <h4>Import CSV</h4>
-        <p>Upload existing lead lists.</p>
-    </div>
-    <div class="action-card" onclick="window.location='/leads'">
-        <h4>View All Leads</h4>
-        <p>Search, filter, manage your full database.</p>
+
+    <div class="actions-grid">
+        <div class="action-card" onclick="runScraper('overpass')">
+            <h4>OpenStreetMap <span class="free">FREE</span></h4>
+            <p>Overpass API. Phone + website data for established businesses.</p>
+        </div>
+        <div class="action-card" onclick="runScraper('nominatim')">
+            <h4>Nominatim Search <span class="free">FREE</span></h4>
+            <p>Search-based scraper. Reliable fallback when Overpass is busy.</p>
+        </div>
+        <div class="action-card" onclick="runScraper('yp')">
+            <h4>Yellow Pages <span class="free">FREE</span></h4>
+            <p>YP.com scraper. Best for finding no-website leads.</p>
+        </div>
+        <div class="action-card" onclick="runScraper('sos')">
+            <h4>State Filings <span class="free">FREE</span></h4>
+            <p>Brand new MA/RI LLC and DBA registrations.</p>
+        </div>
+        <div class="action-card" onclick="runScraper('all')">
+            <h4>Run All Sources <span class="free">FREE</span></h4>
+            <p>All 4 sources sequentially. 5-15 min total.</p>
+        </div>
+        <div class="action-card" onclick="document.getElementById('csvUpload').click()">
+            <h4>Import CSV</h4>
+            <p>Upload existing lead lists.</p>
+        </div>
     </div>
 </div>
 <input type="file" id="csvUpload" accept=".csv" style="display:none" onchange="uploadCSV(this)">
@@ -96,7 +151,7 @@
             {% for state, count in stats.by_state.items() %}
             <li><span>{{ state }}</span><span class="count">{{ count }}</span></li>
             {% endfor %}
-            {% if not stats.by_state %}<li><span style="color:#64748b">No data</span><span></span></li>{% endif %}
+            {% if not stats.by_state %}<li><span style="color:#64748b">No data — run a scraper to start</span><span></span></li>{% endif %}
         </ul>
     </div>
     <div class="card">
@@ -129,7 +184,7 @@
             <div class="time">{{ a.created_at }}</div>
         </div>
         {% endfor %}
-        {% if not activities %}<div style="color:#64748b;font-size:13px">No activity yet.</div>{% endif %}
+        {% if not activities %}<div style="color:#64748b;font-size:13px">No activity yet — run a scraper to start finding leads.</div>{% endif %}
     </div>
 
     <div class="card">
@@ -145,7 +200,10 @@
                     <td>{{ log.state }}</td>
                     <td>{{ log.leads_found }}</td>
                     <td>{{ log.leads_added }}</td>
-                    <td><span class="{% if log.status == 'completed' %}badge-green{% else %}badge-red{% endif %}">{{ log.status }}</span></td>
+                    <td>
+                        <span class="{% if log.status == 'completed' %}badge-green{% else %}badge-red{% endif %}">{{ log.status }}</span>
+                        {% if log.error %}<div style="color:#f87171;font-size:11px;margin-top:2px">{{ log.error[:80] }}</div>{% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
                 {% if not logs %}
@@ -155,27 +213,141 @@
         </table>
     </div>
 </div>
+
+<div class="preview-modal" id="previewModal" onclick="if(event.target===this)closePreview()">
+    <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <h3 id="previewTitle">Live Test Results</h3>
+            <button class="btn btn-outline btn-sm" onclick="closePreview()">Close</button>
+        </div>
+        <div id="previewBody"></div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
+let pollTimer = null;
+
 async function runScraper(source) {
-    showToast('Scraper started — running in background...');
+    const state = document.getElementById('scrapeState').value;
+    const onlyNoWebsite = document.getElementById('onlyNoWebsite').checked;
+
     try {
         const resp = await fetch('/api/run-scraper', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({source})
+            body: JSON.stringify({source, state: state || null, only_no_website: onlyNoWebsite})
         });
         const data = await resp.json();
+        if (resp.status === 409) {
+            showToast('A scraper is already running');
+            startPolling();
+            return;
+        }
         if (data.error) {
             showToast('Error: ' + data.error);
             return;
         }
-        showToast(data.message || 'Scraper running...');
-        setTimeout(() => location.reload(), 30000);
+        showToast('Scraper started — watch live progress below');
+        startPolling();
     } catch(e) {
-        showToast('Error starting scraper');
+        showToast('Network error starting scraper');
+    }
+}
+
+async function testScraper(source) {
+    const state = document.getElementById('scrapeState').value || 'MA';
+    showToast('Running quick test (10-30s)...');
+    document.getElementById('previewTitle').textContent = `Testing ${source} (${state})...`;
+    document.getElementById('previewBody').innerHTML = '<div style="color:#94a3b8;padding:24px;text-align:center">Pulling live data from the web... please wait.</div>';
+    document.getElementById('previewModal').classList.add('active');
+
+    try {
+        const resp = await fetch('/api/test-scrape', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({source, state})
+        });
+        const data = await resp.json();
+
+        if (data.error && !data.leads.length) {
+            document.getElementById('previewBody').innerHTML =
+                `<div style="background:#7f1d1d;color:#fca5a5;padding:16px;border-radius:8px">
+                    <strong>Scraper error:</strong> ${escHtml(data.error)}
+                    <div style="margin-top:8px;font-size:12px">Try a different source or wait a minute and retry — public APIs sometimes rate-limit.</div>
+                </div>`;
+            return;
+        }
+
+        const leads = data.leads || [];
+        let html = `<div style="color:#4ade80;margin-bottom:12px">✓ Pulled ${leads.length} live leads from ${escHtml(source)}</div>`;
+        if (leads.length === 0) {
+            html += '<div style="color:#94a3b8">No results returned. Try another source.</div>';
+        } else {
+            leads.forEach(l => {
+                html += `<div class="row">
+                    <div class="name">${escHtml(l.business_name)}</div>
+                    <div class="meta">${escHtml(l.category||'')} · ${escHtml(l.city||'')}, ${escHtml(l.state||'')}
+                    ${l.phone ? ' · ' + escHtml(l.phone) : ''}
+                    ${l.email ? ' · ' + escHtml(l.email) : ''}
+                    ${l.has_website ? ' · <span style="color:#fbbf24">has website</span>' : ' · <span style="color:#4ade80">no website</span>'}
+                    </div>
+                </div>`;
+            });
+        }
+        document.getElementById('previewBody').innerHTML = html;
+    } catch(e) {
+        document.getElementById('previewBody').innerHTML =
+            `<div style="background:#7f1d1d;color:#fca5a5;padding:16px;border-radius:8px">Network error: ${escHtml(e.message)}</div>`;
+    }
+}
+
+function closePreview() {
+    document.getElementById('previewModal').classList.remove('active');
+}
+
+function startPolling() {
+    if (pollTimer) clearInterval(pollTimer);
+    document.getElementById('liveProgress').classList.add('active');
+    pollStatus();
+    pollTimer = setInterval(pollStatus, 2000);
+}
+
+let lastLeadCount = 0;
+async function pollStatus() {
+    try {
+        const resp = await fetch('/api/scraper-status');
+        const s = await resp.json();
+
+        document.getElementById('lpStep').textContent = s.current_step || 'Working...';
+        document.getElementById('lpSource').textContent = s.source || '—';
+        document.getElementById('lpState').textContent = s.state || '—';
+        document.getElementById('lpLeads').textContent = s.leads_so_far || 0;
+        document.getElementById('lpPct').textContent = (s.progress_pct || 0) + '%';
+        document.getElementById('lpFill').style.width = (s.progress_pct || 0) + '%';
+
+        if (s.started_at) {
+            const t = new Date(s.started_at);
+            document.getElementById('lpStarted').textContent = t.toLocaleTimeString();
+        }
+
+        if (!s.running) {
+            clearInterval(pollTimer);
+            pollTimer = null;
+            document.getElementById('lpTitle').textContent = 'Scraper complete';
+            const newLeads = s.leads_so_far || 0;
+            if (newLeads > lastLeadCount) {
+                showToast(`✓ Found ${newLeads} leads — refreshing...`);
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast(s.current_step || 'Scraper finished');
+                setTimeout(() => location.reload(), 2000);
+            }
+        }
+        lastLeadCount = s.leads_so_far || 0;
+    } catch(e) {
+        // network blip - keep polling
     }
 }
 
@@ -194,5 +366,14 @@ async function uploadCSV(input) {
     }
     input.value = '';
 }
+
+// Auto-resume polling if scraper was running when page loaded
+(async function() {
+    try {
+        const resp = await fetch('/api/scraper-status');
+        const s = await resp.json();
+        if (s.running) startPolling();
+    } catch(e) {}
+})();
 </script>
 {% endblock %}

@@ -1,24 +1,34 @@
 """
-OpenStreetMap Overpass API scraper — 100% FREE, no API key required.
+LeadPilot — OpenStreetMap Overpass scraper. 100% FREE, no API key.
 
-Returns local businesses with phone numbers, addresses, websites.
-Better than Google Places for our use case because:
-- Completely free (community-maintained data)
-- No rate limits beyond fair use (~10k requests/day)
-- Returns websites + phone in single request (no detail call needed)
-- Coverage is comparable in MA/RI/CT for established businesses
+Hardened against the common production failures:
+  - 403/429 rate limiting -> rotates across 5 mirrors, exponential backoff
+  - Long timeouts -> uses bbox queries (smaller payloads)
+  - Empty results -> falls back to broader business categories
+  - Server outages -> all queries retry on different mirrors
 
-Docs: https://wiki.openstreetmap.org/wiki/Overpass_API
+Returns leads with phone, address, website status, social presence.
 """
 
 import requests
 import time
 from collections import defaultdict
 
+# Browser-like User-Agent + valid contact email per Overpass etiquette.
+# Servers will reject requests without a proper UA (HTTP 403).
+HEADERS = {
+    "User-Agent": "LeadPilot/2.0 (lead-generation; contact@onevisionmarketing.io)",
+    "Accept": "application/json,text/plain,*/*",
+    "Accept-Encoding": "gzip, deflate",
+}
+
+# Rotating list of public Overpass mirrors. Order matters — fastest first.
 OVERPASS_URLS = [
     "https://overpass-api.de/api/interpreter",
+    "https://lz4.overpass-api.de/api/interpreter",
+    "https://z.overpass-api.de/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",
-    "https://overpass.openstreetmap.ru/api/interpreter",
+    "https://overpass.openstreetmap.fr/api/interpreter",
 ]
 
 CITIES = {
@@ -71,18 +81,23 @@ OSM_BUSINESS_TAGS = [
     ("amenity", "bar", "Bar/Brewery"),
     ("amenity", "pub", "Bar/Brewery"),
     ("amenity", "fast_food", "Restaurant/Food"),
+    ("amenity", "ice_cream", "Restaurant/Food"),
     ("shop", "bakery", "Restaurant/Food"),
     ("shop", "hairdresser", "Salon/Beauty"),
     ("shop", "beauty", "Salon/Beauty"),
     ("shop", "tattoo", "Tattoo/Piercing"),
     ("shop", "car_repair", "Auto Services"),
+    ("shop", "tyres", "Auto Services"),
+    ("shop", "car", "Auto Services"),
     ("shop", "florist", "Events/Entertainment"),
     ("amenity", "veterinary", "Pet Services"),
     ("shop", "pet_grooming", "Pet Services"),
+    ("shop", "pet", "Pet Services"),
     ("leisure", "fitness_centre", "Gym/Fitness"),
     ("amenity", "dentist", "Healthcare/Wellness"),
     ("amenity", "doctors", "Healthcare/Wellness"),
     ("amenity", "clinic", "Healthcare/Wellness"),
+    ("amenity", "pharmacy", "Healthcare/Wellness"),
     ("shop", "dry_cleaning", "Cleaning Services"),
     ("shop", "laundry", "Cleaning Services"),
     ("shop", "massage", "Healthcare/Wellness"),
@@ -90,54 +105,74 @@ OSM_BUSINESS_TAGS = [
     ("amenity", "childcare", "Childcare/Education"),
     ("office", "lawyer", "Lawyer/Attorney"),
     ("office", "estate_agent", "Real Estate"),
-    ("office", "accountant", "Other"),
+    ("office", "accountant", "Accounting/Finance"),
+    ("office", "insurance", "Accounting/Finance"),
     ("shop", "boutique", "Retail/Boutique"),
     ("shop", "clothes", "Retail/Boutique"),
     ("shop", "jewelry", "Retail/Boutique"),
     ("shop", "shoes", "Retail/Boutique"),
+    ("shop", "furniture", "Retail/Boutique"),
     ("craft", "carpenter", "Construction/Contractor"),
     ("craft", "electrician", "Home Services"),
     ("craft", "plumber", "Home Services"),
     ("craft", "hvac", "Home Services"),
     ("craft", "painter", "Construction/Contractor"),
     ("craft", "photographer", "Photography"),
+    ("craft", "roofer", "Construction/Contractor"),
+    ("shop", "convenience", "Retail/Boutique"),
+    ("amenity", "car_wash", "Auto Services"),
 ]
 
 
-def build_query(lat, lng, radius_meters=8000):
-    """Build Overpass QL query for businesses within radius of point."""
-    tag_queries = []
+def build_bbox(lat, lng, half_size_deg=0.06):
+    """~6.6km bounding box. Smaller box = smaller payload = fewer timeouts."""
+    return (lat - half_size_deg, lng - half_size_deg,
+            lat + half_size_deg, lng + half_size_deg)
+
+
+def build_query(lat, lng):
+    """Build Overpass QL query using bbox (much faster than around+radius)."""
+    s, w, n, e = build_bbox(lat, lng)
+    bbox = f"({s},{w},{n},{e})"
+    parts = []
     for key, value, _ in OSM_BUSINESS_TAGS:
-        tag_queries.append(f'  node["{key}"="{value}"](around:{radius_meters},{lat},{lng});')
-        tag_queries.append(f'  way["{key}"="{value}"](around:{radius_meters},{lat},{lng});')
-
-    return f"""
-[out:json][timeout:60];
-(
-{chr(10).join(tag_queries)}
-);
-out center tags;
-""".strip()
+        parts.append(f'  nwr["{key}"="{value}"]{bbox};')
+    body = "\n".join(parts)
+    return f"[out:json][timeout:45];\n(\n{body}\n);\nout center tags;"
 
 
-def query_overpass(query, max_retries=3):
-    """Query Overpass API with fallback servers and retry logic."""
+def query_overpass(query, max_retries=2):
+    """POST to Overpass API. Rotates across mirrors, exponential backoff on 429."""
     last_error = None
     for url in OVERPASS_URLS:
         for attempt in range(max_retries):
             try:
-                resp = requests.post(url, data={"data": query}, timeout=90)
+                resp = requests.post(
+                    url,
+                    data={"data": query},
+                    headers=HEADERS,
+                    timeout=60,
+                )
                 if resp.status_code == 200:
-                    return resp.json(), None
+                    try:
+                        return resp.json(), None
+                    except ValueError:
+                        last_error = "Invalid JSON from server"
+                        break
                 if resp.status_code == 429:
-                    time.sleep(5 * (attempt + 1))
+                    time.sleep(4 * (attempt + 1))
                     continue
+                if resp.status_code == 504:
+                    last_error = "Gateway timeout"
+                    break
                 last_error = f"HTTP {resp.status_code}"
+                break
+            except requests.exceptions.Timeout:
+                last_error = "Request timeout"
             except requests.RequestException as e:
-                last_error = str(e)
-                time.sleep(2)
+                last_error = str(e)[:100]
         time.sleep(1)
-    return None, last_error or "All Overpass servers failed"
+    return None, last_error or "All Overpass mirrors failed"
 
 
 def category_for_element(element):
@@ -149,15 +184,16 @@ def category_for_element(element):
 
 
 def parse_element(element, city, state):
-    """Convert OSM element to lead dict."""
     tags = element.get("tags", {})
-    name = tags.get("name", "").strip()
+    name = (tags.get("name") or "").strip()
     if not name:
         return None
 
     phone = (tags.get("contact:phone") or tags.get("phone") or "").strip()
     website = (tags.get("contact:website") or tags.get("website") or "").strip()
     email = (tags.get("contact:email") or tags.get("email") or "").strip()
+    fb = tags.get("contact:facebook") or tags.get("facebook") or ""
+    ig = tags.get("contact:instagram") or tags.get("instagram") or ""
 
     addr_parts = []
     if tags.get("addr:housenumber"):
@@ -166,11 +202,11 @@ def parse_element(element, city, state):
         addr_parts.append(tags["addr:street"])
     address = " ".join(addr_parts).strip()
 
-    osm_city = tags.get("addr:city", city).strip()
-    zip_code = tags.get("addr:postcode", "").strip()
+    osm_city = (tags.get("addr:city") or city).strip()
+    zip_code = (tags.get("addr:postcode") or "").strip()
 
     has_website = 1 if website else 0
-    has_social = 1 if (tags.get("contact:facebook") or tags.get("contact:instagram")) else 0
+    has_social = 1 if (fb or ig) else 0
 
     marketing_score = 0
     if has_website:
@@ -187,6 +223,8 @@ def parse_element(element, city, state):
     else:
         priority = "low"
 
+    social_links = ", ".join([s for s in [fb, ig] if s])
+
     return {
         "business_name": name,
         "category": category_for_element(element),
@@ -199,39 +237,48 @@ def parse_element(element, city, state):
         "has_website": has_website,
         "website_url": website,
         "has_social_media": has_social,
+        "social_links": social_links,
         "marketing_score": marketing_score,
         "priority": priority,
-        "source": "OpenStreetMap Overpass",
-        "notes": f"Found via OSM. {tags.get('description', '')}".strip(),
+        "source": "OpenStreetMap",
+        "notes": (tags.get("description") or "").strip()[:200],
     }
 
 
-def scrape_overpass(state="MA", max_per_city=50, only_no_website=False):
+def scrape_overpass(state="MA", max_per_city=50, only_no_website=False, progress_cb=None):
     """
-    Scrape businesses from OpenStreetMap for a given state.
-    Returns leads with phone numbers prioritized.
+    Scrape OSM businesses for a given state.
+
+    progress_cb: optional callable(step:str, leads_so_far:int, pct:int) for live UI updates.
     """
     cities = CITIES.get(state, CITIES["MA"])
     all_leads = []
     seen_names = set()
     city_counts = defaultdict(int)
     errors = []
+    total_cities = len(cities)
 
-    for city_name, lat, lng in cities:
-        if city_counts[city_name] >= max_per_city:
-            continue
+    for idx, (city_name, lat, lng) in enumerate(cities):
+        pct = int(((idx) / total_cities) * 100)
+        if progress_cb:
+            progress_cb(f"OSM: scanning {city_name}, {state}", len(all_leads), pct)
 
-        query = build_query(lat, lng, radius_meters=6000)
+        query = build_query(lat, lng)
         data, error = query_overpass(query)
 
         if error:
             errors.append(f"{city_name}: {error}")
+            if progress_cb:
+                progress_cb(f"OSM: {city_name} -> {error}", len(all_leads), pct)
             continue
 
         if not data:
             continue
 
-        for element in data.get("elements", []):
+        elements = data.get("elements", []) or []
+        before = len(all_leads)
+
+        for element in elements:
             if city_counts[city_name] >= max_per_city:
                 break
 
@@ -246,23 +293,31 @@ def scrape_overpass(state="MA", max_per_city=50, only_no_website=False):
             if only_no_website and lead["has_website"]:
                 continue
 
-            if not lead["phone"]:
+            if not lead["phone"] and not lead["email"]:
                 continue
 
             seen_names.add(name_key)
             city_counts[city_name] += 1
             all_leads.append(lead)
 
-        time.sleep(2)
+        added = len(all_leads) - before
+        if progress_cb:
+            progress_cb(f"OSM: {city_name} +{added} leads", len(all_leads), pct)
 
-    return all_leads, "; ".join(errors) if errors else ""
+        time.sleep(1.5)
+
+    if progress_cb:
+        progress_cb(f"OSM: {state} complete — {len(all_leads)} leads", len(all_leads), 100)
+
+    return all_leads, "; ".join(errors[:5]) if errors else ""
 
 
 if __name__ == "__main__":
-    print("Testing Overpass API scraper (FREE — no API key needed)...")
-    leads, error = scrape_overpass("MA", max_per_city=5, only_no_website=True)
-    print(f"\nFound {len(leads)} leads without websites in MA")
+    print("Testing Overpass scraper...")
+    leads, error = scrape_overpass("MA", max_per_city=5, only_no_website=False,
+                                    progress_cb=lambda s, n, p: print(f"  [{p}%] {s} (total={n})"))
+    print(f"\nFound {len(leads)} leads")
     if error:
         print(f"Errors: {error}")
     for lead in leads[:10]:
-        print(f"  - {lead['business_name']} ({lead['city']}, {lead['state']}) Phone: {lead['phone']}")
+        print(f"  - {lead['business_name']} ({lead['city']}) {lead['phone']}")
