@@ -1,485 +1,505 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leads — One Vision Marketing</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+{% extends "_layout.html" %}
+{% set active = "leads" %}
+{% block title %}Leads — One Vision{% endblock %}
 
-        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 240px; background: #1e293b; border-right: 1px solid #334155; padding: 24px 16px; z-index: 100; }
-        .sidebar h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
-        .sidebar .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 32px; }
-        .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: #cbd5e1; text-decoration: none; font-size: 14px; margin-bottom: 4px; transition: all 0.15s; }
-        .sidebar nav a:hover, .sidebar nav a.active { background: #334155; color: #f8fafc; }
-        .sidebar nav a svg { width: 18px; height: 18px; flex-shrink: 0; }
+{% block extra_css %}
+.filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; align-items: center; }
+.filters input, .filters select { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; font-family: inherit; }
+.filters input:focus, .filters select:focus { outline: none; border-color: #3b82f6; }
+.filters input[type="text"] { width: 220px; }
 
-        .main { margin-left: 240px; padding: 24px; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+.toolbar .info { font-size: 13px; color: #94a3b8; }
 
-        .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
-        .filters input, .filters select { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
-        .filters input:focus, .filters select:focus { outline: none; border-color: #3b82f6; }
-        .filters input[type="text"] { width: 220px; }
+.leads-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.leads-table th { text-align: left; padding: 10px 8px; color: #94a3b8; border-bottom: 2px solid #334155; font-weight: 500; cursor: pointer; user-select: none; white-space: nowrap; background: #0f172a; position: sticky; top: 0; }
+.leads-table th:hover { color: #f8fafc; }
+.leads-table td { padding: 10px 8px; border-bottom: 1px solid #1e293b; vertical-align: middle; }
+.leads-table tr:hover { background: #1e293b; }
+.leads-table input[type="checkbox"] { accent-color: #3b82f6; }
 
-        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .toolbar .info { font-size: 13px; color: #94a3b8; }
+.score-bar { display: inline-block; width: 50px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden; vertical-align: middle; }
+.score-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444, #fbbf24, #4ade80); }
 
-        .btn { padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
-        .btn-sm { padding: 5px 10px; font-size: 12px; }
-        .btn-primary { background: #3b82f6; color: white; }
-        .btn-primary:hover { background: #2563eb; }
-        .btn-success { background: #22c55e; color: white; }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-outline { background: transparent; border: 1px solid #475569; color: #cbd5e1; }
-        .btn-outline:hover { border-color: #60a5fa; color: #60a5fa; }
+.phone-link { color: #60a5fa; }
+.phone-link:hover { text-decoration: underline; }
 
-        .leads-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .leads-table th { text-align: left; padding: 10px 8px; color: #94a3b8; border-bottom: 2px solid #334155; font-weight: 500; position: sticky; top: 0; background: #0f172a; cursor: pointer; user-select: none; white-space: nowrap; }
-        .leads-table th:hover { color: #f8fafc; }
-        .leads-table td { padding: 10px 8px; border-bottom: 1px solid #1e293b; vertical-align: middle; }
-        .leads-table tr:hover { background: #1e293b; }
-        .leads-table input[type="checkbox"] { accent-color: #3b82f6; }
+.bulk-bar { background: #1e3a5f; border: 1px solid #2563eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: none; align-items: center; gap: 12px; flex-wrap: wrap; }
+.bulk-bar.show { display: flex; }
+.bulk-bar span { font-size: 13px; color: #93c5fd; }
 
-        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
-        .badge-high { background: #7f1d1d; color: #fca5a5; }
-        .badge-medium { background: #713f12; color: #fde047; }
-        .badge-low { background: #14532d; color: #86efac; }
-        .badge-new { background: #1e3a5f; color: #93c5fd; }
-        .badge-contacted { background: #166534; color: #4ade80; }
-        .badge-qualified { background: #581c87; color: #d8b4fe; }
-        .badge-lost { background: #44403c; color: #a8a29e; }
-        .badge-nosite { background: #7f1d1d; color: #fca5a5; }
-        .badge-basic { background: #713f12; color: #fde047; }
-        .badge-yes { background: #14532d; color: #86efac; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: none; align-items: center; justify-content: center; }
+.modal-overlay.show { display: flex; }
+.modal { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; width: 600px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+.modal h3 { font-size: 18px; margin-bottom: 16px; color: #f8fafc; }
+.modal label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 4px; margin-top: 12px; }
+.modal input, .modal select, .modal textarea { width: 100%; background: #0f172a; border: 1px solid #334155; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; font-family: inherit; }
+.modal textarea { height: 60px; resize: vertical; }
+.modal .actions { display: flex; gap: 8px; margin-top: 20px; justify-content: flex-end; }
+.modal .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        .phone-link { color: #60a5fa; text-decoration: none; }
-        .phone-link:hover { text-decoration: underline; }
+.loading { text-align: center; padding: 40px; color: #64748b; font-size: 14px; }
+.sort-active { color: #60a5fa !important; }
+.sort-active::after { content: ' ▾'; }
+.sort-active.asc::after { content: ' ▴'; }
 
-        .pagination { display: flex; gap: 8px; justify-content: center; margin-top: 20px; }
+.pagination { display: flex; gap: 8px; justify-content: center; margin-top: 20px; }
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: none; align-items: center; justify-content: center; }
-        .modal-overlay.show { display: flex; }
-        .modal { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; width: 500px; max-height: 80vh; overflow-y: auto; }
-        .modal h3 { font-size: 18px; margin-bottom: 16px; color: #f8fafc; }
-        .modal label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 4px; margin-top: 12px; }
-        .modal input, .modal select, .modal textarea { width: 100%; background: #0f172a; border: 1px solid #334155; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
-        .modal textarea { height: 60px; resize: vertical; }
-        .modal .actions { display: flex; gap: 8px; margin-top: 20px; justify-content: flex-end; }
+.activities { margin-top: 16px; max-height: 200px; overflow-y: auto; padding: 12px; background: #0f172a; border-radius: 6px; }
+.activity { padding: 6px 0; font-size: 12px; border-bottom: 1px solid #1e293b; }
+.activity .type { color: #60a5fa; font-weight: 500; }
+.activity .time { color: #64748b; font-size: 11px; }
 
-        .bulk-bar { background: #1e3a5f; border: 1px solid #2563eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: none; align-items: center; gap: 12px; }
-        .bulk-bar.show { display: flex; }
-        .bulk-bar span { font-size: 13px; color: #93c5fd; }
+.saved-search-list { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.saved-search-tag { background: #1e3a5f; color: #93c5fd; padding: 4px 10px; border-radius: 12px; font-size: 12px; cursor: pointer; }
+.saved-search-tag:hover { background: #1e40af; }
+.saved-search-tag .x { color: #f87171; margin-left: 6px; cursor: pointer; }
+{% endblock %}
 
-        #toast { position: fixed; bottom: 24px; right: 24px; background: #22c55e; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; z-index: 1000; }
+{% block content %}
+<h2 style="font-size:24px;color:#f8fafc;margin-bottom:16px">All Leads</h2>
 
-        .mobile-nav { display: none; position: fixed; top: 0; left: 0; right: 0; background: #1e293b; border-bottom: 1px solid #334155; padding: 12px 16px; z-index: 100; }
-        .mobile-nav h1 { font-size: 16px; font-weight: 700; color: #f8fafc; display: inline; }
-        .mobile-nav a { color: #60a5fa; text-decoration: none; font-size: 13px; margin-left: 16px; }
+{% if saved_searches %}
+<div class="saved-search-list">
+    <span style="font-size:12px;color:#94a3b8;align-self:center">Saved:</span>
+    {% for s in saved_searches %}
+    <span class="saved-search-tag" data-filters='{{ s.filters | tojson }}' onclick="loadSaved(this)">
+        {{ s.name }}
+        <span class="x" onclick="event.stopPropagation();delSaved({{ s.id }})">×</span>
+    </span>
+    {% endfor %}
+</div>
+{% endif %}
 
-        .loading { text-align: center; padding: 40px; color: #64748b; font-size: 14px; }
-        .sort-active { color: #60a5fa !important; }
+<div class="filters">
+    <input type="text" id="search" placeholder="Search name, phone, email..." onkeyup="if(event.key==='Enter')loadLeads()">
+    <select id="filterState" onchange="loadLeads()">
+        <option value="">All States</option>
+        <option value="MA">MA</option><option value="RI">RI</option><option value="CT">CT</option>
+    </select>
+    <select id="filterWebsite" onchange="loadLeads()">
+        <option value="">Any Website</option>
+        <option value="0">No Website</option>
+        <option value="1">Has Website</option>
+    </select>
+    <select id="filterPriority" onchange="loadLeads()">
+        <option value="">Any Priority</option>
+        <option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
+    </select>
+    <select id="filterStatus" onchange="loadLeads()">
+        <option value="">Any Status</option>
+        <option value="new">New</option><option value="contacted">Contacted</option>
+        <option value="responded">Responded</option><option value="qualified">Qualified</option>
+        <option value="proposal">Proposal</option><option value="won">Won</option><option value="lost">Lost</option>
+    </select>
+    <input type="text" id="filterCategory" placeholder="Category" onkeyup="if(event.key==='Enter')loadLeads()" style="width:140px">
+    <input type="number" id="filterMinScore" placeholder="Min score" min="0" max="100" onchange="loadLeads()" style="width:100px">
+    <button class="btn btn-primary btn-sm" onclick="loadLeads()">Apply</button>
+    <button class="btn btn-outline btn-sm" onclick="resetFilters()">Reset</button>
+    <button class="btn btn-outline btn-sm" onclick="saveCurrentSearch()">Save Search</button>
+</div>
 
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .mobile-nav { display: flex; align-items: center; }
-            .main { margin-left: 0; padding: 12px; padding-top: 56px; }
-        }
-    </style>
-</head>
-<body>
-    <div class="mobile-nav">
-        <h1>One Vision</h1>
-        <a href="/">Dashboard</a>
-        <a href="/leads">Leads</a>
-        <a href="/api/export">Export</a>
+<div class="bulk-bar" id="bulkBar">
+    <span id="bulkCount">0 selected</span>
+    <button class="btn btn-sm btn-success" onclick="bulkUpdate('status','contacted')">Mark Contacted</button>
+    <button class="btn btn-sm btn-primary" onclick="bulkUpdate('status','qualified')">Mark Qualified</button>
+    <button class="btn btn-sm btn-primary" onclick="bulkUpdate('priority','high')">High Priority</button>
+    <button class="btn btn-sm btn-danger" onclick="bulkDelete()">Delete</button>
+</div>
+
+<div class="toolbar">
+    <div class="info" id="resultsInfo">Loading...</div>
+    <div style="display:flex;gap:8px">
+        <button class="btn btn-sm btn-outline" onclick="addLead()">+ Add Lead</button>
+        <button class="btn btn-sm btn-outline" onclick="exportFiltered()">Export Filtered</button>
     </div>
-    <div class="sidebar">
-        <h1>One Vision</h1>
-        <div class="subtitle">Lead Generation System</div>
-        <nav>
-            <a href="/">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                Dashboard
-            </a>
-            <a href="/leads" class="active">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                All Leads
-            </a>
-            <a href="/api/export">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Export CSV
-            </a>
-        </nav>
-    </div>
+</div>
 
-    <div class="main">
-        <div class="filters">
-            <input type="text" id="search" placeholder="Search leads..." onkeyup="if(event.key==='Enter')loadLeads()">
-            <select id="filterState" onchange="loadLeads()">
-                <option value="">All States</option>
-                <option value="MA">Massachusetts</option>
-                <option value="RI">Rhode Island</option>
-                <option value="CT">Connecticut</option>
-            </select>
-            <select id="filterWebsite" onchange="loadLeads()">
-                <option value="">Any Website Status</option>
-                <option value="0">No Website</option>
-                <option value="1">Has Website</option>
-            </select>
-            <select id="filterPriority" onchange="loadLeads()">
-                <option value="">Any Priority</option>
-                <option value="high">High</option>
-                <option value="medium">Medium</option>
-                <option value="low">Low</option>
-            </select>
-            <select id="filterStatus" onchange="loadLeads()">
-                <option value="">Any Status</option>
-                <option value="new">New</option>
-                <option value="contacted">Contacted</option>
-                <option value="qualified">Qualified</option>
-                <option value="lost">Lost</option>
-            </select>
-            <select id="filterCategory" onchange="loadLeads()">
-                <option value="">Any Category</option>
-                <option value="Restaurant">Restaurant/Food</option>
-                <option value="Salon">Salon/Beauty</option>
-                <option value="Barbershop">Barbershop</option>
-                <option value="Gym">Gym/Fitness</option>
-                <option value="Auto">Auto Services</option>
-                <option value="Construction">Construction</option>
-                <option value="Landscaping">Landscaping</option>
-                <option value="Cleaning">Cleaning</option>
-                <option value="Tattoo">Tattoo/Piercing</option>
-                <option value="Real Estate">Real Estate</option>
-                <option value="Lawyer">Lawyer/Attorney</option>
-                <option value="Healthcare">Healthcare</option>
-                <option value="Retail">Retail/Boutique</option>
-                <option value="Other">Other</option>
-            </select>
-            <button class="btn btn-primary" onclick="loadLeads()">Search</button>
-            <button class="btn btn-outline" onclick="resetFilters()">Reset</button>
+<div style="overflow-x:auto;background:#0f172a;border-radius:8px">
+    <table class="leads-table">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                <th data-sort="business_name">Business</th>
+                <th data-sort="category">Category</th>
+                <th data-sort="city">City</th>
+                <th data-sort="state">St</th>
+                <th>Phone</th>
+                <th>Website</th>
+                <th data-sort="lead_score">Score</th>
+                <th data-sort="priority">Priority</th>
+                <th>Status</th>
+                <th data-sort="date_found">Found</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="leadsBody"></tbody>
+    </table>
+</div>
+
+<div class="pagination" id="pagination"></div>
+
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <h3 id="modalTitle">Edit Lead</h3>
+        <input type="hidden" id="editId">
+        <div class="row">
+            <div><label>Business Name</label><input type="text" id="editName"></div>
+            <div><label>Owner Name</label><input type="text" id="editOwner"></div>
         </div>
-
-        <div class="bulk-bar" id="bulkBar">
-            <span id="bulkCount">0 selected</span>
-            <button class="btn btn-sm btn-success" onclick="bulkUpdate('status','contacted')">Mark Contacted</button>
-            <button class="btn btn-sm btn-primary" onclick="bulkUpdate('priority','high')">Set High Priority</button>
-            <button class="btn btn-sm btn-danger" onclick="bulkDelete()">Delete Selected</button>
+        <div class="row">
+            <div><label>Category</label><input type="text" id="editCategory"></div>
+            <div><label>Business Type</label><input type="text" id="editBizType"></div>
         </div>
+        <div class="row">
+            <div><label>Phone</label><input type="text" id="editPhone"></div>
+            <div><label>Email</label><input type="text" id="editEmail"></div>
+        </div>
+        <label>Address</label><input type="text" id="editAddress">
+        <div class="row">
+            <div><label>City</label><input type="text" id="editCity"></div>
+            <div><label>State</label>
+                <select id="editState">
+                    <option value="MA">MA</option><option value="RI">RI</option><option value="CT">CT</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div><label>Priority</label>
+                <select id="editPriority">
+                    <option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
+                </select>
+            </div>
+            <div><label>Status</label>
+                <select id="editStatus">
+                    <option value="new">New</option><option value="contacted">Contacted</option>
+                    <option value="responded">Responded</option><option value="qualified">Qualified</option>
+                    <option value="proposal">Proposal</option><option value="won">Won</option><option value="lost">Lost</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div><label>Tags (comma separated)</label><input type="text" id="editTags" placeholder="e.g. hot, follow-up"></div>
+            <div><label>Next Followup</label><input type="date" id="editFollowup"></div>
+        </div>
+        <label>Notes</label>
+        <textarea id="editNotes"></textarea>
 
-        <div class="toolbar">
-            <div class="info" id="resultsInfo">Loading...</div>
+        <div id="activityPanel" style="display:none">
+            <h4 style="font-size:14px;color:#f8fafc;margin-top:20px;margin-bottom:8px">Activity</h4>
             <div style="display:flex;gap:8px">
-                <button class="btn btn-sm btn-outline" onclick="addLead()">+ Add Lead</button>
-                <button class="btn btn-sm btn-outline" onclick="window.location='/api/export?'+buildQuery()">Export Filtered</button>
+                <input type="text" id="newActivityNote" placeholder="Add a note...">
+                <button class="btn btn-sm btn-primary" onclick="addActivity()">Add</button>
             </div>
+            <div class="activities" id="activitiesList"></div>
         </div>
 
-        <div style="overflow-x:auto">
-            <table class="leads-table">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
-                        <th onclick="sortBy('business_name')">Business</th>
-                        <th onclick="sortBy('category')">Category</th>
-                        <th onclick="sortBy('city')">City</th>
-                        <th onclick="sortBy('state')">State</th>
-                        <th>Phone</th>
-                        <th>Website</th>
-                        <th onclick="sortBy('priority')">Priority</th>
-                        <th>Status</th>
-                        <th onclick="sortBy('date_found')">Found</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="leadsBody"></tbody>
-            </table>
-        </div>
-
-        <div class="pagination" id="pagination"></div>
-    </div>
-
-    <div class="modal-overlay" id="editModal">
-        <div class="modal">
-            <h3 id="modalTitle">Edit Lead</h3>
-            <input type="hidden" id="editId">
-            <label>Business Name</label>
-            <input type="text" id="editName">
-            <label>Owner Name</label>
-            <input type="text" id="editOwner">
-            <label>Category</label>
-            <input type="text" id="editCategory">
-            <label>Phone</label>
-            <input type="text" id="editPhone">
-            <label>Email</label>
-            <input type="text" id="editEmail">
-            <label>City</label>
-            <input type="text" id="editCity">
-            <label>State</label>
-            <select id="editState"><option value="MA">MA</option><option value="RI">RI</option><option value="CT">CT</option></select>
-            <label>Priority</label>
-            <select id="editPriority"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
-            <label>Status</label>
-            <select id="editStatus"><option value="new">New</option><option value="contacted">Contacted</option><option value="qualified">Qualified</option><option value="lost">Lost</option></select>
-            <label>Notes</label>
-            <textarea id="editNotes"></textarea>
-            <div class="actions">
-                <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveLead()">Save</button>
-            </div>
+        <div class="actions">
+            <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveLead()">Save</button>
         </div>
     </div>
+</div>
+{% endblock %}
 
-    <div id="toast"></div>
+{% block scripts %}
+<script>
+let currentSort = 'lead_score', currentDir = 'DESC', currentOffset = 0;
+const pageSize = 100;
+let selectedIds = new Set();
 
-    <script>
-        let currentSort = 'date_found';
-        let currentDir = 'DESC';
-        let currentOffset = 0;
-        const pageSize = 100;
-        let selectedIds = new Set();
+function buildQuery() {
+    const p = new URLSearchParams();
+    const get = id => document.getElementById(id).value;
+    if (get('search')) p.set('search', get('search'));
+    if (get('filterState')) p.set('state', get('filterState'));
+    if (get('filterWebsite') !== '') p.set('has_website', get('filterWebsite'));
+    if (get('filterPriority')) p.set('priority', get('filterPriority'));
+    if (get('filterStatus')) p.set('status', get('filterStatus'));
+    if (get('filterCategory')) p.set('category', get('filterCategory'));
+    if (get('filterMinScore')) p.set('min_score', get('filterMinScore'));
+    p.set('sort_by', currentSort);
+    p.set('sort_dir', currentDir);
+    p.set('limit', pageSize);
+    p.set('offset', currentOffset);
+    return p.toString();
+}
 
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3000);
+async function loadLeads() {
+    const tbody = document.getElementById('leadsBody');
+    tbody.innerHTML = '<tr><td colspan="12" class="loading">Loading...</td></tr>';
+
+    document.querySelectorAll('.leads-table th').forEach(th => {
+        th.classList.remove('sort-active', 'asc');
+        if (th.dataset.sort === currentSort) {
+            th.classList.add('sort-active');
+            if (currentDir === 'ASC') th.classList.add('asc');
         }
+    });
 
-        function buildQuery() {
-            const params = new URLSearchParams();
-            const search = document.getElementById('search').value;
-            const state = document.getElementById('filterState').value;
-            const website = document.getElementById('filterWebsite').value;
-            const priority = document.getElementById('filterPriority').value;
-            const status = document.getElementById('filterStatus').value;
-            const category = document.getElementById('filterCategory').value;
+    try {
+        const resp = await fetch('/api/leads?' + buildQuery());
+        const data = await resp.json();
+        tbody.innerHTML = '';
 
-            if (search) params.set('search', search);
-            if (state) params.set('state', state);
-            if (website !== '') params.set('has_website', website);
-            if (priority) params.set('priority', priority);
-            if (status) params.set('status', status);
-            if (category) params.set('category', category);
-            params.set('sort_by', currentSort);
-            params.set('sort_dir', currentDir);
-            params.set('limit', pageSize);
-            params.set('offset', currentOffset);
-            return params.toString();
-        }
-
-        async function loadLeads() {
-            const tbody = document.getElementById('leadsBody');
-            tbody.innerHTML = '<tr><td colspan="11" class="loading">Loading leads...</td></tr>';
-
-            document.querySelectorAll('.leads-table th').forEach(th => th.classList.remove('sort-active'));
-
-            const resp = await fetch('/api/leads?' + buildQuery());
-            const data = await resp.json();
-            tbody.innerHTML = '';
-
-            data.leads.forEach(lead => {
-                const websiteBadge = lead.has_website
-                    ? '<span class="badge badge-basic">Basic</span>'
-                    : '<span class="badge badge-nosite">None</span>';
-                const priorityBadge = `<span class="badge badge-${lead.priority}">${lead.priority}</span>`;
-                const statusBadge = `<span class="badge badge-${lead.status}">${lead.status}</span>`;
-                const phone = lead.phone ? `<a class="phone-link" href="tel:${lead.phone}">${lead.phone}</a>` : '-';
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><input type="checkbox" class="lead-cb" data-id="${lead.id}" onchange="updateSelection()" ${selectedIds.has(lead.id)?'checked':''}></td>
-                    <td><strong>${esc(lead.business_name)}</strong>${lead.owner_name ? '<br><small style="color:#94a3b8">'+esc(lead.owner_name)+'</small>' : ''}</td>
-                    <td>${esc(lead.category || lead.business_type || '-')}</td>
-                    <td>${esc(lead.city || '-')}</td>
-                    <td>${lead.state || '-'}</td>
-                    <td>${phone}</td>
-                    <td>${websiteBadge}</td>
-                    <td>${priorityBadge}</td>
-                    <td>${statusBadge}</td>
-                    <td>${lead.date_found || '-'}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline" onclick="editLead(${lead.id})">Edit</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            const total = data.total || '?';
-            document.getElementById('resultsInfo').textContent = `Showing ${data.leads.length} of ${total} leads`;
-            updateBulkBar();
-            buildPagination(data.count);
-
-            if (!data.leads.length) {
-                tbody.innerHTML = '<tr><td colspan="11" class="loading">No leads found matching your filters.</td></tr>';
-            }
-        }
-
-        function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-        function sortBy(field) {
-            if (currentSort === field) currentDir = currentDir === 'ASC' ? 'DESC' : 'ASC';
-            else { currentSort = field; currentDir = 'ASC'; }
-            currentOffset = 0;
-            loadLeads();
-        }
-
-        function resetFilters() {
-            document.getElementById('search').value = '';
-            document.getElementById('filterState').value = '';
-            document.getElementById('filterWebsite').value = '';
-            document.getElementById('filterPriority').value = '';
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterCategory').value = '';
-            currentOffset = 0;
-            currentSort = 'date_found';
-            currentDir = 'DESC';
-            loadLeads();
-        }
-
-        function buildPagination(count) {
-            const div = document.getElementById('pagination');
-            div.innerHTML = '';
-            if (currentOffset > 0) {
-                const btn = document.createElement('button');
-                btn.className = 'btn btn-sm btn-outline';
-                btn.textContent = 'Previous';
-                btn.onclick = () => { currentOffset = Math.max(0, currentOffset - pageSize); loadLeads(); };
-                div.appendChild(btn);
-            }
-            if (count >= pageSize) {
-                const btn = document.createElement('button');
-                btn.className = 'btn btn-sm btn-outline';
-                btn.textContent = 'Next';
-                btn.onclick = () => { currentOffset += pageSize; loadLeads(); };
-                div.appendChild(btn);
-            }
-        }
-
-        function toggleSelectAll() {
-            const checked = document.getElementById('selectAll').checked;
-            document.querySelectorAll('.lead-cb').forEach(cb => {
-                cb.checked = checked;
-                const id = parseInt(cb.dataset.id);
-                if (checked) selectedIds.add(id); else selectedIds.delete(id);
-            });
-            updateBulkBar();
-        }
-
-        function updateSelection() {
-            selectedIds.clear();
-            document.querySelectorAll('.lead-cb:checked').forEach(cb => selectedIds.add(parseInt(cb.dataset.id)));
-            updateBulkBar();
-        }
-
-        function updateBulkBar() {
-            const bar = document.getElementById('bulkBar');
-            const count = selectedIds.size;
-            bar.classList.toggle('show', count > 0);
-            document.getElementById('bulkCount').textContent = `${count} selected`;
-        }
-
-        async function bulkUpdate(field, value) {
-            if (!selectedIds.size) return;
-            const updates = {}; updates[field] = value;
-            await fetch('/api/leads/bulk-update', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ids: [...selectedIds], updates})
-            });
-            showToast(`Updated ${selectedIds.size} leads`);
-            selectedIds.clear();
-            loadLeads();
-        }
-
-        async function bulkDelete() {
-            if (!selectedIds.size || !confirm(`Delete ${selectedIds.size} leads?`)) return;
-            for (const id of selectedIds) {
-                await fetch(`/api/leads/${id}`, {method: 'DELETE'});
-            }
-            showToast(`Deleted ${selectedIds.size} leads`);
-            selectedIds.clear();
-            loadLeads();
-        }
-
-        async function editLead(id) {
-            const resp = await fetch(`/api/leads/${id}`);
-            const lead = await resp.json();
-            document.getElementById('editId').value = id;
-            document.getElementById('editName').value = lead.business_name || '';
-            document.getElementById('editOwner').value = lead.owner_name || '';
-            document.getElementById('editCategory').value = lead.category || '';
-            document.getElementById('editPhone').value = lead.phone || '';
-            document.getElementById('editEmail').value = lead.email || '';
-            document.getElementById('editCity').value = lead.city || '';
-            document.getElementById('editState').value = lead.state || 'MA';
-            document.getElementById('editPriority').value = lead.priority || 'medium';
-            document.getElementById('editStatus').value = lead.status || 'new';
-            document.getElementById('editNotes').value = lead.notes || '';
-            document.getElementById('modalTitle').textContent = 'Edit Lead';
-            document.getElementById('editModal').classList.add('show');
-        }
-
-        function addLead() {
-            document.getElementById('editId').value = '';
-            document.getElementById('editName').value = '';
-            document.getElementById('editOwner').value = '';
-            document.getElementById('editCategory').value = '';
-            document.getElementById('editPhone').value = '';
-            document.getElementById('editEmail').value = '';
-            document.getElementById('editCity').value = '';
-            document.getElementById('editState').value = 'MA';
-            document.getElementById('editPriority').value = 'high';
-            document.getElementById('editStatus').value = 'new';
-            document.getElementById('editNotes').value = '';
-            document.getElementById('modalTitle').textContent = 'Add Lead';
-            document.getElementById('editModal').classList.add('show');
-        }
-
-        function closeModal() {
-            document.getElementById('editModal').classList.remove('show');
-        }
-
-        async function saveLead() {
-            const id = document.getElementById('editId').value;
-            const data = {
-                business_name: document.getElementById('editName').value,
-                owner_name: document.getElementById('editOwner').value,
-                category: document.getElementById('editCategory').value,
-                phone: document.getElementById('editPhone').value,
-                email: document.getElementById('editEmail').value,
-                city: document.getElementById('editCity').value,
-                state: document.getElementById('editState').value,
-                priority: document.getElementById('editPriority').value,
-                status: document.getElementById('editStatus').value,
-                notes: document.getElementById('editNotes').value,
-            };
-
-            if (id) {
-                await fetch(`/api/leads/${id}`, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
-                });
-                showToast('Lead updated');
-            } else {
-                await fetch('/api/leads', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
-                });
-                showToast('Lead added');
-            }
-            closeModal();
-            loadLeads();
-        }
-
-        document.getElementById('editModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
+        data.leads.forEach(lead => {
+            const score = lead.lead_score || 0;
+            const websiteBadge = lead.has_website
+                ? '<span class="badge badge-basic">Has site</span>'
+                : '<span class="badge badge-nosite">No site</span>';
+            const phone = lead.phone ? `<a class="phone-link" href="tel:${escHtml(lead.phone)}">${escHtml(lead.phone)}</a>` : '-';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="checkbox" class="lead-cb" data-id="${lead.id}" onchange="updateSelection()" ${selectedIds.has(lead.id)?'checked':''}></td>
+                <td><strong>${escHtml(lead.business_name)}</strong>${lead.owner_name ? '<br><small style="color:#94a3b8">'+escHtml(lead.owner_name)+'</small>' : ''}</td>
+                <td>${escHtml(lead.category || lead.business_type || '-')}</td>
+                <td>${escHtml(lead.city || '-')}</td>
+                <td>${escHtml(lead.state || '-')}</td>
+                <td>${phone}</td>
+                <td>${websiteBadge}</td>
+                <td><span class="score-bar"><span class="score-bar-fill" style="width:${score}%"></span></span> <span style="font-size:11px;color:#94a3b8">${score}</span></td>
+                <td><span class="badge badge-${lead.priority}">${lead.priority}</span></td>
+                <td><span class="badge badge-${lead.status || 'new'}">${lead.status || 'new'}</span></td>
+                <td style="font-size:11px;color:#94a3b8">${lead.date_found || '-'}</td>
+                <td><button class="btn btn-sm btn-outline" onclick="editLead(${lead.id})">Edit</button></td>
+            `;
+            tbody.appendChild(tr);
         });
 
-        loadLeads();
-    </script>
-</body>
-</html>
+        if (!data.leads.length) {
+            tbody.innerHTML = '<tr><td colspan="12" class="loading">No leads match your filters.</td></tr>';
+        }
+
+        document.getElementById('resultsInfo').textContent = `Showing ${data.leads.length} of ${data.total} leads`;
+        updateBulkBar();
+        buildPagination(data.count);
+    } catch(e) {
+        tbody.innerHTML = '<tr><td colspan="12" class="loading">Error loading leads</td></tr>';
+    }
+}
+
+function sortBy(field) {
+    if (currentSort === field) currentDir = currentDir === 'ASC' ? 'DESC' : 'ASC';
+    else { currentSort = field; currentDir = 'DESC'; }
+    currentOffset = 0;
+    loadLeads();
+}
+
+document.querySelectorAll('.leads-table th[data-sort]').forEach(th => {
+    th.onclick = () => sortBy(th.dataset.sort);
+});
+
+function resetFilters() {
+    ['search','filterState','filterWebsite','filterPriority','filterStatus','filterCategory','filterMinScore'].forEach(id => document.getElementById(id).value = '');
+    currentOffset = 0;
+    currentSort = 'lead_score';
+    currentDir = 'DESC';
+    loadLeads();
+}
+
+function buildPagination(count) {
+    const div = document.getElementById('pagination');
+    div.innerHTML = '';
+    if (currentOffset > 0) {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm btn-outline'; btn.textContent = '← Previous';
+        btn.onclick = () => { currentOffset = Math.max(0, currentOffset - pageSize); loadLeads(); };
+        div.appendChild(btn);
+    }
+    if (count >= pageSize) {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm btn-outline'; btn.textContent = 'Next →';
+        btn.onclick = () => { currentOffset += pageSize; loadLeads(); };
+        div.appendChild(btn);
+    }
+}
+
+function toggleSelectAll() {
+    const checked = document.getElementById('selectAll').checked;
+    document.querySelectorAll('.lead-cb').forEach(cb => {
+        cb.checked = checked;
+        const id = parseInt(cb.dataset.id);
+        if (checked) selectedIds.add(id); else selectedIds.delete(id);
+    });
+    updateBulkBar();
+}
+
+function updateSelection() {
+    selectedIds.clear();
+    document.querySelectorAll('.lead-cb:checked').forEach(cb => selectedIds.add(parseInt(cb.dataset.id)));
+    updateBulkBar();
+}
+
+function updateBulkBar() {
+    const bar = document.getElementById('bulkBar');
+    bar.classList.toggle('show', selectedIds.size > 0);
+    document.getElementById('bulkCount').textContent = `${selectedIds.size} selected`;
+}
+
+async function bulkUpdate(field, value) {
+    if (!selectedIds.size) return;
+    await fetch('/api/leads/bulk-update', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ids: [...selectedIds], updates: {[field]: value}})
+    });
+    showToast(`Updated ${selectedIds.size} leads`);
+    selectedIds.clear();
+    loadLeads();
+}
+
+async function bulkDelete() {
+    if (!selectedIds.size || !confirm(`Delete ${selectedIds.size} leads?`)) return;
+    for (const id of selectedIds) await fetch(`/api/leads/${id}`, {method: 'DELETE'});
+    showToast(`Deleted ${selectedIds.size} leads`);
+    selectedIds.clear();
+    loadLeads();
+}
+
+let currentLeadId = null;
+
+async function editLead(id) {
+    const resp = await fetch(`/api/leads/${id}`);
+    const lead = await resp.json();
+    currentLeadId = id;
+    document.getElementById('editId').value = id;
+    document.getElementById('editName').value = lead.business_name || '';
+    document.getElementById('editOwner').value = lead.owner_name || '';
+    document.getElementById('editCategory').value = lead.category || '';
+    document.getElementById('editBizType').value = lead.business_type || '';
+    document.getElementById('editPhone').value = lead.phone || '';
+    document.getElementById('editEmail').value = lead.email || '';
+    document.getElementById('editAddress').value = lead.address || '';
+    document.getElementById('editCity').value = lead.city || '';
+    document.getElementById('editState').value = lead.state || 'MA';
+    document.getElementById('editPriority').value = lead.priority || 'medium';
+    document.getElementById('editStatus').value = lead.status || 'new';
+    document.getElementById('editTags').value = lead.tags || '';
+    document.getElementById('editFollowup').value = lead.next_followup || '';
+    document.getElementById('editNotes').value = lead.notes || '';
+    document.getElementById('modalTitle').textContent = lead.business_name;
+    document.getElementById('activityPanel').style.display = 'block';
+    renderActivities(lead.activities || []);
+    document.getElementById('editModal').classList.add('show');
+}
+
+function addLead() {
+    currentLeadId = null;
+    ['editId','editName','editOwner','editCategory','editBizType','editPhone','editEmail','editAddress','editCity','editTags','editFollowup','editNotes'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('editState').value = 'MA';
+    document.getElementById('editPriority').value = 'high';
+    document.getElementById('editStatus').value = 'new';
+    document.getElementById('modalTitle').textContent = 'Add Lead';
+    document.getElementById('activityPanel').style.display = 'none';
+    document.getElementById('editModal').classList.add('show');
+}
+
+function closeModal() {
+    document.getElementById('editModal').classList.remove('show');
+}
+
+async function saveLead() {
+    const data = {
+        business_name: document.getElementById('editName').value,
+        owner_name: document.getElementById('editOwner').value,
+        category: document.getElementById('editCategory').value,
+        business_type: document.getElementById('editBizType').value,
+        phone: document.getElementById('editPhone').value,
+        email: document.getElementById('editEmail').value,
+        address: document.getElementById('editAddress').value,
+        city: document.getElementById('editCity').value,
+        state: document.getElementById('editState').value,
+        priority: document.getElementById('editPriority').value,
+        status: document.getElementById('editStatus').value,
+        tags: document.getElementById('editTags').value,
+        next_followup: document.getElementById('editFollowup').value,
+        notes: document.getElementById('editNotes').value,
+    };
+
+    if (currentLeadId) {
+        await fetch(`/api/leads/${currentLeadId}`, {
+            method: 'PUT', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        showToast('Lead updated');
+    } else {
+        const resp = await fetch('/api/leads', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        const result = await resp.json();
+        if (result.error) { showToast(result.error); return; }
+        showToast('Lead added');
+    }
+    closeModal();
+    loadLeads();
+}
+
+function renderActivities(activities) {
+    const list = document.getElementById('activitiesList');
+    if (!activities.length) {
+        list.innerHTML = '<div style="color:#64748b;font-size:12px">No activity yet</div>';
+        return;
+    }
+    list.innerHTML = activities.map(a => `
+        <div class="activity">
+            <div><span class="type">${escHtml(a.activity_type)}</span> ${escHtml(a.note || '')}</div>
+            <div class="time">${escHtml(a.created_at)}</div>
+        </div>
+    `).join('');
+}
+
+async function addActivity() {
+    if (!currentLeadId) return;
+    const note = document.getElementById('newActivityNote').value.trim();
+    if (!note) return;
+    await fetch(`/api/leads/${currentLeadId}/activities`, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({type: 'note', note})
+    });
+    document.getElementById('newActivityNote').value = '';
+    const resp = await fetch(`/api/leads/${currentLeadId}/activities`);
+    renderActivities(await resp.json());
+}
+
+function exportFiltered() {
+    window.location = '/api/export?' + buildQuery();
+}
+
+async function saveCurrentSearch() {
+    const name = prompt('Name this search:');
+    if (!name) return;
+    const filters = {};
+    const get = id => document.getElementById(id).value;
+    ['search','filterState','filterWebsite','filterPriority','filterStatus','filterCategory','filterMinScore'].forEach(id => {
+        if (get(id)) filters[id] = get(id);
+    });
+    await fetch('/api/saved-searches', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name, filters})
+    });
+    showToast('Search saved');
+    setTimeout(() => location.reload(), 1000);
+}
+
+function loadSaved(el) {
+    const filters = JSON.parse(el.dataset.filters);
+    Object.keys(filters).forEach(k => {
+        const input = document.getElementById(k);
+        if (input) input.value = filters[k];
+    });
+    loadLeads();
+}
+
+async function delSaved(id) {
+    if (!confirm('Delete saved search?')) return;
+    await fetch(`/api/saved-searches/${id}`, {method: 'DELETE'});
+    location.reload();
+}
+
+document.getElementById('editModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+loadLeads();
+</script>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "_layout.html" %}
+{% set active = "map" %}
+{% block title %}Map — One Vision{% endblock %}
+
+{% block extra_css %}
+@import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+#map { height: calc(100vh - 180px); border-radius: 12px; border: 1px solid #334155; }
+.map-controls { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.map-controls select { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
+{% endblock %}
+
+{% block content %}
+<h2 style="font-size:24px;color:#f8fafc;margin-bottom:8px">Map View</h2>
+<p style="color:#94a3b8;margin-bottom:16px;font-size:13px">Geocoded by city — click markers to see leads in each area</p>
+
+<div class="map-controls">
+    <select id="filterState" onchange="loadMap()">
+        <option value="">All States</option>
+        <option value="MA">MA</option><option value="RI">RI</option><option value="CT">CT</option>
+    </select>
+    <select id="filterWebsite" onchange="loadMap()">
+        <option value="">Any Website</option>
+        <option value="0">No Website Only</option>
+    </select>
+    <select id="filterPriority" onchange="loadMap()">
+        <option value="">Any Priority</option>
+        <option value="high">High Priority Only</option>
+    </select>
+</div>
+
+<div id="map"></div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const CITY_COORDS = {
+    "Boston,MA": [42.3601, -71.0589], "Worcester,MA": [42.2626, -71.8023],
+    "Springfield,MA": [42.1015, -72.5898], "Brockton,MA": [42.0834, -71.0184],
+    "New Bedford,MA": [41.6362, -70.9342], "Lowell,MA": [42.6334, -71.3162],
+    "Fall River,MA": [41.7015, -71.155], "Taunton,MA": [41.9006, -71.0898],
+    "Plymouth,MA": [41.9584, -70.6673], "Framingham,MA": [42.2793, -71.4162],
+    "Cambridge,MA": [42.3736, -71.1097], "Quincy,MA": [42.2529, -71.0023],
+    "Newton,MA": [42.337, -71.2092], "Somerville,MA": [42.3876, -71.0995],
+    "Pittsfield,MA": [42.4500, -73.2500], "Haverhill,MA": [42.7762, -71.0773],
+    "Roxbury,MA": [42.3294, -71.0951], "West Springfield,MA": [42.1070, -72.6203],
+    "Providence,RI": [41.824, -71.4128], "Warwick,RI": [41.7001, -71.4162],
+    "Cranston,RI": [41.7798, -71.4373], "Pawtucket,RI": [41.8787, -71.3826],
+    "East Providence,RI": [41.8137, -71.3701], "Newport,RI": [41.4901, -71.3128],
+    "Woonsocket,RI": [42.0029, -71.5148],
+    "Hartford,CT": [41.7658, -72.6734], "New Haven,CT": [41.3083, -72.9279],
+    "Bridgeport,CT": [41.1865, -73.1952], "Stamford,CT": [41.0534, -73.5387],
+    "Waterbury,CT": [41.5582, -73.0515], "Norwalk,CT": [41.1177, -73.4082],
+    "Danbury,CT": [41.4015, -73.454], "New Britain,CT": [41.6612, -72.7795],
+    "West Hartford,CT": [41.7620, -72.7420],
+};
+
+const map = L.map('map').setView([42.0, -71.5], 8);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+    maxZoom: 18
+}).addTo(map);
+
+let markers = [];
+
+async function loadMap() {
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+
+    const params = new URLSearchParams();
+    const state = document.getElementById('filterState').value;
+    const website = document.getElementById('filterWebsite').value;
+    const priority = document.getElementById('filterPriority').value;
+    if (state) params.set('state', state);
+    if (website) params.set('has_website', website);
+    if (priority) params.set('priority', priority);
+    params.set('limit', '1000');
+
+    const resp = await fetch('/api/leads?' + params.toString());
+    const data = await resp.json();
+
+    const grouped = {};
+    data.leads.forEach(lead => {
+        const key = `${lead.city || ''},${lead.state || ''}`;
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(lead);
+    });
+
+    Object.keys(grouped).forEach(key => {
+        const coords = CITY_COORDS[key];
+        if (!coords) return;
+        const leads = grouped[key];
+        const noSite = leads.filter(l => !l.has_website).length;
+
+        const color = noSite >= 5 ? '#ef4444' : noSite >= 2 ? '#fbbf24' : '#3b82f6';
+        const radius = Math.min(8 + leads.length * 1.5, 30);
+
+        const marker = L.circleMarker(coords, {
+            radius, color, fillColor: color, fillOpacity: 0.6, weight: 2
+        }).addTo(map);
+
+        const list = leads.slice(0, 8).map(l =>
+            `<div style="padding:4px 0;border-bottom:1px solid #eee;font-size:12px">
+                <strong>${l.business_name}</strong>
+                ${l.phone ? `<br><span style="color:#666">${l.phone}</span>` : ''}
+                ${l.has_website ? '' : '<span style="color:#c00">·No website</span>'}
+            </div>`
+        ).join('');
+
+        marker.bindPopup(`
+            <div style="min-width:240px">
+                <h4 style="margin-bottom:8px">${key} (${leads.length})</h4>
+                <div style="font-size:11px;color:#666;margin-bottom:6px">${noSite} without website</div>
+                ${list}
+                ${leads.length > 8 ? `<div style="font-size:11px;margin-top:6px">+${leads.length - 8} more</div>` : ''}
+            </div>
+        `);
+        markers.push(marker);
+    });
+}
+
+loadMap();
+</script>
+{% endblock %}

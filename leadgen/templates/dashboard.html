@@ -1,243 +1,198 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One Vision Marketing — Lead Dashboard</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+{% extends "_layout.html" %}
+{% set active = "dashboard" %}
+{% block title %}Dashboard — One Vision{% endblock %}
 
-        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 240px; background: #1e293b; border-right: 1px solid #334155; padding: 24px 16px; z-index: 100; }
-        .sidebar h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
-        .sidebar .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 32px; }
-        .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: #cbd5e1; text-decoration: none; font-size: 14px; margin-bottom: 4px; transition: all 0.15s; }
-        .sidebar nav a:hover, .sidebar nav a.active { background: #334155; color: #f8fafc; }
-        .sidebar nav a svg { width: 18px; height: 18px; flex-shrink: 0; }
+{% block extra_css %}
+.page-header { margin-bottom: 32px; }
+.page-header h2 { font-size: 28px; font-weight: 700; color: #f8fafc; }
+.page-header p { color: #94a3b8; margin-top: 4px; }
 
-        .main { margin-left: 240px; padding: 32px; }
-        .page-header { margin-bottom: 32px; }
-        .page-header h2 { font-size: 28px; font-weight: 700; color: #f8fafc; }
-        .page-header p { color: #94a3b8; margin-top: 4px; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; }
+.stat-card .label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-card .value { font-size: 32px; font-weight: 700; color: #f8fafc; margin-top: 4px; }
+.stat-card .value.green { color: #4ade80; }
+.stat-card .value.blue { color: #60a5fa; }
+.stat-card .value.orange { color: #fb923c; }
+.stat-card .value.purple { color: #a78bfa; }
+.stat-card .value.red { color: #f87171; }
+.stat-card .sub { font-size: 11px; color: #64748b; margin-top: 4px; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
-        .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; }
-        .stat-card .label { font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-card .value { font-size: 36px; font-weight: 700; color: #f8fafc; margin-top: 4px; }
-        .stat-card .value.green { color: #4ade80; }
-        .stat-card .value.blue { color: #60a5fa; }
-        .stat-card .value.orange { color: #fb923c; }
-        .stat-card .value.purple { color: #a78bfa; }
+.breakdown-list { list-style: none; }
+.breakdown-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 14px; }
+.breakdown-list li:last-child { border-bottom: none; }
+.breakdown-list .count { font-weight: 600; color: #60a5fa; }
 
-        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-        .card h3 { font-size: 16px; font-weight: 600; color: #f8fafc; margin-bottom: 16px; }
+.actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 32px; }
+.action-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; cursor: pointer; transition: all 0.2s; }
+.action-card:hover { border-color: #60a5fa; transform: translateY(-1px); }
+.action-card h4 { font-size: 14px; font-weight: 600; color: #f8fafc; margin-bottom: 4px; }
+.action-card p { font-size: 12px; color: #94a3b8; }
+.action-card .free { background: #14532d; color: #86efac; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; margin-left: 6px; }
 
-        .breakdown-list { list-style: none; }
-        .breakdown-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 14px; }
-        .breakdown-list li:last-child { border-bottom: none; }
-        .breakdown-list .count { font-weight: 600; color: #60a5fa; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+@media (max-width: 1024px) { .two-col, .three-col { grid-template-columns: 1fr; } }
 
-        .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 32px; }
-        .action-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; cursor: pointer; transition: all 0.2s; }
-        .action-card:hover { border-color: #60a5fa; transform: translateY(-2px); }
-        .action-card h4 { font-size: 15px; font-weight: 600; color: #f8fafc; margin-bottom: 8px; }
-        .action-card p { font-size: 13px; color: #94a3b8; }
+.log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.log-table th { text-align: left; padding: 10px; color: #94a3b8; border-bottom: 1px solid #334155; font-weight: 500; }
+.log-table td { padding: 10px; border-bottom: 1px solid #1e293b; }
+.badge-green { background: #166534; color: #4ade80; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+.badge-red { background: #7f1d1d; color: #fca5a5; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
 
-        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
-        .btn-primary { background: #3b82f6; color: white; }
-        .btn-primary:hover { background: #2563eb; }
-        .btn-success { background: #22c55e; color: white; }
-        .btn-success:hover { background: #16a34a; }
-        .btn-outline { background: transparent; border: 1px solid #475569; color: #cbd5e1; }
-        .btn-outline:hover { border-color: #60a5fa; color: #60a5fa; }
+.activity-item { padding: 10px 0; border-bottom: 1px solid #334155; font-size: 13px; }
+.activity-item:last-child { border-bottom: none; }
+.activity-item .time { color: #64748b; font-size: 11px; }
+.activity-item .biz { color: #60a5fa; font-weight: 500; }
+{% endblock %}
 
-        .log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .log-table th { text-align: left; padding: 10px; color: #94a3b8; border-bottom: 1px solid #334155; font-weight: 500; }
-        .log-table td { padding: 10px; border-bottom: 1px solid #1e293b; }
-        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
-        .badge-green { background: #166534; color: #4ade80; }
-        .badge-red { background: #7f1d1d; color: #fca5a5; }
-        .badge-yellow { background: #713f12; color: #fde047; }
+{% block content %}
+<div class="page-header">
+    <h2>Dashboard</h2>
+    <p>{{ stats.total }} leads · {{ stats.no_website }} without websites · {{ stats.with_phone }} with phone</p>
+</div>
 
-        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+<div class="stats-grid">
+    <div class="stat-card"><div class="label">Total Leads</div><div class="value blue">{{ stats.total }}</div></div>
+    <div class="stat-card"><div class="label">No Website</div><div class="value green">{{ stats.no_website }}</div><div class="sub">Best targets</div></div>
+    <div class="stat-card"><div class="label">High Priority</div><div class="value orange">{{ stats.high_priority }}</div></div>
+    <div class="stat-card"><div class="label">New Today</div><div class="value purple">{{ stats.new_today }}</div><div class="sub">{{ stats.new_this_week }} this week</div></div>
+    <div class="stat-card"><div class="label">Contacted</div><div class="value blue">{{ stats.contacted }}</div><div class="sub">{{ stats.contact_rate }}% rate</div></div>
+    <div class="stat-card"><div class="label">Followups Due</div><div class="value red">{{ stats.needs_followup }}</div></div>
+</div>
 
-        #toast { position: fixed; bottom: 24px; right: 24px; background: #22c55e; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; z-index: 1000; }
-
-        .upload-area { border: 2px dashed #475569; border-radius: 12px; padding: 32px; text-align: center; cursor: pointer; transition: all 0.2s; }
-        .upload-area:hover { border-color: #60a5fa; }
-        .upload-area input { display: none; }
-
-        .mobile-nav { display: none; position: fixed; top: 0; left: 0; right: 0; background: #1e293b; border-bottom: 1px solid #334155; padding: 12px 16px; z-index: 100; }
-        .mobile-nav h1 { font-size: 16px; font-weight: 700; color: #f8fafc; display: inline; }
-        .mobile-nav a { color: #60a5fa; text-decoration: none; font-size: 13px; margin-left: 16px; }
-
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .mobile-nav { display: flex; align-items: center; }
-            .main { margin-left: 0; padding: 16px; padding-top: 56px; }
-            .two-col { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-    </style>
-</head>
-<body>
-    <div class="mobile-nav">
-        <h1>One Vision</h1>
-        <a href="/">Dashboard</a>
-        <a href="/leads">Leads</a>
-        <a href="/api/export">Export</a>
+<div class="actions-grid">
+    <div class="action-card" onclick="runScraper('overpass')">
+        <h4>OpenStreetMap <span class="free">FREE</span></h4>
+        <p>Find businesses w/ phone + website status. No API key.</p>
     </div>
-    <div class="sidebar">
-        <h1>One Vision</h1>
-        <div class="subtitle">Lead Generation System</div>
-        <nav>
-            <a href="/" class="active">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                Dashboard
-            </a>
-            <a href="/leads">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                All Leads
-            </a>
-            <a href="/api/export">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Export CSV
-            </a>
-        </nav>
+    <div class="action-card" onclick="runScraper('yp')">
+        <h4>Yellow Pages <span class="free">FREE</span></h4>
+        <p>Scrape YP.com — best for finding no-website leads.</p>
     </div>
+    <div class="action-card" onclick="runScraper('sos')">
+        <h4>State Filings <span class="free">FREE</span></h4>
+        <p>Brand new MA/RI LLC and DBA registrations.</p>
+    </div>
+    <div class="action-card" onclick="runScraper('all')">
+        <h4>Run Everything <span class="free">FREE</span></h4>
+        <p>All free sources. May take 5-10 min to complete.</p>
+    </div>
+    <div class="action-card" onclick="document.getElementById('csvUpload').click()">
+        <h4>Import CSV</h4>
+        <p>Upload existing lead lists.</p>
+    </div>
+    <div class="action-card" onclick="window.location='/leads'">
+        <h4>View All Leads</h4>
+        <p>Search, filter, manage your full database.</p>
+    </div>
+</div>
+<input type="file" id="csvUpload" accept=".csv" style="display:none" onchange="uploadCSV(this)">
 
-    <div class="main">
-        <div class="page-header">
-            <h2>Lead Dashboard</h2>
-            <p>{{ stats.total }} total leads in database</p>
-        </div>
+<div class="three-col">
+    <div class="card">
+        <h3>By State</h3>
+        <ul class="breakdown-list">
+            {% for state, count in stats.by_state.items() %}
+            <li><span>{{ state }}</span><span class="count">{{ count }}</span></li>
+            {% endfor %}
+            {% if not stats.by_state %}<li><span style="color:#64748b">No data</span><span></span></li>{% endif %}
+        </ul>
+    </div>
+    <div class="card">
+        <h3>By Category</h3>
+        <ul class="breakdown-list">
+            {% for cat, count in stats.by_category.items() %}
+            <li><span>{{ cat }}</span><span class="count">{{ count }}</span></li>
+            {% endfor %}
+            {% if not stats.by_category %}<li><span style="color:#64748b">No data</span><span></span></li>{% endif %}
+        </ul>
+    </div>
+    <div class="card">
+        <h3>By Source</h3>
+        <ul class="breakdown-list">
+            {% for src, count in stats.by_source.items() %}
+            <li><span style="font-size:12px">{{ src }}</span><span class="count">{{ count }}</span></li>
+            {% endfor %}
+            {% if not stats.by_source %}<li><span style="color:#64748b">No data</span><span></span></li>{% endif %}
+        </ul>
+    </div>
+</div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="label">Total Leads</div>
-                <div class="value blue">{{ stats.total }}</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">No Website</div>
-                <div class="value green">{{ stats.no_website }}</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">New Today</div>
-                <div class="value orange">{{ stats.new_today }}</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">Contacted</div>
-                <div class="value purple">{{ stats.contacted }}</div>
-            </div>
+<div class="two-col">
+    <div class="card">
+        <h3>Recent Activity</h3>
+        {% for a in activities %}
+        <div class="activity-item">
+            <div><span class="biz">{{ a.business_name }}</span> · {{ a.activity_type }}</div>
+            {% if a.note %}<div style="color:#94a3b8;margin-top:2px">{{ a.note }}</div>{% endif %}
+            <div class="time">{{ a.created_at }}</div>
         </div>
-
-        <div class="actions-grid">
-            <div class="action-card" onclick="runScraper('all')">
-                <h4>Run All Scrapers</h4>
-                <p>Search MA, RI, CT for new businesses. Pulls from SOS filings + Google Places.</p>
-            </div>
-            <div class="action-card" onclick="runScraper('sos')">
-                <h4>SOS Filings Only</h4>
-                <p>Check Secretary of State for new LLC/DBA registrations in the last 7 days.</p>
-            </div>
-            <div class="action-card" onclick="document.getElementById('csvUpload').click()">
-                <h4>Import CSV</h4>
-                <p>Upload a CSV file with leads to add to the database.</p>
-            </div>
-            <div class="action-card" onclick="window.location='/leads'">
-                <h4>View All Leads</h4>
-                <p>Search, filter, and manage your full lead database.</p>
-            </div>
-        </div>
-        <input type="file" id="csvUpload" accept=".csv" style="display:none" onchange="uploadCSV(this)">
-
-        <div class="two-col">
-            <div class="card">
-                <h3>Leads by State</h3>
-                <ul class="breakdown-list">
-                    {% for state, count in stats.by_state.items() %}
-                    <li><span>{{ state }}</span><span class="count">{{ count }}</span></li>
-                    {% endfor %}
-                    {% if not stats.by_state %}<li><span>No data yet</span><span></span></li>{% endif %}
-                </ul>
-            </div>
-            <div class="card">
-                <h3>Leads by Category</h3>
-                <ul class="breakdown-list">
-                    {% for cat, count in stats.by_category.items() %}
-                    <li><span>{{ cat }}</span><span class="count">{{ count }}</span></li>
-                    {% endfor %}
-                    {% if not stats.by_category %}<li><span>No data yet</span><span></span></li>{% endif %}
-                </ul>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>Recent Scraper Activity</h3>
-            <table class="log-table">
-                <thead>
-                    <tr><th>Source</th><th>State</th><th>Found</th><th>Added</th><th>Status</th><th>Time</th></tr>
-                </thead>
-                <tbody>
-                    {% for log in logs %}
-                    <tr>
-                        <td>{{ log.source }}</td>
-                        <td>{{ log.state }}</td>
-                        <td>{{ log.leads_found }}</td>
-                        <td>{{ log.leads_added }}</td>
-                        <td><span class="badge {% if log.status == 'completed' %}badge-green{% elif log.status == 'error' %}badge-red{% else %}badge-yellow{% endif %}">{{ log.status }}</span></td>
-                        <td>{{ log.finished_at or log.started_at }}</td>
-                    </tr>
-                    {% endfor %}
-                    {% if not logs %}
-                    <tr><td colspan="6" style="text-align:center;color:#64748b">No scraper runs yet. Click "Run All Scrapers" to start.</td></tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
+        {% endfor %}
+        {% if not activities %}<div style="color:#64748b;font-size:13px">No activity yet.</div>{% endif %}
     </div>
 
-    <div id="toast"></div>
+    <div class="card">
+        <h3>Recent Scraper Runs</h3>
+        <table class="log-table">
+            <thead>
+                <tr><th>Source</th><th>State</th><th>Found</th><th>Added</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.source }}</td>
+                    <td>{{ log.state }}</td>
+                    <td>{{ log.leads_found }}</td>
+                    <td>{{ log.leads_added }}</td>
+                    <td><span class="{% if log.status == 'completed' %}badge-green{% else %}badge-red{% endif %}">{{ log.status }}</span></td>
+                </tr>
+                {% endfor %}
+                {% if not logs %}
+                <tr><td colspan="5" style="text-align:center;color:#64748b">No scraper runs yet.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
 
-    <script>
-        function showToast(msg, duration=3000) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', duration);
+{% block scripts %}
+<script>
+async function runScraper(source) {
+    showToast('Scraper started — running in background...');
+    try {
+        const resp = await fetch('/api/run-scraper', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({source})
+        });
+        const data = await resp.json();
+        if (data.error) {
+            showToast('Error: ' + data.error);
+            return;
         }
+        showToast(data.message || 'Scraper running...');
+        setTimeout(() => location.reload(), 30000);
+    } catch(e) {
+        showToast('Error starting scraper');
+    }
+}
 
-        async function runScraper(source) {
-            showToast('Scraper started...');
-            try {
-                const resp = await fetch('/api/run-scraper', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({source})
-                });
-                const data = await resp.json();
-                showToast(data.message || 'Scraper running in background');
-                setTimeout(() => location.reload(), 10000);
-            } catch(e) {
-                showToast('Error starting scraper');
-            }
-        }
-
-        async function uploadCSV(input) {
-            if (!input.files.length) return;
-            const formData = new FormData();
-            formData.append('file', input.files[0]);
-            showToast('Uploading CSV...');
-            try {
-                const resp = await fetch('/api/import-csv', {method: 'POST', body: formData});
-                const data = await resp.json();
-                showToast(`Imported ${data.added} new leads`);
-                setTimeout(() => location.reload(), 2000);
-            } catch(e) {
-                showToast('Upload failed');
-            }
-            input.value = '';
-        }
-    </script>
-</body>
-</html>
+async function uploadCSV(input) {
+    if (!input.files.length) return;
+    const formData = new FormData();
+    formData.append('file', input.files[0]);
+    showToast('Uploading...');
+    try {
+        const resp = await fetch('/api/import-csv', {method: 'POST', body: formData});
+        const data = await resp.json();
+        showToast(`Imported ${data.added} new leads`);
+        setTimeout(() => location.reload(), 2000);
+    } catch(e) {
+        showToast('Upload failed');
+    }
+    input.value = '';
+}
+</script>
+{% endblock %}

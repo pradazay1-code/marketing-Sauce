@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}One Vision — Leads{% endblock %}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+        a { color: inherit; text-decoration: none; }
+
+        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 240px; background: #1e293b; border-right: 1px solid #334155; padding: 24px 16px; z-index: 100; overflow-y: auto; }
+        .sidebar h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+        .sidebar .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 32px; }
+        .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: #cbd5e1; font-size: 14px; margin-bottom: 4px; transition: all 0.15s; }
+        .sidebar nav a:hover, .sidebar nav a.active { background: #334155; color: #f8fafc; }
+        .sidebar nav a svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .mobile-nav { display: none; position: fixed; top: 0; left: 0; right: 0; background: #1e293b; border-bottom: 1px solid #334155; padding: 12px 16px; z-index: 100; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .mobile-nav h1 { font-size: 15px; font-weight: 700; color: #f8fafc; margin-right: auto; }
+        .mobile-nav a { color: #60a5fa; font-size: 12px; }
+        .mobile-nav a.active { color: #f8fafc; }
+
+        .main { margin-left: 240px; padding: 32px; }
+
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-outline { background: transparent; border: 1px solid #475569; color: #cbd5e1; }
+        .btn-outline:hover { border-color: #60a5fa; color: #60a5fa; }
+
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+        .card h3 { font-size: 16px; font-weight: 600; color: #f8fafc; margin-bottom: 16px; }
+
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; display: inline-block; }
+        .badge-high { background: #7f1d1d; color: #fca5a5; }
+        .badge-medium { background: #713f12; color: #fde047; }
+        .badge-low { background: #14532d; color: #86efac; }
+        .badge-new { background: #1e3a5f; color: #93c5fd; }
+        .badge-contacted { background: #166534; color: #4ade80; }
+        .badge-responded { background: #15803d; color: #86efac; }
+        .badge-qualified { background: #581c87; color: #d8b4fe; }
+        .badge-proposal { background: #6b21a8; color: #e9d5ff; }
+        .badge-won { background: #15803d; color: #ffffff; }
+        .badge-lost { background: #44403c; color: #a8a29e; }
+        .badge-nosite { background: #7f1d1d; color: #fca5a5; }
+        .badge-basic { background: #713f12; color: #fde047; }
+
+        #toast { position: fixed; bottom: 24px; right: 24px; background: #22c55e; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; z-index: 1000; }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .mobile-nav { display: flex; }
+            .main { margin-left: 0; padding: 16px; padding-top: 80px; }
+        }
+
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+    <div class="mobile-nav">
+        <h1>One Vision</h1>
+        <a href="/" class="{% if active=='dashboard' %}active{% endif %}">Home</a>
+        <a href="/leads" class="{% if active=='leads' %}active{% endif %}">Leads</a>
+        <a href="/pipeline" class="{% if active=='pipeline' %}active{% endif %}">Pipeline</a>
+        <a href="/map" class="{% if active=='map' %}active{% endif %}">Map</a>
+        <a href="/reports" class="{% if active=='reports' %}active{% endif %}">Reports</a>
+    </div>
+    <div class="sidebar">
+        <h1>One Vision</h1>
+        <div class="subtitle">Lead Generation System</div>
+        <nav>
+            <a href="/" class="{% if active=='dashboard' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Dashboard
+            </a>
+            <a href="/leads" class="{% if active=='leads' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+                All Leads
+            </a>
+            <a href="/pipeline" class="{% if active=='pipeline' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="9"/></svg>
+                Pipeline
+            </a>
+            <a href="/map" class="{% if active=='map' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                Map View
+            </a>
+            <a href="/reports" class="{% if active=='reports' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                Reports
+            </a>
+            <a href="/api/export">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+            </a>
+        </nav>
+    </div>
+
+    <div class="main">
+        {% block content %}{% endblock %}
+    </div>
+
+    <div id="toast"></div>
+    <script>
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+        function escHtml(s) { if (s===null||s===undefined) return ''; const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
 """
 One Vision Marketing — Lead Generation Dashboard
-Flask web app for viewing, filtering, searching, and managing leads.
-
-Usage:
-  python leadgen/app.py              # Start on port 5000
-  python leadgen/app.py --port 8080  # Custom port
+Full-featured Flask app: dashboard, leads, pipeline, map, reports, activities.
 """
 
 import argparse
@@ -22,12 +18,15 @@ from flask import Flask, request, jsonify, render_template, Response
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from database import (
-    init_db, get_leads, get_lead_by_id, add_lead, update_lead,
-    delete_lead, get_stats, get_scrape_logs, export_csv, add_leads_bulk
+    init_db, get_leads, count_leads, get_lead_by_id, add_lead, update_lead,
+    delete_lead, get_stats, get_scrape_logs, export_csv, add_leads_bulk,
+    add_activity, get_activities, get_recent_activities, get_pipeline_data,
+    save_search, get_saved_searches, delete_saved_search, PIPELINE_STAGES
 )
+from utils import enrich_lead, normalize_phone, is_valid_phone, is_valid_email, calculate_lead_score
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "change-me-in-production")
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", os.urandom(24).hex())
 
 DASHBOARD_PASSWORD = os.getenv("DASHBOARD_PASSWORD", "")
 
@@ -43,8 +42,6 @@ def check_auth(f):
         auth = request.authorization
         if auth and auth.password == DASHBOARD_PASSWORD:
             return f(*args, **kwargs)
-        if request.cookies.get("auth") == DASHBOARD_PASSWORD:
-            return f(*args, **kwargs)
         return Response(
             "Login required", 401,
             {"WWW-Authenticate": 'Basic realm="One Vision Leads"'}
@@ -57,29 +54,65 @@ def check_auth(f):
 def dashboard():
     stats = get_stats()
     logs = get_scrape_logs(10)
-    return render_template("dashboard.html", stats=stats, logs=logs)
+    activities = get_recent_activities(10)
+    return render_template("dashboard.html", stats=stats, logs=logs, activities=activities)
 
 
 @app.route("/leads")
 @check_auth
 def leads_page():
-    return render_template("leads.html")
+    return render_template("leads.html", saved_searches=get_saved_searches())
+
+
+@app.route("/pipeline")
+@check_auth
+def pipeline_page():
+    return render_template("pipeline.html", stages=PIPELINE_STAGES)
+
+
+@app.route("/map")
+@check_auth
+def map_page():
+    return render_template("map.html")
+
+
+@app.route("/reports")
+@check_auth
+def reports_page():
+    return render_template("reports.html", stats=get_stats())
+
+
+@app.route("/lead/<int:lead_id>")
+@check_auth
+def lead_detail_page(lead_id):
+    lead = get_lead_by_id(lead_id)
+    if not lead:
+        return "Lead not found", 404
+    activities = get_activities(lead_id)
+    return render_template("lead_detail.html", lead=lead, activities=activities)
 
 
 @app.route("/api/leads")
 @check_auth
 def api_leads():
     filters = {}
-    for key in ["state", "city", "category", "status", "priority", "search", "date_from", "date_to"]:
+    for key in ["state", "city", "category", "status", "priority", "search",
+                "date_from", "date_to", "tag", "source"]:
         val = request.args.get(key)
         if val:
             filters[key] = val
 
-    if request.args.get("has_website") is not None and request.args.get("has_website") != "":
+    if request.args.get("has_website") not in (None, ""):
         filters["has_website"] = request.args.get("has_website") == "1"
 
+    if request.args.get("has_phone") == "1":
+        filters["has_phone"] = True
+
     if request.args.get("min_score"):
-        filters["min_score"] = request.args.get("min_score")
+        try:
+            filters["min_score"] = int(request.args.get("min_score"))
+        except (ValueError, TypeError):
+            pass
 
     try:
         limit = min(int(request.args.get("limit", 200)), 1000)
@@ -87,11 +120,11 @@ def api_leads():
     except (ValueError, TypeError):
         limit, offset = 200, 0
 
-    sort_by = request.args.get("sort_by", "date_found")
+    sort_by = request.args.get("sort_by", "lead_score")
     sort_dir = request.args.get("sort_dir", "DESC")
 
     leads = get_leads(filters, limit, offset, sort_by, sort_dir)
-    total = get_stats()["total"]
+    total = count_leads(filters)
     return jsonify({"leads": leads, "count": len(leads), "total": total, "offset": offset, "limit": limit})
 
 
@@ -101,6 +134,7 @@ def api_get_lead(lead_id):
     lead = get_lead_by_id(lead_id)
     if not lead:
         return jsonify({"error": "Lead not found"}), 404
+    lead["activities"] = get_activities(lead_id, 20)
     return jsonify(lead)
 
 
@@ -110,6 +144,8 @@ def api_update_lead(lead_id):
     data = request.get_json()
     if not data:
         return jsonify({"error": "No data provided"}), 400
+    if "phone" in data:
+        data["phone"] = normalize_phone(data["phone"])
     update_lead(lead_id, data)
     return jsonify({"success": True})
 
@@ -127,6 +163,9 @@ def api_add_lead():
     data = request.get_json()
     if not data or not data.get("business_name"):
         return jsonify({"error": "business_name required"}), 400
+    if "phone" in data:
+        data["phone"] = normalize_phone(data["phone"])
+    enrich_lead(data)
     lead_id = add_lead(data)
     if lead_id is None:
         return jsonify({"error": "Lead already exists"}), 409
@@ -148,21 +187,70 @@ def api_bulk_update():
     return jsonify({"success": True, "updated": len(ids)})
 
 
+@app.route("/api/leads/<int:lead_id>/activities", methods=["GET"])
+@check_auth
+def api_get_activities(lead_id):
+    return jsonify(get_activities(lead_id))
+
+
+@app.route("/api/leads/<int:lead_id>/activities", methods=["POST"])
+@check_auth
+def api_add_activity(lead_id):
+    data = request.get_json() or {}
+    activity_type = data.get("type", "note")
+    note = data.get("note", "")
+    if not note:
+        return jsonify({"error": "note required"}), 400
+    add_activity(lead_id, activity_type, note)
+    return jsonify({"success": True})
+
+
+@app.route("/api/pipeline")
+@check_auth
+def api_pipeline():
+    return jsonify(get_pipeline_data())
+
+
 @app.route("/api/stats")
 @check_auth
 def api_stats():
     return jsonify(get_stats())
 
 
+@app.route("/api/saved-searches", methods=["GET"])
+@check_auth
+def api_saved_searches():
+    return jsonify(get_saved_searches())
+
+
+@app.route("/api/saved-searches", methods=["POST"])
+@check_auth
+def api_save_search():
+    data = request.get_json() or {}
+    name = data.get("name", "").strip()
+    filters = data.get("filters", {})
+    if not name:
+        return jsonify({"error": "name required"}), 400
+    save_search(name, filters)
+    return jsonify({"success": True})
+
+
+@app.route("/api/saved-searches/<int:search_id>", methods=["DELETE"])
+@check_auth
+def api_delete_saved_search(search_id):
+    delete_saved_search(search_id)
+    return jsonify({"success": True})
+
+
 @app.route("/api/export")
 @check_auth
 def api_export():
     filters = {}
-    for key in ["state", "city", "category", "status", "priority"]:
+    for key in ["state", "city", "category", "status", "priority", "tag"]:
         val = request.args.get(key)
         if val:
             filters[key] = val
-    if request.args.get("has_website") is not None and request.args.get("has_website") != "":
+    if request.args.get("has_website") not in (None, ""):
         filters["has_website"] = request.args.get("has_website") == "1"
 
     csv_data = export_csv(filters)
@@ -180,7 +268,7 @@ def api_run_scraper():
     source = data.get("source", "all")
     state = data.get("state")
 
-    allowed_sources = {"all", "sos", "google"}
+    allowed_sources = {"all", "overpass", "yp", "sos"}
     allowed_states = {"MA", "RI", "CT", None}
     if source not in allowed_sources or state not in allowed_states:
         return jsonify({"error": "Invalid source or state"}), 400
@@ -191,12 +279,14 @@ def api_run_scraper():
             cmd.extend(["--source", source])
         if state:
             cmd.extend(["--state", state])
-        subprocess.run(cmd, capture_output=True, text=True)
+        if data.get("only_no_website"):
+            cmd.append("--only-no-website")
+        subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
 
     thread = Thread(target=run_in_background, daemon=True)
     thread.start()
 
-    return jsonify({"success": True, "message": "Scraper started in background"})
+    return jsonify({"success": True, "message": "Scraper started — refresh in 1-2 minutes"})
 
 
 @app.route("/api/import-csv", methods=["POST"])
@@ -212,7 +302,7 @@ def api_import_csv():
     try:
         content = file.read().decode("utf-8")
     except UnicodeDecodeError:
-        content = file.read().decode("latin-1")
+        content = file.read().decode("latin-1", errors="ignore")
 
     reader = csv.DictReader(io.StringIO(content))
     leads = []
@@ -223,8 +313,9 @@ def api_import_csv():
             "business_name": row.get("name", row.get("business_name", "")).strip(),
             "category": row.get("category", "").strip(),
             "business_type": row.get("business_type", "").strip(),
-            "phone": row.get("phone", "").strip(),
+            "phone": normalize_phone(row.get("phone", "").strip()),
             "email": row.get("email", "").strip(),
+            "address": row.get("address", "").strip(),
             "city": row.get("city", "").strip(),
             "state": row.get("state", "").strip(),
             "has_website": has_website,
@@ -235,6 +326,7 @@ def api_import_csv():
             "notes": row.get("notes", "").strip(),
             "status": "new",
         }
+        enrich_lead(lead)
         if lead["business_name"]:
             leads.append(lead)
 
@@ -249,6 +341,11 @@ def api_logs():
     return jsonify(logs)
 
 
+@app.route("/api/health")
+def api_health():
+    return jsonify({"status": "ok", "timestamp": datetime.now().isoformat()})
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=5000)
@@ -256,9 +353,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(f"\n  One Vision Marketing — Lead Dashboard")
     print(f"  http://localhost:{args.port}")
-    if DASHBOARD_PASSWORD:
-        print(f"  Password protection: ON")
-    else:
-        print(f"  Password protection: OFF (set DASHBOARD_PASSWORD env var)")
+    print(f"  Auth: {'ON' if DASHBOARD_PASSWORD else 'OFF (set DASHBOARD_PASSWORD env var)'}")
     print()
     app.run(host="0.0.0.0", port=args.port, debug=args.debug)

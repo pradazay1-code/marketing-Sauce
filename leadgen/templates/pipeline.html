@@ -1,0 +1,97 @@
+{% extends "_layout.html" %}
+{% set active = "pipeline" %}
+{% block title %}Pipeline — One Vision{% endblock %}
+
+{% block extra_css %}
+.pipeline-board { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 16px; min-height: calc(100vh - 180px); }
+.pipeline-col { flex: 0 0 280px; background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 12px; }
+.pipeline-col h4 { font-size: 12px; color: #94a3b8; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; }
+.pipeline-col .count { background: #334155; color: #f8fafc; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+
+.lead-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; margin-bottom: 8px; cursor: grab; transition: all 0.15s; }
+.lead-card:hover { border-color: #60a5fa; }
+.lead-card.dragging { opacity: 0.5; }
+.lead-card.high { border-left: 3px solid #ef4444; }
+.lead-card.medium { border-left: 3px solid #fbbf24; }
+.lead-card.low { border-left: 3px solid #4ade80; }
+.lead-card .name { font-size: 13px; font-weight: 600; color: #f8fafc; }
+.lead-card .meta { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+.lead-card .score { display: inline-block; background: #334155; color: #f8fafc; padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-top: 4px; }
+
+.pipeline-col.drag-over { background: #1e3a5f; border-color: #2563eb; }
+
+.empty-col { text-align: center; padding: 24px 0; color: #64748b; font-size: 12px; }
+{% endblock %}
+
+{% block content %}
+<h2 style="font-size:24px;color:#f8fafc;margin-bottom:8px">Pipeline</h2>
+<p style="color:#94a3b8;margin-bottom:24px;font-size:13px">Drag cards between columns to update status</p>
+
+<div class="pipeline-board" id="board">
+    {% for stage in stages %}
+    <div class="pipeline-col" data-stage="{{ stage }}" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event, '{{ stage }}')">
+        <h4>{{ stage }} <span class="count" id="count-{{ stage }}">0</span></h4>
+        <div class="col-body" id="col-{{ stage }}"></div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadPipeline() {
+    const resp = await fetch('/api/pipeline');
+    const data = await resp.json();
+
+    Object.keys(data).forEach(stage => {
+        const body = document.getElementById('col-' + stage);
+        if (!body) return;
+        const leads = data[stage] || [];
+        document.getElementById('count-' + stage).textContent = leads.length;
+
+        if (!leads.length) {
+            body.innerHTML = '<div class="empty-col">No leads</div>';
+            return;
+        }
+
+        body.innerHTML = leads.map(l => `
+            <div class="lead-card ${l.priority}" draggable="true" ondragstart="handleDragStart(event, ${l.id})" onclick="window.open('/leads', '_self')">
+                <div class="name">${escHtml(l.business_name)}</div>
+                <div class="meta">${escHtml(l.city || '')}, ${escHtml(l.state || '')} · ${escHtml(l.category || '')}</div>
+                ${l.phone ? `<div class="meta">${escHtml(l.phone)}</div>` : ''}
+                <span class="score">Score: ${l.lead_score || 0}</span>
+            </div>
+        `).join('');
+    });
+}
+
+let draggedId = null;
+function handleDragStart(e, id) {
+    draggedId = id;
+    e.dataTransfer.effectAllowed = 'move';
+    e.target.classList.add('dragging');
+}
+
+document.addEventListener('dragend', e => {
+    document.querySelectorAll('.lead-card').forEach(c => c.classList.remove('dragging'));
+    document.querySelectorAll('.pipeline-col').forEach(c => c.classList.remove('drag-over'));
+});
+
+async function handleDrop(e, stage) {
+    e.preventDefault();
+    e.target.closest('.pipeline-col').classList.remove('drag-over');
+    if (!draggedId) return;
+
+    await fetch(`/api/leads/${draggedId}`, {
+        method: 'PUT', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({status: stage})
+    });
+    showToast('Moved to ' + stage);
+    draggedId = null;
+    loadPipeline();
+}
+
+loadPipeline();
+setInterval(loadPipeline, 30000);
+</script>
+{% endblock %}
