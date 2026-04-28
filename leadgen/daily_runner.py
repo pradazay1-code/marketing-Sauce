@@ -55,18 +55,22 @@ def run_sos_scrapers(states=None, days_back=7, max_per_state=100):
         print(f"\n[SOS] Scraping {state} Secretary of State...")
         leads, error = scraper(days_back=days_back, max_results=max_per_state)
 
+        if error and not leads:
+            print(f"  Error: {error}")
+            log_scrape(f"SOS-{state}", state, 0, 0, "error", error)
+            continue
+
         if error:
             print(f"  Warning: {error}")
-            log_scrape(f"SOS-{state}", state, len(leads), 0, "error", error)
 
         if leads:
             added = add_leads_bulk(leads)
             total_added += added
             print(f"  Found {len(leads)} filings, added {added} new leads")
-            log_scrape(f"SOS-{state}", state, len(leads), added, "completed")
+            log_scrape(f"SOS-{state}", state, len(leads), added, "completed", error or "")
         else:
             print(f"  No new filings found")
-            log_scrape(f"SOS-{state}", state, 0, 0, "completed", error or "No results")
+            log_scrape(f"SOS-{state}", state, 0, 0, "completed", "No results")
 
     return total_added
 
