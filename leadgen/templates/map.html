@@ -101,8 +101,9 @@ async function loadMap() {
 
         const list = leads.slice(0, 8).map(l =>
             `<div style="padding:4px 0;border-bottom:1px solid #eee;font-size:12px">
-                <strong>${l.business_name}</strong>
-                ${l.phone ? `<br><span style="color:#666">${l.phone}</span>` : ''}
+                <strong>${escHtml(l.business_name)}</strong>
+                ${l.phone ? `<br><span style="color:#666">${escHtml(l.phone)}</span>` : ''}
+                ${l.email ? `<br><span style="color:#336">${escHtml(l.email)}</span>` : ''}
                 ${l.has_website ? '' : '<span style="color:#c00">·No website</span>'}
             </div>`
         ).join('');

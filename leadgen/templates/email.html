@@ -1,0 +1,354 @@
+{% extends "_layout.html" %}
+{% set active = "email" %}
+{% block title %}Email — LeadPilot{% endblock %}
+
+{% block extra_css %}
+.email-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 1024px) { .email-grid { grid-template-columns: 1fr; } }
+
+.template-list { display: flex; flex-direction: column; gap: 8px; }
+.template-item { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.15s; }
+.template-item:hover, .template-item.active { border-color: #3b82f6; }
+.template-item h4 { font-size: 14px; color: #f8fafc; }
+.template-item p { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+
+.compose-form label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 4px; margin-top: 12px; }
+.compose-form input, .compose-form textarea, .compose-form select {
+    width: 100%; background: #0f172a; border: 1px solid #334155; color: #e2e8f0;
+    padding: 8px 12px; border-radius: 6px; font-size: 13px; font-family: inherit;
+}
+.compose-form textarea { height: 200px; resize: vertical; }
+.compose-form .hint { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+.settings-section { margin-top: 24px; }
+.settings-section input { max-width: 400px; }
+
+.email-log-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px; }
+.email-log-table th { text-align: left; padding: 8px; color: #94a3b8; border-bottom: 1px solid #334155; }
+.email-log-table td { padding: 8px; border-bottom: 1px solid #1e293b; }
+
+.tab-bar { display: flex; gap: 4px; margin-bottom: 20px; }
+.tab-bar button { padding: 8px 16px; background: transparent; border: 1px solid #334155; color: #94a3b8;
+    border-radius: 6px; font-size: 13px; cursor: pointer; font-family: inherit; }
+.tab-bar button.active { background: #1e3a5f; border-color: #2563eb; color: #93c5fd; }
+{% endblock %}
+
+{% block content %}
+<h2 style="font-size:24px;color:#f8fafc;margin-bottom:8px">Email Outreach</h2>
+<p style="color:#94a3b8;margin-bottom:20px;font-size:13px">Send personalized emails to your leads. Configure SMTP, manage templates, and track what you've sent.</p>
+
+<div class="tab-bar">
+    <button class="active" onclick="showTab('compose',this)">Compose</button>
+    <button onclick="showTab('templates',this)">Templates</button>
+    <button onclick="showTab('settings',this)">SMTP Settings</button>
+    <button onclick="showTab('log',this)">Sent Log</button>
+</div>
+
+<div id="tab-compose">
+    <div class="email-grid">
+        <div class="card">
+            <h3>Compose Email</h3>
+            <div class="compose-form">
+                <label>To (email)</label>
+                <input type="email" id="composeTo" placeholder="name@business.com">
+
+                <label>Or select a lead</label>
+                <input type="text" id="leadSearch" placeholder="Search leads by name..." oninput="searchLeadsForEmail(this.value)">
+                <div id="leadResults" style="max-height:120px;overflow-y:auto;margin-top:4px"></div>
+
+                <label>Load Template</label>
+                <select id="templateSelect" onchange="loadTemplate()">
+                    <option value="">— Custom email —</option>
+                    {% for t in templates %}
+                    <option value="{{ t.id }}">{{ t.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label>Subject</label>
+                <input type="text" id="composeSubject" placeholder="Subject line...">
+
+                <label>Body</label>
+                <textarea id="composeBody" placeholder="Write your email..."></textarea>
+                <div class="hint">Use {{business_name}}, {{owner_name}}, {{city}}, {{state}}, {{category}} for personalization</div>
+
+                <div style="display:flex;gap:8px;margin-top:16px">
+                    <button class="btn btn-primary" onclick="sendEmail()">Send Email</button>
+                    <button class="btn btn-outline" onclick="previewEmail()">Preview</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Preview</h3>
+            <div id="previewArea" style="background:#0f172a;border-radius:8px;padding:16px;min-height:200px">
+                <div style="color:#64748b;font-size:13px">Click "Preview" to see how the email will look with variables filled in.</div>
+            </div>
+
+            <h3 style="margin-top:24px">Bulk Send</h3>
+            <p style="font-size:12px;color:#94a3b8;margin-bottom:8px">Send to all leads with emails using the template above.</p>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <select id="bulkFilter" style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;padding:6px 10px;border-radius:6px;font-size:13px">
+                    <option value="all">All leads with email</option>
+                    <option value="new">New leads only</option>
+                    <option value="high">High priority only</option>
+                    <option value="no_website">No website only</option>
+                </select>
+                <button class="btn btn-sm btn-success" onclick="bulkSend()">Send to All Matching</button>
+            </div>
+            <div id="bulkStatus" style="margin-top:8px;font-size:13px;color:#94a3b8"></div>
+        </div>
+    </div>
+</div>
+
+<div id="tab-templates" style="display:none">
+    <div class="email-grid">
+        <div class="card">
+            <h3>Email Templates</h3>
+            <div class="template-list" id="templateList">
+                {% for t in templates %}
+                <div class="template-item" onclick="editTemplate({{ t.id }})">
+                    <h4>{{ t.name }}</h4>
+                    <p>{{ t.subject }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="btn btn-sm btn-outline" style="margin-top:12px" onclick="newTemplate()">+ New Template</button>
+        </div>
+        <div class="card">
+            <h3 id="tplFormTitle">Edit Template</h3>
+            <div class="compose-form">
+                <input type="hidden" id="tplId">
+                <label>Template Name</label>
+                <input type="text" id="tplName" placeholder="e.g. Cold Outreach">
+                <label>Subject Line</label>
+                <input type="text" id="tplSubject" placeholder="Subject with {{business_name}}...">
+                <label>Body</label>
+                <textarea id="tplBody" style="height:260px"></textarea>
+                <div style="display:flex;gap:8px;margin-top:12px">
+                    <button class="btn btn-primary btn-sm" onclick="saveTemplate()">Save Template</button>
+                    <button class="btn btn-danger btn-sm" id="tplDeleteBtn" onclick="deleteTemplate()" style="display:none">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="tab-settings" style="display:none">
+    <div class="card" style="max-width:600px">
+        <h3>SMTP Settings</h3>
+        <p style="font-size:12px;color:#94a3b8;margin-bottom:16px">Configure your email server to send outreach emails. Gmail, Outlook, or any SMTP server.</p>
+        <div class="compose-form settings-section">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+                <label style="margin:0">Enable email sending</label>
+                <input type="checkbox" id="smtpEnabled" {% if settings.enabled %}checked{% endif %} style="width:auto">
+            </div>
+            <label>SMTP Host</label>
+            <input type="text" id="smtpHost" value="{{ settings.smtp_host or '' }}" placeholder="smtp.gmail.com">
+            <label>SMTP Port</label>
+            <input type="number" id="smtpPort" value="{{ settings.smtp_port or 587 }}" placeholder="587">
+            <label>Username</label>
+            <input type="text" id="smtpUser" value="{{ settings.smtp_user or '' }}" placeholder="your@email.com">
+            <label>Password / App Password</label>
+            <input type="password" id="smtpPass" placeholder="Enter to update (leave blank to keep current)">
+            <div class="hint">For Gmail: use an App Password, not your regular password. Go to myaccount.google.com > Security > App Passwords.</div>
+            <label>From Name</label>
+            <input type="text" id="smtpFromName" value="{{ settings.from_name or 'LeadPilot' }}" placeholder="Your Agency Name">
+            <label>From Email</label>
+            <input type="email" id="smtpFromEmail" value="{{ settings.from_email or '' }}" placeholder="your@email.com">
+            <button class="btn btn-primary" style="margin-top:16px" onclick="saveSettings()">Save Settings</button>
+        </div>
+    </div>
+</div>
+
+<div id="tab-log" style="display:none">
+    <div class="card">
+        <h3>Sent Emails</h3>
+        <table class="email-log-table">
+            <thead><tr><th>To</th><th>Business</th><th>Subject</th><th>Sent</th></tr></thead>
+            <tbody>
+                {% for e in recent_emails %}
+                <tr>
+                    <td>{{ e.to_email }}</td>
+                    <td>{{ e.business_name or '—' }}</td>
+                    <td>{{ e.subject[:60] }}</td>
+                    <td style="font-size:11px;color:#94a3b8">{{ e.sent_at }}</td>
+                </tr>
+                {% endfor %}
+                {% if not recent_emails %}
+                <tr><td colspan="4" style="text-align:center;color:#64748b">No emails sent yet.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let selectedLeadId = null;
+const templates = {{ templates | tojson }};
+
+function showTab(id, btn) {
+    document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+    document.getElementById('tab-' + id).style.display = '';
+    document.querySelectorAll('.tab-bar button').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+}
+
+function loadTemplate() {
+    const sel = document.getElementById('templateSelect');
+    const tid = parseInt(sel.value);
+    if (!tid) return;
+    const t = templates.find(x => x.id === tid);
+    if (t) {
+        document.getElementById('composeSubject').value = t.subject;
+        document.getElementById('composeBody').value = t.body;
+    }
+}
+
+async function searchLeadsForEmail(q) {
+    const div = document.getElementById('leadResults');
+    if (q.length < 2) { div.innerHTML = ''; return; }
+    const resp = await fetch('/api/leads?search=' + encodeURIComponent(q) + '&has_email=1&limit=5');
+    const data = await resp.json();
+    div.innerHTML = data.leads.map(l => `
+        <div style="padding:6px 8px;cursor:pointer;font-size:12px;border-bottom:1px solid #334155;color:#cbd5e1"
+             onclick="selectLead(${l.id}, '${escHtml(l.email)}', '${escHtml(l.business_name)}')">
+            <strong>${escHtml(l.business_name)}</strong> — ${escHtml(l.email)} · ${escHtml(l.city || '')}, ${escHtml(l.state || '')}
+        </div>
+    `).join('');
+}
+
+function selectLead(id, email, name) {
+    selectedLeadId = id;
+    document.getElementById('composeTo').value = email;
+    document.getElementById('leadResults').innerHTML = '';
+    document.getElementById('leadSearch').value = name;
+    showToast('Selected: ' + name);
+}
+
+async function sendEmail() {
+    const to = document.getElementById('composeTo').value.trim();
+    const subject = document.getElementById('composeSubject').value.trim();
+    const body = document.getElementById('composeBody').value.trim();
+    if (!to || !subject) { showToast('Enter a recipient and subject'); return; }
+
+    const resp = await fetch('/api/email/send', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({to_email: to, subject, body, lead_id: selectedLeadId})
+    });
+    const data = await resp.json();
+    if (data.success) showToast('Email sent!');
+    else showToast('Error: ' + (data.error || 'Unknown'));
+}
+
+async function previewEmail() {
+    const subject = document.getElementById('composeSubject').value;
+    const body = document.getElementById('composeBody').value;
+    const resp = await fetch('/api/email/preview', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({lead_id: selectedLeadId, subject, body})
+    });
+    const data = await resp.json();
+    document.getElementById('previewArea').innerHTML = `
+        <div style="margin-bottom:12px"><strong style="color:#60a5fa">Subject:</strong> <span style="color:#f8fafc">${escHtml(data.subject)}</span></div>
+        <div style="white-space:pre-wrap;color:#cbd5e1;font-size:13px;line-height:1.6">${escHtml(data.body)}</div>
+    `;
+}
+
+async function bulkSend() {
+    if (!confirm('This will send emails to ALL matching leads with email addresses. Continue?')) return;
+    const subject = document.getElementById('composeSubject').value;
+    const body = document.getElementById('composeBody').value;
+    const filter = document.getElementById('bulkFilter').value;
+    if (!subject) { showToast('Enter a subject first'); return; }
+
+    const params = new URLSearchParams();
+    params.set('has_email', '1');
+    params.set('limit', '500');
+    if (filter === 'new') params.set('status', 'new');
+    if (filter === 'high') params.set('priority', 'high');
+    if (filter === 'no_website') params.set('has_website', '0');
+
+    const lResp = await fetch('/api/leads?' + params.toString());
+    const lData = await lResp.json();
+    const ids = lData.leads.map(l => l.id);
+
+    if (!ids.length) { showToast('No matching leads with email'); return; }
+
+    document.getElementById('bulkStatus').textContent = `Sending to ${ids.length} leads...`;
+
+    const resp = await fetch('/api/email/send-bulk', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({lead_ids: ids, subject, body})
+    });
+    const data = await resp.json();
+    document.getElementById('bulkStatus').textContent =
+        `Sent ${data.sent} emails` + (data.errors?.length ? `. Errors: ${data.errors.length}` : '');
+    showToast(`Sent ${data.sent} emails`);
+}
+
+function editTemplate(tid) {
+    const t = templates.find(x => x.id === tid);
+    if (!t) return;
+    document.getElementById('tplId').value = t.id;
+    document.getElementById('tplName').value = t.name;
+    document.getElementById('tplSubject').value = t.subject;
+    document.getElementById('tplBody').value = t.body;
+    document.getElementById('tplFormTitle').textContent = 'Edit Template';
+    document.getElementById('tplDeleteBtn').style.display = '';
+}
+
+function newTemplate() {
+    document.getElementById('tplId').value = '';
+    document.getElementById('tplName').value = '';
+    document.getElementById('tplSubject').value = '';
+    document.getElementById('tplBody').value = '';
+    document.getElementById('tplFormTitle').textContent = 'New Template';
+    document.getElementById('tplDeleteBtn').style.display = 'none';
+}
+
+async function saveTemplate() {
+    const data = {
+        id: document.getElementById('tplId').value || null,
+        name: document.getElementById('tplName').value,
+        subject: document.getElementById('tplSubject').value,
+        body: document.getElementById('tplBody').value,
+    };
+    if (!data.name || !data.subject) { showToast('Name and subject required'); return; }
+    await fetch('/api/email/templates', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    showToast('Template saved');
+    setTimeout(() => location.reload(), 500);
+}
+
+async function deleteTemplate() {
+    const tid = document.getElementById('tplId').value;
+    if (!tid || !confirm('Delete this template?')) return;
+    await fetch('/api/email/templates/' + tid, {method: 'DELETE'});
+    showToast('Template deleted');
+    setTimeout(() => location.reload(), 500);
+}
+
+async function saveSettings() {
+    const data = {
+        smtp_host: document.getElementById('smtpHost').value,
+        smtp_port: parseInt(document.getElementById('smtpPort').value) || 587,
+        smtp_user: document.getElementById('smtpUser').value,
+        from_name: document.getElementById('smtpFromName').value,
+        from_email: document.getElementById('smtpFromEmail').value,
+        enabled: document.getElementById('smtpEnabled').checked ? 1 : 0,
+    };
+    const pass = document.getElementById('smtpPass').value;
+    if (pass) data.smtp_pass = pass;
+
+    await fetch('/api/email/settings', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    showToast('Settings saved');
+}
+</script>
+{% endblock %}

@@ -55,10 +55,11 @@ async function loadPipeline() {
         }
 
         body.innerHTML = leads.map(l => `
-            <div class="lead-card ${l.priority}" draggable="true" ondragstart="handleDragStart(event, ${l.id})" onclick="window.open('/leads', '_self')">
+            <div class="lead-card ${l.priority}" draggable="true" ondragstart="handleDragStart(event, ${l.id})" onclick="window.location='/lead/${l.id}'">
                 <div class="name">${escHtml(l.business_name)}</div>
                 <div class="meta">${escHtml(l.city || '')}, ${escHtml(l.state || '')} · ${escHtml(l.category || '')}</div>
                 ${l.phone ? `<div class="meta">${escHtml(l.phone)}</div>` : ''}
+                ${l.email ? `<div class="meta" style="color:#60a5fa">${escHtml(l.email)}</div>` : ''}
                 <span class="score">Score: ${l.lead_score || 0}</span>
             </div>
         `).join('');

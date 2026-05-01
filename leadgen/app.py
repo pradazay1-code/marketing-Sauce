@@ -23,8 +23,12 @@ from database import (
     add_activity, get_activities, get_recent_activities, get_pipeline_data,
     save_search, get_saved_searches, delete_saved_search, PIPELINE_STAGES,
     update_scrape_status, get_scrape_status,
+    get_email_settings, update_email_settings,
+    save_email_template, get_email_templates, get_email_template, delete_email_template,
+    get_email_log, log_email,
 )
 from utils import enrich_lead, normalize_phone, is_valid_phone, is_valid_email, calculate_lead_score
+from email_service import send_email, send_bulk_emails, render_template as render_email_template, DEFAULT_TEMPLATES
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", os.urandom(24).hex())
@@ -83,6 +87,19 @@ def reports_page():
     return render_template("reports.html", stats=get_stats())
 
 
+@app.route("/email")
+@check_auth
+def email_page():
+    templates = get_email_templates()
+    if not templates:
+        for t in DEFAULT_TEMPLATES:
+            save_email_template(t["name"], t["subject"], t["body"])
+        templates = get_email_templates()
+    settings = get_email_settings()
+    recent_emails = get_email_log(20)
+    return render_template("email.html", templates=templates, settings=settings, recent_emails=recent_emails)
+
+
 @app.route("/lead/<int:lead_id>")
 @check_auth
 def lead_detail_page(lead_id):
@@ -90,7 +107,8 @@ def lead_detail_page(lead_id):
     if not lead:
         return "Lead not found", 404
     activities = get_activities(lead_id)
-    return render_template("lead_detail.html", lead=lead, activities=activities)
+    emails = get_email_log(10, lead_id=lead_id)
+    return render_template("lead_detail.html", lead=lead, activities=activities, emails=emails)
 
 
 @app.route("/api/leads")
@@ -383,10 +401,11 @@ def api_import_csv():
     if not file.filename or not file.filename.endswith(".csv"):
         return jsonify({"error": "Must be a CSV file"}), 400
 
+    raw_bytes = file.read()
     try:
-        content = file.read().decode("utf-8")
+        content = raw_bytes.decode("utf-8")
     except UnicodeDecodeError:
-        content = file.read().decode("latin-1", errors="ignore")
+        content = raw_bytes.decode("latin-1", errors="ignore")
 
     reader = csv.DictReader(io.StringIO(content))
     leads = []
@@ -423,6 +442,120 @@ def api_import_csv():
 def api_logs():
     logs = get_scrape_logs(50)
     return jsonify(logs)
+
+
+# --- Email API ---
+
+@app.route("/api/email/settings", methods=["GET"])
+@check_auth
+def api_email_settings_get():
+    settings = get_email_settings()
+    settings.pop("smtp_pass", None)
+    return jsonify(settings)
+
+
+@app.route("/api/email/settings", methods=["POST"])
+@check_auth
+def api_email_settings_update():
+    data = request.get_json() or {}
+    update_email_settings(data)
+    return jsonify({"success": True})
+
+
+@app.route("/api/email/templates", methods=["GET"])
+@check_auth
+def api_email_templates_list():
+    return jsonify(get_email_templates())
+
+
+@app.route("/api/email/templates", methods=["POST"])
+@check_auth
+def api_email_template_save():
+    data = request.get_json() or {}
+    name = data.get("name", "").strip()
+    subject = data.get("subject", "").strip()
+    body = data.get("body", "").strip()
+    tid = data.get("id")
+    if not name or not subject:
+        return jsonify({"error": "name and subject required"}), 400
+    save_email_template(name, subject, body, template_id=tid)
+    return jsonify({"success": True})
+
+
+@app.route("/api/email/templates/<int:tid>", methods=["DELETE"])
+@check_auth
+def api_email_template_delete(tid):
+    delete_email_template(tid)
+    return jsonify({"success": True})
+
+
+@app.route("/api/email/send", methods=["POST"])
+@check_auth
+def api_email_send():
+    data = request.get_json() or {}
+    to_email = data.get("to_email", "").strip()
+    subject = data.get("subject", "").strip()
+    body = data.get("body", "").strip()
+    lead_id = data.get("lead_id")
+    template_id = data.get("template_id")
+
+    if not to_email or not subject:
+        return jsonify({"error": "to_email and subject required"}), 400
+
+    ok, err = send_email(to_email, subject, body, lead_id=lead_id, template_id=template_id)
+    if ok:
+        return jsonify({"success": True})
+    return jsonify({"error": err}), 400
+
+
+@app.route("/api/email/send-bulk", methods=["POST"])
+@check_auth
+def api_email_send_bulk():
+    data = request.get_json() or {}
+    lead_ids = data.get("lead_ids", [])
+    subject_template = data.get("subject", "").strip()
+    body_template = data.get("body", "").strip()
+    template_id = data.get("template_id")
+
+    if not lead_ids or not subject_template:
+        return jsonify({"error": "lead_ids and subject required"}), 400
+
+    leads = []
+    for lid in lead_ids:
+        lead = get_lead_by_id(lid)
+        if lead and lead.get("email"):
+            leads.append(lead)
+
+    if not leads:
+        return jsonify({"error": "No leads with email addresses in selection"}), 400
+
+    sent, errors = send_bulk_emails(leads, subject_template, body_template, template_id)
+    return jsonify({"success": True, "sent": sent, "errors": errors[:10]})
+
+
+@app.route("/api/email/preview", methods=["POST"])
+@check_auth
+def api_email_preview():
+    data = request.get_json() or {}
+    lead_id = data.get("lead_id")
+    subject = data.get("subject", "")
+    body = data.get("body", "")
+
+    lead = {}
+    if lead_id:
+        lead = get_lead_by_id(lead_id) or {}
+
+    return jsonify({
+        "subject": render_email_template(subject, lead),
+        "body": render_email_template(body, lead),
+    })
+
+
+@app.route("/api/email/log")
+@check_auth
+def api_email_log_list():
+    lead_id = request.args.get("lead_id", type=int)
+    return jsonify(get_email_log(50, lead_id=lead_id))
 
 
 @app.route("/api/health")

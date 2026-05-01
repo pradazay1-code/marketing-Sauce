@@ -1,0 +1,143 @@
+{% extends "_layout.html" %}
+{% set active = "leads" %}
+{% block title %}{{ lead.business_name }} — LeadPilot{% endblock %}
+
+{% block extra_css %}
+.detail-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+@media (max-width: 1024px) { .detail-grid { grid-template-columns: 1fr; } }
+
+.detail-header { margin-bottom: 24px; }
+.detail-header h2 { font-size: 24px; color: #f8fafc; }
+.detail-header .meta { font-size: 14px; color: #94a3b8; margin-top: 4px; }
+
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
+.field label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+.field .val { font-size: 15px; color: #f8fafc; margin-top: 2px; word-break: break-word; }
+.field .val a { color: #60a5fa; }
+
+.activity-list { max-height: 400px; overflow-y: auto; }
+.act-item { padding: 10px 0; border-bottom: 1px solid #334155; font-size: 13px; }
+.act-item:last-child { border-bottom: none; }
+.act-type { color: #60a5fa; font-weight: 600; text-transform: capitalize; }
+.act-time { color: #64748b; font-size: 11px; margin-top: 2px; }
+
+.email-item { padding: 10px 0; border-bottom: 1px solid #334155; font-size: 13px; }
+.email-item .subj { color: #f8fafc; font-weight: 500; }
+.email-item .to { color: #94a3b8; font-size: 12px; }
+{% endblock %}
+
+{% block content %}
+<div class="detail-header">
+    <a href="/leads" style="font-size:13px;color:#60a5fa">← Back to All Leads</a>
+    <h2 style="margin-top:8px">{{ lead.business_name }}</h2>
+    <div class="meta">
+        {{ lead.category or '' }} · {{ lead.city or '' }}, {{ lead.state or '' }}
+        · <span class="badge badge-{{ lead.priority }}">{{ lead.priority }}</span>
+        · <span class="badge badge-{{ lead.status or 'new' }}">{{ lead.status or 'new' }}</span>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <div>
+        <div class="card">
+            <h3>Lead Details</h3>
+            <div class="field-grid">
+                <div class="field"><label>Business Name</label><div class="val">{{ lead.business_name }}</div></div>
+                <div class="field"><label>Owner</label><div class="val">{{ lead.owner_name or '—' }}</div></div>
+                <div class="field"><label>Phone</label><div class="val">{% if lead.phone %}<a href="tel:{{ lead.phone }}">{{ lead.phone }}</a>{% else %}—{% endif %}</div></div>
+                <div class="field"><label>Email</label><div class="val">{% if lead.email %}<a href="mailto:{{ lead.email }}">{{ lead.email }}</a>{% else %}—{% endif %}</div></div>
+                <div class="field"><label>Address</label><div class="val">{{ lead.address or '—' }}</div></div>
+                <div class="field"><label>City / State / Zip</label><div class="val">{{ lead.city or '' }}, {{ lead.state or '' }} {{ lead.zip_code or '' }}</div></div>
+                <div class="field"><label>Category</label><div class="val">{{ lead.category or '—' }}</div></div>
+                <div class="field"><label>Business Type</label><div class="val">{{ lead.business_type or '—' }}</div></div>
+                <div class="field"><label>Website</label><div class="val">{% if lead.has_website and lead.website_url %}<a href="{{ lead.website_url }}" target="_blank">{{ lead.website_url[:50] }}</a>{% elif lead.has_website %}Has website{% else %}<span style="color:#f87171">No website</span>{% endif %}</div></div>
+                <div class="field"><label>Social Media</label><div class="val">{% if lead.social_links %}{{ lead.social_links }}{% else %}{{ 'Yes' if lead.has_social_media else 'None found' }}{% endif %}</div></div>
+                <div class="field"><label>Lead Score</label><div class="val">{{ lead.lead_score or 0 }} / 100</div></div>
+                <div class="field"><label>Source</label><div class="val">{{ lead.source or '—' }}</div></div>
+                <div class="field"><label>Date Found</label><div class="val">{{ lead.date_found or '—' }}</div></div>
+                <div class="field"><label>Tags</label><div class="val">{{ lead.tags or '—' }}</div></div>
+                <div class="field"><label>Next Followup</label><div class="val">{{ lead.next_followup or '—' }}</div></div>
+                <div class="field"><label>Filing Date</label><div class="val">{{ lead.filing_date or '—' }}</div></div>
+            </div>
+            {% if lead.notes %}
+            <div style="margin-top:16px;padding:12px;background:#0f172a;border-radius:6px">
+                <label style="font-size:12px;color:#64748b">Notes</label>
+                <div style="color:#cbd5e1;font-size:13px;margin-top:4px;white-space:pre-wrap">{{ lead.notes }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if emails %}
+        <div class="card">
+            <h3>Emails Sent</h3>
+            {% for e in emails %}
+            <div class="email-item">
+                <div class="subj">{{ e.subject }}</div>
+                <div class="to">To: {{ e.to_email }} · {{ e.sent_at }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div>
+        <div class="card">
+            <h3>Quick Actions</h3>
+            <div style="display:flex;flex-direction:column;gap:8px">
+                {% if lead.email %}
+                <a href="/email" class="btn btn-primary" style="text-align:center">Send Email</a>
+                {% endif %}
+                {% if lead.phone %}
+                <a href="tel:{{ lead.phone }}" class="btn btn-success" style="text-align:center">Call {{ lead.phone }}</a>
+                {% endif %}
+                <button class="btn btn-outline" onclick="updateStatus('contacted')">Mark Contacted</button>
+                <button class="btn btn-outline" onclick="updateStatus('qualified')">Mark Qualified</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Activity Log</h3>
+            <div style="display:flex;gap:8px;margin-bottom:12px">
+                <input type="text" id="newNote" placeholder="Add a note..." style="flex:1;background:#0f172a;border:1px solid #334155;color:#e2e8f0;padding:8px;border-radius:6px;font-size:13px">
+                <button class="btn btn-sm btn-primary" onclick="addNote()">Add</button>
+            </div>
+            <div class="activity-list">
+                {% for a in activities %}
+                <div class="act-item">
+                    <div><span class="act-type">{{ a.activity_type }}</span> {{ a.note or '' }}</div>
+                    <div class="act-time">{{ a.created_at }}</div>
+                </div>
+                {% endfor %}
+                {% if not activities %}
+                <div style="color:#64748b;font-size:13px">No activity yet.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function updateStatus(status) {
+    await fetch('/api/leads/{{ lead.id }}', {
+        method: 'PUT', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({status})
+    });
+    showToast('Status updated');
+    setTimeout(() => location.reload(), 500);
+}
+
+async function addNote() {
+    const note = document.getElementById('newNote').value.trim();
+    if (!note) return;
+    await fetch('/api/leads/{{ lead.id }}/activities', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({type: 'note', note})
+    });
+    document.getElementById('newNote').value = '';
+    showToast('Note added');
+    setTimeout(() => location.reload(), 500);
+}
+</script>
+{% endblock %}

@@ -69,6 +69,7 @@
         <a href="/pipeline" class="{% if active=='pipeline' %}active{% endif %}">Pipeline</a>
         <a href="/map" class="{% if active=='map' %}active{% endif %}">Map</a>
         <a href="/reports" class="{% if active=='reports' %}active{% endif %}">Reports</a>
+        <a href="/email" class="{% if active=='email' %}active{% endif %}">Email</a>
     </div>
     <div class="sidebar">
         <h1 style="display:flex;align-items:center;gap:8px"><span style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:white;font-weight:800">L</span> LeadPilot</h1>
@@ -93,6 +94,10 @@
             <a href="/reports" class="{% if active=='reports' %}active{% endif %}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                 Reports
+            </a>
+            <a href="/email" class="{% if active=='email' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Email
             </a>
             <a href="/api/export">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>

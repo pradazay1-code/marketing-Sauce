@@ -104,6 +104,40 @@ def init_db():
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
         );
 
+        CREATE TABLE IF NOT EXISTS email_templates (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            subject TEXT NOT NULL DEFAULT '',
+            body TEXT NOT NULL DEFAULT '',
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE IF NOT EXISTS email_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            lead_id INTEGER,
+            to_email TEXT NOT NULL,
+            subject TEXT NOT NULL DEFAULT '',
+            body TEXT NOT NULL DEFAULT '',
+            template_id INTEGER,
+            status TEXT DEFAULT 'sent',
+            sent_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE SET NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS email_settings (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            smtp_host TEXT DEFAULT '',
+            smtp_port INTEGER DEFAULT 587,
+            smtp_user TEXT DEFAULT '',
+            smtp_pass TEXT DEFAULT '',
+            from_name TEXT DEFAULT 'LeadPilot',
+            from_email TEXT DEFAULT '',
+            enabled INTEGER DEFAULT 0
+        );
+
+        INSERT OR IGNORE INTO email_settings (id) VALUES (1);
+
         CREATE INDEX IF NOT EXISTS idx_leads_state ON leads(state);
         CREATE INDEX IF NOT EXISTS idx_leads_city ON leads(city);
         CREATE INDEX IF NOT EXISTS idx_leads_category ON leads(category);
@@ -113,8 +147,10 @@ def init_db():
         CREATE INDEX IF NOT EXISTS idx_leads_lead_score ON leads(lead_score);
         CREATE INDEX IF NOT EXISTS idx_leads_priority ON leads(priority);
         CREATE INDEX IF NOT EXISTS idx_leads_phone ON leads(phone);
+        CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);
         CREATE INDEX IF NOT EXISTS idx_activities_lead ON activities(lead_id);
         CREATE INDEX IF NOT EXISTS idx_activities_created ON activities(created_at);
+        CREATE INDEX IF NOT EXISTS idx_email_log_lead ON email_log(lead_id);
     """)
 
     cur = conn.execute("PRAGMA table_info(leads)")
@@ -139,10 +175,15 @@ def _sanitize_keys(data):
 
 
 def _phone_digits(phone):
-    return "".join(c for c in (phone or "") if c.isdigit())
+    """Extract last 10 digits for dedup comparison."""
+    digits = "".join(c for c in (phone or "") if c.isdigit())
+    if len(digits) == 11 and digits.startswith("1"):
+        digits = digits[1:]
+    return digits[-10:] if len(digits) >= 10 else ""
 
 
 def add_lead(lead_data, dedupe_by_phone=True):
+    """Add a lead with deduplication by name+city+state AND phone."""
     conn = get_db()
     biz_name = (lead_data.get("business_name") or "").strip()
     if not biz_name:
@@ -153,6 +194,7 @@ def add_lead(lead_data, dedupe_by_phone=True):
     state = (lead_data.get("state") or "").strip()
     phone_digits = _phone_digits(lead_data.get("phone", ""))
 
+    # Dedup 1: exact name + city + state match (case-insensitive)
     existing = conn.execute(
         "SELECT id FROM leads WHERE LOWER(business_name) = LOWER(?) AND LOWER(city) = LOWER(?) AND state = ?",
         (biz_name, city, state)
@@ -161,14 +203,14 @@ def add_lead(lead_data, dedupe_by_phone=True):
         conn.close()
         return None
 
-    if dedupe_by_phone and phone_digits and len(phone_digits) >= 10:
-        existing = conn.execute(
-            "SELECT id FROM leads WHERE REPLACE(REPLACE(REPLACE(REPLACE(phone, '(', ''), ')', ''), ' ', ''), '-', '') LIKE ?",
-            (f"%{phone_digits[-10:]}",)
-        ).fetchone()
-        if existing:
-            conn.close()
-            return None
+    # Dedup 2: phone match (exact last 10 digits)
+    if dedupe_by_phone and phone_digits and len(phone_digits) == 10:
+        all_phones = conn.execute("SELECT id, phone FROM leads WHERE phone != ''").fetchall()
+        for row in all_phones:
+            existing_digits = _phone_digits(row["phone"])
+            if existing_digits == phone_digits:
+                conn.close()
+                return None
 
     safe_data = _sanitize_keys(lead_data)
     safe_data.setdefault("date_found", date.today().isoformat())
@@ -246,8 +288,11 @@ def get_leads(filters=None, limit=200, offset=0, sort_by="date_found", sort_dir=
             params.append(filters["date_to"])
         if filters.get("has_phone"):
             query += " AND phone != ''"
+        if filters.get("has_email"):
+            query += " AND email != ''"
 
-    allowed_sorts = {"date_found", "business_name", "city", "state", "lead_score", "marketing_score", "priority", "created_at", "category"}
+    allowed_sorts = {"date_found", "business_name", "city", "state", "lead_score",
+                     "marketing_score", "priority", "created_at", "category", "email"}
     if sort_by not in allowed_sorts:
         sort_by = "date_found"
     sort_dir = "ASC" if sort_dir.upper() == "ASC" else "DESC"
@@ -278,12 +323,19 @@ def count_leads(filters=None):
             query += " AND priority = ?"
             params.append(filters["priority"])
         if filters.get("search"):
-            query += " AND (business_name LIKE ? OR owner_name LIKE ? OR notes LIKE ? OR phone LIKE ?)"
+            query += " AND (business_name LIKE ? OR owner_name LIKE ? OR notes LIKE ? OR phone LIKE ? OR email LIKE ?)"
             s = f"%{filters['search']}%"
-            params.extend([s, s, s, s])
+            params.extend([s, s, s, s, s])
         if filters.get("category"):
             query += " AND category LIKE ?"
             params.append(f"%{filters['category']}%")
+        if filters.get("min_score") is not None:
+            query += " AND lead_score >= ?"
+            params.append(int(filters["min_score"]))
+        if filters.get("has_phone"):
+            query += " AND phone != ''"
+        if filters.get("has_email"):
+            query += " AND email != ''"
 
     count = conn.execute(query, params).fetchone()[0]
     conn.close()
@@ -302,6 +354,12 @@ def update_lead(lead_id, updates, log_activity=True):
     if not safe_updates:
         return
     conn = get_db()
+
+    existing = conn.execute("SELECT id FROM leads WHERE id = ?", (lead_id,)).fetchone()
+    if not existing:
+        conn.close()
+        return
+
     safe_updates["updated_at"] = datetime.now().isoformat()
     set_clause = ", ".join([f"{k} = ?" for k in safe_updates.keys()])
     values = list(safe_updates.values()) + [lead_id]
@@ -364,6 +422,7 @@ def get_stats():
     stats["total"] = conn.execute("SELECT COUNT(*) FROM leads").fetchone()[0]
     stats["no_website"] = conn.execute("SELECT COUNT(*) FROM leads WHERE has_website = 0").fetchone()[0]
     stats["with_phone"] = conn.execute("SELECT COUNT(*) FROM leads WHERE phone != ''").fetchone()[0]
+    stats["with_email"] = conn.execute("SELECT COUNT(*) FROM leads WHERE email != ''").fetchone()[0]
     stats["new_today"] = conn.execute(
         "SELECT COUNT(*) FROM leads WHERE date_found = ?", (date.today().isoformat(),)
     ).fetchone()[0]
@@ -376,6 +435,7 @@ def get_stats():
         "SELECT COUNT(*) FROM leads WHERE next_followup != '' AND next_followup <= ?",
         (date.today().isoformat(),)
     ).fetchone()[0]
+    stats["emails_sent"] = conn.execute("SELECT COUNT(*) FROM email_log").fetchone()[0] if table_exists(conn, "email_log") else 0
 
     stats["by_state"] = {}
     for row in conn.execute("SELECT state, COUNT(*) as cnt FROM leads WHERE state != '' GROUP BY state ORDER BY cnt DESC"):
@@ -397,26 +457,29 @@ def get_stats():
     for row in conn.execute("SELECT source, COUNT(*) as cnt FROM leads WHERE source != '' GROUP BY source ORDER BY cnt DESC LIMIT 10"):
         stats["by_source"][row[0]] = row[1]
 
-    if stats["total"] > 0:
-        stats["conversion_rate"] = round(
-            (stats["by_status"].get("won", 0) / stats["total"]) * 100, 1
-        )
-        stats["contact_rate"] = round((stats["contacted"] / stats["total"]) * 100, 1)
+    total = stats["total"]
+    if total > 0:
+        stats["conversion_rate"] = round((stats["by_status"].get("won", 0) / total) * 100, 1)
+        stats["contact_rate"] = round((stats["contacted"] / total) * 100, 1)
     else:
-        stats["conversion_rate"] = 0
-        stats["contact_rate"] = 0
+        stats["conversion_rate"] = 0.0
+        stats["contact_rate"] = 0.0
 
     conn.close()
     return stats
 
 
+def table_exists(conn, table_name):
+    row = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table_name,)).fetchone()
+    return row is not None
+
+
 def get_pipeline_data():
-    """Returns leads grouped by status for kanban view."""
     conn = get_db()
     pipeline = {}
     for stage in PIPELINE_STAGES:
         rows = conn.execute(
-            "SELECT id, business_name, city, state, phone, priority, lead_score, category FROM leads WHERE status = ? ORDER BY lead_score DESC, date_found DESC LIMIT 100",
+            "SELECT id, business_name, city, state, phone, email, priority, lead_score, category FROM leads WHERE status = ? ORDER BY lead_score DESC, date_found DESC LIMIT 100",
             (stage,)
         ).fetchall()
         pipeline[stage] = [dict(row) for row in rows]
@@ -446,7 +509,6 @@ def log_scrape(source, state, leads_found=0, leads_added=0, status="completed", 
 def update_scrape_status(running=None, source=None, state=None, current_step=None,
                           progress_pct=None, leads_so_far=None, last_message=None,
                           starting=False):
-    """Update the live scrape status row used by the UI for progress polling."""
     conn = get_db()
     fields = []
     values = []
@@ -487,6 +549,97 @@ def get_scrape_status():
     row = conn.execute("SELECT * FROM scrape_status WHERE id = 1").fetchone()
     conn.close()
     return dict(row) if row else {"running": 0}
+
+
+# --- Email system ---
+
+def get_email_settings():
+    conn = get_db()
+    row = conn.execute("SELECT * FROM email_settings WHERE id = 1").fetchone()
+    conn.close()
+    return dict(row) if row else {}
+
+
+def update_email_settings(settings):
+    conn = get_db()
+    allowed = {"smtp_host", "smtp_port", "smtp_user", "smtp_pass", "from_name", "from_email", "enabled"}
+    safe = {k: v for k, v in settings.items() if k in allowed}
+    if not safe:
+        conn.close()
+        return
+    set_clause = ", ".join([f"{k} = ?" for k in safe.keys()])
+    values = list(safe.values()) + [1]
+    conn.execute(f"UPDATE email_settings SET {set_clause} WHERE id = ?", values)
+    conn.commit()
+    conn.close()
+
+
+def save_email_template(name, subject, body, template_id=None):
+    conn = get_db()
+    if template_id:
+        conn.execute(
+            "UPDATE email_templates SET name=?, subject=?, body=?, updated_at=? WHERE id=?",
+            (name, subject, body, datetime.now().isoformat(), template_id)
+        )
+    else:
+        conn.execute(
+            "INSERT INTO email_templates (name, subject, body) VALUES (?, ?, ?)",
+            (name, subject, body)
+        )
+    conn.commit()
+    conn.close()
+
+
+def get_email_templates():
+    conn = get_db()
+    rows = conn.execute("SELECT * FROM email_templates ORDER BY created_at DESC").fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
+def get_email_template(template_id):
+    conn = get_db()
+    row = conn.execute("SELECT * FROM email_templates WHERE id = ?", (template_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def delete_email_template(template_id):
+    conn = get_db()
+    conn.execute("DELETE FROM email_templates WHERE id = ?", (template_id,))
+    conn.commit()
+    conn.close()
+
+
+def log_email(lead_id, to_email, subject, body, template_id=None):
+    conn = get_db()
+    conn.execute(
+        "INSERT INTO email_log (lead_id, to_email, subject, body, template_id) VALUES (?, ?, ?, ?, ?)",
+        (lead_id, to_email, subject, body, template_id)
+    )
+    if lead_id:
+        conn.execute(
+            "INSERT INTO activities (lead_id, activity_type, note) VALUES (?, ?, ?)",
+            (lead_id, "email_sent", f"Email sent: {subject}")
+        )
+    conn.commit()
+    conn.close()
+
+
+def get_email_log(limit=50, lead_id=None):
+    conn = get_db()
+    if lead_id:
+        rows = conn.execute(
+            "SELECT e.*, l.business_name FROM email_log e LEFT JOIN leads l ON e.lead_id = l.id WHERE e.lead_id = ? ORDER BY e.sent_at DESC LIMIT ?",
+            (lead_id, limit)
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT e.*, l.business_name FROM email_log e LEFT JOIN leads l ON e.lead_id = l.id ORDER BY e.sent_at DESC LIMIT ?",
+            (limit,)
+        ).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
 
 
 def save_search(name, filters):
@@ -534,7 +687,7 @@ def export_csv(filters=None):
         row = []
         for h in headers:
             val = str(lead.get(h, "")).replace("\n", " ").replace("\r", " ").replace('"', '""')
-            if "," in val or '"' in val or "\n" in val:
+            if "," in val or '"' in val:
                 val = f'"{val}"'
             row.append(val)
         lines.append(",".join(row))

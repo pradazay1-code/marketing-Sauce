@@ -125,6 +125,7 @@
                 <th data-sort="city">City</th>
                 <th data-sort="state">St</th>
                 <th>Phone</th>
+                <th>Email</th>
                 <th>Website</th>
                 <th data-sort="lead_score">Score</th>
                 <th data-sort="priority">Priority</th>
@@ -227,7 +228,7 @@ function buildQuery() {
 
 async function loadLeads() {
     const tbody = document.getElementById('leadsBody');
-    tbody.innerHTML = '<tr><td colspan="12" class="loading">Loading...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="13" class="loading">Loading...</td></tr>';
 
     document.querySelectorAll('.leads-table th').forEach(th => {
         th.classList.remove('sort-active', 'asc');
@@ -256,6 +257,7 @@ async function loadLeads() {
                 <td>${escHtml(lead.city || '-')}</td>
                 <td>${escHtml(lead.state || '-')}</td>
                 <td>${phone}</td>
+                <td>${lead.email ? `<a style="color:#60a5fa;font-size:12px" href="mailto:${escHtml(lead.email)}">${escHtml(lead.email)}</a>` : '<span style="color:#64748b">—</span>'}</td>
                 <td>${websiteBadge}</td>
                 <td><span class="score-bar"><span class="score-bar-fill" style="width:${score}%"></span></span> <span style="font-size:11px;color:#94a3b8">${score}</span></td>
                 <td><span class="badge badge-${lead.priority}">${lead.priority}</span></td>
@@ -267,14 +269,14 @@ async function loadLeads() {
         });
 
         if (!data.leads.length) {
-            tbody.innerHTML = '<tr><td colspan="12" class="loading">No leads match your filters.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="13" class="loading">No leads match your filters.</td></tr>';
         }
 
         document.getElementById('resultsInfo').textContent = `Showing ${data.leads.length} of ${data.total} leads`;
         updateBulkBar();
         buildPagination(data.count);
     } catch(e) {
-        tbody.innerHTML = '<tr><td colspan="12" class="loading">Error loading leads</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="13" class="loading">Error loading leads</td></tr>';
     }
 }
 

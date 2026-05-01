@@ -79,6 +79,13 @@ def parse_yp_listing(card):
     website = website_el.get("href", "") if website_el else ""
     has_website = 1 if website else 0
 
+    email_el = card.find("a", class_="track-email") or card.find("a", href=re.compile(r"mailto:"))
+    email = ""
+    if email_el:
+        href = email_el.get("href", "")
+        if href.startswith("mailto:"):
+            email = href[7:].split("?")[0].strip()
+
     years_el = card.find(class_="years-in-business")
     years = years_el.get_text(strip=True) if years_el else ""
 
@@ -88,6 +95,7 @@ def parse_yp_listing(card):
     return {
         "name": name,
         "phone": phone,
+        "email": email,
         "address": address,
         "city_state_zip": city_state_zip,
         "website": website,
@@ -147,8 +155,8 @@ def search_yellowpages(category_slug, city, state, page=1, max_pages=2):
     return leads, last_error
 
 
-def normalize_phone(phone):
-    """Strip phone formatting, keep digits only."""
+def _phone_digits(phone):
+    """Strip phone formatting, keep digits only for dedup."""
     return re.sub(r"\D", "", phone or "")
 
 
@@ -190,7 +198,7 @@ def scrape_yellowpages(state="MA", categories=None, cities=None, max_per_combo=1
                 if only_no_website and r["has_website"]:
                     continue
 
-                phone_normalized = normalize_phone(r["phone"])
+                phone_normalized = _phone_digits(r["phone"])
                 name_key = r["name"].lower().strip()
 
                 if phone_normalized and phone_normalized in seen_phones:
@@ -213,6 +221,7 @@ def scrape_yellowpages(state="MA", categories=None, cities=None, max_per_combo=1
                     "business_name": r["name"],
                     "category": our_category,
                     "phone": r["phone"],
+                    "email": r.get("email", ""),
                     "address": r["address"],
                     "city": parsed_city or city.replace("-", " "),
                     "state": parsed_state or state,
