@@ -1,8 +1,8 @@
-# Directive: Email Client — One Vision Marketing
+# Directive: Email Client — Aventis Marketing
 
 ## Goal
 Send professional emails to clients — cold outreach, website deliveries, proposals, follow-ups.
-All emails represent One Vision Marketing (Bridgewater, MA).
+All emails represent Aventis Marketing (Bridgewater, MA).
 
 ## Inputs
 - Recipient email address
@@ -48,7 +48,7 @@ All emails represent One Vision Marketing (Bridgewater, MA).
 - NEVER send without user confirmation
 - Keep subject lines under 60 characters
 - Always include a clear but soft CTA
-- Sign off as "Isaiah Wright, One Vision Marketing, Bridgewater, MA"
+- Sign off as "Isaiah Wright, Aventis Marketing, Bridgewater, MA"
 - Never sound money-hungry — focus on helping the business grow
 - Frame services as solutions to their problems, not products to sell
 

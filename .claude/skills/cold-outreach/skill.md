@@ -55,7 +55,7 @@ mcp__github__create_or_update_file(
 7. **Workflow sends emails** and commits status updates automatically
 
 ## Email Template Info
-- Brand: **One Vision Marketing** (Bridgewater, MA)
+- Brand: **Aventis Marketing** (Bridgewater, MA)
 - Signed by: **Isaiah Wright**
 - Tone: Professional, genuine, NOT salesy
 - Services listed: websites, hosting, ads, SEO, social media, growth strategies

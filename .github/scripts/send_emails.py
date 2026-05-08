@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-GitHub Actions email sender for One Vision Marketing.
+GitHub Actions email sender for Aventis Marketing.
 Reads outreach_drafts.json, sends pending emails via Gmail SMTP.
 """
 
@@ -23,7 +23,7 @@ DELAY_BETWEEN_EMAILS = 30  # seconds
 def send_email(to_email, subject, body):
     """Send a single email via Gmail SMTP."""
     msg = MIMEMultipart()
-    msg["From"] = f"Isaiah Wright - One Vision Marketing <{GMAIL_EMAIL}>"
+    msg["From"] = f"Isaiah Wright - Aventis Marketing <{GMAIL_EMAIL}>"
     msg["To"] = to_email
     msg["Subject"] = subject
     msg.attach(MIMEText(body, "plain"))

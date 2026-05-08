@@ -75,7 +75,7 @@ def save_leads(leads, output_path="clients/leads/raw_leads.json"):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="One Vision Marketing — Lead Finder")
+    parser = argparse.ArgumentParser(description="Aventis Marketing — Lead Finder")
     parser.add_argument("--state", default="MA", choices=["MA", "RI", "CT"], help="Target state")
     parser.add_argument("--count", type=int, default=15, help="Number of leads to find")
     parser.add_argument("--queries-only", action="store_true", help="Only print search queries")

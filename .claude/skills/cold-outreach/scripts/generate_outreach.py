@@ -19,7 +19,7 @@ from execution.email_outreach import generate_email
 
 
 def main():
-    parser = argparse.ArgumentParser(description="One Vision Marketing — Outreach Draft Generator")
+    parser = argparse.ArgumentParser(description="Aventis Marketing — Outreach Draft Generator")
     parser.add_argument("--leads", required=True, help="Path to raw_leads.json or outreach_drafts.json")
     parser.add_argument("--site-url", default="https://pradazay1-code.github.io/marketing-Sauce",
                         help="Base URL for deployed websites")

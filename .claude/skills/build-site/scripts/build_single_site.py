@@ -317,7 +317,7 @@ footer a{{color:var(--s);text-decoration:none}}
 </section>
 
 <footer>
-  <p>&copy; 2026 {name}. All rights reserved. | Website by <a href="https://pradazay1-code.github.io/marketing-Sauce/" target="_blank">One Vision Marketing</a></p>
+  <p>&copy; 2026 {name}. All rights reserved. | Website by <a href="https://pradazay1-code.github.io/marketing-Sauce/" target="_blank">Aventis Marketing</a></p>
 </footer>
 
 <script>

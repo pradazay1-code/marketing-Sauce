@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Send emails via Outlook SMTP for One Vision Marketing.
+Send emails via Outlook SMTP for Aventis Marketing.
 
 Usage:
   python execution/send_outlook_email.py \
@@ -27,16 +27,16 @@ load_dotenv()
 
 SMTP_SERVER = "smtp-mail.outlook.com"
 SMTP_PORT = 587
-OUTLOOK_EMAIL = os.getenv("OUTLOOK_EMAIL", "onevisionmarketing1@outlook.com")
+OUTLOOK_EMAIL = os.getenv("OUTLOOK_EMAIL", "aventismarketing1@outlook.com")
 OUTLOOK_PASSWORD = os.getenv("OUTLOOK_PASSWORD", "")
 
 
-def send_email(to_email, subject, body, sender_name="Isaiah Wright - One Vision Marketing"):
+def send_email(to_email, subject, body, sender_name="Isaiah Wright - Aventis Marketing"):
     """Send a single email via Outlook SMTP."""
     if not OUTLOOK_PASSWORD:
         print("ERROR: OUTLOOK_PASSWORD not set in .env")
         print("Add this to your .env file:")
-        print('  OUTLOOK_EMAIL=onevisionmarketing1@outlook.com')
+        print('  OUTLOOK_EMAIL=aventismarketing1@outlook.com')
         print('  OUTLOOK_PASSWORD=your-password-here')
         return False
 
@@ -68,7 +68,7 @@ def send_email(to_email, subject, body, sender_name="Isaiah Wright - One Vision 
 
 
 def main():
-    parser = argparse.ArgumentParser(description="One Vision Marketing — Outlook Email Sender")
+    parser = argparse.ArgumentParser(description="Aventis Marketing — Outlook Email Sender")
     parser.add_argument("--to", help="Recipient email address")
     parser.add_argument("--subject", help="Email subject")
     parser.add_argument("--body", help="Email body text")

@@ -103,7 +103,7 @@ Would you be open to a quick 5-minute call this week to see if it's a fit?
 
 Best,
 [Your Name]
-One Vision Marketing""",
+Aventis Marketing""",
     },
     {
         "name": "Cold Outreach — Weak Website",
@@ -123,7 +123,7 @@ Would you have 10 minutes this week?
 
 Best,
 [Your Name]
-One Vision Marketing""",
+Aventis Marketing""",
     },
     {
         "name": "Follow-Up",
@@ -136,7 +136,7 @@ I genuinely think I can help bring more customers to {{business_name}} through a
 
 Best,
 [Your Name]
-One Vision Marketing""",
+Aventis Marketing""",
     },
     {
         "name": "AI Software — Real Estate",
@@ -152,7 +152,7 @@ No hiring an assistant. No missing another commission.
 Worth a 10-minute call this week? I'll show you exactly how it works with your current setup.
 
 — [Your Name]
-One Vision Marketing""",
+Aventis Marketing""",
     },
     {
         "name": "AI Software — Home Services",
@@ -172,7 +172,7 @@ You're already getting the calls. You're just not catching all of them.
 Want me to show you how it works? Takes 10 minutes, no commitment.
 
 — [Your Name]
-One Vision Marketing""",
+Aventis Marketing""",
     },
     {
         "name": "AI Software — Medical/Dental/Spa",
@@ -192,7 +192,7 @@ Your front desk handles the people in the room. Our AI handles everyone trying t
 I'd love to show you a quick demo — 10 minutes, no pressure. What does your Thursday look like?
 
 — [Your Name]
-One Vision Marketing""",
+Aventis Marketing""",
     },
     {
         "name": "AI Software — Law Firms",
@@ -212,7 +212,7 @@ You went to law school to practice law, not chase down leads.
 Worth a short call? I'll walk you through exactly how it works.
 
 — [Your Name]
-One Vision Marketing""",
+Aventis Marketing""",
     },
     {
         "name": "AI Software — Gyms/Fitness",
@@ -232,6 +232,6 @@ No one on your team has to remember to follow up. The AI just does it.
 Want to see it in action? Quick 10-minute demo — I'll build a sample workflow for {{business_name}} on the call.
 
 — [Your Name]
-One Vision Marketing""",
+Aventis Marketing""",
     },
 ]

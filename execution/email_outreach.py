@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Email Template Generator for One Vision Marketing
+Email Template Generator for Aventis Marketing
 Generates email drafts from templates for client outreach.
 
 Usage:
@@ -24,7 +24,7 @@ TEMPLATES = {
 
 I came across {business_name} and really like what you're doing in {city}. As a fellow Massachusetts business owner, I know how important it is to have a strong online presence — and I think there's a great opportunity for {business_name} to reach even more customers.
 
-My name is Isaiah Wright, and I run One Vision Marketing out of Bridgewater, MA. We're a full-service digital marketing agency that helps small businesses like yours grow through:
+My name is Isaiah Wright, and I run Aventis Marketing out of Bridgewater, MA. We're a full-service digital marketing agency that helps small businesses like yours grow through:
 
 - Professional website creation & hosting
 - Google, Facebook & Instagram advertising
@@ -40,7 +40,7 @@ Would you be open to a quick chat this week?
 
 Best regards,
 Isaiah Wright
-One Vision Marketing
+Aventis Marketing
 Bridgewater, MA
 """
     },
@@ -61,11 +61,11 @@ Take a look and let me know if you'd like any changes — I'm happy to make adju
 
 This is just the beginning. Whenever you're ready, we can also look into advertising, social media, and other strategies to bring in more clients.
 
-Thanks for trusting One Vision Marketing with your online presence.
+Thanks for trusting Aventis Marketing with your online presence.
 
 Best regards,
 Isaiah Wright
-One Vision Marketing
+Aventis Marketing
 Bridgewater, MA
 """
     },
@@ -83,7 +83,7 @@ Feel free to reply whenever it's convenient, or let me know a good time to chat.
 
 Best regards,
 Isaiah Wright
-One Vision Marketing
+Aventis Marketing
 Bridgewater, MA
 """
     },
@@ -111,7 +111,7 @@ My goal is to make this easy for you — you focus on running your business, and
 
 Best regards,
 Isaiah Wright
-One Vision Marketing
+Aventis Marketing
 Bridgewater, MA
 """
     }
@@ -139,7 +139,7 @@ def generate_email(template_type, **kwargs):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="One Vision Marketing — Email Template Generator")
+    parser = argparse.ArgumentParser(description="Aventis Marketing — Email Template Generator")
     parser.add_argument("--type", required=True, choices=TEMPLATES.keys(), help="Email template type")
     parser.add_argument("--business", dest="business_name", default="your business", help="Business name")
     parser.add_argument("--owner", dest="owner_name", default="there", help="Owner name")
@@ -164,7 +164,7 @@ def main():
     print(f"\n{'='*50}\n")
     print(body)
     print(f"\n{'='*50}")
-    print(f"\nGenerated on {date.today()} by One Vision Marketing")
+    print(f"\nGenerated on {date.today()} by Aventis Marketing")
 
 
 if __name__ == "__main__":
