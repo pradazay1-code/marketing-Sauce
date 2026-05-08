@@ -157,8 +157,14 @@ def init_db():
         CREATE INDEX IF NOT EXISTS idx_email_log_lead ON email_log(lead_id);
     """)
 
-    cur = conn.execute("PRAGMA table_info(leads)")
-    existing_cols = {row[1] for row in cur.fetchall()}
+    if is_postgres():
+        cur = conn.execute(
+            "SELECT column_name FROM information_schema.columns WHERE table_name = 'leads'",
+        )
+        existing_cols = {row["column_name"] for row in cur.fetchall()}
+    else:
+        cur = conn.execute("PRAGMA table_info(leads)")
+        existing_cols = {row[1] for row in cur.fetchall()}
     for col, ddl in [
         ("lead_score", "ALTER TABLE leads ADD COLUMN lead_score INTEGER DEFAULT 50"),
         ("tags", "ALTER TABLE leads ADD COLUMN tags TEXT DEFAULT ''"),
@@ -167,7 +173,7 @@ def init_db():
         if col not in existing_cols:
             try:
                 conn.execute(ddl)
-            except sqlite3.OperationalError:
+            except Exception:
                 pass
 
     conn.commit()
@@ -474,7 +480,16 @@ def get_stats():
 
 
 def table_exists(conn, table_name):
-    row = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table_name,)).fetchone()
+    if is_postgres():
+        row = conn.execute(
+            "SELECT table_name FROM information_schema.tables WHERE table_name=?",
+            (table_name,)
+        ).fetchone()
+    else:
+        row = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+            (table_name,)
+        ).fetchone()
     return row is not None
 
 

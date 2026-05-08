@@ -74,9 +74,11 @@ def _convert_sql(sql):
     """Convert SQLite SQL to PostgreSQL-compatible SQL."""
     sql = sql.replace("?", "%s")
     sql = sql.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY")
-    sql = sql.replace("PRAGMA journal_mode=WAL", "SELECT 1")
-    sql = sql.replace("PRAGMA foreign_keys=ON", "SELECT 1")
     sql = re.sub(r"TEXT DEFAULT CURRENT_TIMESTAMP", "TIMESTAMP DEFAULT NOW()", sql)
+    if re.match(r"^\s*PRAGMA\b", sql, re.IGNORECASE):
+        return "SELECT 1"
+    sql = re.sub(r"date\('now',\s*'-(\d+) days'\)", r"CURRENT_DATE - INTERVAL '\1 days'", sql)
+    sql = re.sub(r"date\('now'\)", "CURRENT_DATE", sql)
     if "INSERT OR IGNORE" in sql.upper():
         sql = re.sub(r"INSERT OR IGNORE", "INSERT", sql, flags=re.IGNORECASE)
         sql = sql.rstrip().rstrip(";") + " ON CONFLICT DO NOTHING;"
