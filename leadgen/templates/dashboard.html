@@ -112,6 +112,7 @@
             <option value="CT">Connecticut</option>
         </select>
         <label style="margin-left:12px"><input type="checkbox" id="onlyNoWebsite"> Only no-website</label>
+        <label style="margin-left:12px" title="Verifies each business via OpenCorporates and keeps only 2025/2026 formations. Slower but high-quality."><input type="checkbox" id="onlyNewBusinesses"> Only newly-formed (2025/2026)</label>
         <button class="btn btn-outline btn-sm" onclick="testScraper('overpass')" style="margin-left:auto">⚡ Quick Test</button>
     </div>
 
@@ -232,12 +233,18 @@ let pollTimer = null;
 async function runScraper(source) {
     const state = document.getElementById('scrapeState').value;
     const onlyNoWebsite = document.getElementById('onlyNoWebsite').checked;
+    const onlyNewBusinesses = document.getElementById('onlyNewBusinesses').checked;
 
     try {
         const resp = await fetch('/api/run-scraper', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({source, state: state || null, only_no_website: onlyNoWebsite})
+            body: JSON.stringify({
+                source,
+                state: state || null,
+                only_no_website: onlyNoWebsite,
+                only_new_businesses: onlyNewBusinesses,
+            })
         });
         const data = await resp.json();
         if (resp.status === 409) {

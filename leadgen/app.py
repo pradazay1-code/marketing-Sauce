@@ -314,6 +314,8 @@ def api_run_scraper():
             cmd.extend(["--state", state])
         if data.get("only_no_website"):
             cmd.append("--only-no-website")
+        if data.get("only_new_businesses"):
+            cmd.append("--only-new-businesses")
         try:
             subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
         except subprocess.TimeoutExpired:

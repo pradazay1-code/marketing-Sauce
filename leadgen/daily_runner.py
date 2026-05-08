@@ -37,6 +37,21 @@ from scrapers.sos_scraper import (
 from scrapers.overpass_scraper import scrape_overpass
 from scrapers.nominatim_scraper import scrape_nominatim
 from scrapers.yellowpages_scraper import scrape_yellowpages
+from scrapers.business_age_verifier import filter_new_businesses
+
+
+def filter_through_verifier(leads, source_label):
+    """Run leads through OpenCorporates verifier, keep only 2025/2026 formations."""
+    if not leads:
+        return leads
+    update_scrape_status(current_step=f"Verifying {len(leads)} businesses are newly formed...",
+                         progress_pct=85)
+    print(f"  [verify] Checking {len(leads)} businesses against OpenCorporates...")
+    result = filter_new_businesses(leads, sleep=0.6)
+    stats = result["stats"]
+    print(f"  [verify] {stats['verified_new']} new / {stats['verified_old']} old / "
+          f"{stats['unknown']} unverified")
+    return result["new_leads"]
 
 
 def make_progress_cb(source_label):
@@ -53,7 +68,7 @@ def make_progress_cb(source_label):
     return cb
 
 
-def run_overpass(states=None, max_per_city=30, only_no_website=False):
+def run_overpass(states=None, max_per_city=30, only_no_website=False, only_new=False):
     if states is None:
         states = ["MA", "RI", "CT"]
     total_added = 0
@@ -69,6 +84,9 @@ def run_overpass(states=None, max_per_city=30, only_no_website=False):
             enrich_lead(lead)
             lead["date_found"] = date.today().isoformat()
 
+        if only_new:
+            leads = filter_through_verifier(leads, f"Overpass-{state}")
+
         if error and not leads:
             print(f"  Error: {error[:200]}")
             log_scrape(f"Overpass-{state}", state, 0, 0, "error", error[:500])
@@ -83,7 +101,7 @@ def run_overpass(states=None, max_per_city=30, only_no_website=False):
     return total_added
 
 
-def run_nominatim(states=None, max_per_query=10, only_no_website=False):
+def run_nominatim(states=None, max_per_query=10, only_no_website=False, only_new=False):
     if states is None:
         states = ["MA", "RI", "CT"]
     total_added = 0
@@ -99,6 +117,9 @@ def run_nominatim(states=None, max_per_query=10, only_no_website=False):
             enrich_lead(lead)
             lead["date_found"] = date.today().isoformat()
 
+        if only_new:
+            leads = filter_through_verifier(leads, f"Nominatim-{state}")
+
         if error and not leads:
             print(f"  Error: {error[:200]}")
             log_scrape(f"Nominatim-{state}", state, 0, 0, "error", error[:500])
@@ -113,7 +134,7 @@ def run_nominatim(states=None, max_per_query=10, only_no_website=False):
     return total_added
 
 
-def run_yellowpages(states=None, max_per_combo=10, only_no_website=False):
+def run_yellowpages(states=None, max_per_combo=10, only_no_website=False, only_new=False):
     if states is None:
         states = ["MA", "RI", "CT"]
     total_added = 0
@@ -128,6 +149,9 @@ def run_yellowpages(states=None, max_per_combo=10, only_no_website=False):
         for lead in leads:
             enrich_lead(lead)
             lead["date_found"] = date.today().isoformat()
+
+        if only_new:
+            leads = filter_through_verifier(leads, f"YP-{state}")
 
         if error and not leads:
             print(f"  Error: {error[:200]}")
@@ -281,6 +305,8 @@ def main():
     parser.add_argument("--max-results", type=int, default=100, help="Max results per state")
     parser.add_argument("--only-no-website", action="store_true",
                         help="Only return businesses without websites")
+    parser.add_argument("--only-new-businesses", action="store_true",
+                        help="Verify each lead via OpenCorporates and keep only 2025/2026 formations")
     parser.add_argument("--report-only", action="store_true", help="Only print report")
     args = parser.parse_args()
 
@@ -313,13 +339,16 @@ def main():
         total_added = 0
 
         if args.source in ("overpass", "all"):
-            total_added += run_overpass(states, only_no_website=args.only_no_website)
+            total_added += run_overpass(states, only_no_website=args.only_no_website,
+                                         only_new=args.only_new_businesses)
 
         if args.source in ("nominatim", "all"):
-            total_added += run_nominatim(states, only_no_website=args.only_no_website)
+            total_added += run_nominatim(states, only_no_website=args.only_no_website,
+                                          only_new=args.only_new_businesses)
 
         if args.source in ("yp", "all"):
-            total_added += run_yellowpages(states, only_no_website=args.only_no_website)
+            total_added += run_yellowpages(states, only_no_website=args.only_no_website,
+                                            only_new=args.only_new_businesses)
 
         if args.source in ("sos", "all"):
             total_added += run_sos_scrapers(states, args.days_back, args.max_results)
