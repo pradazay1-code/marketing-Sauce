@@ -496,6 +496,16 @@ def get_scrape_logs(limit=20):
     return [dict(row) for row in rows]
 
 
+def clear_scrape_logs(only_errors=False):
+    conn = get_db()
+    if only_errors:
+        conn.execute("DELETE FROM scrape_log WHERE status = 'error'")
+    else:
+        conn.execute("DELETE FROM scrape_log")
+    conn.commit()
+    conn.close()
+
+
 def log_scrape(source, state, leads_found=0, leads_added=0, status="completed", error=""):
     conn = get_db()
     conn.execute(

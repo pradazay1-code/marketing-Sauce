@@ -350,7 +350,9 @@ def main():
             total_added += run_yellowpages(states, only_no_website=args.only_no_website,
                                             only_new=args.only_new_businesses)
 
-        if args.source in ("sos", "all"):
+        # SOS scrapers are unreliable (MA blocks 403, CT requires Salesforce automation).
+        # Only run when explicitly requested via --source sos, never in "all".
+        if args.source == "sos":
             total_added += run_sos_scrapers(states, args.days_back, args.max_results)
 
         print(f"\nTotal new leads added: {total_added}")

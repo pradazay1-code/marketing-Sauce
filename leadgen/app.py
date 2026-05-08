@@ -19,7 +19,7 @@ from flask import Flask, request, jsonify, render_template, Response
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from database import (
     init_db, get_leads, count_leads, get_lead_by_id, add_lead, update_lead,
-    delete_lead, get_stats, get_scrape_logs, export_csv, add_leads_bulk,
+    delete_lead, get_stats, get_scrape_logs, clear_scrape_logs, export_csv, add_leads_bulk,
     add_activity, get_activities, get_recent_activities, get_pipeline_data,
     save_search, get_saved_searches, delete_saved_search, PIPELINE_STAGES,
     update_scrape_status, get_scrape_status,
@@ -444,6 +444,14 @@ def api_import_csv():
 def api_logs():
     logs = get_scrape_logs(50)
     return jsonify(logs)
+
+
+@app.route("/api/logs/clear", methods=["POST"])
+@check_auth
+def api_clear_logs():
+    only_errors = (request.get_json() or {}).get("only_errors", False)
+    clear_scrape_logs(only_errors=only_errors)
+    return jsonify({"success": True})
 
 
 # --- Email API ---

@@ -129,10 +129,6 @@
             <h4>Yellow Pages <span class="free">FREE</span></h4>
             <p>YP.com scraper. Best for finding no-website leads.</p>
         </div>
-        <div class="action-card" onclick="runScraper('sos')">
-            <h4>State Filings <span class="free">FREE</span></h4>
-            <p>Brand new MA/RI LLC and DBA registrations.</p>
-        </div>
         <div class="action-card" onclick="runScraper('all')">
             <h4>Run All Sources <span class="free">FREE</span></h4>
             <p>All 4 sources sequentially. 5-15 min total.</p>
@@ -189,7 +185,13 @@
     </div>
 
     <div class="card">
-        <h3>Recent Scraper Runs</h3>
+        <h3 style="display:flex;justify-content:space-between;align-items:center">
+            <span>Recent Scraper Runs</span>
+            <span>
+                <button class="btn btn-outline btn-sm" onclick="clearLogs(true)" title="Remove failed runs from history">Clear errors</button>
+                <button class="btn btn-outline btn-sm" onclick="clearLogs(false)" title="Remove all run history" style="margin-left:6px">Clear all</button>
+            </span>
+        </h3>
         <table class="log-table">
             <thead>
                 <tr><th>Source</th><th>State</th><th>Found</th><th>Added</th><th>Status</th></tr>
@@ -312,6 +314,26 @@ async function testScraper(source) {
 
 function closePreview() {
     document.getElementById('previewModal').classList.remove('active');
+}
+
+async function clearLogs(onlyErrors) {
+    const msg = onlyErrors ? 'Clear all failed runs from history?' : 'Clear ALL scraper run history?';
+    if (!confirm(msg)) return;
+    try {
+        const resp = await fetch('/api/logs/clear', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({only_errors: onlyErrors}),
+        });
+        if (resp.ok) {
+            showToast(onlyErrors ? 'Errors cleared' : 'Log cleared');
+            setTimeout(() => location.reload(), 600);
+        } else {
+            showToast('Failed to clear log');
+        }
+    } catch (e) {
+        showToast('Network error');
+    }
 }
 
 function startPolling() {
