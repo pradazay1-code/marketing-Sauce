@@ -19,9 +19,17 @@ ALLOWED_COLUMNS = {
 PIPELINE_STAGES = ["new", "contacted", "responded", "qualified", "proposal", "won", "lost"]
 
 
+_pg_failed = False
+
+
 def get_db():
-    if is_postgres():
-        return get_pg_connection()
+    global _pg_failed
+    if is_postgres() and not _pg_failed:
+        try:
+            return get_pg_connection()
+        except Exception as e:
+            _pg_failed = True
+            print(f"[DB] PostgreSQL connection failed, falling back to SQLite: {e}")
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
