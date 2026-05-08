@@ -3,6 +3,8 @@ import os
 import json
 from datetime import datetime, date
 
+from pg_adapter import is_postgres, get_pg_connection
+
 DB_PATH = os.environ.get("LEADGEN_DB_PATH") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "leads.db")
 
 ALLOWED_COLUMNS = {
@@ -18,6 +20,8 @@ PIPELINE_STAGES = ["new", "contacted", "responded", "qualified", "proposal", "wo
 
 
 def get_db():
+    if is_postgres():
+        return get_pg_connection()
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")

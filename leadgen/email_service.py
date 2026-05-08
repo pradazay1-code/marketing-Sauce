@@ -138,4 +138,100 @@ Best,
 [Your Name]
 One Vision Marketing""",
     },
+    {
+        "name": "AI Software — Real Estate",
+        "subject": "You lost 3 leads last weekend — here's why",
+        "body": """Hi {{owner_name}},
+
+The average real estate agent loses 3-5 buyer inquiries every weekend because they can't respond fast enough. By the time Monday hits, those leads already called someone else.
+
+We built an AI system that responds to every lead within 60 seconds — whether it comes from Zillow, your website, or a missed call. It qualifies them, books a showing, and adds them to your pipeline automatically.
+
+No hiring an assistant. No missing another commission.
+
+Worth a 10-minute call this week? I'll show you exactly how it works with your current setup.
+
+— [Your Name]
+One Vision Marketing""",
+    },
+    {
+        "name": "AI Software — Home Services",
+        "subject": "That missed call at 2pm was a $4,000 job",
+        "body": """Hi {{owner_name}},
+
+When you're on a job site, you can't answer every call. But your customers won't leave a voicemail — they'll call the next contractor on Google.
+
+We set up an AI system for service companies like {{business_name}} that:
+- Texts back every missed call instantly
+- Books the estimate on your calendar without you lifting a finger
+- Sends automatic reminders so customers actually show up
+- Follows up on old quotes that never closed
+
+You're already getting the calls. You're just not catching all of them.
+
+Want me to show you how it works? Takes 10 minutes, no commitment.
+
+— [Your Name]
+One Vision Marketing""",
+    },
+    {
+        "name": "AI Software — Medical/Dental/Spa",
+        "subject": "Your front desk is losing you $8K/month",
+        "body": """Hi {{owner_name}},
+
+Here's the math: the average practice loses 15-20 appointment requests per month to hold times, missed calls, and slow follow-ups. At $400+ per treatment, that's $6,000-$8,000 walking out the door.
+
+We built an AI booking assistant for practices like {{business_name}} that:
+- Answers inquiries 24/7 via text, webchat, and social DMs
+- Books directly onto your calendar with no back-and-forth
+- Sends reminders that cut no-shows by 35%
+- Automatically asks happy patients for Google reviews
+
+Your front desk handles the people in the room. Our AI handles everyone trying to get in.
+
+I'd love to show you a quick demo — 10 minutes, no pressure. What does your Thursday look like?
+
+— [Your Name]
+One Vision Marketing""",
+    },
+    {
+        "name": "AI Software — Law Firms",
+        "subject": "67% of your website visitors leave without contacting you",
+        "body": """Hi {{owner_name}},
+
+Most people looking for an attorney visit 3-4 websites before making a call. If your site doesn't capture them immediately, they're gone — and they're hiring someone else.
+
+We built an AI intake system for firms like {{business_name}} that:
+- Engages every website visitor with an AI chat assistant
+- Qualifies them before they reach your desk (case type, timeline, budget)
+- Sends the intake form automatically and follows up if they don't complete it
+- Tracks every lead in a pipeline so nothing slips through the cracks
+
+You went to law school to practice law, not chase down leads.
+
+Worth a short call? I'll walk you through exactly how it works.
+
+— [Your Name]
+One Vision Marketing""",
+    },
+    {
+        "name": "AI Software — Gyms/Fitness",
+        "subject": "That 'I'll think about it' lead just joined another gym",
+        "body": """Hi {{owner_name}},
+
+Most people who inquire about a membership don't sign up on the first visit. They say "I'll think about it" and disappear. The gyms that win are the ones that follow up.
+
+We set up an AI follow-up system for fitness businesses like {{business_name}} that:
+- Texts every new inquiry within 60 seconds with a free trial offer
+- Follows up automatically at day 1, 3, and 7 if they go quiet
+- Sends class schedules, trainer availability, and booking links
+- Re-engages old leads every 30 days with a "we miss you" offer
+
+No one on your team has to remember to follow up. The AI just does it.
+
+Want to see it in action? Quick 10-minute demo — I'll build a sample workflow for {{business_name}} on the call.
+
+— [Your Name]
+One Vision Marketing""",
+    },
 ]
