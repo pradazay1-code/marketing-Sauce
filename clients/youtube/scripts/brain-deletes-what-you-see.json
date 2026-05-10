@@ -1,0 +1,13 @@
+{
+  "slug": "brain-deletes-what-you-see",
+  "title": "Your brain deletes 90% of what you see",
+  "voiceover": "Right now, your brain is deleting almost everything you see. Your eyes take in millions of details every second, but your brain throws most of it out before it ever reaches your awareness. In a famous experiment, scientists asked people to count basketball passes in a video. Halfway through, a person in a full gorilla suit walks across the screen, beats their chest, and walks off. Half of all viewers don't see it. Not because they weren't looking... because their brain decided it wasn't important. You're not seeing reality. You're seeing a highlight reel. Follow for one mind-blowing fact a day.",
+  "shots": [
+    {"query": "human eye macro", "duration": 4},
+    {"query": "city street crowd", "duration": 4},
+    {"query": "basketball players passing", "duration": 4},
+    {"query": "person in costume walking", "duration": 3},
+    {"query": "brain scan animation", "duration": 4},
+    {"query": "person looking confused", "duration": 3}
+  ]
+}

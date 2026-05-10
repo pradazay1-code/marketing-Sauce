@@ -1,0 +1,13 @@
+{
+  "slug": "hyoid-bone",
+  "title": "There's a bone in your body that isn't connected to any other bone",
+  "voiceover": "There's a bone in your body that isn't connected to any other bone. It just floats. It's called the hyoid, a small horseshoe-shaped bone in your throat, held in place only by muscles and ligaments. It lets you talk, swallow, and breathe. And here's the dark part: forensic investigators check this bone first when they suspect strangulation. Because the hyoid is one of the only bones that almost always breaks during it. So this tiny floating bone... it's basically a witness. Follow for one mind-blowing fact a day.",
+  "shots": [
+    {"query": "human skeleton anatomy", "duration": 4},
+    {"query": "x-ray neck throat", "duration": 4},
+    {"query": "anatomical model", "duration": 3},
+    {"query": "person speaking close up", "duration": 3},
+    {"query": "forensic lab investigation", "duration": 4},
+    {"query": "medical illustration bone", "duration": 3}
+  ]
+}

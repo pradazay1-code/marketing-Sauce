@@ -1,0 +1,13 @@
+{
+  "slug": "one-nostril-at-a-time",
+  "title": "Your nose only smells one nostril at a time",
+  "voiceover": "Right now, you're only smelling out of one nostril. Your nose has something called the nasal cycle. Every few hours, one nostril swells slightly to slow airflow, while the other handles most of the work. Then they switch. Why? Different scent molecules need different airspeeds to be detected. Fast airflow catches some smells. Slow airflow catches others. By alternating, your nose covers the full range. You've been doing this every minute of your life and never noticed. Try it. Block one nostril, then the other. One will always be more open than the other. Follow for one mind-blowing fact a day.",
+  "shots": [
+    {"query": "person smelling flower", "duration": 4},
+    {"query": "human nose close up", "duration": 4},
+    {"query": "anatomy nasal passage", "duration": 4},
+    {"query": "person breathing deep", "duration": 3},
+    {"query": "perfume bottle aroma", "duration": 3},
+    {"query": "person touching nose", "duration": 3}
+  ]
+}
