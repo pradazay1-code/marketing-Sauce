@@ -96,6 +96,7 @@ This system has 5 core agents. Each follows the DOE pattern (Directive → Orche
 | **SEO Auditor** | `directives/seo_audit.md` | `execution/seo_audit.py` | Audit client sites for SEO issues |
 | **Ad Creator** | `directives/create_ad.md` | `execution/generate_ad.py` | Generate Google/Facebook/Instagram ad copy |
 | **Email Outreach** | `directives/email_client.md` | `execution/email_outreach.py` + Gmail MCP | Draft and send emails as Aventis Marketing |
+| **YouTube Short** | `directives/youtube_short.md` | `execution/generate_short.py` | Generate a 1080x1920 base MP4 (voiceover + Pexels footage) for fact-bomb Shorts |
 
 ## How to Use Each Agent
 
