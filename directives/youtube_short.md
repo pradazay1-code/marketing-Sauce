@@ -34,6 +34,19 @@ A JSON script file at `clients/youtube/scripts/{slug}.json`:
 - `.env` must contain `PEXELS_API_KEY`. Get one free at https://www.pexels.com/api/.
 
 ## Run
+
+### Cloud render (default — fully automated)
+Any commit that adds or modifies `clients/youtube/scripts/*.json` triggers
+`.github/workflows/render-short.yml`, which:
+1. Installs ffmpeg + Python deps
+2. Runs `execution/generate_short.py` for each changed script
+3. Publishes the MP4 as a GitHub Release with a public download URL
+
+You can also trigger a manual render from the Actions tab → "Render YouTube Short" → Run workflow → enter the slug (e.g. `honey-never-spoils`).
+
+**One-time setup:** add `PEXELS_API_KEY` in repo Settings → Secrets and variables → Actions → New repository secret.
+
+### Local render (fallback)
 ```
 python execution/generate_short.py --script-file clients/youtube/scripts/honey-never-spoils.json
 ```
