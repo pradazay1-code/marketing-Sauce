@@ -35,8 +35,14 @@ jobs:
           python-version: '3.11'
           cache: pip
 
-      - name: Install ffmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install ffmpeg + Anton font (for burned-in captions)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fontconfig
+          mkdir -p ~/.fonts
+          curl -sSL -o ~/.fonts/Anton-Regular.ttf \
+            "https://github.com/google/fonts/raw/main/ofl/anton/Anton-Regular.ttf"
+          fc-cache -f
 
       - name: Install Python dependencies
         run: pip install -r requirements.txt
@@ -56,6 +62,7 @@ jobs:
         if: steps.pick.outputs.files != ''
         env:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         run: |
           for f in ${{ steps.pick.outputs.files }}; do
             [ -f "$f" ] || { echo "Skipping missing $f"; continue; }

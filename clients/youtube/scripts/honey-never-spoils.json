@@ -1,8 +1,15 @@
 {
   "slug": "honey-never-spoils",
-  "render_version": 1,
+  "render_version": 2,
   "title": "Honey from Egyptian tombs is still edible 3,000 years later",
+  "hook": "3,000-year-old honey was still edible",
   "voiceover": "Archaeologists opened a sealed jar inside an ancient Egyptian tomb. What they found was honey... over three thousand years old, and still perfectly edible. Honey is the only food on Earth that never spoils. It has almost no water, it's naturally acidic, and bees add a tiny bit of hydrogen peroxide as they make it. Bacteria literally cannot survive in it. So that jar in your pantry? It will outlive you. Follow for one mind-blowing fact a day.",
+  "emphasis": [
+    "three thousand years old",
+    "never spoils",
+    "bacteria literally cannot survive",
+    "outlive you"
+  ],
   "shots": [
     {"query": "egyptian tomb interior", "duration": 4},
     {"query": "ancient clay jar", "duration": 3},

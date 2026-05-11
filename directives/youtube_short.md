@@ -17,7 +17,9 @@ A JSON script file at `clients/youtube/scripts/{slug}.json`:
 {
   "slug": "honey-never-spoils",
   "title": "Honey from Egyptian tombs is still edible 3,000 years later",
+  "hook": "3,000-year-old honey was still edible",
   "voiceover": "...full narration text, one paragraph...",
+  "emphasis": ["three thousand years old", "never spoils", "outlive you"],
   "shots": [
     {"query": "egyptian tomb", "duration": 4},
     {"query": "honey jar pouring", "duration": 4}
@@ -26,12 +28,16 @@ A JSON script file at `clients/youtube/scripts/{slug}.json`:
 ```
 
 - `voiceover`: full narration. The execution script synthesizes this verbatim.
+- `hook`: short title-card text (3–7 words) burned in for the first ~2 seconds, top of frame, yellow. Scroll-stopper.
+- `emphasis`: phrases that get **yellow** highlighting in the captions. Pick 3–5 "shock words" per Short.
 - `shots[].query`: Pexels search query. Pick visual, concrete nouns ("honey dripping" not "sweetness"). 4–7 shots per Short.
 - `shots[].duration`: relative weight, not absolute seconds. The script normalizes to fit voiceover length.
 
 ## Tools
-- `execution/generate_short.py` — main pipeline. Voiceover via Edge TTS (free, no key), footage via Pexels API.
-- `.env` must contain `PEXELS_API_KEY`. Get one free at https://www.pexels.com/api/.
+- `execution/generate_short.py` — main pipeline. Voiceover via ElevenLabs Adam if `ELEVENLABS_API_KEY` set (premium), else Edge TTS Guy (free fallback). Footage via Pexels API. Auto-burns styled captions (Anton font, white + yellow emphasis) and a hook card. Applies Ken Burns zoom to every clip.
+- `.env` / GitHub secrets must contain `PEXELS_API_KEY` (required) and optionally `ELEVENLABS_API_KEY` (recommended for production voice).
+- Pexels key: https://www.pexels.com/api/
+- ElevenLabs key: https://elevenlabs.io → My Account → API Keys
 
 ## Run
 
