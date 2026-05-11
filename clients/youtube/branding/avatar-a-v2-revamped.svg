@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <!-- Mindbloom Avatar v2: bloom-crown M with gradient depth + glow halo -->
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="35%" r="80%">
+      <stop offset="0%" stop-color="#2a2a2a"/>
+      <stop offset="60%" stop-color="#0e0e0e"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <linearGradient id="m-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFEC55"/>
+      <stop offset="100%" stop-color="#FFA000"/>
+    </linearGradient>
+    <radialGradient id="petal-grad" cx="40%" cy="25%" r="80%">
+      <stop offset="0%" stop-color="#FFF5B0"/>
+      <stop offset="55%" stop-color="#FFC700"/>
+      <stop offset="100%" stop-color="#FF7A00"/>
+    </radialGradient>
+    <filter id="haloBlur" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="20"/>
+    </filter>
+  </defs>
+
+  <!-- Background with radial depth -->
+  <circle cx="250" cy="250" r="250" fill="url(#bg)"/>
+
+  <!-- Soft yellow glow halo behind the bloom (the attention-grabber) -->
+  <circle cx="250" cy="175" r="115" fill="#FFC700" opacity="0.38" filter="url(#haloBlur)"/>
+
+  <!-- Bold M (foundation / the "mind") -->
+  <text x="250" y="450" text-anchor="middle"
+        font-family="Anton, Impact, 'Archivo Black', sans-serif"
+        font-weight="900" font-size="340" fill="url(#m-grad)"
+        letter-spacing="-15">M</text>
+
+  <!-- Bloom (5 petals, slightly tilted for dynamism) -->
+  <g transform="translate(250 175) rotate(-12)">
+    <g fill="url(#petal-grad)" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round">
+      <ellipse cx="0" cy="-44" rx="28" ry="58"/>
+      <ellipse cx="0" cy="-44" rx="28" ry="58" transform="rotate(72)"/>
+      <ellipse cx="0" cy="-44" rx="28" ry="58" transform="rotate(144)"/>
+      <ellipse cx="0" cy="-44" rx="28" ry="58" transform="rotate(216)"/>
+      <ellipse cx="0" cy="-44" rx="28" ry="58" transform="rotate(288)"/>
+    </g>
+    <!-- Pistil + inner highlight -->
+    <circle r="22" fill="#1a1a1a"/>
+    <circle r="10" fill="#FFEC80"/>
+    <circle cx="-4" cy="-5" r="3.5" fill="#FFFFFF" opacity="0.8"/>
+  </g>
+</svg>

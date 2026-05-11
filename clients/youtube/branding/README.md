@@ -10,9 +10,10 @@
 ## Files
 | File | Purpose | Recommended export |
 |---|---|---|
-| `avatar-a-m-with-bloom.svg` | Profile pic — Yellow "M" + tiny bloom (Recommended) | 1080×1080 PNG |
-| `avatar-b-bloom-icon.svg` | Alt profile pic — Pure flower icon, no letter | 1080×1080 PNG |
-| `wordmark.svg` | Channel banner, end cards, watermark | 2560×1440 PNG (YouTube banner safe area: 1546×423 center) |
+| **`avatar-a-v2-revamped.svg`** ⭐ **USE THIS** | Final avatar — bloom-crown M, gradients, glow halo | 1080×1080 PNG |
+| `avatar-a-m-with-bloom.svg` | v1 — flat M with corner bloom (kept for reference) | — |
+| `avatar-b-bloom-icon.svg` | Alt — pure flower icon, no letter | 1080×1080 PNG |
+| `wordmark.svg` | Channel banner, end cards, watermark | 2560×1440 PNG |
 
 ## How to convert SVG to PNG (free, 30 sec)
 
