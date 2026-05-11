@@ -43,7 +43,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 ADAM_VOICE_ID = "pNInz6obpgDQGcFmaJgB"
 EDGE_VOICE = "en-US-GuyNeural"
-ELEVENLABS_MODEL = "eleven_turbo_v2_5"
+ELEVENLABS_MODEL = "eleven_multilingual_v2"
 
 WORDS_PER_LINE = 3
 KEN_BURNS_ZOOM = 1.10
@@ -88,8 +88,10 @@ def _voice_elevenlabs(text: str, out_path: Path, api_key: str):
         model_id=ELEVENLABS_MODEL,
         output_format="mp3_44100_128",
     )
-    audio = base64.b64decode(result.audio_base64)
-    out_path.write_bytes(audio)
+    audio_b64 = getattr(result, "audio_base_64", None) or getattr(result, "audio_base64", None)
+    if not audio_b64:
+        raise RuntimeError(f"ElevenLabs response missing audio. Fields: {list(vars(result).keys())}")
+    out_path.write_bytes(base64.b64decode(audio_b64))
     alignment = result.alignment
     return _chars_to_words(
         alignment.characters,
