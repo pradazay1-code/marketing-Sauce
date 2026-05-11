@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 400" width="1500" height="400">
+  <!-- Mindbloom wordmark for channel banner / end cards -->
+  <rect width="1500" height="400" fill="#111111"/>
+  <!-- "mind" white, "bloom" yellow -->
+  <text x="750" y="270" text-anchor="middle"
+        font-family="Anton, Impact, 'Archivo Black', sans-serif"
+        font-weight="900" font-size="240" letter-spacing="-8">
+    <tspan fill="#FFFFFF">mind</tspan><tspan fill="#FFC700">bloom</tspan>
+  </text>
+  <!-- Tagline -->
+  <text x="750" y="340" text-anchor="middle"
+        font-family="Anton, Impact, sans-serif"
+        font-weight="400" font-size="36" fill="#888888"
+        letter-spacing="14">ONE FACT A DAY</text>
+  <!-- Tiny bloom accent above the dot in "i" position -->
+  <g transform="translate(528 105)">
+    <circle r="9" fill="#FFC700"/>
+    <circle cx="-16" cy="0" r="7" fill="#FFC700"/>
+    <circle cx="16" cy="0" r="7" fill="#FFC700"/>
+    <circle cx="0" cy="-16" r="7" fill="#FFC700"/>
+    <circle cx="0" cy="16" r="7" fill="#FFC700"/>
+  </g>
+</svg>
