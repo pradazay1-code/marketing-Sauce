@@ -1,0 +1,40 @@
+{
+  "slug": "tunguska-explosion",
+  "day": 3,
+  "slot": "pm",
+  "title": "The 1908 Tunguska explosion \u2014 flattened 800 square miles, cause unknown",
+  "hook": "SIBERIA LOST 800 SQUARE MILES",
+  "voiceover": "In 1908, something exploded over Siberia with the force of 185 Hiroshima bombs. It flattened 80 million trees over 800 square miles. The shockwave knocked people off their feet 40 miles away. The sky glowed for nights afterward, all the way across Europe. But here's the part scientists still can't fully explain. There was no crater. No meteorite fragments. No clear point of impact. Theories range from a mid-air asteroid, to dark matter, to natural gas. Over 100 years later, we still don't actually know what hit us. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "185 Hiroshima bombs",
+    "80 million trees",
+    "no crater",
+    "still don't actually know"
+  ],
+  "shots": [
+    {
+      "query": "siberian forest aerial",
+      "duration": 4
+    },
+    {
+      "query": "explosion fireball sky",
+      "duration": 4
+    },
+    {
+      "query": "fallen trees forest",
+      "duration": 4
+    },
+    {
+      "query": "meteor shooting star",
+      "duration": 3
+    },
+    {
+      "query": "scientist field research",
+      "duration": 3
+    },
+    {
+      "query": "dark glowing night sky",
+      "duration": 3
+    }
+  ]
+}

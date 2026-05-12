@@ -1,13 +1,40 @@
 {
   "slug": "second-brain-in-gut",
-  "title": "You have a second brain in your gut with 500 million neurons",
-  "voiceover": "You have a second brain. It's in your gut, and it has over five hundred million neurons. Scientists call it the enteric nervous system, and it can operate completely on its own, without any signal from your actual brain. It controls digestion, but it also makes ninety percent of your body's serotonin... the chemical that controls your mood. So when you get a gut feeling? That's not a metaphor. That's literally a second brain talking to you. The next time your stomach feels off before a big decision... it might know something you don't. Follow for one mind-blowing fact a day.",
+  "day": 8,
+  "slot": "am",
+  "title": "You have a second brain in your gut",
+  "hook": "YOUR GUT IS A SECOND BRAIN",
+  "voiceover": "You have a second brain. It's in your gut, and it has over 500 million neurons. Scientists call it the enteric nervous system, and it can operate completely on its own, without a signal from your actual brain. It controls digestion. But it also makes 90 percent of your body's serotonin \u2014 the chemical that controls your mood. So when you get a gut feeling? That's not a metaphor. That's literally a second brain talking to you. The next time your stomach feels off before a big decision, it might know something you don't. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "500 million neurons",
+    "without a signal",
+    "90 percent of your serotonin",
+    "second brain talking"
+  ],
   "shots": [
-    {"query": "human anatomy stomach", "duration": 4},
-    {"query": "neurons firing animation", "duration": 4},
-    {"query": "digestive system", "duration": 4},
-    {"query": "person hand on stomach", "duration": 3},
-    {"query": "brain neural network", "duration": 4},
-    {"query": "person thinking nervous", "duration": 3}
+    {
+      "query": "human anatomy stomach",
+      "duration": 4
+    },
+    {
+      "query": "neurons firing animation",
+      "duration": 4
+    },
+    {
+      "query": "digestive system illustration",
+      "duration": 4
+    },
+    {
+      "query": "person hand on stomach",
+      "duration": 3
+    },
+    {
+      "query": "brain neural network",
+      "duration": 4
+    },
+    {
+      "query": "person looking thoughtful",
+      "duration": 3
+    }
   ]
 }

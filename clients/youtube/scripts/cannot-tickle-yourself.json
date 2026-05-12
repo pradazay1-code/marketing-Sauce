@@ -1,0 +1,40 @@
+{
+  "slug": "cannot-tickle-yourself",
+  "day": 3,
+  "slot": "am",
+  "title": "Why you can't tickle yourself",
+  "hook": "TRY TO TICKLE YOURSELF",
+  "voiceover": "You can't tickle yourself. Try it. Run your fingers across your ribs right now. Nothing. It feels like nothing. But if someone else does it, you lose it. Here's why. Your brain is constantly predicting your own movements. When you reach to tickle yourself, your brain says \u2014 yeah, that's me. It cancels the sensation before it ever reaches awareness. When someone else does it, your brain can't predict, can't cancel, and the full nerve signal hits. Surprise is a feeling. Routine is invisible. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "can't tickle yourself",
+    "cancels the sensation",
+    "can't predict it",
+    "surprise is a feeling"
+  ],
+  "shots": [
+    {
+      "query": "person laughing close up",
+      "duration": 4
+    },
+    {
+      "query": "brain neural network animation",
+      "duration": 4
+    },
+    {
+      "query": "hand fingers reaching",
+      "duration": 3
+    },
+    {
+      "query": "person surprised reaction",
+      "duration": 4
+    },
+    {
+      "query": "nerve signal animation",
+      "duration": 3
+    },
+    {
+      "query": "two friends laughing",
+      "duration": 3
+    }
+  ]
+}

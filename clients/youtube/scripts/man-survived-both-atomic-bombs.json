@@ -1,13 +1,40 @@
 {
   "slug": "man-survived-both-atomic-bombs",
-  "title": "The man who survived BOTH atomic bombs",
-  "voiceover": "On August sixth, nineteen forty-five, a Japanese engineer named Tsutomu Yamaguchi was on a business trip in Hiroshima when the first atomic bomb dropped. He was less than two miles from the blast. He survived... burned, deafened in one ear, but alive. He took a train home the next day to recover. Home was Nagasaki. Three days later, the second bomb dropped. He was at work, telling his boss what happened in Hiroshima... when the sky lit up again. And he survived that too. He lived to ninety-three. Follow for one mind-blowing fact a day.",
+  "day": 6,
+  "slot": "pm",
+  "title": "Tsutomu Yamaguchi \u2014 the man who survived BOTH atomic bombs",
+  "hook": "ONE MAN. TWO ATOMIC BOMBS.",
+  "voiceover": "On August 6th, 1945, a Japanese engineer named Tsutomu Yamaguchi was finishing a business trip in Hiroshima when the first atomic bomb dropped. He was less than two miles from the blast. He survived. Burned, deafened in one ear, but alive. The next day, he took a train home to recover. Home was Nagasaki. Three days later, he was at work, telling his boss what had happened in Hiroshima, when the sky lit up again. And he survived that too. He lived to 93. He spent the rest of his life warning the world. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "August 6th, 1945",
+    "two miles from the blast",
+    "Home was Nagasaki",
+    "survived that too"
+  ],
   "shots": [
-    {"query": "vintage japan 1940s", "duration": 4},
-    {"query": "atomic bomb explosion mushroom cloud", "duration": 4},
-    {"query": "old train station vintage", "duration": 4},
-    {"query": "city ruins destroyed", "duration": 4},
-    {"query": "old man portrait elderly", "duration": 3},
-    {"query": "memorial peace park", "duration": 3}
+    {
+      "query": "vintage japan 1940s",
+      "duration": 4
+    },
+    {
+      "query": "atomic bomb mushroom cloud",
+      "duration": 4
+    },
+    {
+      "query": "old train station vintage",
+      "duration": 4
+    },
+    {
+      "query": "city destroyed ruins",
+      "duration": 3
+    },
+    {
+      "query": "elderly japanese man portrait",
+      "duration": 3
+    },
+    {
+      "query": "peace memorial monument",
+      "duration": 4
+    }
   ]
 }

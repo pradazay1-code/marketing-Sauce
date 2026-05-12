@@ -122,12 +122,12 @@ def _voice_edge(text: str, out_path: Path):
     return words
 
 
-def synthesize_voice(text: str, out_path: Path):
+def synthesize_voice(text: str, out_path: Path, use_elevenlabs: bool = False):
     api_key = os.getenv("ELEVENLABS_API_KEY")
-    if api_key:
+    if use_elevenlabs and api_key:
         print("  using ElevenLabs (Adam)")
         return _voice_elevenlabs(text, out_path, api_key)
-    print("  using Edge TTS (Guy) — set ELEVENLABS_API_KEY for premium voice")
+    print("  using Edge TTS (Guy)")
     return _voice_edge(text, out_path)
 
 
@@ -273,7 +273,11 @@ def main() -> int:
 
     print("[1/6] Voice + timings...")
     voice_path = out_dir / "voice.mp3"
-    words = synthesize_voice(script["voiceover"], voice_path)
+    words = synthesize_voice(
+        script["voiceover"],
+        voice_path,
+        use_elevenlabs=bool(script.get("use_elevenlabs", False)),
+    )
     voice_clip = AudioFileClip(str(voice_path))
     total = voice_clip.duration
     print(f"      {total:.1f}s, {len(words)} words")

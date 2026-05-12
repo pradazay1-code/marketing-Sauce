@@ -1,0 +1,40 @@
+{
+  "slug": "kneecaps-form-at-three",
+  "day": 2,
+  "slot": "am",
+  "title": "Babies don't have kneecaps",
+  "hook": "BABIES DON'T HAVE KNEECAPS",
+  "voiceover": "Babies don't have kneecaps. Yours didn't fully form until you were about three years old. At birth, what's there is just cartilage \u2014 soft, flexible tissue that protects the joint while you crawl, fall, and figure out how to walk. Slowly, the cartilage hardens into real bone. The process takes years. Scientists think this is evolution being smart. A hard kneecap on a baby would shatter every time they fell. So nature gave us shock absorbers first, and armor later. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "don't have kneecaps",
+    "three years old",
+    "just cartilage",
+    "shock absorbers first"
+  ],
+  "shots": [
+    {
+      "query": "baby crawling close up",
+      "duration": 4
+    },
+    {
+      "query": "child knee x-ray",
+      "duration": 3
+    },
+    {
+      "query": "anatomy knee joint",
+      "duration": 4
+    },
+    {
+      "query": "baby learning to walk",
+      "duration": 4
+    },
+    {
+      "query": "child running playground",
+      "duration": 3
+    },
+    {
+      "query": "medical anatomy diagram",
+      "duration": 3
+    }
+  ]
+}

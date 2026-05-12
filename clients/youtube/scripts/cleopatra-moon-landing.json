@@ -1,13 +1,40 @@
 {
   "slug": "cleopatra-moon-landing",
-  "title": "Cleopatra lived closer to the moon landing than to the building of the pyramids",
-  "voiceover": "Cleopatra lived closer in time to the moon landing than to the building of the Great Pyramid. Let that sink in. The pyramids were built around twenty-five hundred BC. Cleopatra was born in sixty-nine BC. The moon landing happened in nineteen sixty-nine. That's about two thousand years from her to us... and over twenty-four hundred years from her to the pyramids. To Cleopatra, the pyramids were already ancient ruins. Older than her than she is to us. History isn't a straight line. It's a long, weird, stretched-out timeline. Follow for one mind-blowing fact a day.",
+  "day": 2,
+  "slot": "pm",
+  "title": "Cleopatra lived closer to the moon landing than to the pyramids",
+  "hook": "CLEOPATRA WASN'T THAT ANCIENT",
+  "voiceover": "Cleopatra lived closer in time to the moon landing than to the building of the pyramids. The Great Pyramid was finished around 2,500 BC. Cleopatra was born in 69 BC. The moon landing happened in 1969. That's about 2,000 years from her to us. And over 2,400 years from her to the pyramids. To Cleopatra, the pyramids were already ancient ruins, older to her than she is to us. History isn't a straight line. It's a long, weird, stretched-out timeline. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "closer to the moon landing",
+    "2,500 BC",
+    "1969",
+    "already ancient ruins"
+  ],
   "shots": [
-    {"query": "egyptian pyramids giza", "duration": 4},
-    {"query": "ancient egyptian queen statue", "duration": 4},
-    {"query": "moon landing astronaut", "duration": 4},
-    {"query": "rocket launch nasa", "duration": 3},
-    {"query": "ancient ruins desert", "duration": 4},
-    {"query": "old historical timeline book", "duration": 3}
+    {
+      "query": "egyptian pyramids giza",
+      "duration": 4
+    },
+    {
+      "query": "ancient egyptian queen statue",
+      "duration": 4
+    },
+    {
+      "query": "moon landing astronaut",
+      "duration": 4
+    },
+    {
+      "query": "rocket launch nasa",
+      "duration": 3
+    },
+    {
+      "query": "desert ancient ruins",
+      "duration": 4
+    },
+    {
+      "query": "historical timeline old",
+      "duration": 3
+    }
   ]
 }

@@ -1,0 +1,40 @@
+{
+  "slug": "wow-signal",
+  "day": 5,
+  "slot": "pm",
+  "title": "The Wow! Signal \u2014 something deep in space called us once",
+  "hook": "SOMETHING CALLED US ONCE",
+  "voiceover": "In 1977, a radio telescope in Ohio picked up a signal from deep space that lasted 72 seconds. It was so strong, so clearly unnatural, the astronomer on duty circled it on the printout and wrote a single word. Wow. The signal came from a region near the constellation Sagittarius. It matched every prediction for what an alien transmission would look like. We pointed every dish we had back at that spot. We've been listening ever since. It has never repeated. Whatever sent it, only said it once. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "72 seconds",
+    "circled it",
+    "never repeated",
+    "only said it once"
+  ],
+  "shots": [
+    {
+      "query": "radio telescope dish",
+      "duration": 4
+    },
+    {
+      "query": "star field deep space",
+      "duration": 4
+    },
+    {
+      "query": "scientist paper printout",
+      "duration": 3
+    },
+    {
+      "query": "computer code analysis",
+      "duration": 4
+    },
+    {
+      "query": "night sky stars constellation",
+      "duration": 4
+    },
+    {
+      "query": "satellite signal waves",
+      "duration": 3
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "slug": "voynich-manuscript",
+  "day": 4,
+  "slot": "pm",
+  "title": "The Voynich Manuscript \u2014 a 600-year-old book no one can read",
+  "hook": "A BOOK NO ONE CAN READ",
+  "voiceover": "In the Yale library sits a 600-year-old book that no one has ever been able to read. It's called the Voynich Manuscript. 240 pages, hand-illustrated, written in a flowing alphabet that doesn't match any language on Earth. The drawings show plants that don't exist, naked figures in green pools, and astronomical charts of stars that aren't in our sky. The cryptographers who broke Enigma in World War 2 tried, and failed. AI has tried, and failed. Whoever wrote it took its meaning to their grave. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "no one has ever been able to read",
+    "doesn't match any language",
+    "plants that don't exist",
+    "took its meaning to their grave"
+  ],
+  "shots": [
+    {
+      "query": "ancient manuscript pages",
+      "duration": 4
+    },
+    {
+      "query": "medieval library old books",
+      "duration": 4
+    },
+    {
+      "query": "mysterious symbols closeup",
+      "duration": 4
+    },
+    {
+      "query": "old book illustrations plants",
+      "duration": 3
+    },
+    {
+      "query": "magnifying glass paper",
+      "duration": 3
+    },
+    {
+      "query": "candle lit scrolls",
+      "duration": 4
+    }
+  ]
+}

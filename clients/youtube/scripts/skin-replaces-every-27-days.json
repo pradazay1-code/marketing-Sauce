@@ -1,0 +1,40 @@
+{
+  "slug": "skin-replaces-every-27-days",
+  "day": 4,
+  "slot": "am",
+  "title": "Your skin completely replaces itself every 27 days",
+  "hook": "YOU SHED A WHOLE NEW BODY",
+  "voiceover": "You are not the same body you were a month ago. Your skin completely replaces itself about every 27 days. Every minute, your body sheds 30 to 40 thousand dead skin cells. The dust in your house? More than half of it is you. Over your entire life, you'll shed around 105 pounds of skin. The person reading this right now is, in a real biological sense, a brand new body every month. The mind that remembers your past lives in a body that doesn't. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "every 27 days",
+    "40 thousand dead skin cells",
+    "105 pounds of skin",
+    "brand new body every month"
+  ],
+  "shots": [
+    {
+      "query": "human skin macro close",
+      "duration": 4
+    },
+    {
+      "query": "dust particles sunlight beam",
+      "duration": 4
+    },
+    {
+      "query": "person looking mirror",
+      "duration": 3
+    },
+    {
+      "query": "skin cells microscope",
+      "duration": 4
+    },
+    {
+      "query": "body silhouette light",
+      "duration": 3
+    },
+    {
+      "query": "hands close up texture",
+      "duration": 4
+    }
+  ]
+}

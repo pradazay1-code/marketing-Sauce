@@ -1,0 +1,40 @@
+{
+  "slug": "dna-banana-60-percent",
+  "day": 5,
+  "slot": "am",
+  "title": "You share 60% of your DNA with a banana",
+  "hook": "YOU ARE 60% BANANA",
+  "voiceover": "You share about 60 percent of your DNA with a banana. Not 6 \u2014 sixty. Most of that overlap is the boring stuff. The basic genetic code every living thing on Earth needs. Processing energy. Dividing cells. Repairing damage. It's the same instructions, just reshuffled. You also share 50 percent of your DNA with a cabbage, 70 percent with a slug, and 99 percent with a chimpanzee. Life isn't a chain of separate species. It's a remix of the same source code. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "60 percent of your DNA",
+    "with a banana",
+    "99 percent with a chimpanzee",
+    "remix of the same source code"
+  ],
+  "shots": [
+    {
+      "query": "banana fruit close up",
+      "duration": 4
+    },
+    {
+      "query": "dna double helix animation",
+      "duration": 4
+    },
+    {
+      "query": "microscope cells research",
+      "duration": 3
+    },
+    {
+      "query": "chimpanzee portrait",
+      "duration": 4
+    },
+    {
+      "query": "cabbage vegetable",
+      "duration": 3
+    },
+    {
+      "query": "fruit market display",
+      "duration": 4
+    }
+  ]
+}

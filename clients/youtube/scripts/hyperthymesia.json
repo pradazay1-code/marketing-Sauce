@@ -1,0 +1,40 @@
+{
+  "slug": "hyperthymesia",
+  "day": 9,
+  "slot": "am",
+  "title": "Hyperthymesia \u2014 60 humans remember every day of their lives",
+  "hook": "THEY REMEMBER EVERY DAY",
+  "voiceover": "There are about 60 people in the world who remember every day of their lives. The condition is called hyperthymesia. You can pick any random date \u2014 November 4th, 2007 \u2014 and they can tell you what day of the week it was, what they wore, what they ate, what they saw on the news. They remember every conversation. Every embarrassment. Every loss. Most of them say it's not a gift. It's a curse. They can't forget the bad memories. The bad days never fade. Their brain has no off switch for the past. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "60 people in the world",
+    "every day of their lives",
+    "Not a gift. A curse.",
+    "no off switch for the past"
+  ],
+  "shots": [
+    {
+      "query": "brain mri scan",
+      "duration": 4
+    },
+    {
+      "query": "calendar pages flipping",
+      "duration": 4
+    },
+    {
+      "query": "person thinking remembering",
+      "duration": 3
+    },
+    {
+      "query": "old photographs memories",
+      "duration": 4
+    },
+    {
+      "query": "person looking distant",
+      "duration": 4
+    },
+    {
+      "query": "clock time passing",
+      "duration": 3
+    }
+  ]
+}

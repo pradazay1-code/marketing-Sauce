@@ -1,0 +1,40 @@
+{
+  "slug": "taller-in-the-morning",
+  "day": 6,
+  "slot": "am",
+  "title": "You're a full centimeter taller in the morning",
+  "hook": "YOU SHRINK EVERY DAY",
+  "voiceover": "You are taller right now if you just woke up. The discs between the bones in your spine soak up fluid like sponges while you sleep. By morning, those discs are plump and fully expanded. You can be a full centimeter, sometimes more, taller than you'll be at night. As gravity squeezes the fluid out throughout the day, you compress back down. NASA astronauts coming back from space gain up to 2 inches in height, because in zero gravity, nothing's squishing them. You're not a fixed height. You're a tide. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "taller right now",
+    "full centimeter",
+    "2 inches in space",
+    "you're a tide"
+  ],
+  "shots": [
+    {
+      "query": "person stretching morning",
+      "duration": 4
+    },
+    {
+      "query": "spine vertebrae anatomy",
+      "duration": 4
+    },
+    {
+      "query": "height measurement wall",
+      "duration": 3
+    },
+    {
+      "query": "astronaut space station",
+      "duration": 4
+    },
+    {
+      "query": "person sleeping bed",
+      "duration": 3
+    },
+    {
+      "query": "sunrise bedroom window",
+      "duration": 4
+    }
+  ]
+}

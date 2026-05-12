@@ -1,0 +1,40 @@
+{
+  "slug": "project-stargate",
+  "day": 10,
+  "slot": "pm",
+  "title": "Project Stargate \u2014 the CIA's $20 million psychic spy program",
+  "hook": "THE CIA HAD PSYCHIC SPIES",
+  "voiceover": "From 1978 to 1995, the CIA ran a secret program training people to spy with their minds. It was called Project Stargate. Officially, they spent over 20 million dollars on it. They trained psychics they called remote viewers, who would sit in a quiet room and try to mentally locate enemy submarines, hostages, and missile silos. They claimed hits. They claimed misses. The program was officially declassified in 1995 \u2014 and shut down \u2014 after a review found the results inconsistent. But the documents are public now. You can read them. Decide for yourself if it really didn't work. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "spy with their minds",
+    "remote viewers",
+    "officially declassified",
+    "decide for yourself"
+  ],
+  "shots": [
+    {
+      "query": "cold war cia office",
+      "duration": 4
+    },
+    {
+      "query": "classified documents folder",
+      "duration": 4
+    },
+    {
+      "query": "person meditating dark room",
+      "duration": 4
+    },
+    {
+      "query": "world map intelligence",
+      "duration": 3
+    },
+    {
+      "query": "old typewriter paper",
+      "duration": 3
+    },
+    {
+      "query": "abstract brain waves",
+      "duration": 4
+    }
+  ]
+}

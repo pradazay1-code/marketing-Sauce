@@ -1,0 +1,40 @@
+{
+  "slug": "greek-fire",
+  "day": 7,
+  "slot": "pm",
+  "title": "Greek Fire \u2014 the ancient weapon we lost the recipe to",
+  "hook": "A WEAPON WE CAN'T REBUILD",
+  "voiceover": "In the 7th century, the Byzantine Empire invented a weapon so terrifying that even today we don't know exactly how it worked. It was called Greek Fire. A liquid that burned on water. Stuck to ships. Couldn't be extinguished. Ignited on contact. For 800 years it saved Constantinople from invasion after invasion. The recipe was the empire's most guarded secret. Only a handful of families knew it. They died one by one without writing it down. We have descriptions. We have theories. The actual formula is lost. The most powerful weapon in the medieval world is just gone. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "burned on water",
+    "couldn't be extinguished",
+    "without writing it down",
+    "lost"
+  ],
+  "shots": [
+    {
+      "query": "medieval ship battle fire",
+      "duration": 4
+    },
+    {
+      "query": "ancient flames torch",
+      "duration": 4
+    },
+    {
+      "query": "byzantine emperor painting",
+      "duration": 3
+    },
+    {
+      "query": "old manuscript paper",
+      "duration": 4
+    },
+    {
+      "query": "alchemist laboratory bottles",
+      "duration": 4
+    },
+    {
+      "query": "candlelight scrolls",
+      "duration": 3
+    }
+  ]
+}

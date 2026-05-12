@@ -1,0 +1,40 @@
+{
+  "slug": "aphantasia",
+  "day": 7,
+  "slot": "am",
+  "title": "Aphantasia \u2014 some people can't picture anything in their head",
+  "hook": "SOME PEOPLE SEE NOTHING",
+  "voiceover": "Close your eyes and picture a red apple. For most people, an image appears \u2014 color, shape, texture, all of it. But about 1 in 50 people see nothing. Just darkness. It's called aphantasia. And the wild part is, most of them grew up assuming everyone was like that. They thought 'picture this in your mind' was a figure of speech. Some don't find out until they're 30 years old, mid-conversation, and realize for the first time that other people can literally see things in their heads. Entire worlds exist inside some of you. None exist inside others. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "1 in 50 people",
+    "Just darkness",
+    "figure of speech",
+    "30 years old"
+  ],
+  "shots": [
+    {
+      "query": "closed eye macro",
+      "duration": 4
+    },
+    {
+      "query": "red apple close up",
+      "duration": 3
+    },
+    {
+      "query": "brain visualization animation",
+      "duration": 4
+    },
+    {
+      "query": "person thinking eyes closed",
+      "duration": 4
+    },
+    {
+      "query": "child drawing imagination",
+      "duration": 4
+    },
+    {
+      "query": "abstract colorful pattern",
+      "duration": 3
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "slug": "dancing-plague-1518",
+  "day": 8,
+  "slot": "pm",
+  "title": "The Dancing Plague of 1518 \u2014 400 people danced themselves to death",
+  "hook": "THEY DANCED UNTIL THEY DIED",
+  "voiceover": "In July of 1518, in the city of Strasbourg, a woman walked out into the street and started dancing. She didn't stop. Within a week, dozens had joined her. Within a month, over 400 people were dancing nonstop, day and night. They couldn't stop. They danced until their feet bled. They danced until they collapsed. Some danced until they died, from heart attacks, strokes, and exhaustion. The plague lasted two months. To this day, no one knows what caused it. Mass hysteria. Ergot poisoning. Religious mania. The mystery is still open. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "she didn't stop",
+    "over 400 people",
+    "danced until they died",
+    "mystery is still open"
+  ],
+  "shots": [
+    {
+      "query": "medieval village street",
+      "duration": 4
+    },
+    {
+      "query": "people dancing crowd",
+      "duration": 4
+    },
+    {
+      "query": "old european city cobblestone",
+      "duration": 3
+    },
+    {
+      "query": "feet running bare",
+      "duration": 4
+    },
+    {
+      "query": "historical painting people",
+      "duration": 4
+    },
+    {
+      "query": "candle flickering dark",
+      "duration": 3
+    }
+  ]
+}
