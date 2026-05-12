@@ -1,0 +1,40 @@
+{
+  "slug": "numbers-stations",
+  "day": 18,
+  "slot": "pm",
+  "title": "Numbers Stations \u2014 Cold War spy radio still broadcasting today",
+  "hook": "SOMEONE IS STILL TRANSMITTING",
+  "voiceover": "Right now, on shortwave radio, you can tune into a channel where a robotic voice reads strings of numbers. For hours. Day after day. Year after year. They're called numbers stations. They started during the Cold War, broadcasting coded messages to spies in the field. The codes are unbreakable without the key. The strange part \u2014 they never stopped. Some have been broadcasting for over 60 years. The voices have changed. The frequencies haven't. Intelligence agencies refuse to confirm or deny. Somewhere out there, an agent is still listening. For the message that's just for them. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "robotic voice reads numbers",
+    "never stopped",
+    "60 years",
+    "still listening"
+  ],
+  "shots": [
+    {
+      "query": "old radio dial vintage",
+      "duration": 4
+    },
+    {
+      "query": "shortwave radio tuning",
+      "duration": 4
+    },
+    {
+      "query": "cold war spy operation",
+      "duration": 3
+    },
+    {
+      "query": "antenna tower transmission",
+      "duration": 4
+    },
+    {
+      "query": "vintage soviet radio",
+      "duration": 4
+    },
+    {
+      "query": "headphones listening dark",
+      "duration": 3
+    }
+  ]
+}

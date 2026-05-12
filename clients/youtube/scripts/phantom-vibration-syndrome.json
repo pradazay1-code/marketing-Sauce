@@ -1,0 +1,40 @@
+{
+  "slug": "phantom-vibration-syndrome",
+  "day": 19,
+  "slot": "am",
+  "title": "Phantom vibration syndrome \u2014 your phone buzzes when it isn't",
+  "hook": "YOUR PHONE LIES TO YOU",
+  "voiceover": "You feel your phone buzz in your pocket. You reach for it. There's no notification. The phone never buzzed. This happens to about 90 percent of people who carry a phone, and it has a name. Phantom vibration syndrome. Your brain has become so trained to expect notifications that it starts inventing them. Any sensation in the area \u2014 fabric shifting, muscle twitch, even your heartbeat \u2014 gets misread as a buzz. The wild part is it's gotten more common as phones got better. Your brain is now hallucinating your phone before it even rings. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "never buzzed",
+    "90 percent of people",
+    "Your brain invents them",
+    "hallucinating your phone"
+  ],
+  "shots": [
+    {
+      "query": "phone in pocket close up",
+      "duration": 4
+    },
+    {
+      "query": "person checking phone",
+      "duration": 4
+    },
+    {
+      "query": "phone notification screen",
+      "duration": 3
+    },
+    {
+      "query": "hand reaching pocket",
+      "duration": 4
+    },
+    {
+      "query": "brain scan technology",
+      "duration": 4
+    },
+    {
+      "query": "person looking at phone",
+      "duration": 3
+    }
+  ]
+}

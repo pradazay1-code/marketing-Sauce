@@ -1,0 +1,40 @@
+{
+  "slug": "synesthesia",
+  "day": 12,
+  "slot": "am",
+  "title": "Synesthesia \u2014 people who taste words and see colors of music",
+  "hook": "SOME PEOPLE TASTE COLORS",
+  "voiceover": "Some people taste words. Some people see colors when they hear music. Some people feel shapes when they read numbers. It's called synesthesia. About 4 percent of the population has some form of it. For them, the letter A might always be red. The number 7 might taste like chocolate. The sound of a violin might feel like silk. They don't choose it. They've experienced the world this way since birth, often not realizing other people don't. Imagine living your whole life thinking everyone hears music in technicolor. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "taste words",
+    "colors when they hear music",
+    "4 percent",
+    "music in technicolor"
+  ],
+  "shots": [
+    {
+      "query": "colorful paint splash",
+      "duration": 4
+    },
+    {
+      "query": "musical notes abstract",
+      "duration": 4
+    },
+    {
+      "query": "letters numbers floating",
+      "duration": 4
+    },
+    {
+      "query": "violin player close up",
+      "duration": 3
+    },
+    {
+      "query": "abstract color synesthesia",
+      "duration": 4
+    },
+    {
+      "query": "person eyes closed listening",
+      "duration": 3
+    }
+  ]
+}

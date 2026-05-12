@@ -1,0 +1,40 @@
+{
+  "slug": "eilmer-malmesbury",
+  "day": 14,
+  "slot": "pm",
+  "title": "Eilmer of Malmesbury \u2014 the medieval monk who flew in the year 1010",
+  "hook": "A MONK BUILT WINGS IN 1010",
+  "voiceover": "In the year 1010, almost 900 years before the Wright brothers, a Benedictine monk in England built a pair of wings, climbed to the top of a tower, and jumped. His name was Eilmer of Malmesbury. He glided for over 200 yards. Then he crashed, and broke both his legs. He survived. Bedridden, he was already planning his next attempt. He told friends he had failed because he didn't make a tail. His abbot, terrified, forbade him from ever trying again. He lived another 40 years, in a body that never walked right, dreaming of flight. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "year 1010",
+    "200 yards",
+    "broke both his legs",
+    "dreaming of flight"
+  ],
+  "shots": [
+    {
+      "query": "medieval monk church",
+      "duration": 4
+    },
+    {
+      "query": "wings feathers flight",
+      "duration": 4
+    },
+    {
+      "query": "old stone tower castle",
+      "duration": 4
+    },
+    {
+      "query": "medieval manuscript drawing",
+      "duration": 3
+    },
+    {
+      "query": "english countryside aerial",
+      "duration": 3
+    },
+    {
+      "query": "bird soaring sky",
+      "duration": 4
+    }
+  ]
+}

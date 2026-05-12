@@ -1,0 +1,40 @@
+{
+  "slug": "lead-masks-case",
+  "day": 11,
+  "slot": "pm",
+  "title": "The Lead Masks Case \u2014 2 men found dead with lead eye-shields in 1966",
+  "hook": "TWO MEN. LEAD MASKS. DEAD.",
+  "voiceover": "In 1966, in a city in Brazil, two men were found dead on a hill. They were wearing matching suits. Side by side. Each had a strange handmade mask over their eyes \u2014 made of lead. There was a notebook beside them. Inside, written in their handwriting, were instructions. Quote: At 4:30 PM, take capsules. After effect, protect metals. Wait for the signal. There were no capsules. No metals. No signal. There were no signs of struggle. No cause of death. The case has never been solved. To this day, no one knows what they were waiting for. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "lead",
+    "protect metals",
+    "wait for the signal",
+    "no one knows"
+  ],
+  "shots": [
+    {
+      "query": "brazil hill aerial",
+      "duration": 4
+    },
+    {
+      "query": "old notebook handwriting",
+      "duration": 4
+    },
+    {
+      "query": "mysterious figure shadow",
+      "duration": 3
+    },
+    {
+      "query": "metal mask vintage",
+      "duration": 4
+    },
+    {
+      "query": "police investigation crime scene",
+      "duration": 4
+    },
+    {
+      "query": "fog hilltop mysterious",
+      "duration": 3
+    }
+  ]
+}

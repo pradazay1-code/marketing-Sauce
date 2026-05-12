@@ -1,0 +1,40 @@
+{
+  "slug": "octopus-dreams",
+  "day": 12,
+  "slot": "pm",
+  "title": "Octopuses change color in their sleep \u2014 and we have it on video",
+  "hook": "OCTOPUSES MIGHT DREAM",
+  "voiceover": "In 2019, a researcher caught an octopus on camera, asleep, changing colors. White to brown. Brown to yellow. Yellow to a deep, rippling pattern of green spots. The colors weren't random. They matched the patterns octopuses use while hunting, hiding, and escaping predators. Scientists believe the octopus may have been dreaming. Acting out memories of their day. If true, this is one of the strangest minds on Earth \u2014 a creature with 9 brains, blue blood, and possibly an inner life that we share with them. They're aliens. And they're already here. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "asleep, changing colors",
+    "dreaming",
+    "9 brains, blue blood",
+    "they're already here"
+  ],
+  "shots": [
+    {
+      "query": "octopus underwater color change",
+      "duration": 4
+    },
+    {
+      "query": "octopus close up tentacles",
+      "duration": 4
+    },
+    {
+      "query": "ocean coral reef",
+      "duration": 3
+    },
+    {
+      "query": "octopus camouflage",
+      "duration": 4
+    },
+    {
+      "query": "deep blue ocean",
+      "duration": 4
+    },
+    {
+      "query": "sea creature swimming",
+      "duration": 3
+    }
+  ]
+}

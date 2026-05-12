@@ -1,0 +1,40 @@
+{
+  "slug": "confabulation",
+  "day": 18,
+  "slot": "am",
+  "title": "Confabulation \u2014 your brain invents memories every single day",
+  "hook": "YOUR MEMORIES ARE FAKE",
+  "voiceover": "Your brain is a liar. Every time you remember something, you don't replay it. You rebuild it from fragments. And every time you rebuild it, you change it a little. Filling in details that were never there. Smoothing over gaps. This is called confabulation. In experiments, scientists have implanted entirely false memories in people \u2014 convincing them they got lost in a mall as a child when they never did \u2014 and the subjects later described the event in vivid detail. They felt the fear. Heard their mother's voice. Saw the strangers around them. None of it happened. You are a story your brain tells itself. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "your brain is a liar",
+    "rebuild it",
+    "implanted false memories",
+    "story your brain tells itself"
+  ],
+  "shots": [
+    {
+      "query": "old photo memory faded",
+      "duration": 4
+    },
+    {
+      "query": "brain neural network",
+      "duration": 4
+    },
+    {
+      "query": "child lost in mall",
+      "duration": 3
+    },
+    {
+      "query": "person thinking remembering",
+      "duration": 4
+    },
+    {
+      "query": "abstract memory fragments",
+      "duration": 4
+    },
+    {
+      "query": "old film projector",
+      "duration": 3
+    }
+  ]
+}

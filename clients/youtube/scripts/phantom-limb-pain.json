@@ -1,0 +1,40 @@
+{
+  "slug": "phantom-limb-pain",
+  "day": 11,
+  "slot": "am",
+  "title": "Phantom limb pain \u2014 your brain feels a body part that isn't there",
+  "hook": "YOUR BRAIN FEELS WHAT'S GONE",
+  "voiceover": "After losing an arm or a leg, around 80 percent of amputees can still feel it. They feel it itch. They feel it ache. Some feel it move. It's called phantom limb pain \u2014 and for over 200 years doctors had no idea what caused it. Then a neuroscientist named Ramachandran tried something simple. A mirror box. The patient put their remaining hand in the box, saw its reflection in the mirror, and their brain thought they had both hands back. After weeks of looking, the brain rewired itself. The phantom pain faded. Your brain doesn't see your body. It hallucinates it. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "80 percent of amputees",
+    "still feel it",
+    "mirror box",
+    "hallucinates it"
+  ],
+  "shots": [
+    {
+      "query": "human arm anatomy",
+      "duration": 4
+    },
+    {
+      "query": "brain mri scan animation",
+      "duration": 4
+    },
+    {
+      "query": "mirror reflection hand",
+      "duration": 4
+    },
+    {
+      "query": "doctor patient consultation",
+      "duration": 3
+    },
+    {
+      "query": "neuroscience research lab",
+      "duration": 4
+    },
+    {
+      "query": "person looking thoughtful",
+      "duration": 3
+    }
+  ]
+}

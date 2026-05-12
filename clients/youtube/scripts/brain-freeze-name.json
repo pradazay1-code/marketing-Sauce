@@ -1,0 +1,40 @@
+{
+  "slug": "brain-freeze-name",
+  "day": 15,
+  "slot": "am",
+  "title": "Brain freeze has a name: sphenopalatine ganglioneuralgia",
+  "hook": "BRAIN FREEZE HAS A REAL NAME",
+  "voiceover": "Brain freeze has a real medical name. Sphenopalatine ganglioneuralgia. It happens when something cold hits the roof of your mouth, and a major nerve called the sphenopalatine misreads the signal as pain in your forehead. Your brain rushes warm blood to that nerve to fix the cold, and that sudden blood rush creates the sharp ache you feel. To stop it instantly, press your tongue flat against the roof of your mouth. The heat from your tongue resets the nerve. Cure speed: about three seconds. Now you know. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "sphenopalatine ganglioneuralgia",
+    "misreads the signal",
+    "press your tongue",
+    "three seconds"
+  ],
+  "shots": [
+    {
+      "query": "ice cream cone close up",
+      "duration": 4
+    },
+    {
+      "query": "brain pain animation",
+      "duration": 4
+    },
+    {
+      "query": "person headache wincing",
+      "duration": 3
+    },
+    {
+      "query": "nerve anatomy diagram",
+      "duration": 4
+    },
+    {
+      "query": "tongue mouth anatomy",
+      "duration": 3
+    },
+    {
+      "query": "cold drink melting ice",
+      "duration": 4
+    }
+  ]
+}

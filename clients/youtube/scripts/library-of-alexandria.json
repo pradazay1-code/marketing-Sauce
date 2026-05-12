@@ -1,0 +1,40 @@
+{
+  "slug": "library-of-alexandria",
+  "day": 13,
+  "slot": "pm",
+  "title": "The Library of Alexandria \u2014 it probably never burned in one fire",
+  "hook": "ALEXANDRIA DIDN'T BURN",
+  "voiceover": "Most people think the Library of Alexandria burned in one dramatic fire. The truth is way worse. It didn't burn in one fire. It died slowly. Over more than 600 years. Caesar's fire in 48 BC damaged part of it. Roman emperors stopped funding it. The library shrank as rulers got bored. Wars and riots took more. Religious purges took the rest. By the time anyone went looking for it, there was nothing to burn. The greatest library in history wasn't destroyed in a flash. It was forgotten, defunded, ignored, until it died. Sometimes the worst losses don't make headlines. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "died slowly",
+    "more than 600 years",
+    "forgotten, defunded, ignored",
+    "don't make headlines"
+  ],
+  "shots": [
+    {
+      "query": "ancient library scrolls",
+      "duration": 4
+    },
+    {
+      "query": "burning paper fire",
+      "duration": 4
+    },
+    {
+      "query": "egyptian ruins alexandria",
+      "duration": 3
+    },
+    {
+      "query": "old roman empire",
+      "duration": 4
+    },
+    {
+      "query": "ancient manuscript decay",
+      "duration": 4
+    },
+    {
+      "query": "abandoned building ruins",
+      "duration": 3
+    }
+  ]
+}

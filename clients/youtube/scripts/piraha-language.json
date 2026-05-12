@@ -1,0 +1,40 @@
+{
+  "slug": "piraha-language",
+  "day": 15,
+  "slot": "pm",
+  "title": "The Pirah\u00e3 \u2014 a language with no numbers, no past tense",
+  "hook": "A LANGUAGE WITH NO NUMBERS",
+  "voiceover": "Deep in the Amazon, there's a tribe of about 800 people called the Pirah\u00e3. Their language has no numbers. No past tense. No word for color. No creation myth. They don't have words for one, two, or three \u2014 just words that roughly mean some, many, and lots. They live almost entirely in the present moment. A linguist named Daniel Everett spent over 30 years with them, trying to convert them to Christianity. He ended up so changed by them, he abandoned his religion and his career. Their language broke a major theory of human linguistics. They just didn't fit our rules. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "no numbers",
+    "no past tense",
+    "live in the present",
+    "didn't fit our rules"
+  ],
+  "shots": [
+    {
+      "query": "amazon rainforest river",
+      "duration": 4
+    },
+    {
+      "query": "indigenous tribe village",
+      "duration": 4
+    },
+    {
+      "query": "linguist writing notes",
+      "duration": 3
+    },
+    {
+      "query": "amazon nature forest",
+      "duration": 4
+    },
+    {
+      "query": "tribal child portrait",
+      "duration": 3
+    },
+    {
+      "query": "river boat amazon",
+      "duration": 4
+    }
+  ]
+}

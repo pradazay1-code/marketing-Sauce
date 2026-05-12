@@ -1,0 +1,40 @@
+{
+  "slug": "mary-celeste",
+  "day": 16,
+  "slot": "pm",
+  "title": "The Mary Celeste \u2014 a ghost ship found in 1872, crew never seen again",
+  "hook": "A SHIP. NO CREW. STILL SAILING.",
+  "voiceover": "In December 1872, a ship was found drifting in the middle of the Atlantic. The sails were set. The cargo was untouched. The captain's belongings were in his cabin. Half-eaten meals sat on the table. The lifeboat was missing. But the crew of eight people \u2014 gone. Without a trace. Nothing was wrong with the ship. There was no sign of struggle. No bodies were ever found. The Mary Celeste sailed for years after that, but the world kept asking the same question. What happened that day? In 150 years, we've never gotten a real answer. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "sails were set",
+    "the crew \u2014 gone",
+    "no sign of struggle",
+    "never gotten a real answer"
+  ],
+  "shots": [
+    {
+      "query": "old sailing ship ocean",
+      "duration": 4
+    },
+    {
+      "query": "empty wooden cabin",
+      "duration": 4
+    },
+    {
+      "query": "vintage compass map",
+      "duration": 3
+    },
+    {
+      "query": "stormy atlantic ocean",
+      "duration": 4
+    },
+    {
+      "query": "abandoned ship rope",
+      "duration": 4
+    },
+    {
+      "query": "fog mist sea",
+      "duration": 3
+    }
+  ]
+}

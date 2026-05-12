@@ -1,0 +1,40 @@
+{
+  "slug": "contagious-yawning",
+  "day": 20,
+  "slot": "am",
+  "title": "Why yawning is contagious \u2014 your brain mirrors others without permission",
+  "hook": "YOU'LL YAWN BY THE END",
+  "voiceover": "You're going to yawn by the end of this video. Statistically. Around 60 to 70 percent of people yawn after seeing someone else yawn. Even just reading the word yawn makes some people do it. Scientists think it's connected to mirror neurons \u2014 the same brain cells that make you wince when someone else gets hurt. It's a sign of empathy. People with higher empathy yawn more contagiously. People with autism, in some studies, yawn less. The wild part \u2014 dogs do it too. Dogs yawn when their owners yawn. Your brain is constantly syncing to others, without permission, without you knowing. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "yawn by the end",
+    "70 percent",
+    "syncing to others",
+    "without permission"
+  ],
+  "shots": [
+    {
+      "query": "person yawning close up",
+      "duration": 4
+    },
+    {
+      "query": "people in office tired",
+      "duration": 4
+    },
+    {
+      "query": "dog yawning cute",
+      "duration": 4
+    },
+    {
+      "query": "brain mirror neurons",
+      "duration": 3
+    },
+    {
+      "query": "person sleepy tired",
+      "duration": 3
+    },
+    {
+      "query": "group of people meeting",
+      "duration": 4
+    }
+  ]
+}

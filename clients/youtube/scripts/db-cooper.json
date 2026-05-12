@@ -1,0 +1,40 @@
+{
+  "slug": "db-cooper",
+  "day": 19,
+  "slot": "pm",
+  "title": "D.B. Cooper \u2014 the only unsolved hijacking in US history",
+  "hook": "HE STOLE $200K AND VANISHED",
+  "voiceover": "On Thanksgiving Eve, 1971, a man calling himself Dan Cooper boarded a flight in Portland, Oregon. He was wearing a black suit. He ordered a bourbon and soda. He handed the flight attendant a note that said he had a bomb. He demanded 200 thousand dollars and four parachutes. He got them. Then somewhere over the forests of Washington state, he opened the back door of the plane and jumped out into a rainstorm. He has never been identified. His body has never been found. The money has never resurfaced. Fifty years later, the FBI has officially given up. D.B. Cooper is the only unsolved skyjacking in American history. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "200 thousand dollars",
+    "jumped out",
+    "never been identified",
+    "officially given up"
+  ],
+  "shots": [
+    {
+      "query": "vintage airplane 1970s",
+      "duration": 4
+    },
+    {
+      "query": "airline ticket boarding pass",
+      "duration": 4
+    },
+    {
+      "query": "rainy forest washington state",
+      "duration": 4
+    },
+    {
+      "query": "parachute jumping plane",
+      "duration": 3
+    },
+    {
+      "query": "old fbi files documents",
+      "duration": 4
+    },
+    {
+      "query": "1970s airport mysterious figure",
+      "duration": 3
+    }
+  ]
+}

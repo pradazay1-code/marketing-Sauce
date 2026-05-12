@@ -1,0 +1,40 @@
+{
+  "slug": "the-hum",
+  "day": 20,
+  "slot": "pm",
+  "title": "The Hum \u2014 a sound only some people can hear, source unknown",
+  "hook": "THERE'S A SOUND. NO SOURCE.",
+  "voiceover": "In certain cities around the world, a small percentage of people hear a low, constant hum. They describe it as a diesel engine running in the distance. It keeps them up at night. It drives them slowly insane. The strange part \u2014 most people in the same city hear nothing. Bristol. Taos. Windsor. Auckland. Every Hum location has the same pattern. Around 2 percent of locals are affected. The sources tested for it \u2014 power lines, infrastructure, factories, even the Earth's natural electromagnetic field \u2014 none consistently match. Decades of investigations. No answer. Some people are tuned to something the rest of us can't hear. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "low, constant hum",
+    "2 percent of locals",
+    "no answer",
+    "tuned to something"
+  ],
+  "shots": [
+    {
+      "query": "city skyline at night",
+      "duration": 4
+    },
+    {
+      "query": "person ear listening close",
+      "duration": 4
+    },
+    {
+      "query": "power lines distant",
+      "duration": 4
+    },
+    {
+      "query": "sound wave visualization",
+      "duration": 3
+    },
+    {
+      "query": "quiet bedroom night",
+      "duration": 4
+    },
+    {
+      "query": "empty industrial factory",
+      "duration": 3
+    }
+  ]
+}

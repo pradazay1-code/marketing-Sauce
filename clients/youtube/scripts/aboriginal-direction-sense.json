@@ -1,0 +1,40 @@
+{
+  "slug": "aboriginal-direction-sense",
+  "day": 14,
+  "slot": "am",
+  "title": "Aboriginal kids have a built-in compass \u2014 they can't get lost",
+  "hook": "THEY CAN NEVER GET LOST",
+  "voiceover": "There's an aboriginal community in Australia where children, by age five, can tell you which way is north. Always. Even with their eyes closed. Even underground. Even in a completely unfamiliar room. They don't think in terms of left and right. They think in terms of cardinal directions. Their language doesn't even have a word for left. Brain scans show their hippocampus develops differently. They built an internal compass. The wild thing \u2014 every human is capable of this. We just stopped using it. Our phones killed something we used to have for free. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "by age five",
+    "always know north",
+    "no word for left",
+    "phones killed it"
+  ],
+  "shots": [
+    {
+      "query": "aboriginal australian landscape",
+      "duration": 4
+    },
+    {
+      "query": "compass needle north",
+      "duration": 4
+    },
+    {
+      "query": "child running outback",
+      "duration": 3
+    },
+    {
+      "query": "brain mri hippocampus",
+      "duration": 4
+    },
+    {
+      "query": "australian desert sunset",
+      "duration": 4
+    },
+    {
+      "query": "phone gps navigation",
+      "duration": 3
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "slug": "mandela-effect",
+  "day": 16,
+  "slot": "am",
+  "title": "The Mandela Effect \u2014 why thousands of people remember things wrong",
+  "hook": "YOU REMEMBER IT WRONG",
+  "voiceover": "Thousands of people are absolutely certain Nelson Mandela died in prison in the 1980s. He didn't. He became president of South Africa and died in 2013. But the false memory is so common, it has a name \u2014 the Mandela Effect. The Monopoly Man? You're picturing him with a monocle. He doesn't have one. Pikachu's tail? You're picturing a black tip. It doesn't have one. Whole groups of people remember the same impossible things. The leading theory is just confabulation \u2014 our brains filling in plausible details that never existed. Memory isn't a recording. It's a story your brain rewrites every time. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "Mandela died in prison",
+    "doesn't have a monocle",
+    "impossible things",
+    "brain rewrites it"
+  ],
+  "shots": [
+    {
+      "query": "old television vintage",
+      "duration": 4
+    },
+    {
+      "query": "person looking confused",
+      "duration": 4
+    },
+    {
+      "query": "brain neural pathways",
+      "duration": 3
+    },
+    {
+      "query": "old photographs memory",
+      "duration": 4
+    },
+    {
+      "query": "newspaper clipping vintage",
+      "duration": 4
+    },
+    {
+      "query": "abstract memory visualization",
+      "duration": 3
+    }
+  ]
+}

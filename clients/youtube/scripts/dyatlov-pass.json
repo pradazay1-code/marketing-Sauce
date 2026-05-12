@@ -1,0 +1,40 @@
+{
+  "slug": "dyatlov-pass",
+  "day": 17,
+  "slot": "pm",
+  "title": "The Dyatlov Pass Incident \u2014 9 hikers died in impossible circumstances",
+  "hook": "NINE HIKERS. ONE NIGHT.",
+  "voiceover": "In February 1959, nine experienced hikers set up camp in the Ural Mountains of the Soviet Union. Sometime that night, they tore open their tent from the inside, and ran out into the freezing snow, barefoot, half-dressed. They were all found dead. Some had broken ribs and fractured skulls. One was missing her eyes and tongue. There were no animal tracks. No signs of an attacker. Their clothes carried traces of radiation. For 60 years, theories included avalanches, military weapons, hypothermic panic, even aliens. In 2020, Russia officially blamed a freak slab avalanche. Most people still don't buy it. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "tore the tent open from inside",
+    "barefoot, half-dressed",
+    "missing eyes and tongue",
+    "still don't buy it"
+  ],
+  "shots": [
+    {
+      "query": "snowy mountain wilderness",
+      "duration": 4
+    },
+    {
+      "query": "tent winter snow",
+      "duration": 4
+    },
+    {
+      "query": "footprints in snow",
+      "duration": 3
+    },
+    {
+      "query": "ural mountains russia",
+      "duration": 4
+    },
+    {
+      "query": "vintage hiking gear 1950s",
+      "duration": 4
+    },
+    {
+      "query": "blizzard storm dark",
+      "duration": 3
+    }
+  ]
+}

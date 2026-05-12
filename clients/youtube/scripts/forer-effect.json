@@ -1,0 +1,40 @@
+{
+  "slug": "forer-effect",
+  "day": 17,
+  "slot": "am",
+  "title": "The Forer Effect \u2014 why horoscopes feel like they know you",
+  "hook": "HOROSCOPES AREN'T MAGIC",
+  "voiceover": "A psychologist named Bertram Forer gave his students a personalized personality test. Each one came back with a unique, detailed analysis. Students rated their results an average of 4.3 out of 5 for accuracy. Then he revealed the truth. Every single student had gotten the exact same paragraph. Word for word. We call it the Forer Effect. The brain is wired to find itself in any vague but flattering description. It's why horoscopes feel real. Why cold readers seem psychic. Why a stranger can describe you and you'll swear they understand. You're not unique to a horoscope. The horoscope is just shaped like you. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "same paragraph",
+    "any vague description",
+    "shaped like you",
+    "Forer Effect"
+  ],
+  "shots": [
+    {
+      "query": "horoscope zodiac signs",
+      "duration": 4
+    },
+    {
+      "query": "person reading newspaper",
+      "duration": 4
+    },
+    {
+      "query": "psychic tarot cards",
+      "duration": 3
+    },
+    {
+      "query": "mirror reflection face",
+      "duration": 4
+    },
+    {
+      "query": "writing paper analysis",
+      "duration": 4
+    },
+    {
+      "query": "abstract personality test",
+      "duration": 3
+    }
+  ]
+}
