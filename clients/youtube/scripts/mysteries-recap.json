@@ -1,0 +1,40 @@
+{
+  "slug": "mysteries-recap",
+  "day": 30,
+  "slot": "pm",
+  "title": "5 mysteries Mindbloom can't explain",
+  "hook": "5 THINGS NOBODY CAN EXPLAIN",
+  "voiceover": "Five mysteries the world has not solved. One. The Wow Signal \u2014 a 72 second transmission from deep space in 1977. Never repeated. Two. The Voynich Manuscript. A 600 year old book no one has ever decoded. Three. The Mary Celeste. A perfect ship found drifting in 1872. The crew vanished. Four. The Dyatlov Pass Incident. Nine hikers, dead under impossible circumstances. Five. The Hum. A low frequency sound only some people hear, in cities around the world. Source unknown. Five real stories. No answers. Which one keeps you up at night? Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "never repeated",
+    "no one has ever decoded",
+    "crew vanished",
+    "source unknown"
+  ],
+  "shots": [
+    {
+      "query": "radio telescope dish night",
+      "duration": 3
+    },
+    {
+      "query": "old manuscript paper",
+      "duration": 3
+    },
+    {
+      "query": "ghost ship sailing fog",
+      "duration": 3
+    },
+    {
+      "query": "snow mountain wilderness",
+      "duration": 3
+    },
+    {
+      "query": "dark empty city night",
+      "duration": 4
+    },
+    {
+      "query": "abstract mysterious darkness",
+      "duration": 3
+    }
+  ]
+}

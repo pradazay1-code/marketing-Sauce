@@ -1,0 +1,40 @@
+{
+  "slug": "bismuth-crystals",
+  "day": 25,
+  "slot": "am",
+  "title": "Bismuth crystals look like they're from another planet",
+  "hook": "THIS METAL LOOKS ALIEN",
+  "voiceover": "Bismuth is a metal. Heavy. Brittle. Found inside common medicines like Pepto Bismol. But when you melt and slowly cool it under the right conditions, it grows into geometric staircases. Square spirals. Rainbow towers. The shapes look impossible. Like alien architecture. The colors come from a thin oxide layer that bends light differently at every angle. Bismuth crystals look so fake that most people scrolling past them think they were CGI. They're not. You can make them on a stovetop with ten dollars worth of pellets. The strangest object on Earth might be the inside of your medicine cabinet. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "geometric staircases",
+    "alien architecture",
+    "not CGI",
+    "strangest object on Earth"
+  ],
+  "shots": [
+    {
+      "query": "bismuth crystal rainbow",
+      "duration": 4
+    },
+    {
+      "query": "geometric crystal structure",
+      "duration": 4
+    },
+    {
+      "query": "molten metal melting",
+      "duration": 4
+    },
+    {
+      "query": "mineral specimen close up",
+      "duration": 3
+    },
+    {
+      "query": "abstract geometric pattern",
+      "duration": 4
+    },
+    {
+      "query": "iridescent rainbow surface",
+      "duration": 3
+    }
+  ]
+}

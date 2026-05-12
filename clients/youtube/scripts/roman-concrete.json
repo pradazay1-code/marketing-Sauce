@@ -1,0 +1,40 @@
+{
+  "slug": "roman-concrete",
+  "day": 27,
+  "slot": "am",
+  "title": "Roman concrete heals itself \u2014 and we just figured out why",
+  "hook": "ROMAN CONCRETE HEALS ITSELF",
+  "voiceover": "Roman concrete is stronger now than the day it was poured. Two thousand years old. Still holding up the Pantheon. Still holding up bridges. Still holding up sea walls underwater, where modern concrete cracks in 50 years. For decades scientists tried to figure out the secret. In 2023, MIT researchers found it. The Romans were mixing lime in a way that created tiny pockets called lime clasts. When cracks formed and water got in, the lime reacted with the water and crystallized, sealing the crack from the inside. The concrete healed itself. We're now copying it for modern construction. Sometimes the future is in the past. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "stronger now",
+    "lime clasts",
+    "concrete healed itself",
+    "future is in the past"
+  ],
+  "shots": [
+    {
+      "query": "ancient roman pantheon",
+      "duration": 4
+    },
+    {
+      "query": "old roman aqueduct",
+      "duration": 4
+    },
+    {
+      "query": "concrete texture macro",
+      "duration": 3
+    },
+    {
+      "query": "construction site modern",
+      "duration": 4
+    },
+    {
+      "query": "roman ruins italy",
+      "duration": 4
+    },
+    {
+      "query": "scientist laboratory research",
+      "duration": 3
+    }
+  ]
+}

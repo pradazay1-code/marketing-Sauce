@@ -1,0 +1,40 @@
+{
+  "slug": "sentinelese",
+  "day": 25,
+  "slot": "pm",
+  "title": "The Sentinelese \u2014 the last uncontacted tribe on Earth",
+  "hook": "DON'T GO TO THIS ISLAND",
+  "voiceover": "There's an island in the Indian Ocean that no outsider has ever successfully visited. It's called North Sentinel Island. The people who live there \u2014 the Sentinelese \u2014 have been there for about 60,000 years. They have refused contact with the outside world for all of recorded history. They greet visitors with arrows. In 2018, an American missionary tried to land there to share his religion. He was killed within minutes. His body was never recovered. The Indian government has made it illegal to approach the island. Everyone on Earth knows about them. None of us have ever spoken to them. They've outlasted every empire in human history by saying no. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "60,000 years",
+    "killed within minutes",
+    "illegal to approach",
+    "outlasted every empire"
+  ],
+  "shots": [
+    {
+      "query": "tropical island aerial ocean",
+      "duration": 4
+    },
+    {
+      "query": "remote forest jungle",
+      "duration": 4
+    },
+    {
+      "query": "ocean waves remote beach",
+      "duration": 4
+    },
+    {
+      "query": "indian ocean island",
+      "duration": 3
+    },
+    {
+      "query": "tribal arrows bow",
+      "duration": 3
+    },
+    {
+      "query": "untouched paradise nature",
+      "duration": 4
+    }
+  ]
+}

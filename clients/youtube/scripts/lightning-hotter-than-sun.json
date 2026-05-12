@@ -1,0 +1,40 @@
+{
+  "slug": "lightning-hotter-than-sun",
+  "day": 29,
+  "slot": "am",
+  "title": "Lightning is 5 times hotter than the surface of the sun",
+  "hook": "LIGHTNING BEATS THE SUN",
+  "voiceover": "Lightning is hotter than the surface of the sun. The sun's surface is around 10,000 degrees Fahrenheit. A bolt of lightning reaches around 50,000 degrees. Five times hotter. The reason it doesn't melt everything it touches is speed. A lightning bolt lasts about 30 microseconds. The energy is real. The duration is tiny. When lightning strikes sand, it can melt it on contact and fuse it into a glass tube called a fulgurite \u2014 a permanent fossil of the lightning bolt's path. The Earth is hit by lightning about 100 times every second. The sky has more energy than we ever appreciate. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "five times hotter",
+    "50,000 degrees",
+    "fulgurite",
+    "100 times every second"
+  ],
+  "shots": [
+    {
+      "query": "lightning bolt night sky",
+      "duration": 4
+    },
+    {
+      "query": "sun surface close up",
+      "duration": 4
+    },
+    {
+      "query": "thunderstorm dark clouds",
+      "duration": 4
+    },
+    {
+      "query": "fulgurite glass tube sand",
+      "duration": 3
+    },
+    {
+      "query": "lightning strike ground",
+      "duration": 4
+    },
+    {
+      "query": "thunder storm landscape",
+      "duration": 3
+    }
+  ]
+}

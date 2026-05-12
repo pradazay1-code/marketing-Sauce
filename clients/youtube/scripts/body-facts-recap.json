@@ -1,0 +1,40 @@
+{
+  "slug": "body-facts-recap",
+  "day": 30,
+  "slot": "am",
+  "title": "5 facts about your body that broke Mindbloom this month",
+  "hook": "5 THINGS YOUR BODY HIDES",
+  "voiceover": "Five facts your body kept from you this month. One. You have a second brain in your gut with 500 million neurons. Two. Your skin completely replaces itself every 27 days. Three. You're a full centimeter taller in the morning than at night. Four. Your nose only smells through one nostril at a time. Five. There's a bone in your throat called the hyoid that isn't connected to anything else. It just floats. Your body is full of secrets it never told you. Which one shocked you most? Comment below. And follow Mindbloom for the next 30. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "second brain in your gut",
+    "every 27 days",
+    "centimeter taller",
+    "isn't connected to anything"
+  ],
+  "shots": [
+    {
+      "query": "human anatomy stomach",
+      "duration": 3
+    },
+    {
+      "query": "skin macro close",
+      "duration": 3
+    },
+    {
+      "query": "person stretching morning",
+      "duration": 3
+    },
+    {
+      "query": "human nose macro",
+      "duration": 3
+    },
+    {
+      "query": "skeleton x-ray",
+      "duration": 3
+    },
+    {
+      "query": "body silhouette",
+      "duration": 4
+    }
+  ]
+}

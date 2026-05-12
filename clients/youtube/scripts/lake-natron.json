@@ -1,0 +1,40 @@
+{
+  "slug": "lake-natron",
+  "day": 23,
+  "slot": "am",
+  "title": "Lake Natron \u2014 the lake that turns animals into stone statues",
+  "hook": "THIS LAKE TURNS YOU TO STONE",
+  "voiceover": "There's a lake in Tanzania so alkaline that animals who fall in turn to stone. It's called Lake Natron. The water has a pH so high it can burn through human skin. The temperature reaches 140 degrees Fahrenheit. The lake's chemistry preserves dead animals almost like mummies, drying them out and coating them in a hard, mineral shell. Photographer Nick Brandt photographed the eerie stone bodies of birds and bats lined up around the lake. They look like statues. They were once alive. The lake is also home to thousands of flamingos. They thrive in it. Nothing else does. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "turn to stone",
+    "burn through human skin",
+    "look like statues",
+    "nothing else does"
+  ],
+  "shots": [
+    {
+      "query": "lake natron tanzania aerial",
+      "duration": 4
+    },
+    {
+      "query": "salt flat crystal landscape",
+      "duration": 4
+    },
+    {
+      "query": "flamingo pink water",
+      "duration": 4
+    },
+    {
+      "query": "preserved bird body",
+      "duration": 3
+    },
+    {
+      "query": "desert mineral red",
+      "duration": 3
+    },
+    {
+      "query": "alkaline lake mysterious",
+      "duration": 4
+    }
+  ]
+}

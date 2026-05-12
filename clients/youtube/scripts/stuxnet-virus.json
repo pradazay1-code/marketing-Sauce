@@ -1,0 +1,40 @@
+{
+  "slug": "stuxnet-virus",
+  "day": 27,
+  "slot": "pm",
+  "title": "Stuxnet \u2014 the first weapon made entirely of code",
+  "hook": "A VIRUS THAT BROKE A NATION",
+  "voiceover": "In 2010, computer security researchers discovered a virus unlike anything they'd seen before. It was called Stuxnet. It didn't steal data. It didn't ransom files. It hunted one specific industrial machine in one specific Iranian nuclear facility. When it found the right machine, it took control of the centrifuges spinning uranium, made them spin too fast until they tore themselves apart, while displaying perfectly normal readings to the operators. It destroyed about a thousand centrifuges and set Iran's nuclear program back by years. No one has ever officially claimed it. Most experts say the US and Israel built it together. Stuxnet was the first weapon made entirely of code. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "first weapon made of code",
+    "hunted one specific machine",
+    "tore themselves apart",
+    "made entirely of code"
+  ],
+  "shots": [
+    {
+      "query": "code lines computer screen",
+      "duration": 4
+    },
+    {
+      "query": "nuclear facility industrial",
+      "duration": 4
+    },
+    {
+      "query": "hacker dark room",
+      "duration": 4
+    },
+    {
+      "query": "server room data center",
+      "duration": 3
+    },
+    {
+      "query": "centrifuge industrial spinning",
+      "duration": 3
+    },
+    {
+      "query": "binary code matrix",
+      "duration": 4
+    }
+  ]
+}

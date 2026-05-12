@@ -1,0 +1,40 @@
+{
+  "slug": "stomach-growling",
+  "day": 28,
+  "slot": "am",
+  "title": "Your stomach growls even when you're not hungry \u2014 here's why",
+  "hook": "YOUR STOMACH NEVER SHUTS UP",
+  "voiceover": "Your stomach makes noise even when you haven't thought about food in hours. It's called borborygmi. And it's not just hunger. Your stomach and intestines are always moving, churning, contracting in waves, even when they're empty. The sound is air and fluid being pushed through your digestive tract. When you're hungry, the contractions get stronger. The stomach is empty. The sounds echo. That's why you only seem to notice it in quiet rooms or in meetings. Your gut isn't asking for food. It's just maintaining itself. The next embarrassing rumble in a silent room is your body doing housekeeping out loud. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "borborygmi",
+    "always moving",
+    "contractions get stronger",
+    "housekeeping out loud"
+  ],
+  "shots": [
+    {
+      "query": "person hand on stomach",
+      "duration": 4
+    },
+    {
+      "query": "digestive system anatomy",
+      "duration": 4
+    },
+    {
+      "query": "quiet office meeting",
+      "duration": 3
+    },
+    {
+      "query": "empty plate dining table",
+      "duration": 4
+    },
+    {
+      "query": "intestines anatomy 3d",
+      "duration": 4
+    },
+    {
+      "query": "person embarrassed expression",
+      "duration": 3
+    }
+  ]
+}

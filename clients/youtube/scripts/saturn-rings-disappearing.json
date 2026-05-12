@@ -1,0 +1,40 @@
+{
+  "slug": "saturn-rings-disappearing",
+  "day": 29,
+  "slot": "pm",
+  "title": "Saturn's rings are disappearing \u2014 they'll be gone in 100 million years",
+  "hook": "SATURN'S RINGS ARE DYING",
+  "voiceover": "Saturn's rings are not permanent. They're falling into the planet right now. NASA scientists call it ring rain. Tons of icy ring material plummets into Saturn's atmosphere every single second. At this rate, the rings have maybe 100 million years left, and could be gone even sooner. We're lucky to be alive to see them. The rings probably formed only 100 to 400 million years ago \u2014 long after Saturn itself. Which means dinosaurs walked an Earth that looked up at a ringless Saturn. Our generation is one of the only ones in the planet's 4 billion year history to see what's there now. Look up while you can. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "falling into the planet",
+    "ring rain",
+    "100 million years left",
+    "look up while you can"
+  ],
+  "shots": [
+    {
+      "query": "saturn rings planet space",
+      "duration": 4
+    },
+    {
+      "query": "outer space planet nasa",
+      "duration": 4
+    },
+    {
+      "query": "ice particles space",
+      "duration": 3
+    },
+    {
+      "query": "telescope night sky",
+      "duration": 4
+    },
+    {
+      "query": "saturn close up rings",
+      "duration": 4
+    },
+    {
+      "query": "starry sky observatory",
+      "duration": 3
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "slug": "operation-northwoods",
+  "day": 26,
+  "slot": "pm",
+  "title": "Operation Northwoods \u2014 the US plan to fake attacks on its own citizens",
+  "hook": "THE US PLANNED TO ATTACK ITSELF",
+  "voiceover": "In 1962, the US military proposed a plan called Operation Northwoods. The idea: stage fake terrorist attacks against American citizens, on American soil, blame them on Cuba, and use the public outrage as justification to invade Castro's island. The plan included sinking refugee boats. Blowing up a US ship. Hijacking planes. Killing innocent people in Miami. Real plans, signed by every Joint Chief of Staff. President Kennedy was given the proposal. He read it. He rejected it. The plan was classified for over 30 years. It became public in 1997. None of it was a conspiracy theory. The Joint Chiefs of Staff genuinely proposed it. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "fake terrorist attacks",
+    "Killing innocent people",
+    "Kennedy rejected it",
+    "genuinely proposed it"
+  ],
+  "shots": [
+    {
+      "query": "white house washington",
+      "duration": 4
+    },
+    {
+      "query": "1960s military meeting",
+      "duration": 4
+    },
+    {
+      "query": "classified documents files",
+      "duration": 4
+    },
+    {
+      "query": "old typewriter paper",
+      "duration": 3
+    },
+    {
+      "query": "miami city vintage",
+      "duration": 3
+    },
+    {
+      "query": "kennedy era oval office",
+      "duration": 4
+    }
+  ]
+}

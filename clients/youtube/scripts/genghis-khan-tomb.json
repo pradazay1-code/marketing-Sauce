@@ -1,0 +1,40 @@
+{
+  "slug": "genghis-khan-tomb",
+  "day": 28,
+  "slot": "pm",
+  "title": "Genghis Khan's tomb has been missing for 800 years",
+  "hook": "THE WORLD'S GREATEST TOMB IS LOST",
+  "voiceover": "Genghis Khan died in 1227. He conquered more land than any human in history. He had more descendants than maybe any human in history \u2014 around 1 in 200 men alive today share his Y chromosome. And then he disappeared. According to legend, his soldiers buried him in a secret location somewhere in Mongolia. They killed every person who saw the funeral procession to keep the location hidden. They diverted a river over the burial site. They rode horses across the grave to flatten it. They did everything possible to make sure no one would ever find him. And so far, no one has. Treasure hunters have spent fortunes searching. Modern Mongolians refuse to dig \u2014 they consider it sacred. The man who ruled half the world is still hidden, somewhere in the mountains he came from. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "died in 1227",
+    "1 in 200 men",
+    "killed everyone who saw",
+    "still hidden"
+  ],
+  "shots": [
+    {
+      "query": "mongolian steppe horse",
+      "duration": 4
+    },
+    {
+      "query": "ancient warrior helmet",
+      "duration": 4
+    },
+    {
+      "query": "mongolian mountains landscape",
+      "duration": 4
+    },
+    {
+      "query": "old map asia",
+      "duration": 3
+    },
+    {
+      "query": "treasure ancient gold",
+      "duration": 3
+    },
+    {
+      "query": "horse running plains",
+      "duration": 4
+    }
+  ]
+}

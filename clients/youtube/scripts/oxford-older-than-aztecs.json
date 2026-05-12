@@ -1,13 +1,40 @@
 {
   "slug": "oxford-older-than-aztecs",
+  "day": 24,
+  "slot": "am",
   "title": "Oxford University is older than the Aztec Empire",
-  "voiceover": "Oxford University is older than the Aztec Empire. Students were studying at Oxford in ten ninety-six. The Aztec Empire wasn't founded until thirteen forty-five. That means when the Aztecs were just starting to build Tenochtitlan, Oxford had already been training scholars for over two hundred and fifty years. By the time the Aztecs fell to the Spanish in fifteen twenty-one, Oxford had been around for over four centuries. We treat the Aztecs like ancient history... but a European university outlived their entire civilization, and is still running today. Follow for one mind-blowing fact a day.",
+  "hook": "OXFORD IS OLDER THAN THE AZTECS",
+  "voiceover": "Oxford University is older than the Aztec Empire. Students were studying at Oxford in 1096. The Aztec Empire wasn't founded until 1345. By the time the Aztecs began building their first city, Oxford had been training scholars for over 250 years. By the time the Aztecs fell to the Spanish in 1521, Oxford had been around for over four centuries. We treat the Aztecs like ancient history. But a European university outlived their entire civilization. And Oxford is still operating today. Our timelines for what feels old are completely wrong. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "older than the Aztec Empire",
+    "studying at Oxford in 1096",
+    "outlived their entire civilization",
+    "completely wrong"
+  ],
   "shots": [
-    {"query": "oxford university old building", "duration": 4},
-    {"query": "ancient library books", "duration": 4},
-    {"query": "aztec temple ruins", "duration": 4},
-    {"query": "medieval manuscript", "duration": 3},
-    {"query": "stone university courtyard", "duration": 4},
-    {"query": "historical map old", "duration": 3}
+    {
+      "query": "oxford university old building",
+      "duration": 4
+    },
+    {
+      "query": "ancient library books leather",
+      "duration": 4
+    },
+    {
+      "query": "aztec temple ruins",
+      "duration": 4
+    },
+    {
+      "query": "medieval manuscript writing",
+      "duration": 3
+    },
+    {
+      "query": "stone university courtyard",
+      "duration": 3
+    },
+    {
+      "query": "historical map old",
+      "duration": 4
+    }
   ]
 }

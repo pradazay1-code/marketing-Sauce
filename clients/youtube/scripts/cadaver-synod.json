@@ -1,0 +1,40 @@
+{
+  "slug": "cadaver-synod",
+  "day": 22,
+  "slot": "pm",
+  "title": "The Cadaver Synod \u2014 a Pope dug up his dead predecessor for trial",
+  "hook": "THE POPE PUT A CORPSE ON TRIAL",
+  "voiceover": "In the year 897, Pope Stephen VI had his predecessor, Pope Formosus, dug up out of the ground. Eight months after his death. Then Stephen put the corpse on trial. They dressed the body in papal robes. Sat him in a chair. A young deacon spoke for him. The dead pope was found guilty. They cut off three fingers from his right hand \u2014 the ones he used to give blessings \u2014 and threw his body in the Tiber River. The whole thing is called the Cadaver Synod. And yes, all of this is real history. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "dug up",
+    "put the corpse on trial",
+    "threw his body in the river",
+    "real history"
+  ],
+  "shots": [
+    {
+      "query": "vatican church medieval",
+      "duration": 4
+    },
+    {
+      "query": "old cathedral interior",
+      "duration": 4
+    },
+    {
+      "query": "medieval pope painting",
+      "duration": 4
+    },
+    {
+      "query": "old roman tiber river",
+      "duration": 3
+    },
+    {
+      "query": "ancient throne dark",
+      "duration": 3
+    },
+    {
+      "query": "candle dark medieval room",
+      "duration": 4
+    }
+  ]
+}

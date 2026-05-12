@@ -1,0 +1,40 @@
+{
+  "slug": "cotard-delusion",
+  "day": 21,
+  "slot": "pm",
+  "title": "Cotard's Delusion \u2014 people who believe they are already dead",
+  "hook": "THEY THINK THEY ARE DEAD",
+  "voiceover": "There's a rare psychiatric condition where people sincerely believe they are dead. It's called Cotard's Delusion. Patients describe feeling no heartbeat. No need to eat. No need to breathe. Some stop eating because, they say, they don't need to anymore. Some demand to be buried. They aren't psychotic in the typical sense. They speak clearly. They remember everything. They just believe their body has ended and they're a soul still wandering. Brain scans show real malfunction \u2014 the regions responsible for self-recognition basically go offline. They are alive, watching their own funeral from the inside. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "sincerely believe they are dead",
+    "demand to be buried",
+    "soul still wandering",
+    "watching their own funeral"
+  ],
+  "shots": [
+    {
+      "query": "person empty room dark",
+      "duration": 4
+    },
+    {
+      "query": "brain mri scan abstract",
+      "duration": 4
+    },
+    {
+      "query": "mirror reflection empty",
+      "duration": 4
+    },
+    {
+      "query": "cemetery old gothic",
+      "duration": 3
+    },
+    {
+      "query": "hospital bed lonely",
+      "duration": 4
+    },
+    {
+      "query": "person looking through window rain",
+      "duration": 3
+    }
+  ]
+}

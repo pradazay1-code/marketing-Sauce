@@ -1,0 +1,40 @@
+{
+  "slug": "great-emu-war",
+  "day": 23,
+  "slot": "pm",
+  "title": "The Great Emu War \u2014 Australia lost a war to birds in 1932",
+  "hook": "AUSTRALIA LOST A WAR TO BIRDS",
+  "voiceover": "In 1932, Australia declared war on emus. Tens of thousands of the giant flightless birds were destroying crops in Western Australia. The government sent in soldiers. With machine guns. The emus, it turned out, were surprisingly hard to kill. They scattered. They ran zigzag. They could take multiple bullets and keep going. The military expedition fired thousands of rounds. The official report admitted maybe a few hundred emus died. The leader called the birds invulnerable, like Zulu warriors. After six weeks, the army quietly withdrew. Australia. Lost. A war. To birds. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "declared war on emus",
+    "machine guns",
+    "invulnerable like Zulu warriors",
+    "Lost. A war. To birds."
+  ],
+  "shots": [
+    {
+      "query": "emu bird australia",
+      "duration": 4
+    },
+    {
+      "query": "australian outback farm",
+      "duration": 4
+    },
+    {
+      "query": "vintage soldiers 1930s",
+      "duration": 3
+    },
+    {
+      "query": "wheat field farmland",
+      "duration": 4
+    },
+    {
+      "query": "running birds wildlife",
+      "duration": 4
+    },
+    {
+      "query": "old newspaper headline",
+      "duration": 3
+    }
+  ]
+}

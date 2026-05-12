@@ -1,0 +1,40 @@
+{
+  "slug": "tambora-eruption",
+  "day": 26,
+  "slot": "am",
+  "title": "1815 \u2014 the year without a summer, caused by one volcano",
+  "hook": "1815 HAD NO SUMMER",
+  "voiceover": "In 1815, a volcano in Indonesia called Mount Tambora erupted. It was the most powerful eruption in recorded history. Ten thousand people died instantly. Then the ash spread. So much ash that the entire planet cooled. The next year, 1816, became known as the year without a summer. Snow fell in New England in June. Crops failed across Europe. Famine spread. Riots broke out. People starved. The cold and gloom inspired a young Mary Shelley, trapped indoors during her summer vacation in Switzerland, to write Frankenstein. One volcano changed the global climate, killed 100,000 people, and gave us horror's most iconic novel. Geology shapes history. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "most powerful eruption in history",
+    "year without a summer",
+    "wrote Frankenstein",
+    "geology shapes history"
+  ],
+  "shots": [
+    {
+      "query": "volcano erupting ash",
+      "duration": 4
+    },
+    {
+      "query": "dark cloudy sky storm",
+      "duration": 4
+    },
+    {
+      "query": "snow falling field",
+      "duration": 3
+    },
+    {
+      "query": "old farmer hands wheat",
+      "duration": 4
+    },
+    {
+      "query": "candle dark room writing",
+      "duration": 4
+    },
+    {
+      "query": "indonesia volcano landscape",
+      "duration": 3
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "slug": "pig-war-1859",
+  "day": 24,
+  "slot": "pm",
+  "title": "The Pig War \u2014 the US and UK almost went to war over one dead pig",
+  "hook": "ONE PIG NEARLY STARTED WW",
+  "voiceover": "In 1859, an American farmer on a small island shared by the US and Britain shot a pig. It was wandering in his potato garden. The pig belonged to a British man. He demanded compensation. The American refused. The British threatened arrest. America sent soldiers. Britain sent warships. Within weeks, 461 American troops and five British warships were facing each other off a small island over a single dead pig. Both sides got orders not to fire first. Officers on the ground refused to escalate. The standoff lasted 13 years. The only casualty of the entire war was the pig. Follow Mindbloom for one fact a day.",
+  "emphasis": [
+    "shot a pig",
+    "461 American troops",
+    "five British warships",
+    "only casualty was the pig"
+  ],
+  "shots": [
+    {
+      "query": "vintage farm 1800s",
+      "duration": 4
+    },
+    {
+      "query": "pig farm field",
+      "duration": 4
+    },
+    {
+      "query": "old british warship",
+      "duration": 4
+    },
+    {
+      "query": "civil war era soldiers",
+      "duration": 3
+    },
+    {
+      "query": "small island green",
+      "duration": 4
+    },
+    {
+      "query": "old newspaper headline",
+      "duration": 3
+    }
+  ]
+}
