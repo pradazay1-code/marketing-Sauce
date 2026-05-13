@@ -114,37 +114,48 @@ def lookup_brand(query: str, library: dict, used: set):
     return None, None
 
 
-# ----- Source 2: yt-dlp YouTube search -----
+# ----- Source 2: yt-dlp YouTube search (V3: filtered, top-5, sponsorblock) -----
 
 
-def search_youtube(query: str):
-    """Search YouTube, return URL of best match."""
+def search_youtube(query: str, n_results: int = 5):
+    """Search YouTube. Filter: 30s-30min, no Shorts. Return URL of best match."""
     try:
         result = subprocess.run(
-            ["yt-dlp", f"ytsearch1:{query}", "--get-id", "--no-warnings", "--quiet", "--ignore-errors"],
-            capture_output=True, text=True, timeout=30,
+            [
+                "yt-dlp", f"ytsearch{n_results}:{query}",
+                "--match-filters", "duration > 30 & duration < 1800",
+                "--get-id", "--no-warnings", "--quiet", "--ignore-errors",
+            ],
+            capture_output=True, text=True, timeout=60,
         )
-        vid = result.stdout.strip().split("\n")[0]
-        if vid and len(vid) == 11:
-            return f"https://www.youtube.com/watch?v={vid}"
+        ids = [i for i in result.stdout.strip().split("\n") if len(i) == 11]
+        if ids:
+            return f"https://www.youtube.com/watch?v={ids[0]}"
     except Exception:
         pass
     return None
 
 
-def download_youtube_snippet(url: str, out_path: Path, duration: float = YT_TRIM_SECONDS):
-    """Download first `duration` seconds of a YouTube video."""
+def download_youtube_snippet(url: str, out_path: Path, start: int = 15, duration: float = 10):
+    """Download `duration` sec from offset `start` (skips intros). SponsorBlock removes ads/sponsors."""
+    end = start + int(duration)
     try:
         cmd = [
             "yt-dlp",
             "-f", "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best[height<=720]",
-            "--download-sections", f"*0-{int(duration)}",
+            "--download-sections", f"*{start}-{end}",
             "--force-keyframes-at-cuts",
+            "--sponsorblock-remove", "sponsor,intro,outro,selfpromo,preview",
             "-o", str(out_path),
             "--no-warnings", "--quiet", "--ignore-errors",
             url,
         ]
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+        if out_path.exists() and out_path.stat().st_size > 10_000:
+            return True
+        # Fallback: try without sponsorblock if it failed
+        cmd_simple = [c for c in cmd if "sponsorblock" not in c and c not in ("sponsor,intro,outro,selfpromo,preview",)]
+        result = subprocess.run(cmd_simple, capture_output=True, text=True, timeout=180)
         return out_path.exists() and out_path.stat().st_size > 10_000
     except Exception:
         return False
@@ -282,15 +293,20 @@ def fetch_shot(
     pexels_key: str, pixabay_key: str | None,
     enable_youtube: bool = True,
 ):
-    """Try multiple sources to fetch this shot. Returns (path, kind) or (None, None)."""
-    query = shot["query"]
+    """Try multiple sources to fetch this shot. Returns (path, kind, source) or (None, None, None).
+
+    V3: supports multi-query via `queries` list — tries each query through all sources.
+    """
+    queries = shot.get("queries") or [shot.get("query", "")]
+    if isinstance(queries, str):
+        queries = [queries]
     video_path = clips_dir / f"shot_{idx:04d}.mp4"
     image_path = clips_dir / f"shot_{idx:04d}.jpg"
 
     if video_path.exists():
-        return video_path, "video"
+        return video_path, "video", "cache"
     if image_path.exists():
-        return image_path, "image"
+        return image_path, "image", "cache"
 
     # 1. Explicit URL in script
     explicit_url = shot.get("url")
@@ -299,59 +315,61 @@ def fetch_shot(
             ext = "mp4" if any(explicit_url.endswith(s) for s in [".mp4", ".mov", ".webm"]) else "jpg"
             out = video_path if ext == "mp4" else image_path
             download(explicit_url, out)
-            return out, ("video" if ext == "mp4" else "image")
+            return out, ("video" if ext == "mp4" else "image"), "explicit"
         except Exception as e:
             print(f"      [explicit] failed: {e}")
 
-    # 2. Brand library
-    url, kind = lookup_brand(query, library, used_urls)
-    if url:
-        try:
-            out = video_path if kind == "video" else image_path
-            download(url, out)
-            return out, kind
-        except Exception as e:
-            print(f"      [library] failed for '{query}': {e}")
+    # 2. Brand library (try each query)
+    for q in queries:
+        url, kind = lookup_brand(q, library, used_urls)
+        if url:
+            try:
+                out = video_path if kind == "video" else image_path
+                download(url, out)
+                return out, kind, "library"
+            except Exception as e:
+                print(f"      [library] failed for '{q}': {e}")
 
     sources = shot.get("sources") or ["youtube", "pexels", "pixabay", "wikimedia", "ai"]
     if not enable_youtube and "youtube" in sources:
         sources = [s for s in sources if s != "youtube"]
 
-    for src in sources:
-        try:
-            if src == "youtube":
-                yt_url = search_youtube(query)
-                if yt_url and download_youtube_snippet(yt_url, video_path):
-                    return video_path, "video"
-            elif src == "pexels":
-                url = search_pexels(query, pexels_key)
-                if url:
-                    download(url, video_path)
-                    return video_path, "video"
-            elif src == "pixabay":
-                url = search_pixabay_video(query, pixabay_key)
-                if url:
-                    download(url, video_path)
-                    return video_path, "video"
-            elif src == "pixabay_image":
-                url = search_pixabay_image(query, pixabay_key)
-                if url:
+    for q in queries:
+        for src in sources:
+            try:
+                if src == "youtube":
+                    yt_url = search_youtube(q)
+                    if yt_url and download_youtube_snippet(yt_url, video_path):
+                        return video_path, "video", "youtube"
+                elif src == "pexels":
+                    url = search_pexels(q, pexels_key)
+                    if url:
+                        download(url, video_path)
+                        return video_path, "video", "pexels"
+                elif src == "pixabay":
+                    url = search_pixabay_video(q, pixabay_key)
+                    if url:
+                        download(url, video_path)
+                        return video_path, "video", "pixabay"
+                elif src == "pixabay_image":
+                    url = search_pixabay_image(q, pixabay_key)
+                    if url:
+                        download(url, image_path)
+                        return image_path, "image", "pixabay_image"
+                elif src == "wikimedia":
+                    url = search_wikimedia_image(q)
+                    if url:
+                        download(url, image_path)
+                        return image_path, "image", "wikimedia"
+                elif src == "ai":
+                    url = pollinations_image_url(q)
                     download(url, image_path)
-                    return image_path, "image"
-            elif src == "wikimedia":
-                url = search_wikimedia_image(query)
-                if url:
-                    download(url, image_path)
-                    return image_path, "image"
-            elif src == "ai":
-                url = pollinations_image_url(query)
-                download(url, image_path)
-                return image_path, "image"
-        except Exception as e:
-            print(f"      [{src}] failed for '{query}': {e}")
-            continue
+                    return image_path, "image", "ai"
+            except Exception as e:
+                print(f"      [{src}] failed for '{q}': {e}")
+                continue
 
-    return None, None
+    return None, None, None
 
 
 # ----- Clip processing -----
@@ -436,35 +454,37 @@ def main() -> int:
     weight_sum = sum(weights)
     durations = [(w / weight_sum) * total_duration for w in weights]
 
-    print(f"[2/4] Fetching {len(shots)} shots (multi-source: brand-lib > yt > pexels > pixabay > wikimedia > ai)...")
+    print(f"[2/4] Fetching {len(shots)} shots (priorities: explicit > library > youtube > pexels > pixabay > wikimedia > ai)...")
     used_urls = set()
     video_clips = []
-    yt_count = 0
-    src_stats = {"library": 0, "youtube": 0, "pexels": 0, "pixabay": 0, "wikimedia": 0, "ai": 0, "failed": 0}
+    src_stats = {"explicit": 0, "library": 0, "youtube": 0, "pexels": 0, "pixabay": 0, "pixabay_image": 0, "wikimedia": 0, "ai": 0, "cache": 0, "failed": 0}
 
     for i, (shot, dur) in enumerate(zip(shots, durations)):
-        query = shot["query"]
+        queries = shot.get("queries") or [shot.get("query", "")]
+        primary_query = queries[0] if isinstance(queries, list) else queries
         if (i + 1) % 20 == 0 or i < 3 or i == len(shots) - 1:
-            print(f"      [{i+1}/{len(shots)}] '{query}' -> {dur:.1f}s")
-        path, kind = fetch_shot(
+            print(f"      [{i+1}/{len(shots)}] '{primary_query}' -> {dur:.1f}s")
+        path, kind, source = fetch_shot(
             i, shot, clips_dir, library, used_urls,
             pexels_key, pixabay_key, enable_youtube=not args.no_youtube,
         )
         if not path:
             src_stats["failed"] += 1
-            print(f"      [{i+1}] WARN no source matched '{query}'")
+            print(f"      [{i+1}] WARN no source matched '{primary_query}'")
             continue
         try:
             clip = load_clip(path, kind, dur)
             video_clips.append(clip)
+            src_stats[source] = src_stats.get(source, 0) + 1
         except Exception as e:
             src_stats["failed"] += 1
-            print(f"      [{i+1}] WARN clip load failed for '{query}': {e}")
+            print(f"      [{i+1}] WARN clip load failed for '{primary_query}': {e}")
 
     if not video_clips:
         sys.exit("ERROR: no usable clips")
 
     print(f"      {len(video_clips)}/{len(shots)} clips ready")
+    print(f"      sources: {dict((k, v) for k, v in src_stats.items() if v > 0)}")
 
     print("[3/4] Compositing timeline...")
     timeline = []
@@ -487,12 +507,31 @@ def main() -> int:
     video = video.with_audio(final_audio).with_duration(total_duration)
 
     out_path = out_dir / "video.mp4"
-    print(f"[4/4] Encoding -> {out_path} ...")
+    temp_path = out_dir / "_pre_normalize.mp4"
+    print(f"[4/4] Encoding -> {temp_path.name} ...")
     video.write_videofile(
-        str(out_path),
+        str(temp_path),
         fps=30, codec="libx264", audio_codec="aac",
         preset="medium", threads=4, bitrate="6000k", logger=None,
     )
+
+    print("      audio normalization (loudnorm I=-16 LRA=11 TP=-1.5)...")
+    try:
+        subprocess.run(
+            [
+                "ffmpeg", "-y", "-i", str(temp_path),
+                "-af", "loudnorm=I=-16:LRA=11:TP=-1.5",
+                "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+                "-loglevel", "error",
+                str(out_path),
+            ],
+            check=True,
+        )
+        temp_path.unlink(missing_ok=True)
+    except Exception as e:
+        print(f"      WARN normalization failed ({e}); using un-normalized output")
+        temp_path.rename(out_path)
+
     print(f"\nDone -> {out_path}")
     return 0
 

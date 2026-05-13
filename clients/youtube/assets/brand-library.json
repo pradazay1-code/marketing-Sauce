@@ -77,5 +77,66 @@
 
   "miami florida beach": [
     {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Miami_Beach_FL_skyline_at_night_aerial.jpg/2560px-Miami_Beach_FL_skyline_at_night_aerial.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "tesla model s": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/2018_Tesla_Model_S_75D.jpg/2560px-2018_Tesla_Model_S_75D.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "tesla autopilot": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Tesla_Model_S_Autopilot.jpg/2560px-Tesla_Model_S_Autopilot.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "tesla giga texas": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Tesla_Gigafactory_Texas_aerial_view.jpg/2560px-Tesla_Gigafactory_Texas_aerial_view.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "tesla showroom": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Tesla_Store_Bergen.jpg/2560px-Tesla_Store_Bergen.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "robotaxi": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/2024_Tesla_Robotaxi%2C_front_left.jpg/2560px-2024_Tesla_Robotaxi%2C_front_left.jpg", "type": "image", "credit": "Wikimedia"},
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Waymo_Jaguar_I-Pace_in_San_Francisco.jpg/2560px-Waymo_Jaguar_I-Pace_in_San_Francisco.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "austin texas": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Austin_skyline_2018.jpg/2560px-Austin_skyline_2018.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "dallas texas": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Dallas_skyline_panorama_at_dusk.jpg/2560px-Dallas_skyline_panorama_at_dusk.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "las vegas nevada": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Las_Vegas_Strip_at_night_2010.jpg/2560px-Las_Vegas_Strip_at_night_2010.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "los angeles": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/LA_Skyline_Mountains2.jpg/2560px-LA_Skyline_Mountains2.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "lyft": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Lyft_logo.svg/1920px-Lyft_logo.svg.png", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "ford factory": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Ford_logo_flat.svg/1920px-Ford_logo_flat.svg.png", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "toyota": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Toyota_carlogo.svg/1920px-Toyota_carlogo.svg.png", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "baidu apollo": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Baidu_Apollo_Robotaxi.jpg/2560px-Baidu_Apollo_Robotaxi.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "neural network ai": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Colored_neural_network.svg/1920px-Colored_neural_network.svg.png", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "tesla cars driving": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/2020_Tesla_Model_Y_Long_Range_Front.jpg/2560px-2020_Tesla_Model_Y_Long_Range_Front.jpg", "type": "image", "credit": "Wikimedia"}
   ]
 }
