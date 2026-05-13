@@ -1,0 +1,81 @@
+{
+  "_comment": "Curated brand/topic asset URLs. Pipeline checks this first when fetching shots. Keys match script shot queries (case-insensitive substring). All URLs must be free for editorial use (Wikimedia Commons, public domain, or press-kit hosted).",
+
+  "tesla cybercab": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/2024_Tesla_Robotaxi%2C_front_left.jpg/2560px-2024_Tesla_Robotaxi%2C_front_left.jpg", "type": "image", "credit": "Wikimedia/Damian B Oh"},
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/2024_Tesla_Robotaxi%2C_side.jpg/2560px-2024_Tesla_Robotaxi%2C_side.jpg", "type": "image", "credit": "Wikimedia"},
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/2024_Tesla_Robotaxi%2C_rear_right.jpg/2560px-2024_Tesla_Robotaxi%2C_rear_right.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "elon musk": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/2560px-Elon_Musk_Royal_Society_%28crop2%29.jpg", "type": "image", "credit": "Wikimedia/Royal Society"},
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Elon_Musk_2015_%28cropped%29.jpg/1920px-Elon_Musk_2015_%28cropped%29.jpg", "type": "image", "credit": "Wikimedia/Heisenberg Media"},
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Tesla_owner_Elon_Musk_at_the_2015_Tesla_Motors_annual_meeting.jpg/1920px-Tesla_owner_Elon_Musk_at_the_2015_Tesla_Motors_annual_meeting.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "tesla factory": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Tesla_Gigafactory_Texas_aerial_view.jpg/2560px-Tesla_Gigafactory_Texas_aerial_view.jpg", "type": "image", "credit": "Wikimedia"},
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Tesla_Fremont_Factory.jpg/2560px-Tesla_Fremont_Factory.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "tesla model y": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/2020_Tesla_Model_Y_Long_Range_Front.jpg/2560px-2020_Tesla_Model_Y_Long_Range_Front.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "tesla model 3": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/2018_Tesla_Model_3_Long_Range_Front.jpg/2560px-2018_Tesla_Model_3_Long_Range_Front.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "tesla cybertruck": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Tesla_Cybertruck_front_view.jpg/2560px-Tesla_Cybertruck_front_view.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "tesla logo": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Tesla_Motors.svg/1920px-Tesla_Motors.svg.png", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "waymo": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Waymo_Jaguar_I-Pace_in_San_Francisco.jpg/2560px-Waymo_Jaguar_I-Pace_in_San_Francisco.jpg", "type": "image", "credit": "Wikimedia"},
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Waymo_self-driving_car_front_view.gk.jpg/2560px-Waymo_self-driving_car_front_view.gk.jpg", "type": "image", "credit": "Wikimedia/Grendelkhan"}
+  ],
+
+  "lidar sensor": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Velodyne-HDL-64E.jpg/1920px-Velodyne-HDL-64E.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "self driving car": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Waymo_self-driving_car_front_view.gk.jpg/2560px-Waymo_self-driving_car_front_view.gk.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "zoox amazon": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Zoox_robotaxi_concept.jpg/2560px-Zoox_robotaxi_concept.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "google headquarters": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Googleplex-Patio-Aug-2014.JPG/2560px-Googleplex-Patio-Aug-2014.JPG", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "us capitol building": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/East_face_of_United_States_Capitol_-_west_side.jpg/2560px-East_face_of_United_States_Capitol_-_west_side.jpg", "type": "image", "credit": "Wikimedia/USCapitol"}
+  ],
+
+  "white house washington": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/White_House_north_and_south_sides.jpg/2560px-White_House_north_and_south_sides.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "uber smartphone app": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Uber_logo_2018.svg/1920px-Uber_logo_2018.svg.png", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "san francisco golden gate": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/GoldenGateBridge-001.jpg/2560px-GoldenGateBridge-001.jpg", "type": "image", "credit": "Wikimedia/Rich Niewiroski Jr."}
+  ],
+
+  "phoenix arizona desert": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Phoenix-arizona-skyline.jpg/2560px-Phoenix-arizona-skyline.jpg", "type": "image", "credit": "Wikimedia"}
+  ],
+
+  "miami florida beach": [
+    {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Miami_Beach_FL_skyline_at_night_aerial.jpg/2560px-Miami_Beach_FL_skyline_at_night_aerial.jpg", "type": "image", "credit": "Wikimedia"}
+  ]
+}
