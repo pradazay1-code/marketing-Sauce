@@ -1,0 +1,94 @@
+name: Render Long-form Video
+
+on:
+  push:
+    paths:
+      - 'clients/youtube/longform-scripts/*.json'
+      - 'execution/generate_longform.py'
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Script slug to render (filename without .json)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify secrets
+        run: |
+          if [ -z "${{ secrets.PEXELS_API_KEY }}" ]; then
+            echo "::error::PEXELS_API_KEY secret not set."
+            exit 1
+          fi
+          if [ -z "${{ secrets.PIXABAY_API_KEY }}" ]; then
+            echo "::warning::PIXABAY_API_KEY not set — pipeline will skip Pixabay sources."
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fontconfig
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Determine scripts to render
+        id: pick
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            files="clients/youtube/longform-scripts/${{ inputs.slug }}.json"
+          else
+            files=$(git diff --name-only HEAD^ HEAD -- 'clients/youtube/longform-scripts/*.json' | tr '\n' ' ')
+          fi
+          echo "Files to render: $files"
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+
+      - name: Render long-form video(s)
+        if: steps.pick.outputs.files != ''
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+        run: |
+          for f in ${{ steps.pick.outputs.files }}; do
+            [ -f "$f" ] || { echo "Skipping missing $f"; continue; }
+            echo "::group::Rendering $f"
+            python execution/generate_longform.py --script-file "$f"
+            echo "::endgroup::"
+          done
+
+      - name: Publish releases with download links
+        if: steps.pick.outputs.files != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "## Rendered Long-form Videos" >> "$GITHUB_STEP_SUMMARY"
+          for f in ${{ steps.pick.outputs.files }}; do
+            slug=$(basename "$f" .json)
+            src="clients/youtube/longform/$slug/video.mp4"
+            if [ ! -f "$src" ]; then
+              echo "No MP4 produced for $slug, skipping" >> "$GITHUB_STEP_SUMMARY"
+              continue
+            fi
+            dest="$slug.mp4"
+            cp "$src" "$dest"
+            tag="longform-$slug-$(date +%Y%m%d-%H%M%S)"
+            gh release create "$tag" "$dest" \
+              --title "Long-form: $slug" \
+              --notes "Auto-rendered from $f by GitHub Actions."
+            url="https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$dest"
+            echo "- **$slug**: [$dest]($url)" >> "$GITHUB_STEP_SUMMARY"
+            echo "::notice title=Long-form ready::$slug -> $url"
+          done
