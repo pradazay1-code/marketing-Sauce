@@ -3,31 +3,146 @@
 {% block title %}Leads — LeadPilot{% endblock %}
 
 {% block extra_css %}
-.filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; align-items: center; }
-.filters input, .filters select { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; font-family: inherit; }
-.filters input:focus, .filters select:focus { outline: none; border-color: #3b82f6; }
-.filters input[type="text"] { width: 220px; }
+/* ── Filter Bar ── */
+.filter-section { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; }
+.filter-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.filter-section-header h3 { font-size: 13px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.filter-group { display: flex; flex-direction: column; gap: 4px; }
+.filter-group label { font-size: 11px; color: #64748b; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+.filter-group input, .filter-group select {
+    background: #0f172a; border: 1px solid #334155; color: #e2e8f0;
+    padding: 7px 12px; border-radius: 6px; font-size: 13px; font-family: inherit;
+    transition: border-color 0.15s;
+}
+.filter-group input:focus, .filter-group select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.15); }
+.filter-group input[type="text"] { width: 220px; }
+.filter-group select { min-width: 130px; cursor: pointer; }
+.filter-actions { display: flex; gap: 8px; align-items: flex-end; margin-left: auto; }
+.clear-filters-btn {
+    background: transparent; border: 1px solid #475569; color: #94a3b8;
+    padding: 7px 14px; border-radius: 6px; font-size: 12px; cursor: pointer;
+    font-family: inherit; transition: all 0.15s; display: flex; align-items: center; gap: 5px;
+}
+.clear-filters-btn:hover { border-color: #ef4444; color: #f87171; }
+.clear-filters-btn svg { width: 14px; height: 14px; }
 
-.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
-.toolbar .info { font-size: 13px; color: #94a3b8; }
+/* ── Results Count Bar ── */
+.results-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+.results-count { font-size: 14px; color: #f8fafc; font-weight: 600; }
+.results-count span { color: #3b82f6; }
+.results-meta { font-size: 12px; color: #64748b; margin-left: 8px; font-weight: 400; }
 
+/* ── Bulk Actions Bar ── */
+.bulk-bar {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+    border: 1px solid #2563eb; border-radius: 10px;
+    padding: 12px 20px; margin-bottom: 12px;
+    display: none; align-items: center; gap: 10px; flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 50;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.bulk-bar.show { display: flex; }
+.bulk-bar .bulk-count {
+    font-size: 13px; color: #93c5fd; font-weight: 600;
+    background: rgba(59,130,246,0.15); padding: 4px 12px; border-radius: 6px;
+    white-space: nowrap;
+}
+.bulk-bar .bulk-divider { width: 1px; height: 24px; background: #334155; }
+.bulk-bar select {
+    background: #0f172a; border: 1px solid #334155; color: #e2e8f0;
+    padding: 5px 10px; border-radius: 6px; font-size: 12px; font-family: inherit; cursor: pointer;
+}
+.bulk-bar input[type="text"] {
+    background: #0f172a; border: 1px solid #334155; color: #e2e8f0;
+    padding: 5px 10px; border-radius: 6px; font-size: 12px; font-family: inherit; width: 130px;
+}
+.bulk-bar .bulk-right { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+
+/* ── Table ── */
+.leads-table-wrap { overflow-x: auto; background: #0f172a; border-radius: 10px; border: 1px solid #1e293b; }
 .leads-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.leads-table th { text-align: left; padding: 10px 8px; color: #94a3b8; border-bottom: 2px solid #334155; font-weight: 500; cursor: pointer; user-select: none; white-space: nowrap; background: #0f172a; position: sticky; top: 0; }
-.leads-table th:hover { color: #f8fafc; }
-.leads-table td { padding: 10px 8px; border-bottom: 1px solid #1e293b; vertical-align: middle; }
-.leads-table tr:hover { background: #1e293b; }
-.leads-table input[type="checkbox"] { accent-color: #3b82f6; }
+.leads-table th {
+    text-align: left; padding: 12px 10px; color: #64748b; border-bottom: 2px solid #1e293b;
+    font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
+    cursor: pointer; user-select: none; white-space: nowrap; background: #0f172a; position: sticky; top: 0;
+}
+.leads-table th:hover { color: #e2e8f0; }
+.leads-table td { padding: 10px 10px; border-bottom: 1px solid rgba(51,65,85,0.5); vertical-align: middle; }
+.leads-table tr:hover { background: rgba(30,41,59,0.6); }
+.leads-table input[type="checkbox"] { accent-color: #3b82f6; width: 16px; height: 16px; cursor: pointer; }
 
+/* ── Score ── */
 .score-bar { display: inline-block; width: 50px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden; vertical-align: middle; }
-.score-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444, #fbbf24, #4ade80); }
+.score-bar-fill { height: 100%; border-radius: 3px; }
+.score-high .score-bar-fill { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.score-med .score-bar-fill { background: linear-gradient(90deg, #eab308, #fbbf24); }
+.score-low .score-bar-fill { background: linear-gradient(90deg, #ef4444, #f87171); }
 
+/* ── Tags ── */
+.tag-pill {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 600; margin: 1px 2px;
+    text-transform: lowercase; white-space: nowrap;
+}
+.tag-color-0 { background: rgba(59,130,246,0.15); color: #93c5fd; }
+.tag-color-1 { background: rgba(168,85,247,0.15); color: #c4b5fd; }
+.tag-color-2 { background: rgba(236,72,153,0.15); color: #f9a8d4; }
+.tag-color-3 { background: rgba(34,197,94,0.15); color: #86efac; }
+.tag-color-4 { background: rgba(245,158,11,0.15); color: #fcd34d; }
+.tag-color-5 { background: rgba(20,184,166,0.15); color: #5eead4; }
+
+/* ── Quick Action Icons ── */
+.quick-actions { display: flex; gap: 4px; align-items: center; }
+.quick-btn {
+    background: transparent; border: 1px solid transparent; color: #64748b;
+    width: 28px; height: 28px; border-radius: 6px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all 0.15s; padding: 0;
+}
+.quick-btn:hover { background: #1e293b; border-color: #334155; color: #e2e8f0; }
+.quick-btn svg { width: 14px; height: 14px; }
+.quick-btn.q-status { position: relative; }
+.quick-btn.q-status:hover { color: #3b82f6; border-color: #3b82f6; }
+.quick-btn.q-call:hover { color: #22c55e; border-color: #22c55e; }
+.quick-btn.q-email:hover { color: #f59e0b; border-color: #f59e0b; }
+.quick-btn.q-edit:hover { color: #8b5cf6; border-color: #8b5cf6; }
+
+/* ── Status Quick Dropdown ── */
+.status-dropdown {
+    position: absolute; top: 100%; right: 0; z-index: 60;
+    background: #1e293b; border: 1px solid #334155; border-radius: 8px;
+    padding: 4px 0; min-width: 140px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    display: none;
+}
+.status-dropdown.show { display: block; }
+.status-dropdown button {
+    display: block; width: 100%; text-align: left; background: none; border: none;
+    color: #e2e8f0; padding: 6px 14px; font-size: 12px; cursor: pointer; font-family: inherit;
+}
+.status-dropdown button:hover { background: #334155; }
+
+/* ── Phone Link ── */
 .phone-link { color: #60a5fa; }
 .phone-link:hover { text-decoration: underline; }
 
-.bulk-bar { background: #1e3a5f; border: 1px solid #2563eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: none; align-items: center; gap: 12px; flex-wrap: wrap; }
-.bulk-bar.show { display: flex; }
-.bulk-bar span { font-size: 13px; color: #93c5fd; }
+/* ── Existing ── */
+.sort-active { color: #60a5fa !important; }
+.sort-active::after { content: ' \25BE'; }
+.sort-active.asc::after { content: ' \25B4'; }
 
+.pagination { display: flex; gap: 8px; justify-content: center; align-items: center; margin-top: 20px; }
+.page-info { font-size: 12px; color: #64748b; }
+
+.loading { text-align: center; padding: 40px; color: #64748b; font-size: 14px; }
+
+/* ── Saved Searches ── */
+.saved-search-list { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.saved-search-tag { background: #1e3a5f; color: #93c5fd; padding: 4px 10px; border-radius: 12px; font-size: 12px; cursor: pointer; transition: all 0.15s; }
+.saved-search-tag:hover { background: #1e40af; }
+.saved-search-tag .x { color: #f87171; margin-left: 6px; cursor: pointer; }
+
+/* ── Modal ── */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: none; align-items: center; justify-content: center; }
 .modal-overlay.show { display: flex; }
 .modal { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; width: 600px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
@@ -38,26 +153,26 @@
 .modal .actions { display: flex; gap: 8px; margin-top: 20px; justify-content: flex-end; }
 .modal .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-.loading { text-align: center; padding: 40px; color: #64748b; font-size: 14px; }
-.sort-active { color: #60a5fa !important; }
-.sort-active::after { content: ' ▾'; }
-.sort-active.asc::after { content: ' ▴'; }
-
-.pagination { display: flex; gap: 8px; justify-content: center; margin-top: 20px; }
-
 .activities { margin-top: 16px; max-height: 200px; overflow-y: auto; padding: 12px; background: #0f172a; border-radius: 6px; }
 .activity { padding: 6px 0; font-size: 12px; border-bottom: 1px solid #1e293b; }
 .activity .type { color: #60a5fa; font-weight: 500; }
 .activity .time { color: #64748b; font-size: 11px; }
 
-.saved-search-list { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-.saved-search-tag { background: #1e3a5f; color: #93c5fd; padding: 4px 10px; border-radius: 12px; font-size: 12px; cursor: pointer; }
-.saved-search-tag:hover { background: #1e40af; }
-.saved-search-tag .x { color: #f87171; margin-left: 6px; cursor: pointer; }
+/* ── Business Name Cell ── */
+.biz-name { font-weight: 600; color: #f8fafc; }
+.biz-owner { font-size: 11px; color: #64748b; margin-top: 2px; }
+.biz-tags { margin-top: 3px; line-height: 1.8; }
 {% endblock %}
 
 {% block content %}
-<h2 style="font-size:24px;color:#f8fafc;margin-bottom:16px">All Leads</h2>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px">
+    <h2 style="font-size:24px;color:#f8fafc;margin:0">All Leads</h2>
+    <div style="display:flex;gap:8px">
+        <button class="btn btn-sm btn-outline" onclick="saveCurrentSearch()">Save Search</button>
+        <button class="btn btn-sm btn-outline" onclick="exportFiltered()">Export Filtered</button>
+        <button class="btn btn-sm btn-primary" onclick="addLead()">+ Add Lead</button>
+    </div>
+</div>
 
 {% if saved_searches %}
 <div class="saved-search-list">
@@ -71,55 +186,140 @@
 </div>
 {% endif %}
 
-<div class="filters">
-    <input type="text" id="search" placeholder="Search name, phone, email..." onkeyup="if(event.key==='Enter')loadLeads()">
-    <select id="filterState" onchange="loadLeads()">
-        <option value="">All States</option>
-        <option value="MA">MA</option><option value="RI">RI</option><option value="CT">CT</option>
-    </select>
-    <select id="filterWebsite" onchange="loadLeads()">
-        <option value="">Any Website</option>
-        <option value="0">No Website</option>
-        <option value="1">Has Website</option>
-    </select>
-    <select id="filterPriority" onchange="loadLeads()">
-        <option value="">Any Priority</option>
-        <option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
-    </select>
-    <select id="filterStatus" onchange="loadLeads()">
-        <option value="">Any Status</option>
+<!-- ── Filter Section ── -->
+<div class="filter-section">
+    <div class="filter-section-header">
+        <h3>Filters</h3>
+        <button class="clear-filters-btn" onclick="resetFilters()" title="Clear all filters">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Clear Filters
+        </button>
+    </div>
+    <div class="filter-row">
+        <div class="filter-group">
+            <label>Search</label>
+            <input type="text" id="search" placeholder="Name, phone, email..." onkeyup="if(event.key==='Enter')loadLeads()">
+        </div>
+        <div class="filter-group">
+            <label>State</label>
+            <select id="filterState" onchange="loadLeads()">
+                <option value="">All States</option>
+                <option value="MA">MA</option><option value="RI">RI</option><option value="CT">CT</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Category</label>
+            <select id="filterCategory" onchange="loadLeads()">
+                <option value="">All Categories</option>
+                <option value="Restaurant/Food">Restaurant/Food</option>
+                <option value="Barbershop">Barbershop</option>
+                <option value="Salon/Beauty">Salon/Beauty</option>
+                <option value="Auto Services">Auto Services</option>
+                <option value="Construction/Contractor">Construction/Contractor</option>
+                <option value="Landscaping">Landscaping</option>
+                <option value="Cleaning Services">Cleaning Services</option>
+                <option value="Tattoo/Piercing">Tattoo/Piercing</option>
+                <option value="Photography">Photography</option>
+                <option value="Gym/Fitness">Gym/Fitness</option>
+                <option value="Pet Services">Pet Services</option>
+                <option value="Events/Entertainment">Events/Entertainment</option>
+                <option value="Lawyer/Attorney">Lawyer/Attorney</option>
+                <option value="Real Estate">Real Estate</option>
+                <option value="Home Services">Home Services</option>
+                <option value="Healthcare/Wellness">Healthcare/Wellness</option>
+                <option value="Retail/Boutique">Retail/Boutique</option>
+                <option value="Bar/Brewery">Bar/Brewery</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Priority</label>
+            <select id="filterPriority" onchange="loadLeads()">
+                <option value="">Any Priority</option>
+                <option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Status</label>
+            <select id="filterStatus" onchange="loadLeads()">
+                <option value="">Any Status</option>
+                <option value="new">New</option><option value="contacted">Contacted</option>
+                <option value="responded">Responded</option><option value="qualified">Qualified</option>
+                <option value="proposal">Proposal</option><option value="won">Won</option><option value="lost">Lost</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Website</label>
+            <select id="filterWebsite" onchange="loadLeads()">
+                <option value="">Any Website</option>
+                <option value="0">No Website</option>
+                <option value="1">Has Website</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Added</label>
+            <select id="filterDateRange" onchange="loadLeads()">
+                <option value="">Any Time</option>
+                <option value="today">Today</option>
+                <option value="this_week">This Week</option>
+                <option value="this_month">This Month</option>
+                <option value="last_30">Last 30 Days</option>
+                <option value="last_90">Last 90 Days</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Min Score</label>
+            <select id="filterMinScore" onchange="loadLeads()">
+                <option value="">Any Score</option>
+                <option value="10">10+</option>
+                <option value="20">20+</option>
+                <option value="30">30+</option>
+                <option value="40">40+</option>
+                <option value="50">50+</option>
+                <option value="60">60+</option>
+                <option value="70">70+</option>
+                <option value="80">80+</option>
+                <option value="90">90+</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- ── Bulk Actions Bar ── -->
+<div class="bulk-bar" id="bulkBar">
+    <span class="bulk-count" id="bulkCount">0 leads selected</span>
+    <button class="btn btn-sm btn-outline" onclick="selectAllPage()" id="bulkSelectAllBtn">Select All</button>
+    <button class="btn btn-sm btn-outline" onclick="deselectAll()">Deselect All</button>
+    <div class="bulk-divider"></div>
+    <select id="bulkStatusSelect" onchange="if(this.value){bulkUpdate('status',this.value);this.value=''}">
+        <option value="">Change Status</option>
         <option value="new">New</option><option value="contacted">Contacted</option>
         <option value="responded">Responded</option><option value="qualified">Qualified</option>
         <option value="proposal">Proposal</option><option value="won">Won</option><option value="lost">Lost</option>
     </select>
-    <input type="text" id="filterCategory" placeholder="Category" onkeyup="if(event.key==='Enter')loadLeads()" style="width:140px">
-    <input type="number" id="filterMinScore" placeholder="Min score" min="0" max="100" onchange="loadLeads()" style="width:100px">
-    <button class="btn btn-primary btn-sm" onclick="loadLeads()">Apply</button>
-    <button class="btn btn-outline btn-sm" onclick="resetFilters()">Reset</button>
-    <button class="btn btn-outline btn-sm" onclick="saveCurrentSearch()">Save Search</button>
-</div>
-
-<div class="bulk-bar" id="bulkBar">
-    <span id="bulkCount">0 selected</span>
-    <button class="btn btn-sm btn-success" onclick="bulkUpdate('status','contacted')">Mark Contacted</button>
-    <button class="btn btn-sm btn-primary" onclick="bulkUpdate('status','qualified')">Mark Qualified</button>
-    <button class="btn btn-sm btn-primary" onclick="bulkUpdate('priority','high')">High Priority</button>
-    <button class="btn btn-sm btn-danger" onclick="bulkDelete()">Delete</button>
-</div>
-
-<div class="toolbar">
-    <div class="info" id="resultsInfo">Loading...</div>
-    <div style="display:flex;gap:8px">
-        <button class="btn btn-sm btn-outline" onclick="addLead()">+ Add Lead</button>
-        <button class="btn btn-sm btn-outline" onclick="exportFiltered()">Export Filtered</button>
+    <select id="bulkPrioritySelect" onchange="if(this.value){bulkUpdate('priority',this.value);this.value=''}">
+        <option value="">Set Priority</option>
+        <option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
+    </select>
+    <input type="text" id="bulkTagInput" placeholder="Add tag..." onkeyup="if(event.key==='Enter'&&this.value.trim()){bulkAddTag(this.value.trim());this.value=''}">
+    <div class="bulk-right">
+        <button class="btn btn-sm btn-primary" onclick="bulkEmail()">Send Email</button>
+        <button class="btn btn-sm btn-outline" onclick="exportSelected()">Export Selected</button>
+        <button class="btn btn-sm btn-danger" onclick="bulkDelete()">Delete</button>
     </div>
 </div>
 
-<div style="overflow-x:auto;background:#0f172a;border-radius:8px">
+<!-- ── Results Count ── -->
+<div class="results-bar">
+    <div class="results-count" id="resultsInfo">Loading...</div>
+</div>
+
+<!-- ── Table ── -->
+<div class="leads-table-wrap">
     <table class="leads-table">
         <thead>
             <tr>
-                <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                <th style="width:36px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
                 <th data-sort="business_name">Business</th>
                 <th data-sort="category">Category</th>
                 <th data-sort="city">City</th>
@@ -131,7 +331,7 @@
                 <th data-sort="priority">Priority</th>
                 <th>Status</th>
                 <th data-sort="date_found">Found</th>
-                <th></th>
+                <th style="width:120px">Actions</th>
             </tr>
         </thead>
         <tbody id="leadsBody"></tbody>
@@ -140,6 +340,7 @@
 
 <div class="pagination" id="pagination"></div>
 
+<!-- ── Edit / Add Modal ── -->
 <div class="modal-overlay" id="editModal">
     <div class="modal">
         <h3 id="modalTitle">Edit Lead</h3>
@@ -208,7 +409,50 @@
 let currentSort = 'lead_score', currentDir = 'DESC', currentOffset = 0;
 const pageSize = 100;
 let selectedIds = new Set();
+let totalLeads = 0;
 
+/* ── Tag colors ── */
+const TAG_COLORS = 6;
+function tagColorClass(tag) {
+    let hash = 0;
+    for (let i = 0; i < tag.length; i++) hash = tag.charCodeAt(i) + ((hash << 5) - hash);
+    return 'tag-color-' + (Math.abs(hash) % TAG_COLORS);
+}
+
+function renderTags(tagsStr) {
+    if (!tagsStr) return '';
+    return tagsStr.split(',').map(t => t.trim()).filter(Boolean)
+        .map(t => `<span class="tag-pill ${tagColorClass(t)}">${escHtml(t)}</span>`).join('');
+}
+
+/* ── Date Range Helper ── */
+function getDateRange(range) {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    let from = null;
+    switch (range) {
+        case 'today':
+            from = today; break;
+        case 'this_week': {
+            const day = today.getDay();
+            from = new Date(today);
+            from.setDate(today.getDate() - day);
+            break;
+        }
+        case 'this_month':
+            from = new Date(today.getFullYear(), today.getMonth(), 1); break;
+        case 'last_30':
+            from = new Date(today); from.setDate(today.getDate() - 30); break;
+        case 'last_90':
+            from = new Date(today); from.setDate(today.getDate() - 90); break;
+        default:
+            return { from: '', to: '' };
+    }
+    const fmt = d => d.toISOString().split('T')[0];
+    return { from: fmt(from), to: fmt(now) };
+}
+
+/* ── Build Query ── */
 function buildQuery() {
     const p = new URLSearchParams();
     const get = id => document.getElementById(id).value;
@@ -219,6 +463,14 @@ function buildQuery() {
     if (get('filterStatus')) p.set('status', get('filterStatus'));
     if (get('filterCategory')) p.set('category', get('filterCategory'));
     if (get('filterMinScore')) p.set('min_score', get('filterMinScore'));
+
+    const dateRange = get('filterDateRange');
+    if (dateRange) {
+        const { from, to } = getDateRange(dateRange);
+        if (from) p.set('date_from', from);
+        if (to) p.set('date_to', to);
+    }
+
     p.set('sort_by', currentSort);
     p.set('sort_dir', currentDir);
     p.set('limit', pageSize);
@@ -226,6 +478,7 @@ function buildQuery() {
     return p.toString();
 }
 
+/* ── Load Leads ── */
 async function loadLeads() {
     const tbody = document.getElementById('leadsBody');
     tbody.innerHTML = '<tr><td colspan="13" class="loading">Loading...</td></tr>';
@@ -242,28 +495,60 @@ async function loadLeads() {
         const resp = await fetch('/api/leads?' + buildQuery());
         const data = await resp.json();
         tbody.innerHTML = '';
+        totalLeads = data.total || 0;
 
         data.leads.forEach(lead => {
             const score = lead.lead_score || 0;
+            const scoreClass = score >= 60 ? 'score-high' : (score >= 30 ? 'score-med' : 'score-low');
             const websiteBadge = lead.has_website
                 ? '<span class="badge badge-basic">Has site</span>'
                 : '<span class="badge badge-nosite">No site</span>';
-            const phone = lead.phone ? `<a class="phone-link" href="tel:${escHtml(lead.phone)}">${escHtml(lead.phone)}</a>` : '-';
+            const phone = lead.phone ? `<a class="phone-link" href="tel:${escHtml(lead.phone)}">${escHtml(lead.phone)}</a>` : '<span style="color:#64748b">--</span>';
+            const emailCell = lead.email
+                ? `<a style="color:#60a5fa;font-size:12px" href="mailto:${escHtml(lead.email)}">${escHtml(lead.email)}</a>`
+                : '<span style="color:#64748b">--</span>';
+            const tagsHtml = renderTags(lead.tags);
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><input type="checkbox" class="lead-cb" data-id="${lead.id}" onchange="updateSelection()" ${selectedIds.has(lead.id)?'checked':''}></td>
-                <td><strong>${escHtml(lead.business_name)}</strong>${lead.owner_name ? '<br><small style="color:#94a3b8">'+escHtml(lead.owner_name)+'</small>' : ''}</td>
+                <td>
+                    <div class="biz-name">${escHtml(lead.business_name)}</div>
+                    ${lead.owner_name ? '<div class="biz-owner">'+escHtml(lead.owner_name)+'</div>' : ''}
+                    ${tagsHtml ? '<div class="biz-tags">'+tagsHtml+'</div>' : ''}
+                </td>
                 <td>${escHtml(lead.category || lead.business_type || '-')}</td>
                 <td>${escHtml(lead.city || '-')}</td>
                 <td>${escHtml(lead.state || '-')}</td>
                 <td>${phone}</td>
-                <td>${lead.email ? `<a style="color:#60a5fa;font-size:12px" href="mailto:${escHtml(lead.email)}">${escHtml(lead.email)}</a>` : '<span style="color:#64748b">—</span>'}</td>
+                <td>${emailCell}</td>
                 <td>${websiteBadge}</td>
-                <td><span class="score-bar"><span class="score-bar-fill" style="width:${score}%"></span></span> <span style="font-size:11px;color:#94a3b8">${score}</span></td>
+                <td class="${scoreClass}"><span class="score-bar"><span class="score-bar-fill" style="width:${score}%"></span></span> <span style="font-size:11px;color:#94a3b8">${score}</span></td>
                 <td><span class="badge badge-${lead.priority}">${lead.priority}</span></td>
                 <td><span class="badge badge-${lead.status || 'new'}">${lead.status || 'new'}</span></td>
                 <td style="font-size:11px;color:#94a3b8">${lead.date_found || '-'}</td>
-                <td><button class="btn btn-sm btn-outline" onclick="editLead(${lead.id})">Edit</button></td>
+                <td>
+                    <div class="quick-actions">
+                        <div style="position:relative">
+                            <button class="quick-btn q-status" onclick="toggleStatusDropdown(event, ${lead.id})" title="Quick status change">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </button>
+                            <div class="status-dropdown" id="sd-${lead.id}">
+                                <button onclick="quickStatus(${lead.id},'new')">New</button>
+                                <button onclick="quickStatus(${lead.id},'contacted')">Contacted</button>
+                                <button onclick="quickStatus(${lead.id},'responded')">Responded</button>
+                                <button onclick="quickStatus(${lead.id},'qualified')">Qualified</button>
+                                <button onclick="quickStatus(${lead.id},'proposal')">Proposal</button>
+                                <button onclick="quickStatus(${lead.id},'won')">Won</button>
+                                <button onclick="quickStatus(${lead.id},'lost')">Lost</button>
+                            </div>
+                        </div>
+                        ${lead.phone ? `<a class="quick-btn q-call" href="tel:${escHtml(lead.phone)}" title="Call ${escHtml(lead.phone)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>` : `<span class="quick-btn" style="opacity:0.3;cursor:default" title="No phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>`}
+                        ${lead.email ? `<a class="quick-btn q-email" href="mailto:${escHtml(lead.email)}" title="Email ${escHtml(lead.email)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>` : `<span class="quick-btn" style="opacity:0.3;cursor:default" title="No email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>`}
+                        <button class="quick-btn q-edit" onclick="editLead(${lead.id})" title="Edit lead">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </div>
+                </td>
             `;
             tbody.appendChild(tr);
         });
@@ -272,7 +557,12 @@ async function loadLeads() {
             tbody.innerHTML = '<tr><td colspan="13" class="loading">No leads match your filters.</td></tr>';
         }
 
-        document.getElementById('resultsInfo').textContent = `Showing ${data.leads.length} of ${data.total} leads`;
+        const showing = data.leads.length;
+        const from = currentOffset + 1;
+        const to = currentOffset + showing;
+        document.getElementById('resultsInfo').innerHTML = `Showing <span>${from}-${to}</span> of <span>${totalLeads}</span> leads` +
+            (hasActiveFilters() ? '<span class="results-meta">(filtered)</span>' : '');
+
         updateBulkBar();
         buildPagination(data.count);
     } catch(e) {
@@ -280,6 +570,12 @@ async function loadLeads() {
     }
 }
 
+function hasActiveFilters() {
+    const ids = ['search','filterState','filterWebsite','filterPriority','filterStatus','filterCategory','filterMinScore','filterDateRange'];
+    return ids.some(id => document.getElementById(id).value !== '');
+}
+
+/* ── Sorting ── */
 function sortBy(field) {
     if (currentSort === field) currentDir = currentDir === 'ASC' ? 'DESC' : 'ASC';
     else { currentSort = field; currentDir = 'DESC'; }
@@ -291,31 +587,43 @@ document.querySelectorAll('.leads-table th[data-sort]').forEach(th => {
     th.onclick = () => sortBy(th.dataset.sort);
 });
 
+/* ── Reset Filters ── */
 function resetFilters() {
-    ['search','filterState','filterWebsite','filterPriority','filterStatus','filterCategory','filterMinScore'].forEach(id => document.getElementById(id).value = '');
+    ['search','filterState','filterWebsite','filterPriority','filterStatus','filterCategory','filterMinScore','filterDateRange'].forEach(id => document.getElementById(id).value = '');
     currentOffset = 0;
     currentSort = 'lead_score';
     currentDir = 'DESC';
     loadLeads();
 }
 
+/* ── Pagination ── */
 function buildPagination(count) {
     const div = document.getElementById('pagination');
     div.innerHTML = '';
+    const page = Math.floor(currentOffset / pageSize) + 1;
+    const totalPages = Math.ceil(totalLeads / pageSize) || 1;
+
     if (currentOffset > 0) {
         const btn = document.createElement('button');
-        btn.className = 'btn btn-sm btn-outline'; btn.textContent = '← Previous';
+        btn.className = 'btn btn-sm btn-outline'; btn.textContent = 'Previous';
         btn.onclick = () => { currentOffset = Math.max(0, currentOffset - pageSize); loadLeads(); };
         div.appendChild(btn);
     }
+
+    const info = document.createElement('span');
+    info.className = 'page-info';
+    info.textContent = `Page ${page} of ${totalPages}`;
+    div.appendChild(info);
+
     if (count >= pageSize) {
         const btn = document.createElement('button');
-        btn.className = 'btn btn-sm btn-outline'; btn.textContent = 'Next →';
+        btn.className = 'btn btn-sm btn-outline'; btn.textContent = 'Next';
         btn.onclick = () => { currentOffset += pageSize; loadLeads(); };
         div.appendChild(btn);
     }
 }
 
+/* ── Selection ── */
 function toggleSelectAll() {
     const checked = document.getElementById('selectAll').checked;
     document.querySelectorAll('.lead-cb').forEach(cb => {
@@ -326,18 +634,37 @@ function toggleSelectAll() {
     updateBulkBar();
 }
 
+function selectAllPage() {
+    document.querySelectorAll('.lead-cb').forEach(cb => {
+        cb.checked = true;
+        selectedIds.add(parseInt(cb.dataset.id));
+    });
+    document.getElementById('selectAll').checked = true;
+    updateBulkBar();
+}
+
+function deselectAll() {
+    selectedIds.clear();
+    document.querySelectorAll('.lead-cb').forEach(cb => cb.checked = false);
+    document.getElementById('selectAll').checked = false;
+    updateBulkBar();
+}
+
 function updateSelection() {
     selectedIds.clear();
     document.querySelectorAll('.lead-cb:checked').forEach(cb => selectedIds.add(parseInt(cb.dataset.id)));
+    const allCbs = document.querySelectorAll('.lead-cb');
+    document.getElementById('selectAll').checked = allCbs.length > 0 && selectedIds.size === allCbs.length;
     updateBulkBar();
 }
 
 function updateBulkBar() {
     const bar = document.getElementById('bulkBar');
     bar.classList.toggle('show', selectedIds.size > 0);
-    document.getElementById('bulkCount').textContent = `${selectedIds.size} selected`;
+    document.getElementById('bulkCount').textContent = `${selectedIds.size} lead${selectedIds.size !== 1 ? 's' : ''} selected`;
 }
 
+/* ── Bulk Actions ── */
 async function bulkUpdate(field, value) {
     if (!selectedIds.size) return;
     await fetch('/api/leads/bulk-update', {
@@ -349,14 +676,67 @@ async function bulkUpdate(field, value) {
     loadLeads();
 }
 
+async function bulkAddTag(tag) {
+    if (!selectedIds.size) return;
+    for (const id of selectedIds) {
+        const resp = await fetch(`/api/leads/${id}`);
+        const lead = await resp.json();
+        const existing = lead.tags ? lead.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+        if (!existing.includes(tag)) {
+            existing.push(tag);
+            await fetch(`/api/leads/${id}`, {
+                method: 'PUT', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tags: existing.join(', ')})
+            });
+        }
+    }
+    showToast(`Added tag "${tag}" to ${selectedIds.size} leads`);
+    selectedIds.clear();
+    loadLeads();
+}
+
 async function bulkDelete() {
-    if (!selectedIds.size || !confirm(`Delete ${selectedIds.size} leads?`)) return;
+    if (!selectedIds.size || !confirm(`Delete ${selectedIds.size} leads? This cannot be undone.`)) return;
     for (const id of selectedIds) await fetch(`/api/leads/${id}`, {method: 'DELETE'});
     showToast(`Deleted ${selectedIds.size} leads`);
     selectedIds.clear();
     loadLeads();
 }
 
+function bulkEmail() {
+    if (!selectedIds.size) return;
+    window.location = `/email?ids=${[...selectedIds].join(',')}`;
+}
+
+function exportSelected() {
+    if (!selectedIds.size) return;
+    window.location = '/api/export?' + buildQuery() + '&ids=' + [...selectedIds].join(',');
+}
+
+/* ── Quick Status ── */
+function toggleStatusDropdown(event, leadId) {
+    event.stopPropagation();
+    document.querySelectorAll('.status-dropdown.show').forEach(d => d.classList.remove('show'));
+    const dd = document.getElementById('sd-' + leadId);
+    dd.classList.toggle('show');
+}
+
+async function quickStatus(leadId, status) {
+    document.querySelectorAll('.status-dropdown.show').forEach(d => d.classList.remove('show'));
+    await fetch(`/api/leads/${leadId}`, {
+        method: 'PUT', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({status})
+    });
+    showToast(`Status changed to ${status}`);
+    loadLeads();
+}
+
+/* Close dropdowns when clicking outside */
+document.addEventListener('click', () => {
+    document.querySelectorAll('.status-dropdown.show').forEach(d => d.classList.remove('show'));
+});
+
+/* ── Edit / Add Modal ── */
 let currentLeadId = null;
 
 async function editLead(id) {
@@ -436,6 +816,7 @@ async function saveLead() {
     loadLeads();
 }
 
+/* ── Activities ── */
 function renderActivities(activities) {
     const list = document.getElementById('activitiesList');
     if (!activities.length) {
@@ -463,6 +844,7 @@ async function addActivity() {
     renderActivities(await resp.json());
 }
 
+/* ── Export & Saved Searches ── */
 function exportFiltered() {
     window.location = '/api/export?' + buildQuery();
 }
@@ -472,7 +854,7 @@ async function saveCurrentSearch() {
     if (!name) return;
     const filters = {};
     const get = id => document.getElementById(id).value;
-    ['search','filterState','filterWebsite','filterPriority','filterStatus','filterCategory','filterMinScore'].forEach(id => {
+    ['search','filterState','filterWebsite','filterPriority','filterStatus','filterCategory','filterMinScore','filterDateRange'].forEach(id => {
         if (get(id)) filters[id] = get(id);
     });
     await fetch('/api/saved-searches', {
@@ -485,6 +867,7 @@ async function saveCurrentSearch() {
 
 function loadSaved(el) {
     const filters = JSON.parse(el.dataset.filters);
+    resetFilters();
     Object.keys(filters).forEach(k => {
         const input = document.getElementById(k);
         if (input) input.value = filters[k];
@@ -502,6 +885,7 @@ document.getElementById('editModal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
 });
 
+/* ── Init ── */
 loadLeads();
 </script>
 {% endblock %}

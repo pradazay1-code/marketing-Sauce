@@ -3,21 +3,227 @@
 {% block title %}Dashboard — LeadPilot{% endblock %}
 
 {% block extra_css %}
+/* ───── Page Header ───── */
 .page-header { margin-bottom: 32px; }
-.page-header h2 { font-size: 28px; font-weight: 700; color: #f8fafc; }
-.page-header p { color: #94a3b8; margin-top: 4px; }
+.page-header h2 { font-size: 28px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 10px; }
+.page-header h2 .dot { width: 10px; height: 10px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e88; }
+.page-header p { color: #94a3b8; margin-top: 4px; font-size: 14px; }
 
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
-.stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; }
-.stat-card .label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-.stat-card .value { font-size: 32px; font-weight: 700; color: #f8fafc; margin-top: 4px; }
-.stat-card .value.green { color: #4ade80; }
-.stat-card .value.blue { color: #60a5fa; }
-.stat-card .value.orange { color: #fb923c; }
-.stat-card .value.purple { color: #a78bfa; }
-.stat-card .value.red { color: #f87171; }
-.stat-card .sub { font-size: 11px; color: #64748b; margin-top: 4px; }
+/* ───── KPI Stats Row ───── */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+}
+@media (max-width: 1400px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
 
+.kpi-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+}
+.kpi-card:hover { border-color: #475569; transform: translateY(-2px); }
+.kpi-card .kpi-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 14px 14px 0 0;
+}
+.kpi-card .kpi-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+    font-size: 20px;
+}
+.kpi-card .kpi-value {
+    font-size: 36px;
+    font-weight: 800;
+    color: #f8fafc;
+    line-height: 1;
+    letter-spacing: -0.5px;
+}
+.kpi-card .kpi-label {
+    font-size: 12px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 6px;
+    font-weight: 500;
+}
+.kpi-card .kpi-sub {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.kpi-card .kpi-sub .trend-up { color: #4ade80; }
+.kpi-card .kpi-sub .trend-down { color: #f87171; }
+
+/* accent colors per card */
+.kpi-card.blue .kpi-accent   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.kpi-card.blue .kpi-icon     { background: #1e3a5f; color: #60a5fa; }
+.kpi-card.green .kpi-accent  { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.kpi-card.green .kpi-icon    { background: #14532d; color: #4ade80; }
+.kpi-card.orange .kpi-accent { background: linear-gradient(90deg, #f97316, #fb923c); }
+.kpi-card.orange .kpi-icon   { background: #431407; color: #fb923c; }
+.kpi-card.purple .kpi-accent { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+.kpi-card.purple .kpi-icon   { background: #2e1065; color: #a78bfa; }
+.kpi-card.cyan .kpi-accent   { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+.kpi-card.cyan .kpi-icon     { background: #083344; color: #22d3ee; }
+.kpi-card.red .kpi-accent    { background: linear-gradient(90deg, #ef4444, #f87171); }
+.kpi-card.red .kpi-icon      { background: #450a0a; color: #f87171; }
+
+/* hot leads glow */
+.kpi-card.hot-leads {
+    border-color: #22c55e44;
+    background: linear-gradient(135deg, #1e293b 0%, #14532d22 100%);
+}
+.kpi-card.hot-leads .kpi-value { color: #4ade80; }
+
+/* ───── Quick Filters ───── */
+.quick-filters {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+}
+@media (max-width: 1024px) { .quick-filters { grid-template-columns: repeat(2, 1fr); } }
+
+.qf-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: inherit;
+}
+.qf-card:hover { border-color: #60a5fa; transform: translateY(-2px); box-shadow: 0 4px 20px rgba(59,130,246,0.12); }
+.qf-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.qf-card .qf-label { font-size: 14px; font-weight: 600; color: #f8fafc; }
+.qf-card .qf-desc { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+/* ───── Recent Leads Table ───── */
+.recent-leads-card { margin-bottom: 28px; }
+.recent-leads-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.recent-leads-card .card-header h3 { margin-bottom: 0; }
+
+.rl-table { width: 100%; border-collapse: collapse; }
+.rl-table thead th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    border-bottom: 1px solid #334155;
+    font-weight: 600;
+}
+.rl-table tbody tr {
+    transition: background 0.15s;
+    cursor: pointer;
+}
+.rl-table tbody tr:hover { background: #334155; }
+.rl-table tbody td {
+    padding: 12px 14px;
+    font-size: 13px;
+    border-bottom: 1px solid #1e293b22;
+    color: #cbd5e1;
+}
+.rl-table .biz-name { color: #f8fafc; font-weight: 600; }
+.rl-table .biz-name:hover { color: #60a5fa; }
+.rl-table .category-pill {
+    display: inline-block;
+    background: #334155;
+    color: #94a3b8;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+.rl-table .date-col { color: #64748b; font-size: 12px; }
+
+/* ───── Industry Breakdown Bars ───── */
+.industry-card { margin-bottom: 28px; }
+.ind-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+.ind-bar-label {
+    width: 140px;
+    font-size: 13px;
+    color: #cbd5e1;
+    text-align: right;
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ind-bar-track {
+    flex: 1;
+    height: 28px;
+    background: #0f172a;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+.ind-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.6s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    min-width: 36px;
+}
+.ind-bar-count {
+    width: 40px;
+    text-align: right;
+    font-size: 13px;
+    font-weight: 700;
+    color: #f8fafc;
+    flex-shrink: 0;
+}
+
+/* bar gradient colors cycling */
+.ind-bar-fill.c0 { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.ind-bar-fill.c1 { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+.ind-bar-fill.c2 { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.ind-bar-fill.c3 { background: linear-gradient(90deg, #f97316, #fb923c); }
+.ind-bar-fill.c4 { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+.ind-bar-fill.c5 { background: linear-gradient(90deg, #ec4899, #f472b6); }
+.ind-bar-fill.c6 { background: linear-gradient(90deg, #eab308, #fde047); }
+.ind-bar-fill.c7 { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+/* ───── Existing components (kept) ───── */
 .breakdown-list { list-style: none; }
 .breakdown-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 14px; }
 .breakdown-list li:last-child { border-bottom: none; }
@@ -68,23 +274,234 @@
 .preview-modal .row { padding: 10px 0; border-bottom: 1px solid #334155; font-size: 13px; }
 .preview-modal .name { color: #60a5fa; font-weight: 600; }
 .preview-modal .meta { color: #94a3b8; font-size: 12px; margin-top: 2px; }
+
+/* ───── Section divider ───── */
+.section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #475569;
+    font-weight: 700;
+    margin-bottom: 14px;
+    margin-top: 8px;
+    padding-left: 2px;
+}
+
+/* ───── View-all link ───── */
+.view-all-link {
+    font-size: 13px;
+    color: #60a5fa;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.15s;
+}
+.view-all-link:hover { color: #93c5fd; }
 {% endblock %}
 
 {% block content %}
+<!-- ═══════════ PAGE HEADER ═══════════ -->
 <div class="page-header">
-    <h2>Mission Control</h2>
-    <p>{{ stats.total }} leads · {{ stats.no_website }} without websites · {{ stats.with_phone }} with phone</p>
+    <h2><span class="dot"></span> Mission Control</h2>
+    <p>{{ stats.total }} leads tracked &middot; {{ stats.no_website }} without websites &middot; {{ stats.with_phone }} with phone &middot; {{ stats.emails_sent or 0 }} emails sent</p>
 </div>
 
-<div class="stats-grid">
-    <div class="stat-card"><div class="label">Total Leads</div><div class="value blue">{{ stats.total }}</div></div>
-    <div class="stat-card"><div class="label">No Website</div><div class="value green">{{ stats.no_website }}</div><div class="sub">Best targets</div></div>
-    <div class="stat-card"><div class="label">High Priority</div><div class="value orange">{{ stats.high_priority }}</div></div>
-    <div class="stat-card"><div class="label">New Today</div><div class="value purple">{{ stats.new_today }}</div><div class="sub">{{ stats.new_this_week }} this week</div></div>
-    <div class="stat-card"><div class="label">Contacted</div><div class="value blue">{{ stats.contacted }}</div><div class="sub">{{ stats.contact_rate }}% rate</div></div>
-    <div class="stat-card"><div class="label">Followups Due</div><div class="value red">{{ stats.needs_followup }}</div></div>
+<!-- ═══════════ KPI STATS ROW ═══════════ -->
+<div class="section-label">Key Metrics</div>
+<div class="kpi-grid">
+    <!-- Total Leads -->
+    <div class="kpi-card blue">
+        <div class="kpi-accent"></div>
+        <div class="kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="kpi-value">{{ stats.total }}</div>
+        <div class="kpi-label">Total Leads</div>
+        <div class="kpi-sub">
+            {% if stats.new_this_week > 0 %}
+            <span class="trend-up">&#9650;</span> <span class="trend-up">{{ stats.new_this_week }}</span> this week
+            {% else %}
+            <span style="color:#64748b">No new this week</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- No Website (hot leads) -->
+    <div class="kpi-card green hot-leads">
+        <div class="kpi-accent"></div>
+        <div class="kpi-icon" style="background:#14532d;color:#4ade80;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="kpi-value">{{ stats.no_website }}</div>
+        <div class="kpi-label">No Website</div>
+        <div class="kpi-sub"><span style="background:#22c55e33;color:#4ade80;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;">HOT LEADS</span></div>
+    </div>
+
+    <!-- High Priority -->
+    <div class="kpi-card orange">
+        <div class="kpi-accent"></div>
+        <div class="kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="kpi-value">{{ stats.high_priority }}</div>
+        <div class="kpi-label">High Priority</div>
+        <div class="kpi-sub">
+            {% if stats.total > 0 %}
+            {{ ((stats.high_priority / stats.total) * 100) | round(0) | int }}% of total
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Contact Rate -->
+    <div class="kpi-card cyan">
+        <div class="kpi-accent"></div>
+        <div class="kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="kpi-value">{{ stats.contact_rate }}<span style="font-size:20px;font-weight:500;">%</span></div>
+        <div class="kpi-label">Contact Rate</div>
+        <div class="kpi-sub">{{ stats.contacted }} contacted</div>
+    </div>
+
+    <!-- New This Week -->
+    <div class="kpi-card purple">
+        <div class="kpi-accent"></div>
+        <div class="kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="kpi-value">{{ stats.new_this_week }}</div>
+        <div class="kpi-label">New This Week</div>
+        <div class="kpi-sub">{{ stats.new_today }} added today</div>
+    </div>
+
+    <!-- Followups Due -->
+    <div class="kpi-card red">
+        <div class="kpi-accent"></div>
+        <div class="kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="kpi-value">{{ stats.needs_followup }}</div>
+        <div class="kpi-label">Followups Due</div>
+        <div class="kpi-sub">
+            {% if stats.needs_followup > 0 %}
+            <span class="trend-down">&#9679;</span> <span style="color:#f87171">Needs attention</span>
+            {% else %}
+            <span style="color:#4ade80">All clear</span>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
+<!-- ═══════════ QUICK FILTERS ═══════════ -->
+<div class="section-label">Quick Filters</div>
+<div class="quick-filters">
+    <a class="qf-card" href="/leads?has_website=0">
+        <div class="qf-icon" style="background:#14532d;color:#4ade80;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><line x1="4" y1="4" x2="20" y2="20" stroke-width="2.5"/></svg>
+        </div>
+        <div>
+            <div class="qf-label">No Website</div>
+            <div class="qf-desc">{{ stats.no_website }} leads ready to pitch</div>
+        </div>
+    </a>
+    <a class="qf-card" href="/leads?priority=high">
+        <div class="qf-icon" style="background:#431407;color:#fb923c;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div>
+            <div class="qf-label">High Priority</div>
+            <div class="qf-desc">{{ stats.high_priority }} high-value targets</div>
+        </div>
+    </a>
+    <a class="qf-card" href="/leads?status=contacted">
+        <div class="qf-icon" style="background:#1e3a5f;color:#60a5fa;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </div>
+        <div>
+            <div class="qf-label">Needs Follow-up</div>
+            <div class="qf-desc">{{ stats.contacted }} contacted, awaiting reply</div>
+        </div>
+    </a>
+    <a class="qf-card" href="/leads?date=today">
+        <div class="qf-icon" style="background:#2e1065;color:#a78bfa;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+            <div class="qf-label">New Today</div>
+            <div class="qf-desc">{{ stats.new_today }} leads added today</div>
+        </div>
+    </a>
+</div>
+
+<!-- ═══════════ RECENT LEADS PREVIEW ═══════════ -->
+<div class="card recent-leads-card">
+    <div class="card-header">
+        <h3>Recent Leads</h3>
+        <a href="/leads" class="view-all-link">View all leads &rarr;</a>
+    </div>
+    {% if recent_leads is defined and recent_leads %}
+    <table class="rl-table">
+        <thead>
+            <tr>
+                <th>Business</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Priority</th>
+                <th>Added</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lead in recent_leads[:5] %}
+            <tr onclick="window.location='/lead/{{ lead.id }}'">
+                <td><a href="/lead/{{ lead.id }}" class="biz-name">{{ lead.business_name }}</a></td>
+                <td><span class="category-pill">{{ lead.category or 'Uncategorized' }}</span></td>
+                <td>{{ lead.city or '' }}{% if lead.city and lead.state %}, {% endif %}{{ lead.state or '' }}</td>
+                <td>
+                    <span class="badge badge-{{ lead.priority or 'medium' }}">{{ lead.priority or 'medium' }}</span>
+                </td>
+                <td class="date-col">{{ lead.created_at[:10] if lead.created_at else '—' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div style="text-align:center;padding:32px 16px;">
+        <div style="font-size:32px;margin-bottom:8px;opacity:0.3;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div style="color:#64748b;font-size:13px;">No leads yet. Run a scraper below to start building your pipeline.</div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- ═══════════ INDUSTRY BREAKDOWN (horizontal bars) ═══════════ -->
+{% if stats.by_category %}
+<div class="card industry-card">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 style="margin-bottom:0;">Industry Breakdown</h3>
+        <a href="/reports" class="view-all-link">Full report &rarr;</a>
+    </div>
+    {% set cat_items = stats.by_category.items() | list %}
+    {% set max_cat = cat_items[0][1] if cat_items else 1 %}
+    {% for cat, count in cat_items[:8] %}
+    <div class="ind-bar-row">
+        <div class="ind-bar-label" title="{{ cat }}">{{ cat }}</div>
+        <div class="ind-bar-track">
+            <div class="ind-bar-fill c{{ loop.index0 % 8 }}" style="width: {{ ((count / max_cat) * 100) | round(0) | int }}%"></div>
+        </div>
+        <div class="ind-bar-count">{{ count }}</div>
+    </div>
+    {% endfor %}
+    {% if cat_items | length > 8 %}
+    <div style="text-align:right;margin-top:8px;">
+        <a href="/reports" class="view-all-link" style="font-size:12px;">+{{ cat_items | length - 8 }} more categories &rarr;</a>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- ═══════════ LIVE SCRAPER PROGRESS (existing) ═══════════ -->
 <div class="live-progress" id="liveProgress">
     <div class="header">
         <h3><span class="pulse"></span> <span id="lpTitle">Scraper running</span></h3>
@@ -100,6 +517,7 @@
     <div class="progress-bar"><div class="fill" id="lpFill"></div></div>
 </div>
 
+<!-- ═══════════ FIND LIVE LEADS (existing) ═══════════ -->
 <div class="card" style="padding:16px;margin-bottom:16px">
     <h3 style="margin-bottom:8px">Find Live Leads</h3>
     <p style="color:#94a3b8;font-size:13px;margin-bottom:12px">All sources are 100% free with no API keys. Live data pulled directly from the web.</p>
@@ -113,7 +531,7 @@
         </select>
         <label style="margin-left:12px"><input type="checkbox" id="onlyNoWebsite"> Only no-website</label>
         <label style="margin-left:12px" title="Verifies each business via OpenCorporates and keeps only 2025/2026 formations. Slower but high-quality."><input type="checkbox" id="onlyNewBusinesses"> Only newly-formed (2025/2026)</label>
-        <button class="btn btn-outline btn-sm" onclick="testScraper('overpass')" style="margin-left:auto">⚡ Quick Test</button>
+        <button class="btn btn-outline btn-sm" onclick="testScraper('overpass')" style="margin-left:auto">&#9889; Quick Test</button>
     </div>
 
     <div class="actions-grid">
@@ -141,6 +559,7 @@
 </div>
 <input type="file" id="csvUpload" accept=".csv" style="display:none" onchange="uploadCSV(this)">
 
+<!-- ═══════════ BREAKDOWN COLUMNS (existing) ═══════════ -->
 <div class="three-col">
     <div class="card">
         <h3>By State</h3>
@@ -171,12 +590,13 @@
     </div>
 </div>
 
+<!-- ═══════════ ACTIVITY + LOGS (existing, moved below new sections) ═══════════ -->
 <div class="two-col">
     <div class="card">
         <h3>Recent Activity</h3>
         {% for a in activities %}
         <div class="activity-item">
-            <div><span class="biz">{{ a.business_name }}</span> · {{ a.activity_type }}</div>
+            <div><span class="biz">{{ a.business_name }}</span> &middot; {{ a.activity_type }}</div>
             {% if a.note %}<div style="color:#94a3b8;margin-top:2px">{{ a.note }}</div>{% endif %}
             <div class="time">{{ a.created_at }}</div>
         </div>
@@ -217,6 +637,7 @@
     </div>
 </div>
 
+<!-- ═══════════ PREVIEW MODAL (existing) ═══════════ -->
 <div class="preview-modal" id="previewModal" onclick="if(event.target===this)closePreview()">
     <div class="box">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
@@ -290,7 +711,7 @@ async function testScraper(source) {
         }
 
         const leads = data.leads || [];
-        let html = `<div style="color:#4ade80;margin-bottom:12px">✓ Pulled ${leads.length} live leads from ${escHtml(source)}</div>`;
+        let html = `<div style="color:#4ade80;margin-bottom:12px">&#10003; Pulled ${leads.length} live leads from ${escHtml(source)}</div>`;
         if (leads.length === 0) {
             html += '<div style="color:#94a3b8">No results returned. Try another source.</div>';
         } else {
