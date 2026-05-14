@@ -52,6 +52,11 @@ jobs:
             files="clients/youtube/longform-scripts/${{ inputs.slug }}.json"
           else
             files=$(git diff --name-only HEAD^ HEAD -- 'clients/youtube/longform-scripts/*.json' | tr '\n' ' ')
+            # If only the pipeline changed (no JSON in diff), re-render all scripts
+            if [ -z "$(echo "$files" | tr -d ' ')" ]; then
+              files=$(ls clients/youtube/longform-scripts/*.json 2>/dev/null | tr '\n' ' ')
+              echo "::notice::No JSON changes in commit — re-rendering all scripts due to pipeline change"
+            fi
           fi
           echo "Files to render: $files"
           echo "files=$files" >> "$GITHUB_OUTPUT"
