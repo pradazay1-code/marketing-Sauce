@@ -330,7 +330,9 @@ def fetch_shot(
             except Exception as e:
                 print(f"      [library] failed for '{q}': {e}")
 
-    sources = shot.get("sources") or ["youtube", "pexels", "pixabay", "wikimedia", "ai"]
+    sources = shot.get("sources") or ["pexels", "pixabay", "wikimedia", "ai"]
+    # yt-dlp is SLOW (search+download = 30-60s per shot). Only use it when explicitly opted-in
+    # by listing "youtube" in the shot's sources. Default order omits youtube.
     if not enable_youtube and "youtube" in sources:
         sources = [s for s in sources if s != "youtube"]
 

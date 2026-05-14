@@ -1,6 +1,6 @@
 {
   "slug": "tesla-robotaxi",
-  "render_version": 3,
+  "render_version": 4,
   "title": "Tesla Robotaxi: The 25-Minute Story of the Most Expensive Bet in Auto History",
   "format": "longform",
   "voice": "en-US-BrianMultilingualNeural",
@@ -8,26 +8,28 @@
   "shots": [
     {
       "query": "tesla factory production line",
-      "duration": 5
-    },
-    {
-      "query": "futuristic robotaxi gold",
-      "duration": 5
+      "duration": 5,
+      "sources": [
+        "youtube",
+        "pexels",
+        "pixabay",
+        "wikimedia",
+        "ai"
+      ]
     },
     {
       "query": "tesla cybercab reveal stage",
-      "duration": 5
-    },
-    {
-      "query": "elon musk speaking microphone",
-      "duration": 4
+      "duration": 5,
+      "sources": [
+        "youtube",
+        "pexels",
+        "pixabay",
+        "wikimedia",
+        "ai"
+      ]
     },
     {
       "query": "tesla giga texas factory",
-      "duration": 5
-    },
-    {
-      "query": "autonomous vehicle prototype",
       "duration": 5
     },
     {
@@ -35,15 +37,7 @@
       "duration": 5
     },
     {
-      "query": "tesla model y driving night",
-      "duration": 4
-    },
-    {
       "query": "futuristic city transport future",
-      "duration": 5
-    },
-    {
-      "query": "automotive assembly robots",
       "duration": 5
     },
     {
@@ -51,31 +45,22 @@
       "duration": 4
     },
     {
-      "query": "tesla model s driving highway",
-      "duration": 5
-    },
-    {
       "query": "tesla cybercab interior concept",
-      "duration": 6
-    },
-    {
-      "query": "two seat electric car interior",
-      "duration": 5
+      "duration": 6,
+      "sources": [
+        "youtube",
+        "pexels",
+        "pixabay",
+        "wikimedia",
+        "ai"
+      ]
     },
     {
       "query": "butterfly doors car opening",
       "duration": 6
     },
     {
-      "query": "luxury car door opening",
-      "duration": 5
-    },
-    {
       "query": "modern car interior dashboard",
-      "duration": 5
-    },
-    {
-      "query": "vegan leather car seat",
       "duration": 5
     },
     {
@@ -83,15 +68,7 @@
       "duration": 5
     },
     {
-      "query": "tesla touchscreen display center",
-      "duration": 6
-    },
-    {
       "query": "no steering wheel concept",
-      "duration": 5
-    },
-    {
-      "query": "futuristic car cockpit",
       "duration": 5
     },
     {
@@ -99,31 +76,15 @@
       "duration": 6
     },
     {
-      "query": "ev charger parking lot",
-      "duration": 5
-    },
-    {
       "query": "electric car battery pack",
       "duration": 5
-    },
-    {
-      "query": "tesla model y self driving",
-      "duration": 6
     },
     {
       "query": "uber smartphone app ride",
       "duration": 5
     },
     {
-      "query": "tesla robotaxi fleet parked",
-      "duration": 6
-    },
-    {
       "query": "tesla stock chart rising",
-      "duration": 5
-    },
-    {
-      "query": "wall street trading floor",
       "duration": 5
     },
     {
@@ -131,87 +92,57 @@
       "duration": 5
     },
     {
-      "query": "money cash currency dollars",
-      "duration": 5
-    },
-    {
       "query": "tesla cars dealership lot",
       "duration": 6
-    },
-    {
-      "query": "elon musk twitter announcement",
-      "duration": 5
     },
     {
       "query": "tesla shareholder meeting",
       "duration": 6
     },
     {
-      "query": "elon musk young 2015",
-      "duration": 5
-    },
-    {
       "query": "tesla model x autopilot 2016",
       "duration": 6
-    },
-    {
-      "query": "self driving demo palo alto",
-      "duration": 5
     },
     {
       "query": "highway driving camera view",
       "duration": 5
     },
     {
-      "query": "tesla autonomy day 2019",
-      "duration": 6
-    },
-    {
       "query": "elon musk presentation stage",
-      "duration": 5
-    },
-    {
-      "query": "tesla earnings call 2020",
-      "duration": 5
+      "duration": 5,
+      "sources": [
+        "youtube",
+        "pexels",
+        "pixabay",
+        "wikimedia",
+        "ai"
+      ]
     },
     {
       "query": "empty parking lot abandoned",
       "duration": 5
     },
     {
-      "query": "tesla we robot hollywood event",
-      "duration": 6
-    },
-    {
       "query": "stage red carpet event night",
       "duration": 5
-    },
-    {
-      "query": "tesla cybercab unveiling 2024",
-      "duration": 6
     },
     {
       "query": "tesla cars driving austin texas",
       "duration": 6
     },
     {
-      "query": "tesla robotaxi service dallas",
-      "duration": 6
-    },
-    {
       "query": "tesla model y safety monitor",
-      "duration": 5
-    },
-    {
-      "query": "houston city driving",
-      "duration": 5
+      "duration": 5,
+      "sources": [
+        "youtube",
+        "pexels",
+        "pixabay",
+        "wikimedia",
+        "ai"
+      ]
     },
     {
       "query": "phoenix arizona desert highway",
-      "duration": 5
-    },
-    {
-      "query": "miami beach city traffic",
       "duration": 5
     },
     {
@@ -219,23 +150,11 @@
       "duration": 4
     },
     {
-      "query": "las vegas nevada city night",
-      "duration": 5
-    },
-    {
       "query": "neural network ai brain visualization",
       "duration": 6
     },
     {
-      "query": "computer servers ai data center",
-      "duration": 5
-    },
-    {
       "query": "tesla driving data collection",
-      "duration": 5
-    },
-    {
-      "query": "highway interstate driving footage",
       "duration": 5
     },
     {
@@ -243,71 +162,42 @@
       "duration": 5
     },
     {
-      "query": "tesla model 3 driving autopilot",
-      "duration": 6
-    },
-    {
       "query": "ai machine learning visualization",
       "duration": 5
-    },
-    {
-      "query": "lidar laser sensor scanning",
-      "duration": 6
     },
     {
       "query": "lidar 3d point cloud visualization",
       "duration": 6
     },
     {
-      "query": "car radar sensor antenna",
-      "duration": 5
-    },
-    {
       "query": "ultrasonic sensor car bumper",
       "duration": 5
-    },
-    {
-      "query": "fog dense road driving",
-      "duration": 6
     },
     {
       "query": "rain heavy storm road",
       "duration": 5
     },
     {
-      "query": "tesla car cameras close up",
-      "duration": 6
-    },
-    {
       "query": "elon musk decision making office",
-      "duration": 5
-    },
-    {
-      "query": "computer chip neural network",
-      "duration": 5
+      "duration": 5,
+      "sources": [
+        "youtube",
+        "pexels",
+        "pixabay",
+        "wikimedia",
+        "ai"
+      ]
     },
     {
       "query": "human eyes close up macro",
       "duration": 6
     },
     {
-      "query": "brain visualization scan",
-      "duration": 5
-    },
-    {
       "query": "deep learning ai training",
       "duration": 5
     },
     {
-      "query": "waymo robotaxi car sensor",
-      "duration": 6
-    },
-    {
       "query": "manufacturing cost calculator",
-      "duration": 5
-    },
-    {
-      "query": "stack of dollar bills",
       "duration": 5
     },
     {
@@ -315,23 +205,11 @@
       "duration": 6
     },
     {
-      "query": "ambulance emergency lights",
-      "duration": 5
-    },
-    {
       "query": "sun glare driving windshield",
       "duration": 6
     },
     {
-      "query": "dust storm desert road",
-      "duration": 5
-    },
-    {
       "query": "snow blizzard driving",
-      "duration": 5
-    },
-    {
-      "query": "fog mountain road dangerous",
       "duration": 5
     },
     {
@@ -339,63 +217,45 @@
       "duration": 6
     },
     {
-      "query": "federal investigation documents",
-      "duration": 5
-    },
-    {
       "query": "courtroom legal scene",
       "duration": 5
     },
     {
-      "query": "warning red alert dashboard",
-      "duration": 5
-    },
-    {
       "query": "san francisco fog golden gate",
-      "duration": 6
-    },
-    {
-      "query": "denver colorado winter snow",
-      "duration": 5
+      "duration": 6,
+      "sources": [
+        "youtube",
+        "pexels",
+        "pixabay",
+        "wikimedia",
+        "ai"
+      ]
     },
     {
       "query": "miami florida rain storm",
       "duration": 5
     },
     {
-      "query": "google self driving car early",
-      "duration": 6
-    },
-    {
       "query": "google headquarters mountain view",
       "duration": 5
     },
     {
-      "query": "waymo car phoenix arizona",
-      "duration": 6
-    },
-    {
       "query": "waymo jaguar i-pace driving",
-      "duration": 6
-    },
-    {
-      "query": "san francisco self driving car",
-      "duration": 6
+      "duration": 6,
+      "sources": [
+        "youtube",
+        "pexels",
+        "pixabay",
+        "wikimedia",
+        "ai"
+      ]
     },
     {
       "query": "los angeles waymo robotaxi",
       "duration": 5
     },
     {
-      "query": "autonomous taxi customer pickup",
-      "duration": 6
-    },
-    {
       "query": "smartphone app waymo ride",
-      "duration": 5
-    },
-    {
-      "query": "uber driver waiting car",
       "duration": 5
     },
     {
@@ -403,15 +263,7 @@
       "duration": 6
     },
     {
-      "query": "lidar spinning sensor",
-      "duration": 5
-    },
-    {
       "query": "expensive technology hardware",
-      "duration": 5
-    },
-    {
-      "query": "alphabet google logo building",
       "duration": 5
     },
     {
@@ -419,23 +271,11 @@
       "duration": 5
     },
     {
-      "query": "safety crash test dummy",
-      "duration": 6
-    },
-    {
       "query": "tesla approach scaling fast",
       "duration": 5
     },
     {
-      "query": "zoox amazon robotaxi",
-      "duration": 6
-    },
-    {
       "query": "robotaxi prototype custom",
-      "duration": 5
-    },
-    {
-      "query": "las vegas strip lights",
       "duration": 5
     },
     {
@@ -443,23 +283,11 @@
       "duration": 5
     },
     {
-      "query": "pedestrian crash accident street",
-      "duration": 5
-    },
-    {
       "query": "racing competition cars",
       "duration": 5
     },
     {
-      "query": "global market world map",
-      "duration": 6
-    },
-    {
       "query": "ride hailing uber lyft app",
-      "duration": 5
-    },
-    {
-      "query": "uber driver smartphone app",
       "duration": 5
     },
     {
@@ -467,23 +295,11 @@
       "duration": 5
     },
     {
-      "query": "atlanta georgia downtown driving",
-      "duration": 5
-    },
-    {
       "query": "tesla customer app screen",
       "duration": 5
     },
     {
-      "query": "dallas texas downtown skyline",
-      "duration": 6
-    },
-    {
       "query": "smartphone app comparison",
-      "duration": 5
-    },
-    {
-      "query": "uber receipt smartphone",
       "duration": 5
     },
     {
@@ -491,15 +307,7 @@
       "duration": 6
     },
     {
-      "query": "calculator counting money",
-      "duration": 5
-    },
-    {
       "query": "stock market analyst office",
-      "duration": 5
-    },
-    {
-      "query": "morgan stanley building wall street",
       "duration": 5
     },
     {
@@ -507,23 +315,11 @@
       "duration": 6
     },
     {
-      "query": "factory production cost",
-      "duration": 5
-    },
-    {
       "query": "car ownership keys",
       "duration": 6
     },
     {
-      "query": "gas station fuel pump expensive",
-      "duration": 5
-    },
-    {
       "query": "car insurance documents",
-      "duration": 5
-    },
-    {
-      "query": "parking lot full cars",
       "duration": 5
     },
     {
@@ -531,15 +327,7 @@
       "duration": 6
     },
     {
-      "query": "dense urban downtown traffic",
-      "duration": 5
-    },
-    {
       "query": "ford factory production",
-      "duration": 5
-    },
-    {
-      "query": "toyota dealership cars",
       "duration": 5
     },
     {
@@ -547,23 +335,11 @@
       "duration": 5
     },
     {
-      "query": "subscription service smartphone",
-      "duration": 5
-    },
-    {
       "query": "uber lyft logos app",
       "duration": 5
     },
     {
-      "query": "ride hailing customer car",
-      "duration": 6
-    },
-    {
       "query": "us capitol building washington",
-      "duration": 6
-    },
-    {
-      "query": "federal regulator government meeting",
       "duration": 6
     },
     {
@@ -571,23 +347,11 @@
       "duration": 6
     },
     {
-      "query": "fsd tesla autopilot screen",
-      "duration": 5
-    },
-    {
       "query": "police accident report documents",
       "duration": 5
     },
     {
-      "query": "fatal car crash investigation",
-      "duration": 6
-    },
-    {
       "query": "pedestrian crossing street",
-      "duration": 5
-    },
-    {
-      "query": "hospital emergency injury",
       "duration": 5
     },
     {
@@ -595,23 +359,11 @@
       "duration": 5
     },
     {
-      "query": "recall notice paper document",
-      "duration": 5
-    },
-    {
       "query": "tesla car defect recall",
       "duration": 6
     },
     {
-      "query": "press conference legal statement",
-      "duration": 5
-    },
-    {
       "query": "statistics data analysis chart",
-      "duration": 5
-    },
-    {
-      "query": "stop sign red traffic",
       "duration": 5
     },
     {
@@ -619,47 +371,23 @@
       "duration": 5
     },
     {
-      "query": "oncoming traffic head on",
-      "duration": 5
-    },
-    {
       "query": "lawyer courtroom briefcase",
       "duration": 5
-    },
-    {
-      "query": "tesla cybercab empty garage",
-      "duration": 6
     },
     {
       "query": "robot fleet stopped grounded",
       "duration": 5
     },
     {
-      "query": "school bus children crossing",
-      "duration": 6
-    },
-    {
       "query": "child pedestrian dangerous street",
       "duration": 5
-    },
-    {
-      "query": "tesla revenue collapse chart",
-      "duration": 6
     },
     {
       "query": "tesla factory expansion scale",
       "duration": 6
     },
     {
-      "query": "robotaxi fleet thousands cars",
-      "duration": 5
-    },
-    {
       "query": "europe city street driving",
-      "duration": 5
-    },
-    {
-      "query": "asia tokyo japan traffic",
       "duration": 5
     },
     {
@@ -667,39 +395,19 @@
       "duration": 5
     },
     {
-      "query": "five trillion market cap chart",
-      "duration": 5
-    },
-    {
       "query": "factory shutdown closed gate",
       "duration": 6
-    },
-    {
-      "query": "lidar sensor expensive cost",
-      "duration": 5
     },
     {
       "query": "tesla brand crisis reputation",
       "duration": 5
     },
     {
-      "query": "stock crash falling chart",
-      "duration": 6
-    },
-    {
       "query": "automotive plant manufacturing",
       "duration": 5
     },
     {
-      "query": "baidu china self driving car",
-      "duration": 6
-    },
-    {
       "query": "china electric vehicle factory",
-      "duration": 5
-    },
-    {
-      "query": "global competition cars race",
       "duration": 5
     },
     {
@@ -707,23 +415,11 @@
       "duration": 5
     },
     {
-      "query": "city by city regulation map",
-      "duration": 5
-    },
-    {
       "query": "long road ahead horizon",
       "duration": 6
     },
     {
-      "query": "future technology landscape",
-      "duration": 5
-    },
-    {
       "query": "tesla investigation watching news",
-      "duration": 6
-    },
-    {
-      "query": "waymo robotaxi rapid deployment",
       "duration": 6
     },
     {
@@ -731,15 +427,7 @@
       "duration": 5
     },
     {
-      "query": "cybercab production countdown",
-      "duration": 5
-    },
-    {
       "query": "fatal accident night flashing lights",
-      "duration": 5
-    },
-    {
-      "query": "downtown city night skyline",
       "duration": 5
     },
     {
@@ -747,16 +435,8 @@
       "duration": 5
     },
     {
-      "query": "passenger riding autonomous car",
-      "duration": 6
-    },
-    {
       "query": "future technology happy passenger",
       "duration": 5
-    },
-    {
-      "query": "car accident dangerous scary",
-      "duration": 6
     }
   ]
 }
