@@ -3,7 +3,7 @@ import os
 import json
 from datetime import datetime, date
 
-from pg_adapter import is_postgres, get_pg_connection
+from pg_adapter import is_postgres, get_pg_connection, PGConnection
 
 DB_PATH = os.environ.get("LEADGEN_DB_PATH") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "leads.db")
 
@@ -38,6 +38,13 @@ def get_db():
 
 
 def init_db():
+    try:
+        _init_db_inner()
+    except Exception as e:
+        print(f"[DB] Warning during init: {e}")
+
+
+def _init_db_inner():
     conn = get_db()
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS leads (
@@ -165,7 +172,7 @@ def init_db():
         CREATE INDEX IF NOT EXISTS idx_email_log_lead ON email_log(lead_id);
     """)
 
-    if is_postgres():
+    if isinstance(conn, PGConnection):
         cur = conn.execute(
             "SELECT column_name FROM information_schema.columns WHERE table_name = 'leads'",
         )
@@ -488,7 +495,7 @@ def get_stats():
 
 
 def table_exists(conn, table_name):
-    if is_postgres():
+    if isinstance(conn, PGConnection):
         row = conn.execute(
             "SELECT table_name FROM information_schema.tables WHERE table_name=?",
             (table_name,)
