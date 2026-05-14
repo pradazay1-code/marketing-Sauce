@@ -454,16 +454,25 @@ def main() -> int:
     weight_sum = sum(weights)
     durations = [(w / weight_sum) * total_duration for w in weights]
 
-    print(f"[2/4] Fetching {len(shots)} shots (priorities: explicit > library > youtube > pexels > pixabay > wikimedia > ai)...")
+    print(f"[2/4] Fetching + processing {len(shots)} shots (streaming to disk to conserve RAM)...")
     used_urls = set()
-    video_clips = []
+    processed_paths = []
     src_stats = {"explicit": 0, "library": 0, "youtube": 0, "pexels": 0, "pixabay": 0, "pixabay_image": 0, "wikimedia": 0, "ai": 0, "cache": 0, "failed": 0}
+    processed_dir = out_dir / "processed"
+    processed_dir.mkdir(exist_ok=True)
 
     for i, (shot, dur) in enumerate(zip(shots, durations)):
         queries = shot.get("queries") or [shot.get("query", "")]
         primary_query = queries[0] if isinstance(queries, list) else queries
         if (i + 1) % 20 == 0 or i < 3 or i == len(shots) - 1:
             print(f"      [{i+1}/{len(shots)}] '{primary_query}' -> {dur:.1f}s")
+
+        processed_path = processed_dir / f"p_{i:04d}.mp4"
+        if processed_path.exists() and processed_path.stat().st_size > 5000:
+            processed_paths.append(processed_path)
+            src_stats["cache"] += 1
+            continue
+
         path, kind, source = fetch_shot(
             i, shot, clips_dir, library, used_urls,
             pexels_key, pixabay_key, enable_youtube=not args.no_youtube,
@@ -474,65 +483,94 @@ def main() -> int:
             continue
         try:
             clip = load_clip(path, kind, dur)
-            video_clips.append(clip)
+            # Render this clip to disk immediately and release memory
+            clip.write_videofile(
+                str(processed_path),
+                fps=30, codec="libx264", audio=False,
+                preset="ultrafast", threads=2, bitrate="5000k",
+                logger=None,
+            )
+            try:
+                clip.close()
+            except Exception:
+                pass
+            processed_paths.append(processed_path)
             src_stats[source] = src_stats.get(source, 0) + 1
         except Exception as e:
             src_stats["failed"] += 1
-            print(f"      [{i+1}] WARN clip load failed for '{primary_query}': {e}")
+            print(f"      [{i+1}] WARN process failed for '{primary_query}': {e}")
 
-    if not video_clips:
+    if not processed_paths:
         sys.exit("ERROR: no usable clips")
 
-    print(f"      {len(video_clips)}/{len(shots)} clips ready")
+    print(f"      {len(processed_paths)}/{len(shots)} clips processed to disk")
     print(f"      sources: {dict((k, v) for k, v in src_stats.items() if v > 0)}")
 
-    print("[3/4] Compositing timeline...")
-    timeline = []
-    t = 0.0
-    for clip in video_clips:
-        timeline.append(clip.with_start(t).with_position("center"))
-        t += clip.duration
+    print("[3/4] Stitching with ffmpeg concat (streaming, low memory)...")
+    concat_file = out_dir / "concat.txt"
+    with concat_file.open("w") as f:
+        for p in processed_paths:
+            f.write(f"file '{p.resolve()}'\n")
 
-    video = CompositeVideoClip(timeline, size=(TARGET_W, TARGET_H)).with_duration(min(t, total_duration))
-
-    audio_tracks = [voice_clip]
-    music_file = script.get("music_file")
-    if music_file:
-        music_path = ROOT / music_file
-        if music_path.exists():
-            print(f"      mixing music: {music_path.name}")
-            audio_tracks.append(prepare_music(music_path, total_duration))
-
-    final_audio = CompositeAudioClip(audio_tracks) if len(audio_tracks) > 1 else voice_clip
-    video = video.with_audio(final_audio).with_duration(total_duration)
-
-    out_path = out_dir / "video.mp4"
-    temp_path = out_dir / "_pre_normalize.mp4"
-    print(f"[4/4] Encoding -> {temp_path.name} ...")
-    video.write_videofile(
-        str(temp_path),
-        fps=30, codec="libx264", audio_codec="aac",
-        preset="medium", threads=4, bitrate="6000k", logger=None,
+    silent_video = out_dir / "_video_no_audio.mp4"
+    subprocess.run(
+        [
+            "ffmpeg", "-y", "-f", "concat", "-safe", "0",
+            "-i", str(concat_file),
+            "-c", "copy",
+            "-loglevel", "error",
+            str(silent_video),
+        ],
+        check=True,
     )
 
-    print("      audio normalization (loudnorm I=-16 LRA=11 TP=-1.5)...")
+    # Release voice_clip — ffmpeg will pull straight from voice.mp3
     try:
-        subprocess.run(
-            [
-                "ffmpeg", "-y", "-i", str(temp_path),
-                "-af", "loudnorm=I=-16:LRA=11:TP=-1.5",
-                "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
-                "-loglevel", "error",
-                str(out_path),
-            ],
-            check=True,
-        )
-        temp_path.unlink(missing_ok=True)
-    except Exception as e:
-        print(f"      WARN normalization failed ({e}); using un-normalized output")
-        temp_path.rename(out_path)
+        voice_clip.close()
+    except Exception:
+        pass
 
-    print(f"\nDone -> {out_path}")
+    print("[4/4] Muxing audio + normalizing + final encode...")
+    out_path = out_dir / "video.mp4"
+    music_path = None
+    music_file = script.get("music_file")
+    if music_file:
+        candidate = ROOT / music_file
+        if candidate.exists():
+            music_path = candidate
+            print(f"      mixing music: {music_path.name}")
+
+    # Build the audio-filter graph
+    if music_path:
+        audio_inputs = ["-i", str(voice_path), "-stream_loop", "-1", "-i", str(music_path)]
+        # Loop music; lower its volume; mix with voice; then loudnorm
+        af = (
+            f"[1:a]volume={MUSIC_VOLUME}[m];"
+            f"[0:a][m]amix=inputs=2:duration=first:dropout_transition=0[mixed];"
+            f"[mixed]loudnorm=I=-16:LRA=11:TP=-1.5[aout]"
+        )
+    else:
+        audio_inputs = ["-i", str(voice_path)]
+        af = "[0:a]loudnorm=I=-16:LRA=11:TP=-1.5[aout]"
+
+    ffmpeg_cmd = [
+        "ffmpeg", "-y",
+        "-i", str(silent_video),
+        *audio_inputs,
+        "-filter_complex", af,
+        "-map", "0:v", "-map", "[aout]",
+        "-c:v", "libx264", "-preset", "medium", "-crf", "21",
+        "-c:a", "aac", "-b:a", "192k",
+        "-shortest",
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        "-loglevel", "error",
+        str(out_path),
+    ]
+    subprocess.run(ffmpeg_cmd, check=True)
+    silent_video.unlink(missing_ok=True)
+
+    print(f"\nDone -> {out_path} ({out_path.stat().st_size / 1_000_000:.1f} MB)")
     return 0
 
 
