@@ -18,14 +18,14 @@ from flask import Flask, request, jsonify, render_template, Response
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from database import (
-    init_db, get_leads, count_leads, get_lead_by_id, add_lead, update_lead,
+    get_db, init_db, get_leads, count_leads, get_lead_by_id, add_lead, update_lead,
     delete_lead, get_stats, get_scrape_logs, clear_scrape_logs, export_csv, add_leads_bulk,
     add_activity, get_activities, get_recent_activities, get_pipeline_data,
     save_search, get_saved_searches, delete_saved_search, PIPELINE_STAGES,
     update_scrape_status, get_scrape_status,
     get_email_settings, update_email_settings,
     save_email_template, get_email_templates, get_email_template, delete_email_template,
-    get_email_log, log_email,
+    get_email_log, log_email, get_recent_leads,
 )
 from utils import enrich_lead, normalize_phone, is_valid_phone, is_valid_email, calculate_lead_score
 from email_service import send_email, send_bulk_emails, render_template as render_email_template, DEFAULT_TEMPLATES
@@ -60,7 +60,8 @@ def dashboard():
     stats = get_stats()
     logs = get_scrape_logs(10)
     activities = get_recent_activities(10)
-    return render_template("dashboard.html", stats=stats, logs=logs, activities=activities)
+    recent_leads = get_recent_leads(5)
+    return render_template("dashboard.html", stats=stats, logs=logs, activities=activities, recent_leads=recent_leads)
 
 
 @app.route("/leads")
@@ -566,6 +567,28 @@ def api_email_preview():
 def api_email_log_list():
     lead_id = request.args.get("lead_id", type=int)
     return jsonify(get_email_log(50, lead_id=lead_id))
+
+
+@app.route("/api/categories")
+@check_auth
+def api_categories():
+    conn = get_db()
+    rows = conn.execute("SELECT DISTINCT category FROM leads WHERE category != '' ORDER BY category").fetchall()
+    conn.close()
+    return jsonify([row["category"] for row in rows])
+
+
+@app.route("/api/cities")
+@check_auth
+def api_cities():
+    state = request.args.get("state")
+    conn = get_db()
+    if state:
+        rows = conn.execute("SELECT DISTINCT city FROM leads WHERE city != '' AND state = ? ORDER BY city", (state,)).fetchall()
+    else:
+        rows = conn.execute("SELECT DISTINCT city FROM leads WHERE city != '' ORDER BY city").fetchall()
+    conn.close()
+    return jsonify([row["city"] for row in rows])
 
 
 @app.route("/api/health")

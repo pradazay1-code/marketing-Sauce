@@ -711,6 +711,16 @@ def delete_saved_search(search_id):
     conn.close()
 
 
+def get_recent_leads(limit=5):
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT id, business_name, category, city, state, priority, date_found, has_website, phone, email FROM leads ORDER BY created_at DESC LIMIT ?",
+        (limit,)
+    ).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
 def export_csv(filters=None):
     leads = get_leads(filters=filters, limit=100000)
     if not leads:
