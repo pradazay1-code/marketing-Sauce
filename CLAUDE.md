@@ -87,7 +87,7 @@ marketing-Sauce/
 
 ## Agent Capabilities
 
-This system has 5 core agents. Each follows the DOE pattern (Directive → Orchestration → Execution):
+This system has 6 core agents. Each follows the DOE pattern (Directive → Orchestration → Execution):
 
 | Agent | Directive | Execution Script | What It Does |
 |-------|-----------|-----------------|--------------|
@@ -96,6 +96,7 @@ This system has 5 core agents. Each follows the DOE pattern (Directive → Orche
 | **SEO Auditor** | `directives/seo_audit.md` | `execution/seo_audit.py` | Audit client sites for SEO issues |
 | **Ad Creator** | `directives/create_ad.md` | `execution/generate_ad.py` | Generate Google/Facebook/Instagram ad copy |
 | **Email Outreach** | `directives/email_client.md` | `execution/email_outreach.py` + Gmail MCP | Draft and send emails as Aventis Marketing |
+| **Content AI** | `directives/instagram_content.md` | `execution/generate_instagram.py` | Generate Instagram posts, carousels, reels, stories, calendars |
 
 ## How to Use Each Agent
 
@@ -104,6 +105,7 @@ This system has 5 core agents. Each follows the DOE pattern (Directive → Orche
 - **SEO audit:** Run `python execution/seo_audit.py clients/{name}/index.html`
 - **Create ads:** Run `python execution/generate_ad.py --client "Name" --service "Service" --location "City, ST"`
 - **Email a client:** Read `directives/email_client.md`, draft email, send via `mcp__gmail__send_message`
+- **Generate content:** Run `python execution/generate_instagram.py --client akira-real-estate --type calendar --count 7 --save`
 
 ## Skills (Automated Workflows)
 

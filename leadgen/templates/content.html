@@ -1,0 +1,333 @@
+{% extends "_layout.html" %}
+{% set active = "content" %}
+{% block title %}Content AI — LeadPilot{% endblock %}
+
+{% block extra_css %}
+.content-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
+.content-header h2 { font-size: 24px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 10px; }
+.content-header h2 span { background: linear-gradient(135deg, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+.gen-grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; }
+@media (max-width: 900px) { .gen-grid { grid-template-columns: 1fr; } }
+
+.gen-panel { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; }
+.gen-panel h3 { font-size: 16px; font-weight: 600; color: #f8fafc; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.gen-panel h3 svg { width: 20px; height: 20px; color: #8b5cf6; }
+
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.form-group select, .form-group input { width: 100%; background: #0f172a; border: 1px solid #475569; border-radius: 8px; color: #e2e8f0; padding: 10px 12px; font-size: 14px; font-family: inherit; }
+.form-group select:focus, .form-group input:focus { outline: none; border-color: #8b5cf6; }
+
+.type-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.type-card { background: #0f172a; border: 2px solid #334155; border-radius: 10px; padding: 12px; cursor: pointer; text-align: center; transition: all 0.15s; }
+.type-card:hover { border-color: #8b5cf6; }
+.type-card.active { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.1); }
+.type-card .icon { font-size: 24px; margin-bottom: 4px; }
+.type-card .label { font-size: 12px; font-weight: 600; color: #cbd5e1; }
+
+.btn-generate { width: 100%; padding: 14px; background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; letter-spacing: 0.3px; }
+.btn-generate:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3); }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.output-area { min-height: 400px; }
+.output-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; color: #64748b; text-align: center; }
+.output-empty svg { width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.3; }
+.output-empty p { font-size: 15px; }
+.output-empty small { font-size: 12px; color: #475569; margin-top: 4px; }
+
+.content-card { background: #0f172a; border: 1px solid #334155; border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+.content-card-header { padding: 16px 20px; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; }
+.content-card-header .tag { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.tag-post { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+.tag-carousel { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+.tag-reel { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+.tag-story { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+.tag-calendar { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.content-card-header .pillar { font-size: 13px; color: #94a3b8; }
+.content-card-body { padding: 20px; }
+.content-card-body .caption-text { white-space: pre-wrap; font-size: 14px; line-height: 1.6; color: #e2e8f0; background: #1e293b; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+.content-card-body .hashtags { font-size: 12px; color: #60a5fa; line-height: 1.8; word-break: break-all; }
+.content-card-body .visual-note { font-size: 12px; color: #94a3b8; margin-top: 8px; padding: 8px 12px; background: rgba(139, 92, 246, 0.08); border-radius: 6px; border-left: 3px solid #8b5cf6; }
+
+.slide-list { list-style: none; padding: 0; margin: 0 0 12px; }
+.slide-list li { padding: 10px 14px; border-left: 3px solid #8b5cf6; margin-bottom: 8px; background: #1e293b; border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.5; }
+.slide-list li strong { color: #a78bfa; font-size: 11px; text-transform: uppercase; display: block; margin-bottom: 2px; }
+
+.scene-list { list-style: none; padding: 0; margin: 0 0 12px; }
+.scene-list li { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid #1e293b; font-size: 13px; }
+.scene-list .time { color: #f472b6; font-weight: 600; min-width: 55px; font-size: 12px; }
+.scene-list .text { color: #e2e8f0; flex: 1; }
+.scene-list .action { color: #64748b; font-size: 12px; font-style: italic; min-width: 120px; text-align: right; }
+
+.frame-list { list-style: none; padding: 0; margin: 0 0 12px; }
+.frame-list li { padding: 10px 14px; margin-bottom: 6px; background: #1e293b; border-radius: 8px; font-size: 13px; display: flex; gap: 10px; align-items: flex-start; }
+.frame-list .frame-num { background: #22c55e; color: #0f172a; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.frame-list .frame-type { font-size: 10px; color: #4ade80; text-transform: uppercase; font-weight: 600; }
+
+.copy-btn { padding: 6px 14px; background: #334155; border: none; border-radius: 6px; color: #cbd5e1; font-size: 12px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.copy-btn:hover { background: #475569; color: #f8fafc; }
+
+.cal-entry { margin-bottom: 24px; }
+.cal-date { font-size: 14px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+.cal-meta { font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
+
+.loading { display: flex; align-items: center; justify-content: center; min-height: 200px; }
+.spinner { width: 40px; height: 40px; border: 3px solid #334155; border-top-color: #8b5cf6; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <h2><span>Content AI</span> — Instagram Generator</h2>
+</div>
+
+<div class="gen-grid">
+    <div class="gen-panel">
+        <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Generate Content
+        </h3>
+
+        <div class="form-group">
+            <label>Content Type</label>
+            <div class="type-cards">
+                <div class="type-card active" data-type="post" onclick="selectType(this)">
+                    <div class="icon">📸</div>
+                    <div class="label">Post</div>
+                </div>
+                <div class="type-card" data-type="carousel" onclick="selectType(this)">
+                    <div class="icon">📑</div>
+                    <div class="label">Carousel</div>
+                </div>
+                <div class="type-card" data-type="reel" onclick="selectType(this)">
+                    <div class="icon">🎬</div>
+                    <div class="label">Reel</div>
+                </div>
+                <div class="type-card" data-type="story" onclick="selectType(this)">
+                    <div class="icon">📱</div>
+                    <div class="label">Story</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Content Pillar</label>
+            <select id="pillar">
+                <option value="">Auto (Balanced Mix)</option>
+                <option value="listing">Listings & Market Updates</option>
+                <option value="education">Buyer/Seller Education</option>
+                <option value="community">Community Spotlight</option>
+                <option value="behind_the_scenes">Behind the Scenes</option>
+                <option value="testimonial">Client Success Story</option>
+                <option value="market_stats">Market Authority</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>City (Optional)</label>
+            <input type="text" id="city" placeholder="e.g. Boston, Cambridge...">
+        </div>
+
+        <div class="form-group">
+            <label>Client Name</label>
+            <input type="text" id="owner" value="Kunal Patel">
+        </div>
+
+        <div class="form-group">
+            <label>Brand</label>
+            <input type="text" id="brand" value="Akira Real Estate">
+        </div>
+
+        <div class="form-group">
+            <label>How Many</label>
+            <select id="count">
+                <option value="1">1 post</option>
+                <option value="3">3 posts</option>
+                <option value="5">5 posts</option>
+                <option value="7" selected>7 days (calendar)</option>
+                <option value="14">14 days</option>
+                <option value="30">30 days</option>
+            </select>
+        </div>
+
+        <button class="btn-generate" id="generateBtn" onclick="generateContent()">Generate Content</button>
+    </div>
+
+    <div class="gen-panel output-area" id="outputArea">
+        <div class="output-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <p>Select content type and hit Generate</p>
+            <small>Posts, carousels, reels, stories — ready for Instagram</small>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let selectedType = 'post';
+
+function selectType(el) {
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    selectedType = el.dataset.type;
+}
+
+function generateContent() {
+    const btn = document.getElementById('generateBtn');
+    const output = document.getElementById('outputArea');
+    btn.disabled = true;
+    btn.textContent = 'Generating...';
+    output.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    const payload = {
+        type: selectedType,
+        pillar: document.getElementById('pillar').value || null,
+        city: document.getElementById('city').value || null,
+        owner: document.getElementById('owner').value,
+        brand: document.getElementById('brand').value,
+        count: parseInt(document.getElementById('count').value),
+    };
+
+    fetch('/api/content/generate', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload),
+    })
+    .then(r => r.json())
+    .then(data => {
+        btn.disabled = false;
+        btn.textContent = 'Generate Content';
+        if (!data.success) { output.innerHTML = `<p style="color:#ef4444">${escHtml(data.error)}</p>`; return; }
+        renderOutput(data.content, data.type);
+    })
+    .catch(err => {
+        btn.disabled = false;
+        btn.textContent = 'Generate Content';
+        output.innerHTML = `<p style="color:#ef4444">Error: ${escHtml(err.message)}</p>`;
+    });
+}
+
+function renderOutput(content, type) {
+    const output = document.getElementById('outputArea');
+    let html = '';
+
+    if (type === 'calendar') {
+        html += '<h3 style="color:#f8fafc;margin-bottom:16px">Content Calendar</h3>';
+        content.forEach(entry => {
+            html += renderCalEntry(entry);
+        });
+    } else if (Array.isArray(content)) {
+        content.forEach((item, i) => {
+            html += renderContentCard(item, i);
+        });
+    }
+    output.innerHTML = html;
+}
+
+function renderCalEntry(entry) {
+    const c = entry.content;
+    let inner = '';
+    if (entry.content_type === 'carousel') inner = renderCarouselBody(c);
+    else if (entry.content_type === 'reel') inner = renderReelBody(c);
+    else if (entry.content_type === 'story') inner = renderStoryBody(c);
+    else inner = renderPostBody(c);
+
+    return `<div class="content-card cal-entry">
+        <div class="content-card-header">
+            <div>
+                <div class="cal-date">${escHtml(entry.day_of_week)}, ${escHtml(entry.date)}</div>
+                <div class="cal-meta">${escHtml(entry.pillar_label)} &middot; Post at ${escHtml(entry.best_time)} EST</div>
+            </div>
+            <span class="tag tag-${entry.content_type}">${entry.content_type}</span>
+        </div>
+        <div class="content-card-body">${inner}</div>
+    </div>`;
+}
+
+function renderContentCard(item, index) {
+    let inner = '';
+    if (item.type === 'carousel') inner = renderCarouselBody(item);
+    else if (item.type === 'reel') inner = renderReelBody(item);
+    else if (item.type === 'story') inner = renderStoryBody(item);
+    else inner = renderPostBody(item);
+
+    return `<div class="content-card">
+        <div class="content-card-header">
+            <span class="pillar">${escHtml(item.pillar_label || item.theme || '')}</span>
+            <span class="tag tag-${item.type}">${item.type}</span>
+        </div>
+        <div class="content-card-body">${inner}</div>
+    </div>`;
+}
+
+function renderPostBody(item) {
+    let html = '';
+    if (item.suggested_visual) html += `<div class="visual-note">📷 ${escHtml(item.suggested_visual)}</div><br>`;
+    html += `<div class="caption-text">${escHtml(item.caption || '')}</div>`;
+    if (item.hashtags) {
+        html += `<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+            <div class="hashtags">${escHtml(item.hashtags)}</div>
+            <button class="copy-btn" onclick="copyText(this, '${escapeForAttr(item.caption + '\\n\\n' + item.hashtags)}')">Copy All</button>
+        </div>`;
+    }
+    return html;
+}
+
+function renderCarouselBody(item) {
+    let html = '';
+    if (item.title) html += `<div style="font-weight:600;color:#a78bfa;margin-bottom:12px;font-size:15px">${escHtml(item.title)}</div>`;
+    if (item.design_notes) html += `<div class="visual-note">🎨 ${escHtml(item.design_notes)}</div><br>`;
+    html += '<ul class="slide-list">';
+    (item.slides || []).forEach(s => {
+        html += `<li><strong>Slide ${s.slide_number}</strong>${escHtml(s.text)}</li>`;
+    });
+    html += '</ul>';
+    html += `<div class="caption-text">${escHtml(item.caption || '')}</div>`;
+    if (item.hashtags) html += `<div class="hashtags" style="margin-top:8px">${escHtml(item.hashtags)}</div>`;
+    html += `<button class="copy-btn" style="margin-top:8px" onclick="copyText(this, '${escapeForAttr(item.caption + '\\n\\n' + (item.hashtags||''))}')">Copy Caption + Tags</button>`;
+    return html;
+}
+
+function renderReelBody(item) {
+    let html = '';
+    if (item.title) html += `<div style="font-weight:600;color:#f472b6;margin-bottom:4px;font-size:15px">${escHtml(item.title)}</div>`;
+    html += `<div style="font-size:12px;color:#94a3b8;margin-bottom:12px">${escHtml(item.duration || '')} &middot; ${escHtml(item.audio_suggestion || '')}</div>`;
+    html += '<ul class="scene-list">';
+    (item.scenes || []).forEach(s => {
+        html += `<li><span class="time">${escHtml(s.time)}</span><span class="text">${escHtml(s.text)}</span><span class="action">${escHtml(s.action)}</span></li>`;
+    });
+    html += '</ul>';
+    html += `<div class="caption-text">${escHtml(item.caption || '')}</div>`;
+    if (item.hashtags) html += `<div class="hashtags" style="margin-top:8px">${escHtml(item.hashtags)}</div>`;
+    return html;
+}
+
+function renderStoryBody(item) {
+    let html = '';
+    if (item.theme) html += `<div style="font-weight:600;color:#4ade80;margin-bottom:12px;font-size:15px">${escHtml(item.theme)}</div>`;
+    html += '<ul class="frame-list">';
+    (item.frames || []).forEach(f => {
+        const sticker = f.sticker ? ` <span class="frame-type">${escHtml(f.sticker)}</span>` : '';
+        html += `<li><span class="frame-num">${f.frame_number}</span><div><span class="frame-type">${escHtml(f.type)}</span>${sticker}<br>${escHtml(f.content)}</div></li>`;
+    });
+    html += '</ul>';
+    return html;
+}
+
+function copyText(btn, text) {
+    const decoded = text.replace(/\\n/g, '\n');
+    navigator.clipboard.writeText(decoded).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.style.background = '#22c55e';
+        setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 1500);
+    });
+}
+
+function escapeForAttr(str) {
+    return (str||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n').replace(/\r/g,'');
+}
+</script>
+{% endblock %}

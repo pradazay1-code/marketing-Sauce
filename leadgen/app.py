@@ -101,6 +101,45 @@ def email_page():
     return render_template("email.html", templates=templates, settings=settings, recent_emails=recent_emails)
 
 
+@app.route("/content")
+@check_auth
+def content_page():
+    return render_template("content.html")
+
+
+@app.route("/api/content/generate", methods=["POST"])
+@check_auth
+def api_content_generate():
+    data = request.get_json() or {}
+    content_type = data.get("type", "post")
+    pillar = data.get("pillar")
+    city = data.get("city")
+    count = min(int(data.get("count", 1)), 30)
+    owner = data.get("owner", "Kunal Patel")
+    brand = data.get("brand", "Akira Real Estate")
+
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), "execution"))
+    from generate_instagram import (
+        generate_post, generate_carousel, generate_reel,
+        generate_story, generate_calendar, format_calendar_markdown,
+    )
+
+    if content_type == "post":
+        results = [generate_post(pillar=pillar, city=city, owner=owner, brand=brand) for _ in range(count)]
+    elif content_type == "carousel":
+        results = [generate_carousel(topic_pillar=pillar, owner=owner, brand=brand) for _ in range(count)]
+    elif content_type == "reel":
+        results = [generate_reel(owner=owner, brand=brand) for _ in range(count)]
+    elif content_type == "story":
+        results = [generate_story() for _ in range(count)]
+    elif content_type == "calendar":
+        results = generate_calendar(days=count, owner=owner, brand=brand)
+    else:
+        return jsonify({"error": "Invalid content type"}), 400
+
+    return jsonify({"success": True, "content": results, "type": content_type})
+
+
 @app.route("/lead/<int:lead_id>")
 @check_auth
 def lead_detail_page(lead_id):
