@@ -68,6 +68,8 @@ marketing-Sauce/
 │       │   ├── skill.md
 │       │   └── scripts/
 │       │       └── generate_outreach.py
+│       ├── content-creator/   # Full content pipeline (text + visuals)
+│       │   └── skill.md
 │       └── full-pipeline/     # End-to-end automation
 │           └── skill.md
 ├── clients/                   # Client projects (websites, assets, deliverables)
@@ -96,7 +98,7 @@ This system has 6 core agents. Each follows the DOE pattern (Directive → Orche
 | **SEO Auditor** | `directives/seo_audit.md` | `execution/seo_audit.py` | Audit client sites for SEO issues |
 | **Ad Creator** | `directives/create_ad.md` | `execution/generate_ad.py` | Generate Google/Facebook/Instagram ad copy |
 | **Email Outreach** | `directives/email_client.md` | `execution/email_outreach.py` + Gmail MCP | Draft and send emails as Aventis Marketing |
-| **Content AI** | `directives/instagram_content.md` | `execution/generate_instagram.py` | Generate Instagram posts, carousels, reels, stories, calendars |
+| **Content AI** | `directives/instagram_content.md` | `execution/generate_instagram.py` + `execution/generate_content_visuals.py` | Generate Instagram content (text + branded visuals) |
 
 ## How to Use Each Agent
 
@@ -105,7 +107,7 @@ This system has 6 core agents. Each follows the DOE pattern (Directive → Orche
 - **SEO audit:** Run `python execution/seo_audit.py clients/{name}/index.html`
 - **Create ads:** Run `python execution/generate_ad.py --client "Name" --service "Service" --location "City, ST"`
 - **Email a client:** Read `directives/email_client.md`, draft email, send via `mcp__gmail__send_message`
-- **Generate content:** Run `python execution/generate_instagram.py --client akira-real-estate --type calendar --count 7 --save`
+- **Generate content:** Run `python execution/generate_instagram.py --client akira-real-estate --type calendar --count 7 --save` then `python execution/generate_content_visuals.py --client akira-real-estate --input instagram_calendar.json`
 
 ## Skills (Automated Workflows)
 
@@ -115,6 +117,7 @@ Skills live in `.claude/skills/` and connect the full pipeline. Each skill has a
 |-------|------|-------------|
 | **Find Leads** | `.claude/skills/find-leads/` | Find MA/RI/CT businesses without websites → `raw_leads.json` |
 | **Build Site** | `.claude/skills/build-site/` | Generate self-contained HTML website per lead |
+| **Content Creator** | `.claude/skills/content-creator/` | Full content pipeline: text + branded visuals (carousels, posts, reels, stories) |
 | **Cold Outreach** | `.claude/skills/cold-outreach/` | Personalized emails → Gmail MCP (with approval) |
 | **Full Pipeline** | `.claude/skills/full-pipeline/` | Find → Build → Email end-to-end |
 
