@@ -72,7 +72,6 @@ CLIENT_BRANDS = {
     "akira-real-estate": AKIRA_BRAND,
 }
 
-# Instagram dimensions
 POST_SIZE = (1080, 1080)
 STORY_SIZE = (1080, 1920)
 REEL_COVER_SIZE = (1080, 1920)
@@ -114,6 +113,68 @@ FONT_SMALL = lambda sz=24: load_font(sz, bold=False)
 FONT_ACCENT = lambda sz=28: load_font(sz, bold=True)
 
 # ---------------------------------------------------------------------------
+# Emoji stripping — system fonts don't render emoji
+# ---------------------------------------------------------------------------
+
+EMOJI_REPLACEMENTS = {
+    "✅": ">",   # ✅ → bullet
+    "❌": "X",   # ❌ → X mark
+    "\U0001f4cd": "", # 📍
+    "\U0001f4ca": "", # 📊
+    "\U0001f4c8": "", # 📈
+    "\U0001f4e6": "", # 📦
+    "⏱️": "", "⏱": "", # ⏱️
+    "\U0001f4b0": "", # 💰
+    "\U0001f535": ">", # 🔵
+    "\U0001f7e2": ">", # 🟢
+    "\U0001f3e0": "", # 🏠
+    "\U0001f3e1": "", # 🏡
+    "\U0001f389": "", # 🎉
+    "\U0001f4f1": "", # 📱
+    "\U0001f37d️": "", "\U0001f37d": "", # 🍽️
+    "\U0001f697": "", # 🚗
+    "\U0001f3eb": "", # 🏫
+    "\U0001f4ac": "", # 💬
+    "\U0001f4cc": "", # 📌
+    "\U0001f511": "", # 🔑
+    "\U0001f4a1": "", # 💡
+    "\U0001f525": "", # 🔥
+    "\U0001f449": ">", # 👉
+    "\U0001f447": "",  # 👇
+    "\U0001f38a": "", # 🎊
+    "\U0001f4f2": "", # 📲
+    "\U0001f4dd": "", # 📝
+}
+
+_EMOJI_PATTERN = re.compile(
+    "["
+    "\U0001F600-\U0001F64F"
+    "\U0001F300-\U0001F5FF"
+    "\U0001F680-\U0001F6FF"
+    "\U0001F1E0-\U0001F1FF"
+    "\U00002702-\U000027B0"
+    "\U0000FE00-\U0000FE0F"
+    "\U0001F900-\U0001F9FF"
+    "\U0001FA00-\U0001FA6F"
+    "\U0001FA70-\U0001FAFF"
+    "\U00002600-\U000026FF"
+    "‍️"
+    "]+", flags=re.UNICODE
+)
+
+
+def strip_emoji(text):
+    for char, repl in EMOJI_REPLACEMENTS.items():
+        text = text.replace(char, repl)
+    text = re.sub(r"[\d]️?⃣", "", text)
+    text = _EMOJI_PATTERN.sub("", text)
+    text = text.replace("$XXX,000", "$499,000")
+    text = text.replace("$xxx,000", "$499,000")
+    text = re.sub(r"  +", " ", text)
+    return text.strip()
+
+
+# ---------------------------------------------------------------------------
 # Color utilities
 # ---------------------------------------------------------------------------
 
@@ -123,6 +184,7 @@ def hex_to_rgb(h):
 
 
 def lerp_color(c1, c2, t):
+    t = max(0.0, min(1.0, t))
     return tuple(int(c1[i] + (c2[i] - c1[i]) * t) for i in range(3))
 
 
@@ -142,8 +204,62 @@ def draw_rounded_rect(draw, xy, fill, radius=20):
     x0, y0, x1, y1 = xy
     draw.rounded_rectangle([x0, y0, x1, y1], radius=radius, fill=fill)
 
+
 # ---------------------------------------------------------------------------
-# Text wrapping
+# Decorative elements
+# ---------------------------------------------------------------------------
+
+def draw_corner_accents(draw, width, height, color, margin=50, length=70, thickness=3,
+                        skip_bottom=False):
+    c = hex_to_rgb(color) if isinstance(color, str) else color
+    draw.rectangle([margin, margin, margin + length, margin + thickness], fill=c)
+    draw.rectangle([margin, margin, margin + thickness, margin + length], fill=c)
+    draw.rectangle([width - margin - length, margin, width - margin, margin + thickness], fill=c)
+    draw.rectangle([width - margin - thickness, margin, width - margin, margin + length], fill=c)
+    if not skip_bottom:
+        bm = height - margin
+        draw.rectangle([margin, bm - thickness, margin + length, bm], fill=c)
+        draw.rectangle([margin, bm - length, margin + thickness, bm], fill=c)
+        draw.rectangle([width - margin - length, bm - thickness, width - margin, bm], fill=c)
+        draw.rectangle([width - margin - thickness, bm - length, width - margin, bm], fill=c)
+
+
+def draw_diamond_separator(draw, y, width, color, size=8):
+    c = hex_to_rgb(color) if isinstance(color, str) else color
+    cx = width // 2
+    draw.polygon([(cx, y - size), (cx + size, y), (cx, y + size), (cx - size, y)], fill=c)
+    line_w = 80
+    draw.rectangle([cx - line_w - 20, y - 1, cx - size - 10, y + 1], fill=c)
+    draw.rectangle([cx + size + 10, y - 1, cx + line_w + 20, y + 1], fill=c)
+
+
+def draw_pill_badge(draw, text, center_x, y, font, text_color, bg_color, pad_x=24, pad_y=8):
+    bbox = draw.textbbox((0, 0), text, font=font)
+    tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+    x0 = center_x - tw // 2 - pad_x
+    x1 = center_x + tw // 2 + pad_x
+    y0 = y
+    y1 = y + th + pad_y * 2
+    radius = (y1 - y0) // 2
+    draw.rounded_rectangle([x0, y0, x1, y1], radius=radius, fill=bg_color)
+    draw.text((center_x - tw // 2, y + pad_y), text, font=font, fill=text_color)
+    return y1
+
+
+def draw_accent_bar(draw, y, width, color, height=4, bar_fraction=0.3):
+    c = hex_to_rgb(color) if isinstance(color, str) else color
+    bar_w = int(width * bar_fraction)
+    x0 = (width - bar_w) // 2
+    draw.rectangle([x0, y, x0 + bar_w, y + height], fill=c)
+
+
+def draw_left_accent_bar(draw, x, y, color, bar_width=120, height=4):
+    c = hex_to_rgb(color) if isinstance(color, str) else color
+    draw.rectangle([x, y, x + bar_width, y + height], fill=c)
+
+
+# ---------------------------------------------------------------------------
+# Text utilities
 # ---------------------------------------------------------------------------
 
 def wrap_text(text, font, max_width, draw):
@@ -171,57 +287,98 @@ def draw_centered_text(draw, text, y, font, fill, width):
     draw.text((x, y), text, font=font, fill=fill)
     return bbox[3] - bbox[1]
 
+
+def text_height(draw, text, font):
+    bbox = draw.textbbox((0, 0), text, font=font)
+    return bbox[3] - bbox[1]
+
+
 # ---------------------------------------------------------------------------
 # Branding elements
 # ---------------------------------------------------------------------------
 
-def draw_accent_bar(draw, y, width, color, height=4):
-    bar_w = int(width * 0.3)
-    x0 = (width - bar_w) // 2
-    draw.rectangle([x0, y, x0 + bar_w, y + height], fill=hex_to_rgb(color))
-
-
-def draw_branding_footer(draw, width, height, brand):
-    footer_h = 80
-    y = height - footer_h
-    draw.rectangle([0, y, width, height], fill=hex_to_rgb(brand["primary"]))
-    draw_accent_bar(draw, y, width, brand["accent"], height=3)
-    font = load_font(22, bold=True)
+def draw_branding_footer(draw, width, height, brand, fade_from=None):
+    footer_h = 100
+    fade_h = 40
+    y_start = height - footer_h
+    if fade_from:
+        c_from = hex_to_rgb(fade_from) if isinstance(fade_from, str) else fade_from
+    else:
+        c_from = hex_to_rgb(brand["gradient_end"])
+    c_to = hex_to_rgb(brand["primary"])
+    for fy in range(fade_h):
+        t = fy / max(fade_h - 1, 1)
+        c = lerp_color(c_from, c_to, t)
+        draw.line([(0, y_start - fade_h + fy), (width, y_start - fade_h + fy)], fill=c)
+    draw.rectangle([0, y_start, width, height], fill=hex_to_rgb(brand["primary"]))
+    draw.rectangle([0, y_start, width, y_start + 3], fill=hex_to_rgb(brand["accent"]))
+    name_font = load_font(24, bold=True)
     name = brand.get("name", "")
-    bbox = draw.textbbox((0, 0), name, font=font)
-    tw = bbox[2] - bbox[0]
-    draw.text(((width - tw) // 2, y + 25), name, font=font, fill=hex_to_rgb(brand["accent"]))
+    draw_centered_text(draw, name, y_start + 22, name_font,
+                       hex_to_rgb(brand["accent"]), width)
+    owner_font = load_font(18, bold=False)
+    owner = brand.get("owner", "")
+    draw_centered_text(draw, owner, y_start + 54, owner_font,
+                       hex_to_rgb(brand["text_muted"]), width)
 
 
 def draw_slide_number(draw, num, total, width, brand):
-    font = load_font(20, bold=False)
+    font = load_font(22, bold=True)
     text = f"{num}/{total}"
     bbox = draw.textbbox((0, 0), text, font=font)
-    draw.text((width - bbox[2] + bbox[0] - 40, 30), text, font=font,
-              fill=hex_to_rgb(brand["text_muted"]))
+    tw = bbox[2] - bbox[0]
+    pad = 12
+    x = width - tw - 50
+    y = 35
+    draw_rounded_rect(draw, (x - pad, y - 6, x + tw + pad, y + bbox[3] - bbox[1] + 6),
+                      hex_to_rgb(brand["secondary"]), radius=10)
+    draw.text((x, y), text, font=font, fill=hex_to_rgb(brand["accent"]))
+
+
+PILLAR_DISPLAY = {
+    "listing": "LISTING",
+    "education": "EDUCATION",
+    "community": "COMMUNITY",
+    "behind_the_scenes": "BTS",
+    "testimonial": "SUCCESS STORY",
+    "market_stats": "MARKET DATA",
+}
+
 
 # ---------------------------------------------------------------------------
 # CAROUSEL SLIDE GENERATORS
 # ---------------------------------------------------------------------------
 
-def generate_carousel_title_slide(title, brand, slide_num=1, total_slides=8):
+def generate_carousel_title_slide(title, brand, slide_num=1, total_slides=8, pillar="education"):
     img = Image.new("RGB", POST_SIZE)
     draw = ImageDraw.Draw(img)
     draw_gradient(draw, *POST_SIZE, brand["gradient_start"], brand["gradient_end"])
 
     accent = hex_to_rgb(brand["accent"])
-    draw.rectangle([80, 80, 1000, 84], fill=accent)
+    draw_corner_accents(draw, *POST_SIZE, accent, margin=45, length=65, thickness=3,
+                        skip_bottom=True)
 
+    badge_font = load_font(16, bold=True)
+    badge_text = PILLAR_DISPLAY.get(pillar, "CONTENT")
+    draw_pill_badge(draw, badge_text, POST_SIZE[0] // 2, 110, badge_font,
+                    hex_to_rgb(brand["primary"]), accent, pad_x=20, pad_y=6)
+
+    title = strip_emoji(title)
     font = FONT_TITLE(52)
-    lines = wrap_text(title, font, 900, draw)
-    y = POST_SIZE[1] // 2 - len(lines) * 35
+    lines = wrap_text(title, font, 860, draw)
+    block_h = sum(text_height(draw, l, font) + 16 for l in lines)
+    y = (POST_SIZE[1] // 2) - (block_h // 2) - 20
     for line in lines:
         h = draw_centered_text(draw, line, y, font, hex_to_rgb(brand["text_light"]), POST_SIZE[0])
         y += h + 16
 
     y += 30
-    swipe_font = load_font(26, bold=False)
-    draw_centered_text(draw, "Swipe to learn more →", y, swipe_font, hex_to_rgb(brand["text_muted"]), POST_SIZE[0])
+    draw_diamond_separator(draw, y, POST_SIZE[0], accent)
+
+    y += 35
+    swipe_font = load_font(24, bold=False)
+    draw_centered_text(draw, "Swipe to learn more  >", y, swipe_font,
+                       hex_to_rgb(brand["text_muted"]), POST_SIZE[0])
 
     draw_branding_footer(draw, *POST_SIZE, brand)
     draw_slide_number(draw, slide_num, total_slides, POST_SIZE[0], brand)
@@ -235,32 +392,53 @@ def generate_carousel_content_slide(number, heading, body_text, brand, slide_num
 
     accent = hex_to_rgb(brand["accent"])
 
-    num_font = FONT_TITLE(72)
+    card_margin = 65
+    card_top = 80
+    card_bottom = POST_SIZE[1] - 120
+    draw_rounded_rect(draw, (card_margin, card_top, POST_SIZE[0] - card_margin, card_bottom),
+                      hex_to_rgb(brand["card_bg"]), radius=24)
+
+    inner_x = card_margin + 40
+    inner_w = POST_SIZE[0] - card_margin * 2 - 80
+
+    circle_r = 32
+    circle_x = inner_x + circle_r
+    circle_y = card_top + 50 + circle_r
+    draw.ellipse([circle_x - circle_r, circle_y - circle_r,
+                  circle_x + circle_r, circle_y + circle_r],
+                 fill=accent)
+    num_font = load_font(36, bold=True)
     num_str = str(number)
-    draw.text((80, 70), num_str, font=num_font, fill=accent)
+    nbbox = draw.textbbox((0, 0), num_str, font=num_font)
+    nw = nbbox[2] - nbbox[0]
+    nh = nbbox[3] - nbbox[1]
+    draw.text((circle_x - nw // 2, circle_y - nh // 2 - 2), num_str, font=num_font,
+              fill=hex_to_rgb(brand["primary"]))
 
-    bbox = draw.textbbox((0, 0), num_str, font=num_font)
-    num_w = bbox[2] - bbox[0]
-    draw.rectangle([80, 160, 80 + num_w, 164], fill=accent)
-
-    head_font = FONT_TITLE(40)
-    head_lines = wrap_text(heading, head_font, 880, draw)
-    y = 200
+    heading = strip_emoji(heading)
+    heading = re.sub(r"^[Xx>]\s+", "", heading)
+    head_font = FONT_TITLE(38)
+    head_lines = wrap_text(heading, head_font, inner_w, draw)
+    y = card_top + 130
     for line in head_lines:
-        draw.text((80, y), line, font=head_font, fill=hex_to_rgb(brand["text_light"]))
+        draw.text((inner_x, y), line, font=head_font, fill=hex_to_rgb(brand["text_light"]))
         hh = draw.textbbox((0, 0), line, font=head_font)
-        y += (hh[3] - hh[1]) + 12
+        y += (hh[3] - hh[1]) + 10
 
-    y += 30
+    y += 14
+    draw_left_accent_bar(draw, inner_x, y, accent, bar_width=100, height=3)
+    y += 22
 
-    body_font = FONT_BODY(30)
-    body_lines = wrap_text(body_text, body_font, 880, draw)
-    for line in body_lines:
-        draw.text((80, y), line, font=body_font, fill=hex_to_rgb(brand["text_muted"]))
-        bh = draw.textbbox((0, 0), line, font=body_font)
-        y += (bh[3] - bh[1]) + 10
+    body_text = strip_emoji(body_text)
+    if body_text:
+        body_font = FONT_BODY(28)
+        body_lines = wrap_text(body_text, body_font, inner_w, draw)
+        for line in body_lines[:8]:
+            draw.text((inner_x, y), line, font=body_font, fill=hex_to_rgb(brand["text_muted"]))
+            bh = draw.textbbox((0, 0), line, font=body_font)
+            y += (bh[3] - bh[1]) + 10
 
-    draw_branding_footer(draw, *POST_SIZE, brand)
+    draw_branding_footer(draw, *POST_SIZE, brand, fade_from=brand["card_bg"])
     draw_slide_number(draw, slide_num, total_slides, POST_SIZE[0], brand)
     return img
 
@@ -271,22 +449,34 @@ def generate_carousel_cta_slide(cta_text, brand, owner, slide_num, total_slides)
     draw_gradient(draw, *POST_SIZE, brand["gradient_end"], brand["gradient_start"])
 
     accent = hex_to_rgb(brand["accent"])
-    y = POST_SIZE[1] // 2 - 120
+    draw_corner_accents(draw, *POST_SIZE, accent, margin=45, length=65, thickness=3,
+                        skip_bottom=True)
 
-    draw_accent_bar(draw, y - 40, POST_SIZE[0], brand["accent"])
-
+    cta_text = strip_emoji(cta_text)
     cta_font = FONT_TITLE(44)
-    cta_lines = wrap_text(cta_text, cta_font, 850, draw)
+    cta_lines = wrap_text(cta_text, cta_font, 820, draw)
+    block_h = sum(text_height(draw, l, cta_font) + 14 for l in cta_lines)
+    total_block = block_h + 130
+    y = (POST_SIZE[1] // 2) - (total_block // 2) - 30
+
+    draw_accent_bar(draw, y - 20, POST_SIZE[0], accent, height=3, bar_fraction=0.4)
+
+    y += 10
     for line in cta_lines:
-        h = draw_centered_text(draw, line, y, cta_font, hex_to_rgb(brand["text_light"]), POST_SIZE[0])
+        h = draw_centered_text(draw, line, y, cta_font,
+                               hex_to_rgb(brand["text_light"]), POST_SIZE[0])
         y += h + 14
 
-    y += 40
-    owner_font = load_font(28, bold=True)
-    draw_centered_text(draw, f"— {owner}", y, owner_font, accent, POST_SIZE[0])
+    y += 30
+    draw_diamond_separator(draw, y, POST_SIZE[0], accent)
+
+    y += 35
+    owner_font = load_font(30, bold=True)
+    draw_centered_text(draw, f"-- {owner}", y, owner_font, accent, POST_SIZE[0])
     y += 45
-    brand_font = load_font(24, bold=False)
-    draw_centered_text(draw, brand["name"], y, brand_font, hex_to_rgb(brand["text_muted"]), POST_SIZE[0])
+    brand_font = load_font(22, bold=False)
+    draw_centered_text(draw, brand["name"], y, brand_font,
+                       hex_to_rgb(brand["text_muted"]), POST_SIZE[0])
 
     draw_branding_footer(draw, *POST_SIZE, brand)
     draw_slide_number(draw, slide_num, total_slides, POST_SIZE[0], brand)
@@ -296,10 +486,12 @@ def generate_carousel_cta_slide(cta_text, brand, owner, slide_num, total_slides)
 def generate_carousel_images(content, brand):
     slides = content.get("slides", [])
     title = content.get("title", "")
+    pillar = content.get("pillar", "education")
     total = len(slides) + 2
     images = []
 
-    images.append(("slide_01_title", generate_carousel_title_slide(title, brand, 1, total)))
+    images.append(("slide_01_title",
+                    generate_carousel_title_slide(title, brand, 1, total, pillar)))
 
     for i, slide in enumerate(slides):
         slide_text = slide if isinstance(slide, str) else slide.get("text", str(slide))
@@ -311,9 +503,11 @@ def generate_carousel_images(content, brand):
 
     cta = content.get("cta", "DM me to get started.")
     owner = brand.get("owner", "")
-    images.append((f"slide_{total:02d}_cta", generate_carousel_cta_slide(cta, brand, owner, total, total)))
+    images.append((f"slide_{total:02d}_cta",
+                    generate_carousel_cta_slide(cta, brand, owner, total, total)))
 
     return images
+
 
 # ---------------------------------------------------------------------------
 # POST IMAGE GENERATORS
@@ -322,85 +516,207 @@ def generate_carousel_images(content, brand):
 def generate_post_image(content, brand):
     img = Image.new("RGB", POST_SIZE)
     draw = ImageDraw.Draw(img)
-
     pillar = content.get("pillar", "education")
+    accent = hex_to_rgb(brand["accent"])
 
-    if pillar in ("market_stats", "education"):
-        draw_gradient(draw, *POST_SIZE, brand["primary"], brand["card_bg"])
-        accent = hex_to_rgb(brand["accent"])
-        draw_rounded_rect(draw, (60, 60, 1020, 920), hex_to_rgb(brand["secondary"]), radius=30)
-
-        hook = content.get("hook", content.get("caption", "")[:80])
-        font = FONT_TITLE(48)
-        lines = wrap_text(hook, font, 850, draw)
-        y = 120
-        for line in lines:
-            draw.text((110, y), line, font=font, fill=hex_to_rgb(brand["text_light"]))
-            h = draw.textbbox((0, 0), line, font=font)
-            y += (h[3] - h[1]) + 14
-        y += 20
-        draw.rectangle([110, y, 400, y + 4], fill=accent)
-
-        caption = content.get("caption", "")
-        body_lines = caption.split("\n")
-        body_font = FONT_BODY(28)
-        y += 30
-        line_count = 0
-        for bl in body_lines:
-            if not bl.strip():
-                y += 14
-                continue
-            wrapped = wrap_text(bl, body_font, 820, draw)
-            for wl in wrapped:
-                draw.text((110, y), wl, font=body_font, fill=hex_to_rgb(brand["text_muted"]))
-                h = draw.textbbox((0, 0), wl, font=body_font)
-                y += (h[3] - h[1]) + 8
-                line_count += 1
-                if line_count > 14:
-                    break
-            if line_count > 14:
-                break
-
-    elif pillar == "listing":
+    if pillar == "listing":
         draw_gradient(draw, *POST_SIZE, "#0a0a14", brand["primary"])
-        accent = hex_to_rgb(brand["accent"])
-        draw.rectangle([0, 0, POST_SIZE[0], 6], fill=accent)
+        draw.rectangle([0, 0, POST_SIZE[0], 5], fill=accent)
+        draw.rectangle([0, POST_SIZE[1] - 105, POST_SIZE[0], POST_SIZE[1] - 102], fill=accent)
 
-        font = FONT_TITLE(44)
-        draw.text((80, 60), "JUST LISTED", font=font, fill=accent)
-        y = 140
-        draw.rectangle([80, y, 400, y + 3], fill=accent)
-        y += 30
+        tag_font = load_font(18, bold=True)
+        draw_pill_badge(draw, "JUST LISTED", 540, 55, tag_font,
+                        hex_to_rgb(brand["primary"]), accent, pad_x=22, pad_y=8)
 
-        caption = content.get("caption", "")
-        body_font = FONT_BODY(30)
-        for line in caption.split("\n")[:12]:
-            if not line.strip():
-                y += 12
+        hook = strip_emoji(content.get("hook", ""))
+        if hook:
+            hook_font = FONT_TITLE(40)
+            hook_lines = wrap_text(hook, hook_font, 900, draw)
+            y = 120
+            for line in hook_lines:
+                draw.text((80, y), line, font=hook_font, fill=hex_to_rgb(brand["text_light"]))
+                h = draw.textbbox((0, 0), line, font=hook_font)
+                y += (h[3] - h[1]) + 10
+            y += 12
+            draw_left_accent_bar(draw, 80, y, accent, bar_width=100, height=3)
+            y += 24
+        else:
+            font = FONT_TITLE(44)
+            draw.text((80, 100), "JUST LISTED", font=font, fill=accent)
+            y = 180
+            draw_left_accent_bar(draw, 80, y, accent, bar_width=100, height=3)
+            y += 30
+
+        caption = strip_emoji(content.get("caption", ""))
+        caption_lines = caption.split("\n")
+        if hook and caption_lines:
+            hook_clean = hook.replace("$XXX,000", "$499,000")
+            caption_lines = [l for l in caption_lines
+                             if l.strip() and l.strip() != hook_clean.strip()]
+        body_font = FONT_BODY(28)
+        line_count = 0
+        for bl in caption_lines[:15]:
+            if not bl.strip():
+                y += 10
                 continue
-            wrapped = wrap_text(line, body_font, 900, draw)
+            is_bullet = bl.strip().startswith(">")
+            wrapped = wrap_text(bl, body_font, 880, draw)
             for wl in wrapped:
-                is_check = wl.strip().startswith("✅")
-                c = hex_to_rgb(brand["text_light"]) if is_check else hex_to_rgb(brand["text_muted"])
+                c = hex_to_rgb(brand["text_light"]) if is_bullet else hex_to_rgb(brand["text_muted"])
                 draw.text((80, y), wl, font=body_font, fill=c)
                 h = draw.textbbox((0, 0), wl, font=body_font)
-                y += (h[3] - h[1]) + 8
+                y += (h[3] - h[1]) + 7
+                line_count += 1
+                if line_count > 16:
+                    break
+            if line_count > 16:
+                break
+
+    elif pillar in ("market_stats", "education"):
+        draw_gradient(draw, *POST_SIZE, brand["primary"], brand["card_bg"])
+
+        card_m = 50
+        draw_rounded_rect(draw, (card_m, card_m, POST_SIZE[0] - card_m, POST_SIZE[1] - 115),
+                          hex_to_rgb(brand["secondary"]), radius=28)
+
+        inner_x = card_m + 40
+        inner_w = POST_SIZE[0] - card_m * 2 - 80
+
+        badge_text = PILLAR_DISPLAY.get(pillar, "CONTENT")
+        badge_font = load_font(14, bold=True)
+        draw_pill_badge(draw, badge_text, POST_SIZE[0] // 2, card_m + 25, badge_font,
+                        hex_to_rgb(brand["primary"]), accent, pad_x=18, pad_y=5)
+
+        hook = strip_emoji(content.get("hook", content.get("caption", "")[:80]))
+        font = FONT_TITLE(42)
+        lines = wrap_text(hook, font, inner_w, draw)
+        y = card_m + 85
+        for line in lines:
+            draw.text((inner_x, y), line, font=font, fill=hex_to_rgb(brand["text_light"]))
+            h = draw.textbbox((0, 0), line, font=font)
+            y += (h[3] - h[1]) + 10
+        y += 14
+        draw_left_accent_bar(draw, inner_x, y, accent, bar_width=100, height=3)
+        y += 22
+
+        caption = strip_emoji(content.get("caption", ""))
+        body_font = FONT_BODY(26)
+        line_count = 0
+        for bl in caption.split("\n"):
+            if not bl.strip():
+                y += 10
+                continue
+            wrapped = wrap_text(bl, body_font, inner_w, draw)
+            for wl in wrapped:
+                if y > POST_SIZE[1] - 160:
+                    break
+                draw.text((inner_x, y), wl, font=body_font, fill=hex_to_rgb(brand["text_muted"]))
+                h = draw.textbbox((0, 0), wl, font=body_font)
+                y += (h[3] - h[1]) + 7
+                line_count += 1
+            if y > POST_SIZE[1] - 160:
+                break
+
+    elif pillar == "testimonial":
+        draw_gradient(draw, *POST_SIZE, brand["gradient_start"], brand["gradient_end"])
+        draw_corner_accents(draw, *POST_SIZE, accent, margin=40, length=60, thickness=3,
+                            skip_bottom=True)
+
+        badge_font = load_font(14, bold=True)
+        draw_pill_badge(draw, "SUCCESS STORY", POST_SIZE[0] // 2, 90, badge_font,
+                        hex_to_rgb(brand["primary"]), accent, pad_x=18, pad_y=5)
+
+        quote_font = FONT_TITLE(60)
+        draw_centered_text(draw, "\"", 160, quote_font, accent, POST_SIZE[0])
+
+        hook = strip_emoji(content.get("hook", content.get("caption", "")[:100]))
+        font = FONT_TITLE(40)
+        lines = wrap_text(hook, font, 860, draw)
+        y = 230
+        for line in lines:
+            h = draw_centered_text(draw, line, y, font,
+                                   hex_to_rgb(brand["text_light"]), POST_SIZE[0])
+            y += h + 12
+
+        y += 25
+        draw_diamond_separator(draw, y, POST_SIZE[0], accent)
+        y += 30
+
+        caption = strip_emoji(content.get("caption", ""))
+        body_font = FONT_BODY(26)
+        line_count = 0
+        for bl in caption.split("\n"):
+            if not bl.strip():
+                y += 8
+                continue
+            wrapped = wrap_text(bl, body_font, 860, draw)
+            for wl in wrapped:
+                if y > POST_SIZE[1] - 150:
+                    break
+                h = draw_centered_text(draw, wl, y, body_font,
+                                       hex_to_rgb(brand["text_muted"]), POST_SIZE[0])
+                y += h + 7
+                line_count += 1
+            if y > POST_SIZE[1] - 150:
+                break
+
+    elif pillar == "behind_the_scenes":
+        draw_gradient(draw, *POST_SIZE, brand["primary"], brand["secondary"])
+
+        badge_font = load_font(14, bold=True)
+        draw_pill_badge(draw, "BEHIND THE SCENES", POST_SIZE[0] // 2, 65, badge_font,
+                        hex_to_rgb(brand["primary"]), accent, pad_x=18, pad_y=5)
+
+        hook = strip_emoji(content.get("hook", "A day in real estate"))
+        font = FONT_TITLE(40)
+        lines = wrap_text(hook, font, 900, draw)
+        y = 130
+        for line in lines:
+            h = draw_centered_text(draw, line, y, font,
+                                   hex_to_rgb(brand["text_light"]), POST_SIZE[0])
+            y += h + 10
+        y += 12
+        draw_accent_bar(draw, y, POST_SIZE[0], accent, height=3, bar_fraction=0.25)
+        y += 28
+
+        caption = strip_emoji(content.get("caption", ""))
+        body_font = FONT_BODY(26)
+        for bl in caption.split("\n"):
+            if not bl.strip():
+                y += 8
+                continue
+            wrapped = wrap_text(bl, body_font, 880, draw)
+            for wl in wrapped:
+                if y > POST_SIZE[1] - 140:
+                    break
+                is_time = re.match(r"^\d{1,2}:\d{2}", wl.strip())
+                c = hex_to_rgb(brand["text_light"]) if is_time else hex_to_rgb(brand["text_muted"])
+                draw.text((90, y), wl, font=body_font, fill=c)
+                h = draw.textbbox((0, 0), wl, font=body_font)
+                y += (h[3] - h[1]) + 7
+            if y > POST_SIZE[1] - 140:
+                break
 
     else:
         draw_gradient(draw, *POST_SIZE, brand["gradient_start"], brand["gradient_end"])
-        hook = content.get("hook", content.get("caption", "")[:100])
-        font = FONT_TITLE(48)
-        lines = wrap_text(hook, font, 900, draw)
-        y = POST_SIZE[1] // 2 - len(lines) * 30
+        draw_corner_accents(draw, *POST_SIZE, accent, margin=40, length=60, thickness=3,
+                            skip_bottom=True)
+        hook = strip_emoji(content.get("hook", content.get("caption", "")[:100]))
+        font = FONT_TITLE(46)
+        lines = wrap_text(hook, font, 860, draw)
+        block_h = sum(text_height(draw, l, font) + 14 for l in lines)
+        y = (POST_SIZE[1] // 2) - (block_h // 2) - 40
         for line in lines:
-            h = draw_centered_text(draw, line, y, font, hex_to_rgb(brand["text_light"]), POST_SIZE[0])
+            h = draw_centered_text(draw, line, y, font,
+                                   hex_to_rgb(brand["text_light"]), POST_SIZE[0])
             y += h + 14
 
-        y += 40
-        draw_accent_bar(draw, y, POST_SIZE[0], brand["accent"])
+        y += 30
+        draw_diamond_separator(draw, y, POST_SIZE[0], accent)
 
     draw_branding_footer(draw, *POST_SIZE, brand)
     return [("post", img)]
+
 
 # ---------------------------------------------------------------------------
 # REEL COVER GENERATOR
@@ -409,47 +725,91 @@ def generate_post_image(content, brand):
 def generate_reel_cover(content, brand):
     img = Image.new("RGB", REEL_COVER_SIZE)
     draw = ImageDraw.Draw(img)
+    w, h = REEL_COVER_SIZE
 
-    draw_gradient(draw, *REEL_COVER_SIZE, brand["gradient_start"], brand["gradient_end"], "vertical")
+    draw_gradient(draw, w, h, brand["gradient_start"], brand["gradient_end"], "vertical")
     accent = hex_to_rgb(brand["accent"])
 
-    play_y = 500
-    play_r = 60
-    cx, cy = REEL_COVER_SIZE[0] // 2, play_y
-    draw.ellipse([cx - play_r, cy - play_r, cx + play_r, cy + play_r], outline=accent, width=4)
-    tri_pts = [(cx - 20, cy - 30), (cx - 20, cy + 30), (cx + 30, cy)]
-    draw.polygon(tri_pts, fill=accent)
+    draw_corner_accents(draw, w, h, accent, margin=50, length=80, thickness=3, skip_bottom=True)
 
-    title = content.get("title", content.get("hook", ""))
-    font = FONT_TITLE(54)
-    lines = wrap_text(title, font, 900, draw)
-    y = 650
+    badge_font = load_font(16, bold=True)
+    draw_pill_badge(draw, "REEL", w // 2, 110, badge_font,
+                    hex_to_rgb(brand["primary"]), accent, pad_x=28, pad_y=8)
+
+    play_y = 480
+    outer_r = 55
+    inner_r = 48
+    cx = w // 2
+    draw.ellipse([cx - outer_r, play_y - outer_r, cx + outer_r, play_y + outer_r],
+                 outline=accent, width=4)
+    draw.ellipse([cx - inner_r, play_y - inner_r, cx + inner_r, play_y + inner_r],
+                 fill=None, outline=accent, width=2)
+    tri = [(cx - 16, play_y - 24), (cx - 16, play_y + 24), (cx + 24, play_y)]
+    draw.polygon(tri, fill=accent)
+
+    title = strip_emoji(content.get("title", content.get("hook", "")))
+    font = FONT_TITLE(50)
+    lines = wrap_text(title, font, 880, draw)
+    y = 600
     for line in lines:
-        h = draw_centered_text(draw, line, y, font, hex_to_rgb(brand["text_light"]), REEL_COVER_SIZE[0])
-        y += h + 14
+        lh = draw_centered_text(draw, line, y, font, hex_to_rgb(brand["text_light"]), w)
+        y += lh + 12
 
-    y += 30
-    hook = content.get("hook", "")
+    y += 16
+    draw_accent_bar(draw, y, w, accent, height=3, bar_fraction=0.2)
+    y += 24
+
+    hook = strip_emoji(content.get("hook", ""))
     if hook and hook != title:
-        hook_font = FONT_BODY(32)
-        hlines = wrap_text(hook, hook_font, 850, draw)
+        hook_font = FONT_BODY(30)
+        hlines = wrap_text(hook, hook_font, 840, draw)
         for hl in hlines[:3]:
-            h = draw_centered_text(draw, hl, y, hook_font, hex_to_rgb(brand["text_muted"]), REEL_COVER_SIZE[0])
-            y += h + 8
+            lh = draw_centered_text(draw, hl, y, hook_font,
+                                    hex_to_rgb(brand["text_muted"]), w)
+            y += lh + 8
+
+    scenes = content.get("scenes", [])
+    if scenes:
+        y += 30
+        scene_font = load_font(22, bold=False)
+        header_font = load_font(20, bold=True)
+        draw_centered_text(draw, "SCENE BREAKDOWN", y, header_font, accent, w)
+        y += 32
+        for scene in scenes[:4]:
+            scene_text = strip_emoji(scene.get("text", ""))
+            if scene_text:
+                time_str = scene.get("time", "")
+                line = f"[{time_str}]  {scene_text}" if time_str else scene_text
+                slines = wrap_text(line, scene_font, 800, draw)
+                for sl in slines[:2]:
+                    lh = draw_centered_text(draw, sl, y, scene_font,
+                                            hex_to_rgb(brand["text_muted"]), w)
+                    y += lh + 6
+                y += 4
 
     duration = content.get("duration", "")
     if duration:
-        dur_font = load_font(22, bold=False)
-        draw_centered_text(draw, f"▶ {duration}", y + 30, dur_font, accent, REEL_COVER_SIZE[0])
+        dur_font = load_font(20, bold=True)
+        dur_text = f"> {duration}"
+        dbbox = draw.textbbox((0, 0), dur_text, font=dur_font)
+        dtw = dbbox[2] - dbbox[0]
+        dth = dbbox[3] - dbbox[1]
+        dx = w // 2 - dtw // 2 - 16
+        dur_y = h - 240
+        draw_rounded_rect(draw, (dx, dur_y, dx + dtw + 32, dur_y + dth + 16),
+                          hex_to_rgb(brand["secondary"]), radius=12)
+        draw.text((dx + 16, dur_y + 8), dur_text, font=dur_font, fill=accent)
 
-    bar_y = REEL_COVER_SIZE[1] - 200
-    draw.rectangle([0, bar_y, REEL_COVER_SIZE[0], bar_y + 3], fill=accent)
-    owner_font = load_font(30, bold=True)
-    draw_centered_text(draw, f"— {brand['owner']}", bar_y + 30, owner_font, accent, REEL_COVER_SIZE[0])
-    brand_font = load_font(24, bold=False)
-    draw_centered_text(draw, brand["name"], bar_y + 70, brand_font, hex_to_rgb(brand["text_muted"]), REEL_COVER_SIZE[0])
+    bar_y = h - 180
+    draw.rectangle([0, bar_y, w, bar_y + 3], fill=accent)
+    owner_font = load_font(28, bold=True)
+    draw_centered_text(draw, f"-- {brand['owner']}", bar_y + 28, owner_font, accent, w)
+    brand_font = load_font(22, bold=False)
+    draw_centered_text(draw, brand["name"], bar_y + 65, brand_font,
+                       hex_to_rgb(brand["text_muted"]), w)
 
     return [("reel_cover", img)]
+
 
 # ---------------------------------------------------------------------------
 # STORY FRAME GENERATOR
@@ -462,67 +822,115 @@ def generate_story_frames(content, brand):
     for i, frame in enumerate(frames):
         img = Image.new("RGB", STORY_SIZE)
         draw = ImageDraw.Draw(img)
+        w, h = STORY_SIZE
 
         t = i / max(len(frames) - 1, 1)
-        start = lerp_color(hex_to_rgb(brand["gradient_start"]), hex_to_rgb(brand["accent"]), t * 0.3)
+        start = lerp_color(hex_to_rgb(brand["gradient_start"]),
+                           hex_to_rgb(brand["accent"]), t * 0.25)
         end = hex_to_rgb(brand["gradient_end"])
-        for y_px in range(STORY_SIZE[1]):
-            c = lerp_color(start, end, y_px / (STORY_SIZE[1] - 1))
-            draw.line([(0, y_px), (STORY_SIZE[0], y_px)], fill=c)
+        for y_px in range(h):
+            c = lerp_color(start, end, y_px / (h - 1))
+            draw.line([(0, y_px), (w, y_px)], fill=c)
 
         accent = hex_to_rgb(brand["accent"])
         frame_type = frame.get("type", "text")
-        frame_content = frame.get("content", "")
+        frame_content = strip_emoji(frame.get("content", ""))
+
+        progress_y = 30
+        bar_total_w = w - 120
+        segment_w = bar_total_w // max(len(frames), 1)
+        for si in range(len(frames)):
+            sx = 60 + si * segment_w + 3
+            sw = segment_w - 6
+            bar_color = accent if si <= i else hex_to_rgb(brand["secondary"])
+            draw_rounded_rect(draw, (sx, progress_y, sx + sw, progress_y + 4),
+                              bar_color, radius=2)
 
         if frame_type == "text":
-            font = FONT_TITLE(48)
-            lines = wrap_text(frame_content, font, 900, draw)
-            y = STORY_SIZE[1] // 2 - len(lines) * 35
+            font = FONT_TITLE(46)
+            lines = wrap_text(frame_content, font, 880, draw)
+            block_h = sum(text_height(draw, l, font) + 14 for l in lines)
+            y = (h // 2) - (block_h // 2) - 20
             for line in lines:
-                h = draw_centered_text(draw, line, y, font, hex_to_rgb(brand["text_light"]), STORY_SIZE[0])
-                y += h + 14
+                lh = draw_centered_text(draw, line, y, font,
+                                        hex_to_rgb(brand["text_light"]), w)
+                y += lh + 14
+
+            sticker = frame.get("sticker", "")
+            if sticker and sticker not in ("poll", "question_box"):
+                st_text = strip_emoji(sticker)
+                if st_text:
+                    st_font = load_font(20, bold=False)
+                    draw_centered_text(draw, st_text, h - 280, st_font, accent, w)
 
         elif frame_type == "poll":
-            q_font = FONT_TITLE(42)
-            q_lines = wrap_text(frame_content, q_font, 850, draw)
-            y = 500
+            q_font = FONT_TITLE(40)
+            q_lines = wrap_text(frame_content, q_font, 840, draw)
+            y = 420
             for line in q_lines:
-                h = draw_centered_text(draw, line, y, q_font, hex_to_rgb(brand["text_light"]), STORY_SIZE[0])
-                y += h + 12
+                lh = draw_centered_text(draw, line, y, q_font,
+                                        hex_to_rgb(brand["text_light"]), w)
+                y += lh + 12
 
-            y += 60
-            options = frame.get("sticker", "").split(" vs. ") if " vs. " in frame.get("sticker", "") else ["Option A", "Option B"]
-            for opt in options[:2]:
-                draw_rounded_rect(draw, (140, y, 940, y + 80), hex_to_rgb(brand["secondary"]), radius=16)
-                opt_font = FONT_BODY(30)
+            y += 50
+            if " vs. " in frame_content:
+                options = [o.strip() for o in frame_content.split(" vs. ")]
+            elif " vs " in frame_content:
+                options = [o.strip() for o in frame_content.split(" vs ")]
+            else:
+                options = [frame_content, ""]
+
+            opt_font = FONT_BODY(28)
+            for idx, opt in enumerate(options[:2]):
+                opt = strip_emoji(opt)
+                if not opt:
+                    continue
+                btn_x0, btn_x1 = 120, w - 120
+                btn_y0, btn_y1 = y, y + 80
+                draw_rounded_rect(draw, (btn_x0, btn_y0, btn_x1, btn_y1),
+                                  hex_to_rgb(brand["secondary"]), radius=16)
+                draw.rounded_rectangle([btn_x0, btn_y0, btn_x1, btn_y1],
+                                       radius=16, outline=accent, width=2)
                 bbox = draw.textbbox((0, 0), opt, font=opt_font)
                 tw = bbox[2] - bbox[0]
-                draw.text(((STORY_SIZE[0] - tw) // 2, y + 22), opt, font=opt_font, fill=hex_to_rgb(brand["text_light"]))
-                y += 110
+                th = bbox[3] - bbox[1]
+                draw.text(((w - tw) // 2, y + (80 - th) // 2), opt, font=opt_font,
+                          fill=hex_to_rgb(brand["text_light"]))
+                label_font = load_font(16, bold=True)
+                label = "A" if idx == 0 else "B"
+                draw.text((btn_x0 + 20, y + 28), label, font=label_font, fill=accent)
+                y += 100
 
         elif frame_type in ("question", "slider"):
-            font = FONT_TITLE(44)
-            lines = wrap_text(frame_content, font, 850, draw)
-            y = 600
-            for line in lines:
-                h = draw_centered_text(draw, line, y, font, hex_to_rgb(brand["text_light"]), STORY_SIZE[0])
-                y += h + 12
-            y += 50
-            draw_rounded_rect(draw, (140, y, 940, y + 70), hex_to_rgb(brand["secondary"]), radius=14)
-            ph_font = FONT_BODY(26)
-            draw.text((180, y + 20), "Type your answer...", font=ph_font, fill=hex_to_rgb(brand["text_muted"]))
+            q_font = FONT_TITLE(40)
+            q_lines = wrap_text(frame_content, q_font, 840, draw)
+            y = 520
+            for line in q_lines:
+                lh = draw_centered_text(draw, line, y, q_font,
+                                        hex_to_rgb(brand["text_light"]), w)
+                y += lh + 12
 
-        sticker = frame.get("sticker", "")
-        if sticker and frame_type == "text":
-            st_font = load_font(22, bold=False)
-            draw_centered_text(draw, sticker, STORY_SIZE[1] - 300, st_font, accent, STORY_SIZE[0])
+            y += 40
+            box_x0, box_x1 = 120, w - 120
+            box_y0, box_y1 = y, y + 70
+            draw_rounded_rect(draw, (box_x0, box_y0, box_x1, box_y1),
+                              hex_to_rgb(brand["secondary"]), radius=14)
+            draw.rounded_rectangle([box_x0, box_y0, box_x1, box_y1],
+                                   radius=14, outline=accent, width=2)
+            ph_font = FONT_BODY(24)
+            draw.text((box_x0 + 24, box_y0 + 22), "Type your answer...",
+                      font=ph_font, fill=hex_to_rgb(brand["text_muted"]))
 
-        owner_font = load_font(22, bold=True)
-        draw_centered_text(draw, brand["name"], STORY_SIZE[1] - 120, owner_font, accent, STORY_SIZE[0])
+        brand_font = load_font(20, bold=True)
+        draw_centered_text(draw, brand["name"], h - 130, brand_font, accent, w)
+        owner_font = load_font(16, bold=False)
+        draw_centered_text(draw, brand["owner"], h - 104, owner_font,
+                           hex_to_rgb(brand["text_muted"]), w)
 
         images.append((f"story_frame_{i+1:02d}", img))
 
     return images
+
 
 # ---------------------------------------------------------------------------
 # STOCK PHOTO FETCHER (Unsplash)
@@ -561,6 +969,7 @@ def fetch_unsplash_photo(pillar, city="", save_path=None):
     except Exception as e:
         print(f"  [PHOTO] Unsplash fetch failed: {e}")
     return None
+
 
 # ---------------------------------------------------------------------------
 # DALL-E IMAGE GENERATOR (optional)
@@ -601,6 +1010,7 @@ def generate_dalle_image(visual_description, save_path, size="1024x1024"):
         print(f"  [DALL-E] Generation failed: {e}")
     return None
 
+
 # ---------------------------------------------------------------------------
 # MAIN PIPELINE
 # ---------------------------------------------------------------------------
@@ -628,6 +1038,8 @@ def process_content_item(item, brand, output_dir, use_unsplash=False, use_dalle=
     pillar = item.get("pillar", "education")
 
     content = item.get("content", item)
+    if isinstance(content, dict) and "pillar" not in content:
+        content["pillar"] = pillar
 
     safe_label = re.sub(r"[^a-zA-Z0-9]", "_", str(day_label))[:20]
     item_dir = os.path.join(output_dir, f"{safe_label}_{content_type}_{pillar}")
@@ -637,33 +1049,33 @@ def process_content_item(item, brand, output_dir, use_unsplash=False, use_dalle=
 
     if content_type == "carousel":
         images = generate_carousel_images(content, brand)
-        for name, img in images:
+        for name, im in images:
             path = os.path.join(item_dir, f"{name}.png")
-            img.save(path, "PNG", quality=95)
+            im.save(path, "PNG", quality=95)
             generated_files.append(path)
             print(f"  [CAROUSEL] {path}")
 
     elif content_type == "reel":
         images = generate_reel_cover(content, brand)
-        for name, img in images:
+        for name, im in images:
             path = os.path.join(item_dir, f"{name}.png")
-            img.save(path, "PNG", quality=95)
+            im.save(path, "PNG", quality=95)
             generated_files.append(path)
             print(f"  [REEL] {path}")
 
     elif content_type == "story":
         images = generate_story_frames(content, brand)
-        for name, img in images:
+        for name, im in images:
             path = os.path.join(item_dir, f"{name}.png")
-            img.save(path, "PNG", quality=95)
+            im.save(path, "PNG", quality=95)
             generated_files.append(path)
             print(f"  [STORY] {path}")
 
     else:
         images = generate_post_image(content, brand)
-        for name, img in images:
+        for name, im in images:
             path = os.path.join(item_dir, f"{name}.png")
-            img.save(path, "PNG", quality=95)
+            im.save(path, "PNG", quality=95)
             generated_files.append(path)
             print(f"  [POST] {path}")
 

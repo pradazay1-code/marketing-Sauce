@@ -8,63 +8,70 @@
 ## Day 1 — Monday, 2026-05-18
 **Type:** CAROUSEL | **Pillar:** Buyer/Seller Education | **Post at:** 8:00 PM EST
 
-### 📑 Carousel: 5 Things to Do BEFORE You Start House Hunting
+### 📑 Carousel: Buying vs. Renting in MA — The Real Math
 
 **Slide 1:**
-> 5 Things to Do BEFORE You Start House Hunting
+> Buying vs. Renting in MA
+The real math nobody shows you 📊
 
 **Slide 2:**
-> 1. Check your credit score
-Know where you stand. Anything above 620 can work — 740+ gets the best rates.
+> Average MA rent: $2,800/mo
+That's $33,600/year going to your landlord's mortgage.
 
 **Slide 3:**
-> 2. Get pre-approved (not pre-qualified)
-Pre-approval means a lender actually verified your finances. Sellers take it seriously.
+> Average MA mortgage: $2,950/mo
+(on a $450K home, 6.5% rate, 10% down)
 
 **Slide 4:**
-> 3. Calculate your REAL budget
-Mortgage + taxes + insurance + maintenance. Most people forget the last two.
+> "But buying is more expensive!"
+
+Not when you factor in:
+✅ Equity building
+✅ Tax deductions
+✅ Fixed payments (rent goes up every year)
 
 **Slide 5:**
-> 4. Save beyond the down payment
-Closing costs = 2-5% of purchase price. Plus you'll want a move-in buffer.
+> After 5 years renting:
+$168,000 spent → $0 equity
+
+After 5 years owning:
+$177,000 spent → ~$85,000 in equity
 
 **Slide 6:**
-> 5. Find an agent BEFORE you find a house
-A good agent will find homes before they hit the market and negotiate in your favor.
+> The gap closes fast.
+And in a market like MA where home values appreciate 3-5% annually? Buying wins long-term.
 
 **Slide 7:**
-> The biggest mistake? Skipping these steps and jumping straight into Zillow.
+> Is buying right for YOU?
+It depends on your timeline, finances, and goals.
 
-Do this first. Thank me later.
+DM me — I'll give you an honest answer.
 
 **Slide 8:**
-> Ready to start the right way?
-
-DM me "READY" and I'll walk you through it step by step.
-
-— Kunal Patel
+> Kunal Patel
 Akira Real Estate
+📱 DM or link in bio
 
 **Caption:**
 ```
-5 Things to Do BEFORE You Start House Hunting
+Buying vs. Renting in MA
+The real math nobody shows you 📊
 
 Swipe through for the full breakdown 👉
 
-Comment "INFO" and I'll reach out.
+Follow for daily real estate tips.
 
 — Kunal Patel
 Akira Real Estate
 ```
 
 **Hashtags:**
-`#realestatetips #sellingyourhome #openhouse #southshorema #livinginma #masshomes #realestate #homesearch #mortgagetips #marealestate #dreamhome #metrowestma #marketupdate #homebuyertips #realestatelife #firsttimehomebuyer #interiordesign #property #mareaitor #homevalue #realestateagent #househunting #massachusettsrealestate #housingmarket #massachusettshomes`
+`#homeownership #southshorema #investment #bostonhomes #realestateagent #realestatetips #homesearch #bostonrealestate #marketupdate #housingmarket #firsttimehomebuyer #realtor #realtorlife #mareaitor #housegoals #propertyinvestment #newlisting #homevalue #realestateinvesting #massachusettsrealestate #newenglandhomes #property #metrowestma #home #marealestate`
 
 ---
 
 ## Day 2 — Tuesday, 2026-05-19
-**Type:** POST | **Pillar:** Listings & Market Updates | **Post at:** 11:00 AM EST
+**Type:** POST | **Pillar:** Listings & Market Updates | **Post at:** 12:00 PM EST
 
 ### 📸 Post: Listings & Market Updates
 
@@ -72,47 +79,13 @@ Akira Real Estate
 ```
 Just listed — and the backyard alone is worth it.
 
-📍 Springfield, MA
+New on the market in Taunton 👇
 
-✅ 3 bed / 3 bath
-✅ 2,500 sq ft
-✅ Central AC
-✅ New roof (2024)
-✅ Updated kitchen with quartz counters
+This property has everything today's buyers are looking for — updated kitchen, natural light throughout, and a location that's hard to beat.
 
-This one's priced to move. If you've been waiting for the right property, this might be it.
+I've already had multiple inquiries. Don't sleep on this one.
 
-Schedule a private showing before it's gone.
-
-Ready to make a move? Let's talk → link in bio.
-
-— Kunal Patel
-Akira Real Estate
-```
-
-**Visual:** High-quality property photos — exterior + best interior room. Location: Springfield, MA.
-
-**Hashtags:**
-`#househunting #masshomes #realtorlife #bostonhomes #marealestate #justlisted #sellersmarket #bostonrealestate #buyersmarket #propertyinvestment #massachusettsrealestate #housegoals #realestateinvesting #housingmarket #southshorema #newlisting #home #firsttimehomebuyer #newenglandhomes #realestatetips #interiordesign #homebuying #realestatelife #mahomesforsale #luxury`
-
----
-
-## Day 3 — Wednesday, 2026-05-20
-**Type:** REEL | **Pillar:** Community Spotlight | **Post at:** 12:00 PM EST
-
-### 🎬 Reel: 3 Signs You're Ready to Buy
-**Duration:** 28 seconds | **Audio:** Trending audio — upbeat, motivational
-
-- **[0-3s]** 3 signs you're ready to buy a home 🏠 — _Hook — stop the scroll_
-- **[3-8s]** 1. You've been at your job for 2+ years — _Lenders want stability_
-- **[8-13s]** 2. You have 3-6 months of expenses saved — _Beyond the down payment_
-- **[13-18s]** 3. Your rent is more than a mortgage would be — _Show the math_
-- **[18-23s]** If that's you — stop paying someone else's mortgage. — _CTA_
-- **[23-28s]** DM me 'READY' and let's get you started. — _Close_
-
-**Caption:**
-```
-If you can check all 3 of these boxes, you're ready to buy a home.
+DM me "TOUR" for details + showing times.
 
 Share this with someone who needs to hear it.
 
@@ -120,25 +93,55 @@ Share this with someone who needs to hear it.
 Akira Real Estate
 ```
 
+**Visual:** High-quality property photos — exterior + best interior room. Location: Taunton, MA.
+
 **Hashtags:**
-`#newenglandhomes #dreamhome #livinginma #newlisting #investment #mareaitor #buyersmarket #homeownership #realtorlife #newenglandrealestate #mahomesforsale #marketupdate #marealestate #propertyinvestment #justlisted #homebuyertips #realestateagent #massachusettshomes #homevalue #massachusettsrealestate #closingday #housingmarket #realtortips #property #newhome`
+`#homeownership #sellersmarket #mareaitor #realtorlife #realestatetips #property #marealestate #justlisted #masshomes #metrowestma #propertyinvestment #newlisting #mortgagetips #realestateinvesting #bostonhomes #housingmarket #massachusettsrealestate #homebuyertips #southshorema #luxury #homesforsale #marketupdate #closingday #newhome #massachusettshomes`
+
+---
+
+## Day 3 — Wednesday, 2026-05-20
+**Type:** REEL | **Pillar:** Community Spotlight | **Post at:** 12:00 PM EST
+
+### 🎬 Reel: Day in My Life as a Realtor
+**Duration:** 27 seconds | **Audio:** Lo-fi / chill background — 'day in my life' vibe
+
+- **[0-3s]** 6:30 AM — Day in my life as a MA realtor — _Hook_
+- **[3-8s]** 7 AM — Checking new listings + responding to overnight leads — _Morning routine_
+- **[8-12s]** 9 AM — Driving to first showing — _Transition_
+- **[12-17s]** 10 AM — Walking a buyer through a property they found at 11 PM last night — _Showing_
+- **[17-22s]** 1 PM — Writing an offer + negotiating with listing agent — _The real work_
+- **[22-27s]** This is why I do it 🔑 — _Emotional payoff_
+
+**Caption:**
+```
+What being a realtor actually looks like (no glamour shots)
+
+DM me your zip code for a free market report.
+
+— Kunal Patel
+Akira Real Estate
+```
+
+**Hashtags:**
+`#marealestate #sellingyourhome #realestatelife #bostonrealestate #justlisted #mareaitor #homebuyertips #southshorema #realtortips #realestate #investment #property #luxury #realtorlife #openhouse #marketupdate #housegoals #newenglandhomes #housingmarket #massachusettshomes #newenglandrealestate #bostonhomes #sellersmarket #homebuying #realestatetips`
 
 ---
 
 ## Day 4 — Thursday, 2026-05-21
-**Type:** POST | **Pillar:** Behind the Scenes | **Post at:** 7:00 PM EST
+**Type:** POST | **Pillar:** Behind the Scenes | **Post at:** 8:00 PM EST
 
 ### 📸 Post: Behind the Scenes
 
 **Caption:**
 ```
-The part of real estate nobody shows you.
+What a day in real estate actually looks like.
 
 Today's schedule:
 
 7:00 AM — Coffee + market research
 9:00 AM — Client call (first-time buyer)
-10:30 AM — Showing in Attleboro
+10:30 AM — Showing in Worcester
 12:00 PM — Lunch meeting with lender
 2:00 PM — Contract review
 4:00 PM — Open house prep
@@ -146,7 +149,7 @@ Today's schedule:
 
 This job is anything but 9-5. But watching clients get their keys makes every long day worth it.
 
-Drop a 🏠 if you're house hunting right now.
+Save this for later 📌
 
 — Kunal Patel
 Akira Real Estate
@@ -155,12 +158,12 @@ Akira Real Estate
 **Visual:** Raw/authentic photos or video — showing, desk work, driving, client meetings.
 
 **Hashtags:**
-`#realestatetips #propertyinvestment #southshorema #investment #marealestate #massachusettsrealestate #mortgagetips #firsttimehomebuyer #housingmarket #realtorlife #homesforsale #metrowestma #masshomes #realtortips #closingday #realestatelife #homevalue #homesearch #livinginma #massachusettshomes #newenglandhomes #sellersmarket #realestateagent #property #dreamhome`
+`#sellersmarket #housingmarket #homebuyertips #massachusettshomes #dreamhome #closingday #newenglandrealestate #mahomesforsale #metrowestma #propertyinvestment #housegoals #realestatelife #marketupdate #homebuying #openhouse #property #househunting #realestatetips #marealestate #bostonhomes #massachusettsrealestate #realtor #home #realestateinvesting #mareaitor`
 
 ---
 
 ## Day 5 — Friday, 2026-05-22
-**Type:** CAROUSEL | **Pillar:** Buyer/Seller Education | **Post at:** 8:00 PM EST
+**Type:** CAROUSEL | **Pillar:** Buyer/Seller Education | **Post at:** 11:00 AM EST
 
 ### 📑 Carousel: 5 Things to Do BEFORE You Start House Hunting
 
@@ -206,25 +209,25 @@ Akira Real Estate
 
 Swipe through for the full breakdown 👉
 
-Drop a 🏠 if you're house hunting right now.
+Link in bio for a free consultation.
 
 — Kunal Patel
 Akira Real Estate
 ```
 
 **Hashtags:**
-`#housegoals #mahomesforsale #mareaitor #luxury #homebuying #realestateagent #openhouse #realestateinvesting #realtortips #massachusettsrealestate #realestate #sellersmarket #southshorema #newhome #newenglandrealestate #marketupdate #massachusettshomes #realestatelife #livinginma #housingmarket #investment #masshomes #closingday #realestatetips #dreamhome`
+`#homesforsale #bostonhomes #homeownership #realestate #massachusettsrealestate #househunting #realestatetips #sellingyourhome #mahomesforsale #realtorlife #realtortips #mortgagetips #livinginma #masshomes #homevalue #metrowestma #homebuying #massachusettshomes #openhouse #housingmarket #southshorema #property #closingday #buyersmarket #housegoals`
 
 ---
 
 ## Day 6 — Saturday, 2026-05-23
-**Type:** POST | **Pillar:** Client Success Story | **Post at:** 11:00 AM EST
+**Type:** POST | **Pillar:** Client Success Story | **Post at:** 8:00 PM EST
 
 ### 📸 Post: Client Success Story
 
 **Caption:**
 ```
-They said the market was too tough. We proved them wrong.
+"We didn't think we could afford it" — here's their story.
 
 Meet my latest clients 🎉
 
@@ -240,7 +243,7 @@ The market isn't impossible — you just need someone who knows how to navigate 
 
 Ready to start your journey? Link in bio.
 
-Ready to make a move? Let's talk → link in bio.
+Save this for later 📌
 
 — Kunal Patel
 Akira Real Estate
@@ -249,12 +252,12 @@ Akira Real Estate
 **Visual:** Client closing day photo with keys, or text-over photo with their quote.
 
 **Hashtags:**
-`#realestate #massachusettsrealestate #livinginma #bostonrealestate #homebuyertips #homebuying #firsttimehomebuyer #newenglandrealestate #homesearch #househunting #housegoals #mortgagetips #masshomes #bostonhomes #marketupdate #realestatetips #homevalue #buyersmarket #interiordesign #metrowestma #openhouse #newhome #home #sellingyourhome #mahomesforsale`
+`#marealestate #newlisting #realestateinvesting #homebuying #firsttimehomebuyer #home #southshorema #realestate #sellingyourhome #massachusettsrealestate #househunting #newhome #interiordesign #propertyinvestment #homevalue #housingmarket #homeownership #bostonhomes #massachusettshomes #realtortips #bostonrealestate #realestatetips #metrowestma #newenglandrealestate #buyersmarket`
 
 ---
 
 ## Day 7 — Sunday, 2026-05-24
-**Type:** STORY | **Pillar:** Market Authority | **Post at:** 7:00 PM EST
+**Type:** STORY | **Pillar:** Market Authority | **Post at:** 8:00 PM EST
 
 ### 📱 Story: This or That — Home Edition
 

@@ -76,7 +76,7 @@ HOOKS = {
         "Early morning showings hit different.",
         "Real talk — this job isn't just open houses.",
         "Another closing day in the books ✅",
-        "Behind the scenes of a $XXX,000 deal.",
+        "Behind the scenes of a big deal.",
     ],
     "testimonial": [
         "Another family in their forever home.",
@@ -346,7 +346,9 @@ def generate_post(pillar=None, city=None, owner="Kunal Patel", brand="Akira Real
         city = random.choice(MA_CITIES)
 
     month = datetime.now().strftime("%B")
+    price = random.choice(["350", "399", "425", "449", "475", "499", "525", "549", "599"])
     hook = random.choice(HOOKS[pillar]).format(city=city, month=month)
+    hook = hook.replace("$XXX,000", f"${price},000")
     body_template = random.choice(BODY_TEMPLATES[pillar])
 
     features = random.sample(FEATURES, 5)
@@ -393,13 +395,20 @@ def generate_post(pillar=None, city=None, owner="Kunal Patel", brand="Akira Real
     }
 
 
+_used_carousel_titles = set()
+
 def generate_carousel(topic_pillar=None, owner="Kunal Patel", brand="Akira Real Estate"):
     """Generate a carousel post with slide-by-slide text."""
     if not topic_pillar:
         topic_pillar = random.choice(list(CAROUSEL_TOPICS.keys()))
 
     topics = CAROUSEL_TOPICS[topic_pillar]
-    topic = random.choice(topics)
+    available = [t for t in topics if t["title"] not in _used_carousel_titles]
+    if not available:
+        _used_carousel_titles.clear()
+        available = topics
+    topic = random.choice(available)
+    _used_carousel_titles.add(topic["title"])
 
     hashtags = pick_hashtags(25)
     cta = random.choice(CTAS)
@@ -468,6 +477,7 @@ def generate_story():
 
 def generate_calendar(days=7, owner="Kunal Patel", brand="Akira Real Estate"):
     """Generate a content calendar for N days."""
+    _used_carousel_titles.clear()
     calendar = []
     start_date = datetime.now()
 
