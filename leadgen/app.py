@@ -26,6 +26,7 @@ from database import (
     get_email_settings, update_email_settings,
     save_email_template, get_email_templates, get_email_template, delete_email_template,
     get_email_log, log_email, get_recent_leads,
+    get_campaigns, save_campaign, get_automation_jobs, get_funnel_analytics,
 )
 from utils import enrich_lead, normalize_phone, is_valid_phone, is_valid_email, calculate_lead_score
 from email_service import send_email, send_bulk_emails, render_template as render_email_template, DEFAULT_TEMPLATES
@@ -316,7 +317,7 @@ def api_export():
     return Response(
         csv_data,
         mimetype="text/csv",
-        headers={"Content-Disposition": f"attachment; filename=leadpilot_export_{date.today()}.csv"}
+        headers={"Content-Disposition": f"attachment; filename=aventisai_export_{date.today()}.csv"}
     )
 
 
@@ -628,6 +629,112 @@ def api_cities():
         rows = conn.execute("SELECT DISTINCT city FROM leads WHERE city != '' ORDER BY city").fetchall()
     conn.close()
     return jsonify([row["city"] for row in rows])
+
+
+@app.route("/automation")
+@check_auth
+def automation_page():
+    return render_template("automation.html")
+
+
+@app.route("/api/automation/status")
+@check_auth
+def api_automation_status():
+    from automation_engine import get_automation_status
+    return jsonify(get_automation_status())
+
+
+@app.route("/api/automation/config", methods=["GET"])
+@check_auth
+def api_automation_config_get():
+    from automation_engine import load_config
+    return jsonify(load_config())
+
+
+@app.route("/api/automation/config", methods=["POST"])
+@check_auth
+def api_automation_config_save():
+    from automation_engine import load_config, save_config
+    data = request.get_json() or {}
+    config = load_config()
+    config.update(data)
+    save_config(config)
+    return jsonify({"success": True})
+
+
+@app.route("/api/automation/discover", methods=["POST"])
+@check_auth
+def api_automation_discover():
+    from automation_engine import run_discovery
+    data = request.get_json() or {}
+
+    def run_bg():
+        run_discovery(
+            city=data.get("city"),
+            state=data.get("state", "MA"),
+            count=data.get("count", 20),
+            business_type=data.get("type"),
+            demo=data.get("demo", False)
+        )
+
+    thread = Thread(target=run_bg, daemon=True)
+    thread.start()
+    return jsonify({"success": True, "message": "Discovery started"})
+
+
+@app.route("/api/automation/outreach", methods=["POST"])
+@check_auth
+def api_automation_outreach():
+    from automation_engine import run_outreach
+    data = request.get_json() or {}
+    campaign = data.get("campaign", "intro")
+    min_score = data.get("min_score", 50)
+    limit = data.get("limit", 10)
+    dry_run = data.get("dry_run", True)
+
+    def run_bg():
+        run_outreach(campaign, min_score, limit, dry_run)
+
+    thread = Thread(target=run_bg, daemon=True)
+    thread.start()
+    return jsonify({"success": True, "message": f"Outreach '{campaign}' started"})
+
+
+@app.route("/api/automation/followups")
+@check_auth
+def api_automation_followups():
+    from automation_engine import check_followups
+    return jsonify(check_followups())
+
+
+@app.route("/api/automation/jobs")
+@check_auth
+def api_automation_jobs():
+    return jsonify(get_automation_jobs(30))
+
+
+@app.route("/api/analytics/funnel")
+@check_auth
+def api_funnel_analytics():
+    return jsonify(get_funnel_analytics())
+
+
+@app.route("/api/campaigns")
+@check_auth
+def api_campaigns_list():
+    return jsonify(get_campaigns())
+
+
+@app.route("/api/campaigns", methods=["POST"])
+@check_auth
+def api_campaign_save():
+    data = request.get_json() or {}
+    name = data.get("name", "").strip()
+    key = data.get("campaign_key", "").strip()
+    if not name or not key:
+        return jsonify({"error": "name and campaign_key required"}), 400
+    save_campaign(name, key, data.get("target_filters"), data.get("sequence_steps"), data.get("id"))
+    return jsonify({"success": True})
 
 
 @app.route("/api/health")

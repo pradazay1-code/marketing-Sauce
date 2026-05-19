@@ -1,5 +1,5 @@
 """
-LeadPilot — Email Service.
+AventisAI — Email Service.
 Sends outreach emails via SMTP. Supports templates with variable substitution.
 """
 
@@ -30,7 +30,7 @@ def send_email(to_email, subject, body, lead_id=None, template_id=None, is_html=
         return False, "No recipient email address."
 
     msg = MIMEMultipart("alternative")
-    msg["From"] = f"{settings.get('from_name', 'LeadPilot')} <{settings['from_email']}>"
+    msg["From"] = f"{settings.get('from_name', 'AventisAI')} <{settings['from_email']}>"
     msg["To"] = to_email
     msg["Subject"] = subject
 

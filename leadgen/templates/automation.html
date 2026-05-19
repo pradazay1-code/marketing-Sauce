@@ -1,0 +1,342 @@
+{% extends "_layout.html" %}
+{% set active = "automation" %}
+{% block title %}Automation — AventisAI{% endblock %}
+
+{% block extra_css %}
+.page-header h2 { font-size: 24px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+.page-header p { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
+
+.auto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+@media (max-width: 1024px) { .auto-grid { grid-template-columns: 1fr; } }
+
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+.status-dot.on { background: #4ade80; box-shadow: 0 0 6px #4ade8088; }
+.status-dot.off { background: #64748b; }
+
+.config-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #334155; font-size: 14px; }
+.config-row:last-child { border-bottom: none; }
+.config-row label { color: #cbd5e1; }
+.config-row input[type="number"], .config-row select { background: #0f172a; border: 1px solid #475569; color: #f8fafc; padding: 6px 10px; border-radius: 6px; width: 120px; font-size: 13px; }
+.config-row input[type="text"] { background: #0f172a; border: 1px solid #475569; color: #f8fafc; padding: 6px 10px; border-radius: 6px; width: 240px; font-size: 13px; }
+
+.toggle { position: relative; width: 44px; height: 24px; cursor: pointer; }
+.toggle input { display: none; }
+.toggle .slider { position: absolute; inset: 0; background: #475569; border-radius: 12px; transition: 0.2s; }
+.toggle .slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+.toggle input:checked + .slider { background: #3b82f6; }
+.toggle input:checked + .slider::before { transform: translateX(20px); }
+
+.action-btn { display: flex; align-items: center; gap: 10px; padding: 16px; background: #0f172a; border: 1px solid #334155; border-radius: 10px; cursor: pointer; transition: all 0.2s; margin-bottom: 10px; }
+.action-btn:hover { border-color: #3b82f6; transform: translateY(-1px); }
+.action-btn .icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.action-btn h4 { font-size: 14px; font-weight: 600; color: #f8fafc; margin-bottom: 2px; }
+.action-btn p { font-size: 12px; color: #94a3b8; }
+
+.job-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.job-table th { text-align: left; padding: 10px; color: #64748b; border-bottom: 1px solid #334155; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.job-table td { padding: 10px; border-bottom: 1px solid #1e293b22; color: #cbd5e1; }
+.badge-running { background: #1e3a5f; color: #60a5fa; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.badge-completed { background: #14532d; color: #4ade80; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.badge-error { background: #7f1d1d; color: #fca5a5; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.badge-pending { background: #713f12; color: #fde047; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+
+.followup-item { padding: 10px 0; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.followup-item:last-child { border-bottom: none; }
+.followup-item .biz { color: #f8fafc; font-weight: 600; }
+.followup-item .meta { color: #94a3b8; font-size: 12px; }
+.followup-item .campaign-tag { background: #334155; color: #94a3b8; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Automation Engine</h2>
+    <p>Schedule lead discovery, enrichment, and outreach sequences</p>
+</div>
+
+<div class="auto-grid">
+    <!-- Config Panel -->
+    <div class="card">
+        <h3 style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+            <span id="autoStatus"><span class="status-dot off"></span> Automation</span>
+        </h3>
+
+        <div class="config-row">
+            <label>Auto-Discovery</label>
+            <label class="toggle"><input type="checkbox" id="cfgDiscovery" onchange="saveConfig()"><span class="slider"></span></label>
+        </div>
+        <div class="config-row">
+            <label>Cities (comma-separated)</label>
+            <input type="text" id="cfgCities" onchange="saveConfig()" placeholder="Boston, Worcester">
+        </div>
+        <div class="config-row">
+            <label>Default State</label>
+            <select id="cfgState" onchange="saveConfig()">
+                <option value="MA">Massachusetts</option>
+                <option value="RI">Rhode Island</option>
+                <option value="CT">Connecticut</option>
+            </select>
+        </div>
+        <div class="config-row">
+            <label>Leads per city</label>
+            <input type="number" id="cfgCount" value="20" min="5" max="100" onchange="saveConfig()">
+        </div>
+        <div class="config-row">
+            <label>Auto-Sequences</label>
+            <label class="toggle"><input type="checkbox" id="cfgSequence" onchange="saveConfig()"><span class="slider"></span></label>
+        </div>
+        <div class="config-row">
+            <label>Follow-up #1 (days)</label>
+            <input type="number" id="cfgFU1" value="3" min="1" max="30" onchange="saveConfig()">
+        </div>
+        <div class="config-row">
+            <label>Follow-up #2 (days)</label>
+            <input type="number" id="cfgFU2" value="7" min="2" max="30" onchange="saveConfig()">
+        </div>
+        <div class="config-row">
+            <label>Breakup email (days)</label>
+            <input type="number" id="cfgBreakup" value="14" min="7" max="60" onchange="saveConfig()">
+        </div>
+        <div class="config-row">
+            <label>Daily send limit</label>
+            <input type="number" id="cfgSendLimit" value="50" min="1" max="200" onchange="saveConfig()">
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+        <h3 style="margin-bottom:16px">Quick Actions</h3>
+
+        <div class="action-btn" onclick="runDiscover()">
+            <div class="icon" style="background:#14532d;color:#4ade80;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <div>
+                <h4>Run Discovery Now</h4>
+                <p>Find new leads across configured cities</p>
+            </div>
+        </div>
+
+        <div class="action-btn" onclick="runDiscover(true)">
+            <div class="icon" style="background:#431407;color:#fb923c;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            </div>
+            <div>
+                <h4>Demo Discovery</h4>
+                <p>Test with sample data (no API keys needed)</p>
+            </div>
+        </div>
+
+        <div class="action-btn" onclick="runOutreach('intro')">
+            <div class="icon" style="background:#1e3a5f;color:#60a5fa;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+                <h4>Generate Intro Emails</h4>
+                <p>Draft personalized intros for top leads</p>
+            </div>
+        </div>
+
+        <div class="action-btn" onclick="runOutreach('followup_1')">
+            <div class="icon" style="background:#2e1065;color:#a78bfa;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div>
+                <h4>Send Follow-ups</h4>
+                <p>Auto follow-up for leads with no response</p>
+            </div>
+        </div>
+
+        <div class="action-btn" onclick="checkFollowups()">
+            <div class="icon" style="background:#083344;color:#22d3ee;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+                <h4>Check Pending Follow-ups</h4>
+                <p>See which leads need follow-up emails</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pending Follow-ups -->
+<div class="card" id="followupsCard">
+    <h3 style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span>Pending Follow-ups</span>
+        <span id="followupCount" style="font-size:13px;color:#94a3b8">Loading...</span>
+    </h3>
+    <div id="followupsList">
+        <div style="color:#64748b;font-size:13px;text-align:center;padding:16px">Loading follow-up data...</div>
+    </div>
+</div>
+
+<!-- Recent Jobs -->
+<div class="card">
+    <h3 style="margin-bottom:16px">Recent Automation Jobs</h3>
+    <table class="job-table">
+        <thead>
+            <tr><th>Type</th><th>Status</th><th>Started</th><th>Finished</th><th>Result</th></tr>
+        </thead>
+        <tbody id="jobsBody">
+            <tr><td colspan="5" style="text-align:center;color:#64748b">Loading...</td></tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadConfig() {
+    try {
+        const resp = await fetch('/api/automation/config');
+        const cfg = await resp.json();
+        document.getElementById('cfgDiscovery').checked = cfg.discovery_enabled || false;
+        document.getElementById('cfgSequence').checked = cfg.sequence_enabled || false;
+        document.getElementById('cfgCities').value = (cfg.discovery_cities || []).join(', ');
+        document.getElementById('cfgState').value = cfg.discovery_state || 'MA';
+        document.getElementById('cfgCount').value = cfg.discovery_count || 20;
+        document.getElementById('cfgFU1').value = cfg.sequence_followup_1_days || 3;
+        document.getElementById('cfgFU2').value = cfg.sequence_followup_2_days || 7;
+        document.getElementById('cfgBreakup').value = cfg.sequence_breakup_days || 14;
+        document.getElementById('cfgSendLimit').value = cfg.daily_send_limit || 50;
+
+        const dot = document.querySelector('#autoStatus .status-dot');
+        if (cfg.discovery_enabled || cfg.sequence_enabled) {
+            dot.classList.remove('off');
+            dot.classList.add('on');
+        }
+    } catch(e) {}
+}
+
+async function saveConfig() {
+    const cities = document.getElementById('cfgCities').value.split(',').map(c => c.trim()).filter(Boolean);
+    const cfg = {
+        discovery_enabled: document.getElementById('cfgDiscovery').checked,
+        sequence_enabled: document.getElementById('cfgSequence').checked,
+        discovery_cities: cities,
+        discovery_state: document.getElementById('cfgState').value,
+        discovery_count: parseInt(document.getElementById('cfgCount').value) || 20,
+        sequence_followup_1_days: parseInt(document.getElementById('cfgFU1').value) || 3,
+        sequence_followup_2_days: parseInt(document.getElementById('cfgFU2').value) || 7,
+        sequence_breakup_days: parseInt(document.getElementById('cfgBreakup').value) || 14,
+        daily_send_limit: parseInt(document.getElementById('cfgSendLimit').value) || 50,
+    };
+    try {
+        await fetch('/api/automation/config', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(cfg)
+        });
+        const dot = document.querySelector('#autoStatus .status-dot');
+        if (cfg.discovery_enabled || cfg.sequence_enabled) {
+            dot.classList.remove('off'); dot.classList.add('on');
+        } else {
+            dot.classList.remove('on'); dot.classList.add('off');
+        }
+        showToast('Config saved');
+    } catch(e) {
+        showToast('Failed to save config');
+    }
+}
+
+async function runDiscover(demo) {
+    const state = document.getElementById('cfgState').value;
+    const city = document.getElementById('cfgCities').value.split(',')[0]?.trim() || 'Boston';
+    showToast('Starting discovery...');
+    try {
+        await fetch('/api/automation/discover', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ city, state, count: parseInt(document.getElementById('cfgCount').value) || 20, demo: !!demo })
+        });
+        showToast('Discovery job started — check jobs table below');
+        setTimeout(loadJobs, 3000);
+    } catch(e) {
+        showToast('Error starting discovery');
+    }
+}
+
+async function runOutreach(campaign) {
+    showToast(`Starting ${campaign} outreach...`);
+    try {
+        await fetch('/api/automation/outreach', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ campaign, min_score: 50, limit: 10, dry_run: true })
+        });
+        showToast(`${campaign} outreach started (dry run)`);
+        setTimeout(loadJobs, 3000);
+    } catch(e) {
+        showToast('Error starting outreach');
+    }
+}
+
+async function checkFollowups() {
+    try {
+        const resp = await fetch('/api/automation/followups');
+        const data = await resp.json();
+        renderFollowups(data);
+    } catch(e) {
+        showToast('Error checking follow-ups');
+    }
+}
+
+function renderFollowups(data) {
+    const el = document.getElementById('followupsList');
+    const count = data.pending_followups?.length || 0;
+    document.getElementById('followupCount').textContent = `${count} pending`;
+
+    if (!count) {
+        el.innerHTML = '<div style="color:#4ade80;font-size:13px;text-align:center;padding:16px">All clear — no follow-ups due</div>';
+        return;
+    }
+
+    let html = '';
+    (data.pending_followups || []).forEach(f => {
+        html += `<div class="followup-item">
+            <div>
+                <div class="biz">${escHtml(f.business_name)}</div>
+                <div class="meta">${f.days_since} days since contact</div>
+            </div>
+            <span class="campaign-tag">${escHtml(f.campaign)}</span>
+        </div>`;
+    });
+    el.innerHTML = html;
+}
+
+async function loadJobs() {
+    try {
+        const resp = await fetch('/api/automation/jobs');
+        const jobs = await resp.json();
+        const body = document.getElementById('jobsBody');
+
+        if (!jobs.length) {
+            body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#64748b">No jobs yet</td></tr>';
+            return;
+        }
+
+        body.innerHTML = jobs.slice(0, 15).map(j => {
+            const badgeClass = j.status === 'completed' ? 'badge-completed' :
+                              j.status === 'running' ? 'badge-running' :
+                              j.status === 'error' ? 'badge-error' : 'badge-pending';
+            const result = j.result || {};
+            let resultText = '';
+            if (result.leads_found !== undefined) resultText = `${result.leads_found} leads`;
+            else if (result.error) resultText = result.error.substring(0, 60);
+            else if (result.campaign) resultText = result.campaign;
+
+            return `<tr>
+                <td style="font-weight:600;color:#f8fafc">${escHtml(j.job_type)}</td>
+                <td><span class="${badgeClass}">${j.status}</span></td>
+                <td style="font-size:12px;color:#64748b">${j.started_at ? j.started_at.substring(0,16) : '—'}</td>
+                <td style="font-size:12px;color:#64748b">${j.finished_at ? j.finished_at.substring(0,16) : '—'}</td>
+                <td style="font-size:12px">${escHtml(resultText)}</td>
+            </tr>`;
+        }).join('');
+    } catch(e) {}
+}
+
+loadConfig();
+loadJobs();
+checkFollowups();
+</script>
+{% endblock %}

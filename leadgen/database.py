@@ -14,6 +14,8 @@ ALLOWED_COLUMNS = {
     "lead_score", "filing_date", "date_found", "source", "status", "notes",
     "priority", "contacted", "contact_date", "tags", "next_followup",
     "created_at", "updated_at",
+    "tech_stack_json", "review_count", "review_rating", "employee_count",
+    "icp_score", "email_verified", "segment",
 }
 
 PIPELINE_STAGES = ["new", "contacted", "responded", "qualified", "proposal", "won", "lost"]
@@ -150,7 +152,7 @@ def _init_db_inner():
             smtp_port INTEGER DEFAULT 587,
             smtp_user TEXT DEFAULT '',
             smtp_pass TEXT DEFAULT '',
-            from_name TEXT DEFAULT 'LeadPilot',
+            from_name TEXT DEFAULT 'AventisAI',
             from_email TEXT DEFAULT '',
             enabled INTEGER DEFAULT 0
         );
@@ -184,12 +186,66 @@ def _init_db_inner():
         ("lead_score", "ALTER TABLE leads ADD COLUMN lead_score INTEGER DEFAULT 50"),
         ("tags", "ALTER TABLE leads ADD COLUMN tags TEXT DEFAULT ''"),
         ("next_followup", "ALTER TABLE leads ADD COLUMN next_followup TEXT DEFAULT ''"),
+        ("tech_stack_json", "ALTER TABLE leads ADD COLUMN tech_stack_json TEXT DEFAULT ''"),
+        ("review_count", "ALTER TABLE leads ADD COLUMN review_count INTEGER DEFAULT 0"),
+        ("review_rating", "ALTER TABLE leads ADD COLUMN review_rating REAL DEFAULT 0"),
+        ("employee_count", "ALTER TABLE leads ADD COLUMN employee_count INTEGER DEFAULT 0"),
+        ("icp_score", "ALTER TABLE leads ADD COLUMN icp_score INTEGER DEFAULT 0"),
+        ("email_verified", "ALTER TABLE leads ADD COLUMN email_verified INTEGER DEFAULT 0"),
+        ("segment", "ALTER TABLE leads ADD COLUMN segment TEXT DEFAULT ''"),
     ]:
         if col not in existing_cols:
             try:
                 conn.execute(ddl)
             except Exception:
                 pass
+
+    conn.executescript("""
+        CREATE TABLE IF NOT EXISTS campaigns (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            campaign_key TEXT NOT NULL DEFAULT '',
+            status TEXT DEFAULT 'draft',
+            target_filters_json TEXT DEFAULT '{}',
+            sequence_steps_json TEXT DEFAULT '[]',
+            total_sent INTEGER DEFAULT 0,
+            total_opened INTEGER DEFAULT 0,
+            total_replied INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE IF NOT EXISTS sequence_runs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            lead_id INTEGER NOT NULL,
+            campaign_id INTEGER,
+            campaign_key TEXT DEFAULT '',
+            current_step INTEGER DEFAULT 0,
+            status TEXT DEFAULT 'active',
+            next_send_at TEXT DEFAULT '',
+            last_sent_at TEXT DEFAULT '',
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS automation_jobs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            job_type TEXT NOT NULL,
+            config_json TEXT DEFAULT '{}',
+            status TEXT DEFAULT 'pending',
+            result_json TEXT DEFAULT '{}',
+            started_at TEXT DEFAULT '',
+            finished_at TEXT DEFAULT '',
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_sequence_runs_lead ON sequence_runs(lead_id);
+        CREATE INDEX IF NOT EXISTS idx_sequence_runs_status ON sequence_runs(status);
+        CREATE INDEX IF NOT EXISTS idx_sequence_runs_next ON sequence_runs(next_send_at);
+        CREATE INDEX IF NOT EXISTS idx_automation_jobs_status ON automation_jobs(status);
+        CREATE INDEX IF NOT EXISTS idx_leads_icp_score ON leads(icp_score);
+        CREATE INDEX IF NOT EXISTS idx_leads_segment ON leads(segment);
+    """)
 
     conn.commit()
     conn.close()
@@ -746,6 +802,231 @@ def export_csv(filters=None):
             row.append(val)
         lines.append(",".join(row))
     return "\n".join(lines)
+
+
+# --- Campaigns & Sequences ---
+
+def save_campaign(name, campaign_key, target_filters=None, sequence_steps=None, campaign_id=None):
+    conn = get_db()
+    if campaign_id:
+        conn.execute(
+            "UPDATE campaigns SET name=?, campaign_key=?, target_filters_json=?, sequence_steps_json=?, updated_at=? WHERE id=?",
+            (name, campaign_key, json.dumps(target_filters or {}), json.dumps(sequence_steps or []),
+             datetime.now().isoformat(), campaign_id)
+        )
+    else:
+        conn.execute(
+            "INSERT INTO campaigns (name, campaign_key, target_filters_json, sequence_steps_json) VALUES (?, ?, ?, ?)",
+            (name, campaign_key, json.dumps(target_filters or {}), json.dumps(sequence_steps or []))
+        )
+    conn.commit()
+    conn.close()
+
+
+def get_campaigns():
+    conn = get_db()
+    rows = conn.execute("SELECT * FROM campaigns ORDER BY created_at DESC").fetchall()
+    conn.close()
+    result = []
+    for row in rows:
+        d = dict(row)
+        try:
+            d["target_filters"] = json.loads(d.get("target_filters_json") or "{}")
+        except (json.JSONDecodeError, TypeError):
+            d["target_filters"] = {}
+        try:
+            d["sequence_steps"] = json.loads(d.get("sequence_steps_json") or "[]")
+        except (json.JSONDecodeError, TypeError):
+            d["sequence_steps"] = []
+        result.append(d)
+    return result
+
+
+def update_campaign_stats(campaign_id, sent=0, opened=0, replied=0):
+    conn = get_db()
+    conn.execute(
+        "UPDATE campaigns SET total_sent = total_sent + ?, total_opened = total_opened + ?, total_replied = total_replied + ?, updated_at = ? WHERE id = ?",
+        (sent, opened, replied, datetime.now().isoformat(), campaign_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+def add_sequence_run(lead_id, campaign_key, campaign_id=None):
+    conn = get_db()
+    existing = conn.execute(
+        "SELECT id FROM sequence_runs WHERE lead_id = ? AND campaign_key = ? AND status = 'active'",
+        (lead_id, campaign_key)
+    ).fetchone()
+    if existing:
+        conn.close()
+        return None
+    cursor = conn.execute(
+        "INSERT INTO sequence_runs (lead_id, campaign_key, campaign_id, status) VALUES (?, ?, ?, 'active')",
+        (lead_id, campaign_key, campaign_id)
+    )
+    run_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return run_id
+
+
+def get_sequence_runs(status=None, due_before=None):
+    conn = get_db()
+    query = """SELECT sr.*, l.business_name, l.email, l.city, l.state, l.phone, l.icp_score, l.lead_score
+               FROM sequence_runs sr JOIN leads l ON sr.lead_id = l.id WHERE 1=1"""
+    params = []
+    if status:
+        query += " AND sr.status = ?"
+        params.append(status)
+    if due_before:
+        query += " AND sr.next_send_at != '' AND sr.next_send_at <= ?"
+        params.append(due_before)
+    query += " ORDER BY sr.created_at DESC"
+    rows = conn.execute(query, params).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
+def update_sequence_run(run_id, **kwargs):
+    conn = get_db()
+    fields = []
+    values = []
+    for k, v in kwargs.items():
+        if k in ("current_step", "status", "next_send_at", "last_sent_at"):
+            fields.append(f"{k} = ?")
+            values.append(v)
+    if not fields:
+        conn.close()
+        return
+    values.append(run_id)
+    conn.execute(f"UPDATE sequence_runs SET {', '.join(fields)} WHERE id = ?", values)
+    conn.commit()
+    conn.close()
+
+
+# --- Automation Jobs ---
+
+def add_automation_job(job_type, config=None):
+    conn = get_db()
+    cursor = conn.execute(
+        "INSERT INTO automation_jobs (job_type, config_json, status, started_at) VALUES (?, ?, 'running', ?)",
+        (job_type, json.dumps(config or {}), datetime.now().isoformat())
+    )
+    job_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return job_id
+
+
+def finish_automation_job(job_id, status="completed", result=None):
+    conn = get_db()
+    conn.execute(
+        "UPDATE automation_jobs SET status = ?, result_json = ?, finished_at = ? WHERE id = ?",
+        (status, json.dumps(result or {}), datetime.now().isoformat(), job_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_automation_jobs(limit=20):
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT * FROM automation_jobs ORDER BY created_at DESC LIMIT ?", (limit,)
+    ).fetchall()
+    conn.close()
+    result = []
+    for row in rows:
+        d = dict(row)
+        try:
+            d["config"] = json.loads(d.get("config_json") or "{}")
+        except (json.JSONDecodeError, TypeError):
+            d["config"] = {}
+        try:
+            d["result"] = json.loads(d.get("result_json") or "{}")
+        except (json.JSONDecodeError, TypeError):
+            d["result"] = {}
+        result.append(d)
+    return result
+
+
+# --- Funnel Analytics ---
+
+def get_funnel_analytics():
+    conn = get_db()
+    analytics = {}
+
+    analytics["pipeline_counts"] = {}
+    for stage in PIPELINE_STAGES:
+        count = conn.execute("SELECT COUNT(*) FROM leads WHERE status = ?", (stage,)).fetchone()[0]
+        analytics["pipeline_counts"][stage] = count
+
+    total = conn.execute("SELECT COUNT(*) FROM leads").fetchone()[0]
+    analytics["total_leads"] = total
+
+    analytics["conversion_rates"] = {}
+    if total > 0:
+        contacted = analytics["pipeline_counts"].get("contacted", 0)
+        responded = analytics["pipeline_counts"].get("responded", 0)
+        qualified = analytics["pipeline_counts"].get("qualified", 0)
+        proposal = analytics["pipeline_counts"].get("proposal", 0)
+        won = analytics["pipeline_counts"].get("won", 0)
+
+        all_past_new = total - analytics["pipeline_counts"].get("new", 0)
+        analytics["conversion_rates"]["new_to_contacted"] = round((all_past_new / total) * 100, 1) if total else 0
+        analytics["conversion_rates"]["contacted_to_responded"] = round((responded / max(contacted + responded + qualified + proposal + won, 1)) * 100, 1)
+        analytics["conversion_rates"]["responded_to_qualified"] = round((qualified / max(responded + qualified + proposal + won, 1)) * 100, 1)
+        analytics["conversion_rates"]["qualified_to_won"] = round((won / max(qualified + proposal + won, 1)) * 100, 1)
+        analytics["conversion_rates"]["overall"] = round((won / total) * 100, 1)
+
+    if table_exists(conn, "email_log"):
+        analytics["emails_sent"] = conn.execute("SELECT COUNT(*) FROM email_log").fetchone()[0]
+        analytics["emails_today"] = conn.execute(
+            "SELECT COUNT(*) FROM email_log WHERE sent_at >= date('now')"
+        ).fetchone()[0]
+        analytics["emails_this_week"] = conn.execute(
+            "SELECT COUNT(*) FROM email_log WHERE sent_at >= date('now', '-7 days')"
+        ).fetchone()[0]
+        analytics["emails_by_day"] = []
+        for row in conn.execute(
+            "SELECT date(sent_at) as day, COUNT(*) as cnt FROM email_log WHERE sent_at >= date('now', '-30 days') GROUP BY date(sent_at) ORDER BY day"
+        ).fetchall():
+            analytics["emails_by_day"].append({"day": row[0], "count": row[1]})
+    else:
+        analytics["emails_sent"] = 0
+        analytics["emails_today"] = 0
+        analytics["emails_this_week"] = 0
+        analytics["emails_by_day"] = []
+
+    if table_exists(conn, "campaigns"):
+        campaigns = conn.execute(
+            "SELECT name, campaign_key, total_sent, total_opened, total_replied FROM campaigns ORDER BY total_sent DESC LIMIT 10"
+        ).fetchall()
+        analytics["campaign_performance"] = [dict(row) for row in campaigns]
+    else:
+        analytics["campaign_performance"] = []
+
+    analytics["leads_by_week"] = []
+    for row in conn.execute("""
+        SELECT strftime('%Y-W%W', date_found) as week, COUNT(*) as cnt
+        FROM leads WHERE date_found >= date('now', '-90 days') AND date_found != ''
+        GROUP BY week ORDER BY week
+    """).fetchall():
+        analytics["leads_by_week"].append({"week": row[0], "count": row[1]})
+
+    analytics["avg_icp_score"] = conn.execute(
+        "SELECT COALESCE(AVG(icp_score), 0) FROM leads WHERE icp_score > 0"
+    ).fetchone()[0]
+
+    analytics["score_distribution"] = {}
+    for label, low, high in [("0-25", 0, 25), ("26-50", 26, 50), ("51-75", 51, 75), ("76-100", 76, 100)]:
+        count = conn.execute(
+            "SELECT COUNT(*) FROM leads WHERE icp_score >= ? AND icp_score <= ?", (low, high)
+        ).fetchone()[0]
+        analytics["score_distribution"][label] = count
+
+    conn.close()
+    return analytics
 
 
 if __name__ == "__main__":

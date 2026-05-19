@@ -3,35 +3,68 @@
 {% block title %}Reports — AventisAI{% endblock %}
 
 {% block extra_css %}
+.page-header h2 { font-size: 24px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+.page-header p { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
+
 .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
 .kpi { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; }
 .kpi .label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
 .kpi .value { font-size: 32px; font-weight: 700; color: #f8fafc; margin-top: 4px; }
 .kpi .pct { font-size: 14px; color: #4ade80; font-weight: 600; margin-top: 2px; }
 
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+@media (max-width: 1024px) { .two-col { grid-template-columns: 1fr; } }
+
 .bar-chart { display: flex; flex-direction: column; gap: 8px; }
 .bar-row { display: flex; align-items: center; gap: 12px; font-size: 13px; }
-.bar-label { width: 140px; color: #cbd5e1; }
-.bar-track { flex: 1; height: 22px; background: #0f172a; border-radius: 4px; overflow: hidden; position: relative; }
-.bar-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); display: flex; align-items: center; padding: 0 8px; color: white; font-size: 12px; font-weight: 600; }
+.bar-label { width: 140px; color: #cbd5e1; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; height: 26px; background: #0f172a; border-radius: 6px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; display: flex; align-items: center; padding: 0 10px; color: white; font-size: 12px; font-weight: 600; border-radius: 6px; min-width: 30px; }
+.bar-count { width: 40px; text-align: right; font-size: 13px; font-weight: 700; color: #f8fafc; flex-shrink: 0; }
 
-.funnel { display: flex; flex-direction: column; gap: 4px; align-items: center; }
-.funnel-stage { width: 100%; max-width: 600px; padding: 14px 20px; border-radius: 6px; color: white; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
-.funnel-stage:nth-child(1) { background: #3b82f6; width: 100%; }
-.funnel-stage:nth-child(2) { background: #2563eb; width: 90%; }
-.funnel-stage:nth-child(3) { background: #1d4ed8; width: 75%; }
-.funnel-stage:nth-child(4) { background: #1e40af; width: 60%; }
-.funnel-stage:nth-child(5) { background: #1e3a8a; width: 45%; }
-.funnel-stage:nth-child(6) { background: #15803d; width: 35%; }
-.funnel-stage:nth-child(7) { background: #166534; width: 25%; }
+.bar-fill.b0 { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.bar-fill.b1 { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+.bar-fill.b2 { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.bar-fill.b3 { background: linear-gradient(90deg, #f97316, #fb923c); }
+.bar-fill.b4 { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+.bar-fill.b5 { background: linear-gradient(90deg, #ec4899, #f472b6); }
+.bar-fill.b6 { background: linear-gradient(90deg, #eab308, #fde047); }
+.bar-fill.b7 { background: linear-gradient(90deg, #ef4444, #f87171); }
 
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-@media (max-width: 1024px) { .two-col { grid-template-columns: 1fr; } }
+/* Funnel */
+.funnel { display: flex; flex-direction: column; gap: 4px; align-items: center; margin: 8px 0; }
+.funnel-stage { width: 100%; padding: 14px 20px; border-radius: 6px; color: white; font-weight: 600; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+.funnel-stage .rate { font-size: 12px; font-weight: 400; opacity: 0.85; }
+
+/* Email chart */
+.email-chart { display: flex; align-items: flex-end; gap: 4px; height: 120px; padding: 0 4px; }
+.email-bar { flex: 1; background: linear-gradient(to top, #3b82f6, #60a5fa); border-radius: 4px 4px 0 0; min-width: 8px; transition: height 0.3s; position: relative; }
+.email-bar:hover { opacity: 0.85; }
+.email-bar .tip { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #1e293b; border: 1px solid #475569; padding: 4px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap; color: #f8fafc; }
+.email-bar:hover .tip { display: block; }
+
+/* Score distribution */
+.score-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.score-bucket { text-align: center; padding: 16px 8px; background: #0f172a; border-radius: 8px; }
+.score-bucket .num { font-size: 28px; font-weight: 700; color: #f8fafc; }
+.score-bucket .lbl { font-size: 11px; color: #94a3b8; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Conversion flow */
+.conv-flow { display: flex; align-items: center; gap: 0; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
+.conv-node { text-align: center; padding: 12px 16px; min-width: 100px; }
+.conv-node .num { font-size: 22px; font-weight: 700; color: #f8fafc; }
+.conv-node .lbl { font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-top: 2px; }
+.conv-arrow { color: #475569; font-size: 20px; padding: 0 4px; }
+.conv-rate { font-size: 11px; color: #4ade80; font-weight: 600; background: #14532d; padding: 2px 6px; border-radius: 3px; margin-top: 4px; display: inline-block; }
 {% endblock %}
 
 {% block content %}
-<h2 style="font-size:24px;color:#f8fafc;margin-bottom:24px">Reports & Analytics</h2>
+<div class="page-header">
+    <h2>Reports & Analytics</h2>
+    <p>Pipeline performance, outreach metrics, and lead intelligence</p>
+</div>
 
+<!-- KPI Row -->
 <div class="kpi-grid">
     <div class="kpi">
         <div class="label">Total Leads</div>
@@ -40,7 +73,7 @@
     <div class="kpi">
         <div class="label">Without Website</div>
         <div class="value" style="color:#4ade80">{{ stats.no_website }}</div>
-        <div class="pct">{{ ((stats.no_website / stats.total * 100) if stats.total > 0 else 0) | round(1) }}% of total</div>
+        <div class="pct">{{ ((stats.no_website / stats.total * 100) if stats.total > 0 else 0) | round(1) }}%</div>
     </div>
     <div class="kpi">
         <div class="label">Contact Rate</div>
@@ -51,16 +84,16 @@
         <div class="value" style="color:#a78bfa">{{ stats.conversion_rate }}%</div>
     </div>
     <div class="kpi">
-        <div class="label">High Priority</div>
-        <div class="value" style="color:#fb923c">{{ stats.high_priority }}</div>
-    </div>
-    <div class="kpi">
-        <div class="label">Followups Due</div>
-        <div class="value" style="color:#f87171">{{ stats.needs_followup }}</div>
-    </div>
-    <div class="kpi">
         <div class="label">With Email</div>
         <div class="value" style="color:#60a5fa">{{ stats.with_email }}</div>
+    </div>
+    <div class="kpi">
+        <div class="label">With Phone</div>
+        <div class="value" style="color:#22d3ee">{{ stats.with_phone }}</div>
+    </div>
+    <div class="kpi">
+        <div class="label">High Priority</div>
+        <div class="value" style="color:#fb923c">{{ stats.high_priority }}</div>
     </div>
     <div class="kpi">
         <div class="label">Emails Sent</div>
@@ -68,65 +101,184 @@
     </div>
 </div>
 
-<div class="card">
-    <h3>Sales Funnel</h3>
-    <div class="funnel">
-        <div class="funnel-stage"><span>New</span><span>{{ stats.by_status.get('new', 0) }}</span></div>
-        <div class="funnel-stage"><span>Contacted</span><span>{{ stats.by_status.get('contacted', 0) }}</span></div>
-        <div class="funnel-stage"><span>Responded</span><span>{{ stats.by_status.get('responded', 0) }}</span></div>
-        <div class="funnel-stage"><span>Qualified</span><span>{{ stats.by_status.get('qualified', 0) }}</span></div>
-        <div class="funnel-stage"><span>Proposal</span><span>{{ stats.by_status.get('proposal', 0) }}</span></div>
-        <div class="funnel-stage"><span>Won</span><span>{{ stats.by_status.get('won', 0) }}</span></div>
-        <div class="funnel-stage"><span>Lost</span><span>{{ stats.by_status.get('lost', 0) }}</span></div>
+<!-- Conversion Flow (loaded via API) -->
+<div class="card" style="margin-bottom:24px">
+    <h3 style="margin-bottom:16px">Conversion Flow</h3>
+    <div class="conv-flow" id="convFlow">
+        <div style="color:#64748b;font-size:13px">Loading analytics...</div>
     </div>
 </div>
 
+<!-- Funnel + Email Activity -->
 <div class="two-col">
     <div class="card">
-        <h3>Leads by Category</h3>
+        <h3 style="margin-bottom:16px">Sales Funnel</h3>
+        <div class="funnel" id="funnelChart">
+            {% set stage_colors = ['#3b82f6', '#2563eb', '#1d4ed8', '#1e40af', '#8b5cf6', '#15803d', '#64748b'] %}
+            {% set stage_widths = [100, 88, 72, 58, 44, 32, 24] %}
+            {% for stage in ['new', 'contacted', 'responded', 'qualified', 'proposal', 'won', 'lost'] %}
+            <div class="funnel-stage" style="background:{{ stage_colors[loop.index0] }};width:{{ stage_widths[loop.index0] }}%;max-width:600px">
+                <span>{{ stage | capitalize }}</span>
+                <span>{{ stats.by_status.get(stage, 0) }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-bottom:8px">Email Activity (30 days)</h3>
+        <div style="font-size:12px;color:#64748b;margin-bottom:12px" id="emailSummary">Loading...</div>
+        <div class="email-chart" id="emailChart">
+            <div style="color:#64748b;font-size:12px;display:flex;align-items:center;width:100%;justify-content:center">Loading chart data...</div>
+        </div>
+    </div>
+</div>
+
+<!-- ICP Score Distribution + Campaign Performance -->
+<div class="two-col">
+    <div class="card">
+        <h3 style="margin-bottom:16px">ICP Score Distribution</h3>
+        <div style="font-size:13px;color:#94a3b8;margin-bottom:12px">Average ICP Score: <span id="avgIcp" style="color:#f8fafc;font-weight:700">—</span></div>
+        <div class="score-grid" id="scoreGrid">
+            <div class="score-bucket" style="border-bottom:3px solid #ef4444"><div class="num">—</div><div class="lbl">0-25</div></div>
+            <div class="score-bucket" style="border-bottom:3px solid #f97316"><div class="num">—</div><div class="lbl">26-50</div></div>
+            <div class="score-bucket" style="border-bottom:3px solid #3b82f6"><div class="num">—</div><div class="lbl">51-75</div></div>
+            <div class="score-bucket" style="border-bottom:3px solid #22c55e"><div class="num">—</div><div class="lbl">76-100</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-bottom:16px">Leads Discovered (by week)</h3>
+        <div class="email-chart" id="weeklyChart" style="height:100px">
+            <div style="color:#64748b;font-size:12px;display:flex;align-items:center;width:100%;justify-content:center">Loading...</div>
+        </div>
+    </div>
+</div>
+
+<!-- Category + Source + Geography -->
+<div class="two-col">
+    <div class="card">
+        <h3 style="margin-bottom:16px">Leads by Category</h3>
         <div class="bar-chart">
             {% set max_cat = stats.by_category.values() | list | max if stats.by_category else 1 %}
             {% for cat, count in stats.by_category.items() %}
             <div class="bar-row">
                 <div class="bar-label">{{ cat }}</div>
                 <div class="bar-track">
-                    <div class="bar-fill" style="width: {{ (count / max_cat * 100) | round }}%">{{ count }}</div>
+                    <div class="bar-fill b{{ loop.index0 % 8 }}" style="width: {{ (count / max_cat * 100) | round }}%"></div>
                 </div>
+                <div class="bar-count">{{ count }}</div>
             </div>
             {% endfor %}
-            {% if not stats.by_category %}<div style="color:#64748b">No data</div>{% endif %}
+            {% if not stats.by_category %}<div style="color:#64748b;font-size:13px">No data</div>{% endif %}
         </div>
     </div>
 
     <div class="card">
-        <h3>Leads by Source</h3>
+        <h3 style="margin-bottom:16px">Leads by Source</h3>
         <div class="bar-chart">
             {% set max_src = stats.by_source.values() | list | max if stats.by_source else 1 %}
             {% for src, count in stats.by_source.items() %}
             <div class="bar-row">
                 <div class="bar-label" style="font-size:12px">{{ src[:25] }}</div>
                 <div class="bar-track">
-                    <div class="bar-fill" style="width: {{ (count / max_src * 100) | round }}%">{{ count }}</div>
+                    <div class="bar-fill b{{ loop.index0 % 8 }}" style="width: {{ (count / max_src * 100) | round }}%"></div>
                 </div>
+                <div class="bar-count">{{ count }}</div>
             </div>
             {% endfor %}
-            {% if not stats.by_source %}<div style="color:#64748b">No data</div>{% endif %}
+            {% if not stats.by_source %}<div style="color:#64748b;font-size:13px">No data</div>{% endif %}
         </div>
     </div>
 </div>
 
-<div class="card">
-    <h3>Geographic Distribution</h3>
+<div class="card" style="margin-bottom:24px">
+    <h3 style="margin-bottom:16px">Geographic Distribution</h3>
     <div class="bar-chart">
         {% set max_state = stats.by_state.values() | list | max if stats.by_state else 1 %}
         {% for state, count in stats.by_state.items() %}
         <div class="bar-row">
             <div class="bar-label">{{ state }}</div>
             <div class="bar-track">
-                <div class="bar-fill" style="width: {{ (count / max_state * 100) | round }}%">{{ count }}</div>
+                <div class="bar-fill b{{ loop.index0 % 8 }}" style="width: {{ (count / max_state * 100) | round }}%"></div>
             </div>
+            <div class="bar-count">{{ count }}</div>
         </div>
         {% endfor %}
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadAnalytics() {
+    try {
+        const resp = await fetch('/api/analytics/funnel');
+        const data = await resp.json();
+
+        // Conversion flow
+        const pc = data.pipeline_counts || {};
+        const cr = data.conversion_rates || {};
+        const flow = document.getElementById('convFlow');
+        const stages = [
+            { key: 'new', label: 'New', count: pc.new || 0 },
+            { key: 'contacted', label: 'Contacted', count: pc.contacted || 0, rate: cr.new_to_contacted },
+            { key: 'responded', label: 'Responded', count: pc.responded || 0, rate: cr.contacted_to_responded },
+            { key: 'qualified', label: 'Qualified', count: pc.qualified || 0, rate: cr.responded_to_qualified },
+            { key: 'won', label: 'Won', count: pc.won || 0, rate: cr.qualified_to_won },
+        ];
+        let flowHtml = '';
+        stages.forEach((s, i) => {
+            if (i > 0) flowHtml += `<div class="conv-arrow">&#8594;</div>`;
+            flowHtml += `<div class="conv-node">
+                <div class="num">${s.count}</div>
+                <div class="lbl">${s.label}</div>
+                ${s.rate !== undefined ? `<div class="conv-rate">${s.rate}%</div>` : ''}
+            </div>`;
+        });
+        flow.innerHTML = flowHtml;
+
+        // Email activity
+        const emailDays = data.emails_by_day || [];
+        const emailChart = document.getElementById('emailChart');
+        const emailSummary = document.getElementById('emailSummary');
+        emailSummary.textContent = `${data.emails_sent || 0} total sent | ${data.emails_this_week || 0} this week | ${data.emails_today || 0} today`;
+
+        if (emailDays.length > 0) {
+            const maxEmail = Math.max(...emailDays.map(d => d.count), 1);
+            emailChart.innerHTML = emailDays.map(d => {
+                const h = Math.max((d.count / maxEmail) * 100, 4);
+                return `<div class="email-bar" style="height:${h}%"><div class="tip">${d.day}: ${d.count} sent</div></div>`;
+            }).join('');
+        } else {
+            emailChart.innerHTML = '<div style="color:#64748b;font-size:12px;display:flex;align-items:center;width:100%;justify-content:center">No emails sent in last 30 days</div>';
+        }
+
+        // ICP score distribution
+        const sd = data.score_distribution || {};
+        document.getElementById('avgIcp').textContent = Math.round(data.avg_icp_score || 0);
+        const buckets = document.querySelectorAll('#scoreGrid .score-bucket .num');
+        const labels = ['0-25', '26-50', '51-75', '76-100'];
+        labels.forEach((l, i) => { if (buckets[i]) buckets[i].textContent = sd[l] || 0; });
+
+        // Weekly leads chart
+        const weeks = data.leads_by_week || [];
+        const weeklyChart = document.getElementById('weeklyChart');
+        if (weeks.length > 0) {
+            const maxWeek = Math.max(...weeks.map(w => w.count), 1);
+            weeklyChart.innerHTML = weeks.map(w => {
+                const h = Math.max((w.count / maxWeek) * 100, 4);
+                return `<div class="email-bar" style="height:${h}%;background:linear-gradient(to top, #22c55e, #4ade80)"><div class="tip">${w.week}: ${w.count} leads</div></div>`;
+            }).join('');
+        } else {
+            weeklyChart.innerHTML = '<div style="color:#64748b;font-size:12px;display:flex;align-items:center;width:100%;justify-content:center">No recent lead data</div>';
+        }
+
+    } catch(e) {
+        console.error('Analytics error:', e);
+    }
+}
+
+loadAnalytics();
+</script>
 {% endblock %}
