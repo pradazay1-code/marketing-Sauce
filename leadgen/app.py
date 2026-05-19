@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LeadPilot — Lead Generation Dashboard
+AventisAI — 2026 Lead Generation CRM
 Full-featured Flask app: dashboard, leads, pipeline, map, reports, activities.
 """
 
@@ -49,7 +49,7 @@ def check_auth(f):
             return f(*args, **kwargs)
         return Response(
             "Login required", 401,
-            {"WWW-Authenticate": 'Basic realm="LeadPilot"'}
+            {"WWW-Authenticate": 'Basic realm="AventisAI"'}
         )
     return decorated
 
@@ -640,7 +640,7 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=5000)
     parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
-    print(f"\n  LeadPilot — Lead Generation Dashboard")
+    print(f"\n  AventisAI — 2026 Lead Generation CRM")
     print(f"  http://localhost:{args.port}")
     print(f"  Auth: {'ON' if DASHBOARD_PASSWORD else 'OFF (set DASHBOARD_PASSWORD env var)'}")
     print()

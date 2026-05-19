@@ -1,6 +1,6 @@
 {% extends "_layout.html" %}
 {% set active = "email" %}
-{% block title %}Email — LeadPilot{% endblock %}
+{% block title %}Email — AventisAI{% endblock %}
 
 {% block extra_css %}
 .email-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
@@ -152,7 +152,7 @@
             <input type="password" id="smtpPass" placeholder="Enter to update (leave blank to keep current)">
             <div class="hint">For Gmail: use an App Password, not your regular password. Go to myaccount.google.com > Security > App Passwords.</div>
             <label>From Name</label>
-            <input type="text" id="smtpFromName" value="{{ settings.from_name or 'LeadPilot' }}" placeholder="Your Agency Name">
+            <input type="text" id="smtpFromName" value="{{ settings.from_name or 'AventisAI' }}" placeholder="Your Agency Name">
             <label>From Email</label>
             <input type="email" id="smtpFromEmail" value="{{ settings.from_email or '' }}" placeholder="your@email.com">
             <button class="btn btn-primary" style="margin-top:16px" onclick="saveSettings()">Save Settings</button>
