@@ -507,9 +507,14 @@ def get_stats():
     stats["new_today"] = conn.execute(
         "SELECT COUNT(*) FROM leads WHERE date_found = ?", (date.today().isoformat(),)
     ).fetchone()[0]
-    stats["new_this_week"] = conn.execute(
-        "SELECT COUNT(*) FROM leads WHERE date_found >= date('now', '-7 days')"
-    ).fetchone()[0]
+    if isinstance(conn, PGConnection):
+        stats["new_this_week"] = conn.execute(
+            "SELECT COUNT(*) FROM leads WHERE date_found != '' AND date_found::date >= CURRENT_DATE - INTERVAL '7 days'"
+        ).fetchone()[0]
+    else:
+        stats["new_this_week"] = conn.execute(
+            "SELECT COUNT(*) FROM leads WHERE date_found >= date('now', '-7 days')"
+        ).fetchone()[0]
     stats["contacted"] = conn.execute("SELECT COUNT(*) FROM leads WHERE contacted = 1 OR status != 'new'").fetchone()[0]
     stats["high_priority"] = conn.execute("SELECT COUNT(*) FROM leads WHERE priority = 'high'").fetchone()[0]
     stats["needs_followup"] = conn.execute(
@@ -981,17 +986,30 @@ def get_funnel_analytics():
 
     if table_exists(conn, "email_log"):
         analytics["emails_sent"] = conn.execute("SELECT COUNT(*) FROM email_log").fetchone()[0]
-        analytics["emails_today"] = conn.execute(
-            "SELECT COUNT(*) FROM email_log WHERE sent_at >= date('now')"
-        ).fetchone()[0]
-        analytics["emails_this_week"] = conn.execute(
-            "SELECT COUNT(*) FROM email_log WHERE sent_at >= date('now', '-7 days')"
-        ).fetchone()[0]
-        analytics["emails_by_day"] = []
-        for row in conn.execute(
-            "SELECT date(sent_at) as day, COUNT(*) as cnt FROM email_log WHERE sent_at >= date('now', '-30 days') GROUP BY date(sent_at) ORDER BY day"
-        ).fetchall():
-            analytics["emails_by_day"].append({"day": row[0], "count": row[1]})
+        if isinstance(conn, PGConnection):
+            analytics["emails_today"] = conn.execute(
+                "SELECT COUNT(*) FROM email_log WHERE sent_at::date >= CURRENT_DATE"
+            ).fetchone()[0]
+            analytics["emails_this_week"] = conn.execute(
+                "SELECT COUNT(*) FROM email_log WHERE sent_at::date >= CURRENT_DATE - INTERVAL '7 days'"
+            ).fetchone()[0]
+            analytics["emails_by_day"] = []
+            for row in conn.execute(
+                "SELECT sent_at::date as day, COUNT(*) as cnt FROM email_log WHERE sent_at::date >= CURRENT_DATE - INTERVAL '30 days' GROUP BY sent_at::date ORDER BY day"
+            ).fetchall():
+                analytics["emails_by_day"].append({"day": str(row[0]), "count": row[1]})
+        else:
+            analytics["emails_today"] = conn.execute(
+                "SELECT COUNT(*) FROM email_log WHERE sent_at >= date('now')"
+            ).fetchone()[0]
+            analytics["emails_this_week"] = conn.execute(
+                "SELECT COUNT(*) FROM email_log WHERE sent_at >= date('now', '-7 days')"
+            ).fetchone()[0]
+            analytics["emails_by_day"] = []
+            for row in conn.execute(
+                "SELECT date(sent_at) as day, COUNT(*) as cnt FROM email_log WHERE sent_at >= date('now', '-30 days') GROUP BY date(sent_at) ORDER BY day"
+            ).fetchall():
+                analytics["emails_by_day"].append({"day": row[0], "count": row[1]})
     else:
         analytics["emails_sent"] = 0
         analytics["emails_today"] = 0
@@ -1007,11 +1025,19 @@ def get_funnel_analytics():
         analytics["campaign_performance"] = []
 
     analytics["leads_by_week"] = []
-    for row in conn.execute("""
-        SELECT strftime('%Y-W%W', date_found) as week, COUNT(*) as cnt
-        FROM leads WHERE date_found >= date('now', '-90 days') AND date_found != ''
-        GROUP BY week ORDER BY week
-    """).fetchall():
+    if isinstance(conn, PGConnection):
+        week_query = """
+            SELECT TO_CHAR(date_found::date, 'IYYY-"W"IW') as week, COUNT(*) as cnt
+            FROM leads WHERE date_found::date >= CURRENT_DATE - INTERVAL '90 days' AND date_found != ''
+            GROUP BY week ORDER BY week
+        """
+    else:
+        week_query = """
+            SELECT strftime('%Y-W%W', date_found) as week, COUNT(*) as cnt
+            FROM leads WHERE date_found >= date('now', '-90 days') AND date_found != ''
+            GROUP BY week ORDER BY week
+        """
+    for row in conn.execute(week_query).fetchall():
         analytics["leads_by_week"].append({"week": row[0], "count": row[1]})
 
     analytics["avg_icp_score"] = conn.execute(

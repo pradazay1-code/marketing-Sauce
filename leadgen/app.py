@@ -201,6 +201,9 @@ def api_get_lead(lead_id):
 @app.route("/api/leads/<int:lead_id>", methods=["PUT"])
 @check_auth
 def api_update_lead(lead_id):
+    lead = get_lead_by_id(lead_id)
+    if not lead:
+        return jsonify({"error": "Lead not found"}), 404
     data = request.get_json()
     if not data:
         return jsonify({"error": "No data provided"}), 400

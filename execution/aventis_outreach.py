@@ -384,7 +384,6 @@ def log_send_intent(draft):
             to_email=draft["to_email"],
             subject=draft["subject"],
             body=draft["body"],
-            status="drafted",
         )
         add_activity(
             lead_id=draft["lead_id"],

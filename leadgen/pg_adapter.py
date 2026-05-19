@@ -79,6 +79,12 @@ def _convert_sql(sql):
         return "SELECT 1"
     sql = re.sub(r"date\('now',\s*'-(\d+) days'\)", r"CURRENT_DATE - INTERVAL '\1 days'", sql)
     sql = re.sub(r"date\('now'\)", "CURRENT_DATE", sql)
+    sql = re.sub(r"\bdate\((\w+)\)", r"CAST(\1 AS DATE)", sql)
+    sql = re.sub(
+        r"strftime\('[^']+',\s*(\w+)\)",
+        r"TO_CHAR(CAST(\1 AS DATE), 'IYYY-\"W\"IW')",
+        sql,
+    )
     sql = re.sub(
         r"INSERT\s+OR\s+IGNORE\s+INTO\s+(\S+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)",
         r"INSERT INTO \1 (\2) VALUES (\3) ON CONFLICT DO NOTHING",

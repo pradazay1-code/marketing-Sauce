@@ -211,25 +211,6 @@
             <label>Category</label>
             <select id="filterCategory" onchange="loadLeads()">
                 <option value="">All Categories</option>
-                <option value="Restaurant/Food">Restaurant/Food</option>
-                <option value="Barbershop">Barbershop</option>
-                <option value="Salon/Beauty">Salon/Beauty</option>
-                <option value="Auto Services">Auto Services</option>
-                <option value="Construction/Contractor">Construction/Contractor</option>
-                <option value="Landscaping">Landscaping</option>
-                <option value="Cleaning Services">Cleaning Services</option>
-                <option value="Tattoo/Piercing">Tattoo/Piercing</option>
-                <option value="Photography">Photography</option>
-                <option value="Gym/Fitness">Gym/Fitness</option>
-                <option value="Pet Services">Pet Services</option>
-                <option value="Events/Entertainment">Events/Entertainment</option>
-                <option value="Lawyer/Attorney">Lawyer/Attorney</option>
-                <option value="Real Estate">Real Estate</option>
-                <option value="Home Services">Home Services</option>
-                <option value="Healthcare/Wellness">Healthcare/Wellness</option>
-                <option value="Retail/Boutique">Retail/Boutique</option>
-                <option value="Bar/Brewery">Bar/Brewery</option>
-                <option value="Other">Other</option>
             </select>
         </div>
         <div class="filter-group">
@@ -410,6 +391,11 @@ let currentSort = 'lead_score', currentDir = 'DESC', currentOffset = 0;
 const pageSize = 100;
 let selectedIds = new Set();
 let totalLeads = 0;
+
+fetch('/api/categories').then(r=>r.json()).then(cats => {
+    const sel = document.getElementById('filterCategory');
+    cats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+});
 
 /* ── Tag colors ── */
 const TAG_COLORS = 6;

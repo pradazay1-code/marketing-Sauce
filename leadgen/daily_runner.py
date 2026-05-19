@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LeadPilot — Daily Lead Generation Runner. All free sources, no API keys.
+AventisAI — Daily Lead Generation Runner. All free sources, no API keys.
 
 Sources:
   1. OpenStreetMap Overpass — free, returns phone+website for established businesses
@@ -270,7 +270,7 @@ def import_all_existing_csvs():
 def print_daily_report():
     stats = get_stats()
     print("\n" + "=" * 60)
-    print(f"  LEADPILOT DAILY REPORT — {date.today()}")
+    print(f"  AVENTISAI DAILY REPORT — {date.today()}")
     print("=" * 60)
     print(f"  Total leads:              {stats['total']}")
     print(f"  Without website:          {stats['no_website']}")
@@ -295,7 +295,7 @@ def print_daily_report():
 
 
 def main():
-    parser = argparse.ArgumentParser(description="LeadPilot — Daily Lead Generator")
+    parser = argparse.ArgumentParser(description="AventisAI — Daily Lead Generator")
     parser.add_argument("--state", choices=["MA", "RI", "CT"], help="Target single state")
     parser.add_argument("--source", choices=["overpass", "nominatim", "yp", "sos", "all"],
                         default="all", help="Data source")
@@ -312,7 +312,7 @@ def main():
 
     init_db()
 
-    print(f"LeadPilot — Lead Generator (FREE sources)")
+    print(f"AventisAI — Lead Generator (FREE sources)")
     print(f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"Source: {args.source}")
 
