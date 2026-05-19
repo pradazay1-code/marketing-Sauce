@@ -1,12 +1,28 @@
 services:
   - type: web
-    name: leadpilot
+    name: aventisai-crm
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn leadgen.app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    plan: free
     envVars:
       - key: PYTHON_VERSION
         value: "3.11"
+      - key: DATABASE_URL
+        sync: false
       - key: DASHBOARD_PASSWORD
         sync: false
-    plan: free
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: GOOGLE_PLACES_API_KEY
+        sync: false
+      - key: HUNTER_API_KEY
+        sync: false
+      - key: AVENTIS_SENDER_NAME
+        sync: false
+      - key: AVENTIS_SENDER_EMAIL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+    healthCheckPath: /api/health
+    autoDeploy: true
