@@ -25,7 +25,7 @@ from urllib.parse import quote_plus
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                  "(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 LeadPilot/1.0",
+                  "(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 AventisAI/1.0",
     "Accept": "application/json, text/html;q=0.9",
 }
 

@@ -21,17 +21,36 @@ ALLOWED_COLUMNS = {
 PIPELINE_STAGES = ["new", "contacted", "responded", "qualified", "proposal", "won", "lost"]
 
 
-_pg_failed = False
+_pg_consecutive_errors = 0
+_pg_max_retries = 3
 
 
 def get_db():
-    global _pg_failed
-    if is_postgres() and not _pg_failed:
-        try:
-            return get_pg_connection()
-        except Exception as e:
-            _pg_failed = True
-            print(f"[DB] PostgreSQL connection failed, falling back to SQLite: {e}")
+    """Return a database connection.
+
+    If DATABASE_URL is set, ALWAYS use PostgreSQL. We never silently fall
+    back to SQLite when Postgres is configured, because on ephemeral hosts
+    (Render free) that would silently lose all writes. Instead we retry a
+    few times, then raise.
+    """
+    global _pg_consecutive_errors
+    if is_postgres():
+        last_err = None
+        for attempt in range(_pg_max_retries):
+            try:
+                conn = get_pg_connection()
+                _pg_consecutive_errors = 0
+                return conn
+            except Exception as e:
+                last_err = e
+                _pg_consecutive_errors += 1
+                print(f"[DB] PostgreSQL connection failed (attempt {attempt + 1}/{_pg_max_retries}): {str(e)[:200]}")
+        raise RuntimeError(
+            f"PostgreSQL unavailable after {_pg_max_retries} attempts. "
+            f"Refusing to use ephemeral SQLite to prevent data loss. "
+            f"Check DATABASE_URL and Supabase status. Last error: {str(last_err)[:200]}"
+        )
+
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
@@ -263,64 +282,109 @@ def _phone_digits(phone):
     return digits[-10:] if len(digits) >= 10 else ""
 
 
-def add_lead(lead_data, dedupe_by_phone=True):
-    """Add a lead with deduplication by name+city+state AND phone."""
+def _build_phone_index(conn):
+    """Build an in-memory set of all existing 10-digit phone numbers for fast dedup."""
+    index = set()
+    for row in conn.execute("SELECT phone FROM leads WHERE phone != ''").fetchall():
+        digits = _phone_digits(row[0] if not isinstance(row, dict) else row.get("phone", ""))
+        if digits and len(digits) == 10:
+            index.add(digits)
+    return index
+
+
+def add_lead(lead_data, dedupe_by_phone=True, phone_index=None):
+    """Add a lead with deduplication by name+city+state AND phone.
+
+    Pass a precomputed phone_index (set of 10-digit strings) to skip the
+    per-call scan when doing bulk inserts.
+    """
     conn = get_db()
-    biz_name = (lead_data.get("business_name") or "").strip()
-    if not biz_name:
-        conn.close()
-        return None
+    try:
+        biz_name = (lead_data.get("business_name") or "").strip()
+        if not biz_name:
+            return None
 
-    city = (lead_data.get("city") or "").strip()
-    state = (lead_data.get("state") or "").strip()
-    phone_digits = _phone_digits(lead_data.get("phone", ""))
+        city = (lead_data.get("city") or "").strip()
+        state = (lead_data.get("state") or "").strip()
+        phone_digits = _phone_digits(lead_data.get("phone", ""))
 
-    # Dedup 1: exact name + city + state match (case-insensitive)
-    existing = conn.execute(
-        "SELECT id FROM leads WHERE LOWER(business_name) = LOWER(?) AND LOWER(city) = LOWER(?) AND state = ?",
-        (biz_name, city, state)
-    ).fetchone()
-    if existing:
-        conn.close()
-        return None
+        existing = conn.execute(
+            "SELECT id FROM leads WHERE LOWER(business_name) = LOWER(?) AND LOWER(city) = LOWER(?) AND state = ?",
+            (biz_name, city, state)
+        ).fetchone()
+        if existing:
+            return None
 
-    # Dedup 2: phone match (exact last 10 digits)
-    if dedupe_by_phone and phone_digits and len(phone_digits) == 10:
-        all_phones = conn.execute("SELECT id, phone FROM leads WHERE phone != ''").fetchall()
-        for row in all_phones:
-            existing_digits = _phone_digits(row["phone"])
-            if existing_digits == phone_digits:
-                conn.close()
-                return None
+        if dedupe_by_phone and phone_digits and len(phone_digits) == 10:
+            if phone_index is not None:
+                if phone_digits in phone_index:
+                    return None
+            else:
+                hit = conn.execute(
+                    "SELECT 1 FROM leads WHERE phone != '' LIMIT 1"
+                ).fetchone()
+                if hit:
+                    all_phones = conn.execute(
+                        "SELECT phone FROM leads WHERE phone != ''"
+                    ).fetchall()
+                    for row in all_phones:
+                        phone_val = row[0] if not isinstance(row, dict) else row.get("phone", "")
+                        if _phone_digits(phone_val) == phone_digits:
+                            return None
 
-    safe_data = _sanitize_keys(lead_data)
-    safe_data.setdefault("date_found", date.today().isoformat())
-    safe_data["created_at"] = datetime.now().isoformat()
-    safe_data["updated_at"] = datetime.now().isoformat()
+        safe_data = _sanitize_keys(lead_data)
+        safe_data.setdefault("date_found", date.today().isoformat())
+        safe_data["created_at"] = datetime.now().isoformat()
+        safe_data["updated_at"] = datetime.now().isoformat()
 
-    columns = ", ".join(safe_data.keys())
-    placeholders = ", ".join(["?"] * len(safe_data))
-    values = list(safe_data.values())
+        columns = ", ".join(safe_data.keys())
+        placeholders = ", ".join(["?"] * len(safe_data))
+        values = list(safe_data.values())
 
-    cursor = conn.execute(f"INSERT INTO leads ({columns}) VALUES ({placeholders})", values)
-    lead_id = cursor.lastrowid
+        cursor = conn.execute(f"INSERT INTO leads ({columns}) VALUES ({placeholders})", values)
+        lead_id = cursor.lastrowid
 
-    conn.execute(
-        "INSERT INTO activities (lead_id, activity_type, note) VALUES (?, ?, ?)",
-        (lead_id, "created", f"Lead added from {safe_data.get('source', 'manual')}")
-    )
+        conn.execute(
+            "INSERT INTO activities (lead_id, activity_type, note) VALUES (?, ?, ?)",
+            (lead_id, "created", f"Lead added from {safe_data.get('source', 'manual')}")
+        )
 
-    conn.commit()
-    conn.close()
-    return lead_id
+        conn.commit()
+        if phone_index is not None and phone_digits and len(phone_digits) == 10:
+            phone_index.add(phone_digits)
+        return lead_id
+    except Exception:
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        raise
+    finally:
+        try:
+            conn.close()
+        except Exception:
+            pass
 
 
 def add_leads_bulk(leads_list):
+    """Bulk insert with O(n) dedup — loads existing phone index once."""
+    if not leads_list:
+        return 0
+    conn = get_db()
+    try:
+        phone_index = _build_phone_index(conn)
+    finally:
+        conn.close()
+
     added = 0
     for lead in leads_list:
-        result = add_lead(dict(lead))
-        if result:
-            added += 1
+        try:
+            result = add_lead(dict(lead), phone_index=phone_index)
+            if result:
+                added += 1
+        except Exception as e:
+            print(f"[add_leads_bulk] skipping lead due to error: {str(e)[:100]}")
+            continue
     return added
 
 
@@ -371,6 +435,12 @@ def get_leads(filters=None, limit=200, offset=0, sort_by="date_found", sort_dir=
             query += " AND phone != ''"
         if filters.get("has_email"):
             query += " AND email != ''"
+        if filters.get("ids"):
+            id_list = [int(i) for i in filters["ids"] if isinstance(i, int) or (isinstance(i, str) and i.isdigit())]
+            if id_list:
+                placeholders = ", ".join(["?"] * len(id_list))
+                query += f" AND id IN ({placeholders})"
+                params.extend(id_list)
 
     allowed_sorts = {"date_found", "business_name", "city", "state", "lead_score",
                      "marketing_score", "priority", "created_at", "category", "email"}
@@ -435,33 +505,35 @@ def update_lead(lead_id, updates, log_activity=True):
     if not safe_updates:
         return
     conn = get_db()
+    try:
+        existing = conn.execute("SELECT id FROM leads WHERE id = ?", (lead_id,)).fetchone()
+        if not existing:
+            return
 
-    existing = conn.execute("SELECT id FROM leads WHERE id = ?", (lead_id,)).fetchone()
-    if not existing:
+        safe_updates["updated_at"] = datetime.now().isoformat()
+        set_clause = ", ".join([f"{k} = ?" for k in safe_updates.keys()])
+        values = list(safe_updates.values()) + [lead_id]
+        conn.execute(f"UPDATE leads SET {set_clause} WHERE id = ?", values)
+
+        if log_activity and "status" in updates:
+            conn.execute(
+                "INSERT INTO activities (lead_id, activity_type, note) VALUES (?, ?, ?)",
+                (lead_id, "status_change", f"Status changed to {updates['status']}")
+            )
+
+        conn.commit()
+    finally:
         conn.close()
-        return
-
-    safe_updates["updated_at"] = datetime.now().isoformat()
-    set_clause = ", ".join([f"{k} = ?" for k in safe_updates.keys()])
-    values = list(safe_updates.values()) + [lead_id]
-    conn.execute(f"UPDATE leads SET {set_clause} WHERE id = ?", values)
-
-    if log_activity and "status" in updates:
-        conn.execute(
-            "INSERT INTO activities (lead_id, activity_type, note) VALUES (?, ?, ?)",
-            (lead_id, "status_change", f"Status changed to {updates['status']}")
-        )
-
-    conn.commit()
-    conn.close()
 
 
 def delete_lead(lead_id):
     conn = get_db()
-    conn.execute("DELETE FROM activities WHERE lead_id = ?", (lead_id,))
-    conn.execute("DELETE FROM leads WHERE id = ?", (lead_id,))
-    conn.commit()
-    conn.close()
+    try:
+        conn.execute("DELETE FROM activities WHERE lead_id = ?", (lead_id,))
+        conn.execute("DELETE FROM leads WHERE id = ?", (lead_id,))
+        conn.commit()
+    finally:
+        conn.close()
 
 
 def add_activity(lead_id, activity_type, note=""):

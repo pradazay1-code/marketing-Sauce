@@ -33,8 +33,15 @@ from email_service import send_email, send_bulk_emails, render_template as rende
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", os.urandom(24).hex())
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16 MB upload cap
 
 DASHBOARD_PASSWORD = os.getenv("DASHBOARD_PASSWORD", "")
+MAX_CSV_LEADS = 25000
+
+
+@app.errorhandler(413)
+def request_too_large(e):
+    return jsonify({"error": "Upload exceeds 16 MB limit"}), 413
 
 with app.app_context():
     init_db()
@@ -167,6 +174,9 @@ def api_leads():
 
     if request.args.get("has_phone") == "1":
         filters["has_phone"] = True
+
+    if request.args.get("has_email") == "1":
+        filters["has_email"] = True
 
     if request.args.get("min_score"):
         try:
@@ -316,6 +326,14 @@ def api_export():
     if request.args.get("has_website") not in (None, ""):
         filters["has_website"] = request.args.get("has_website") == "1"
 
+    ids_param = request.args.get("ids", "").strip()
+    if ids_param:
+        try:
+            id_list = [int(x) for x in ids_param.split(",") if x.strip().isdigit()]
+            filters["ids"] = id_list[:10000]
+        except (ValueError, TypeError):
+            pass
+
     csv_data = export_csv(filters)
     return Response(
         csv_data,
@@ -429,9 +447,10 @@ def api_test_scrape():
             "error": error,
         })
     except Exception as e:
+        print(f"[test-scrape] error: {e}")
         return jsonify({
             "success": False,
-            "error": str(e)[:300],
+            "error": "Test scrape failed — the data source may be temporarily unavailable. Try a different source.",
             "leads": [],
             "count": 0,
         }), 500
@@ -455,7 +474,11 @@ def api_import_csv():
 
     reader = csv.DictReader(io.StringIO(content))
     leads = []
-    for row in reader:
+    for i, row in enumerate(reader):
+        if i >= MAX_CSV_LEADS:
+            return jsonify({
+                "error": f"CSV exceeds {MAX_CSV_LEADS}-lead limit per import. Split into smaller files."
+            }), 400
         has_website_raw = row.get("has_website", "No").strip().lower()
         has_website = 1 if has_website_raw in ("yes", "basic", "1", "true") else 0
         lead = {
@@ -742,7 +765,28 @@ def api_campaign_save():
 
 @app.route("/api/health")
 def api_health():
-    return jsonify({"status": "ok", "timestamp": datetime.now().isoformat()})
+    db_ok = False
+    db_kind = "postgres" if os.environ.get("DATABASE_URL") else "sqlite"
+    try:
+        from database import get_db
+        conn = get_db()
+        conn.execute("SELECT 1").fetchone()
+        conn.close()
+        db_ok = True
+    except Exception as e:
+        return jsonify({
+            "status": "degraded",
+            "database": db_kind,
+            "db_ok": False,
+            "error": str(e)[:200],
+            "timestamp": datetime.now().isoformat(),
+        }), 503
+    return jsonify({
+        "status": "ok",
+        "database": db_kind,
+        "db_ok": db_ok,
+        "timestamp": datetime.now().isoformat(),
+    })
 
 
 if __name__ == "__main__":

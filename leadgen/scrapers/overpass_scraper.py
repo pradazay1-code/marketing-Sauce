@@ -1,5 +1,5 @@
 """
-LeadPilot — OpenStreetMap Overpass scraper. 100% FREE, no API key.
+AventisAI — OpenStreetMap Overpass scraper. 100% FREE, no API key.
 
 Hardened against the common production failures:
   - 403/429 rate limiting -> rotates across 5 mirrors, exponential backoff
@@ -17,7 +17,7 @@ from collections import defaultdict
 # Browser-like User-Agent + valid contact email per Overpass etiquette.
 # Servers will reject requests without a proper UA (HTTP 403).
 HEADERS = {
-    "User-Agent": "LeadPilot/2.0 (lead-generation; contact@aventismarketing.com)",
+    "User-Agent": "AventisAI/2.0 (lead-generation; contact@aventismarketing.com)",
     "Accept": "application/json,text/plain,*/*",
     "Accept-Encoding": "gzip, deflate",
 }

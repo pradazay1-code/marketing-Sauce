@@ -276,6 +276,13 @@ async function loadAnalytics() {
 
     } catch(e) {
         console.error('Analytics error:', e);
+        const errMsg = `<div style="color:#f87171;font-size:13px;padding:16px;text-align:center">Could not load analytics: ${e.message || 'network error'}. <br><a href="javascript:loadAnalytics()" style="color:#60a5fa">Retry</a></div>`;
+        ['convFlow','emailChart','weeklyChart'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = errMsg;
+        });
+        const summary = document.getElementById('emailSummary');
+        if (summary) summary.textContent = 'Unable to load analytics';
     }
 }
 

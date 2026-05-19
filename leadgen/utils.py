@@ -1,5 +1,5 @@
 """
-LeadPilot — Utility functions.
+AventisAI — Utility functions.
 Phone normalization, email validation, lead scoring, enrichment.
 """
 

@@ -272,7 +272,7 @@ async function bulkSend() {
 
     const lResp = await fetch('/api/leads?' + params.toString());
     const lData = await lResp.json();
-    const ids = lData.leads.map(l => l.id);
+    const ids = (lData.leads || []).filter(l => l.email && l.email.trim()).map(l => l.id);
 
     if (!ids.length) { showToast('No matching leads with email'); return; }
 

@@ -1,5 +1,5 @@
 """
-LeadPilot — Nominatim search-based scraper. 100% FREE, no API key.
+AventisAI — Nominatim search-based scraper. 100% FREE, no API key.
 
 Uses OpenStreetMap's Nominatim search API to find businesses by category+city.
 This is a reliable fallback when Overpass is rate-limited because:
@@ -14,7 +14,7 @@ import requests
 import time
 
 HEADERS = {
-    "User-Agent": "LeadPilot/2.0 (lead-generation; contact@aventismarketing.com)",
+    "User-Agent": "AventisAI/2.0 (lead-generation; contact@aventismarketing.com)",
     "Accept": "application/json",
 }
 
@@ -69,13 +69,22 @@ def nominatim_search(query, limit=15):
         "namedetails": 1,
         "countrycodes": "us",
     }
-    try:
-        resp = requests.get(NOMINATIM_URL, params=params, headers=HEADERS, timeout=20)
-        if resp.status_code == 200:
-            return resp.json(), None
-        return [], f"HTTP {resp.status_code}"
-    except requests.RequestException as e:
-        return [], str(e)[:100]
+    last_err = None
+    for attempt in range(3):
+        try:
+            resp = requests.get(NOMINATIM_URL, params=params, headers=HEADERS, timeout=20)
+            if resp.status_code == 200:
+                return resp.json(), None
+            if resp.status_code in (429, 503):
+                wait = 2 ** attempt
+                time.sleep(wait)
+                last_err = f"HTTP {resp.status_code}, retried"
+                continue
+            return [], f"HTTP {resp.status_code}"
+        except requests.RequestException as e:
+            last_err = str(e)[:100]
+            time.sleep(2 ** attempt)
+    return [], last_err or "Failed after retries"
 
 
 def parse_result(item, fallback_city, state, our_category):

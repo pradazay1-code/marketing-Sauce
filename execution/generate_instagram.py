@@ -2,7 +2,7 @@
 """
 Instagram Content Generator — Execution Script
 Generates Instagram-ready content: posts, carousels, reels, stories, calendars.
-Works standalone or integrated with the LeadPilot dashboard.
+Works standalone or integrated with the AventisAI dashboard.
 """
 
 import argparse
