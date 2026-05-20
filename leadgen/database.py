@@ -24,17 +24,16 @@ PIPELINE_STAGES = ["new", "contacted", "responded", "qualified", "proposal", "wo
 
 _pg_consecutive_errors = 0
 _pg_max_retries = 3
+_pg_fallback_warned = False
 
 
 def get_db():
     """Return a database connection.
 
-    If DATABASE_URL is set, ALWAYS use PostgreSQL. We never silently fall
-    back to SQLite when Postgres is configured, because on ephemeral hosts
-    (Render free) that would silently lose all writes. Instead we retry a
-    few times, then raise.
+    If DATABASE_URL is set, try PostgreSQL first. If it fails after retries,
+    fall back to SQLite so the app stays usable (with a warning banner).
     """
-    global _pg_consecutive_errors
+    global _pg_consecutive_errors, _pg_fallback_warned
     if is_postgres():
         last_err = None
         for attempt in range(_pg_max_retries):
@@ -46,11 +45,9 @@ def get_db():
                 last_err = e
                 _pg_consecutive_errors += 1
                 print(f"[DB] PostgreSQL connection failed (attempt {attempt + 1}/{_pg_max_retries}): {str(e)[:200]}")
-        raise RuntimeError(
-            f"PostgreSQL unavailable after {_pg_max_retries} attempts. "
-            f"Refusing to use ephemeral SQLite to prevent data loss. "
-            f"Check DATABASE_URL and Supabase status. Last error: {str(last_err)[:200]}"
-        )
+        if not _pg_fallback_warned:
+            _pg_fallback_warned = True
+            print(f"[DB] WARNING: Falling back to SQLite. Data will NOT persist across restarts. Fix DATABASE_URL to use Postgres.")
 
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row

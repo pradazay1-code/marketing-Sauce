@@ -301,6 +301,15 @@
 {% endblock %}
 
 {% block content %}
+{% if db_warning %}
+<div style="background:#92400e;border:1px solid #f59e0b;border-radius:10px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px">
+    <span style="font-size:22px">&#9888;</span>
+    <div>
+        <strong style="color:#fde68a">Database Fallback Mode</strong>
+        <span style="color:#fcd34d;font-size:13px"> — Using temporary SQLite. Your data will be lost when the server restarts. Fix your DATABASE_URL in Render to connect to Supabase Postgres.</span>
+    </div>
+</div>
+{% endif %}
 <!-- ═══════════ PAGE HEADER ═══════════ -->
 <div class="page-header">
     <h2><span class="dot"></span> Mission Control</h2>

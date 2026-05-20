@@ -110,6 +110,7 @@ def check_auth(f):
 @app.route("/")
 @check_auth
 def dashboard():
+    from database import _pg_fallback_warned
     stats = get_stats()
     logs = get_scrape_logs(10)
     activities = get_recent_activities(10)
@@ -118,8 +119,11 @@ def dashboard():
         filters={"status": "contacted"},
         limit=5, sort_by="date_found", sort_dir="ASC"
     )
+    pg_configured = bool(os.environ.get("DATABASE_URL"))
+    db_warning = (pg_configured and _pg_fallback_warned)
     return render_template("dashboard.html", stats=stats, logs=logs, activities=activities,
-                           recent_leads=recent_leads, followup_leads=followup_leads)
+                           recent_leads=recent_leads, followup_leads=followup_leads,
+                           db_warning=db_warning)
 
 
 @app.route("/leads")
@@ -935,10 +939,12 @@ def api_map_data():
 
 @app.route("/api/health")
 def api_health():
+    from database import _pg_fallback_warned
     db_ok = False
-    db_kind = "postgres" if os.environ.get("DATABASE_URL") else "sqlite"
+    pg_configured = bool(os.environ.get("DATABASE_URL"))
+    using_fallback = pg_configured and _pg_fallback_warned
+    db_kind = "sqlite-fallback" if using_fallback else ("postgres" if pg_configured else "sqlite")
     try:
-        from database import get_db
         conn = get_db()
         conn.execute("SELECT 1").fetchone()
         conn.close()
@@ -951,12 +957,16 @@ def api_health():
             "error": str(e)[:200],
             "timestamp": datetime.now().isoformat(),
         }), 503
-    return jsonify({
-        "status": "ok",
+    status = "fallback" if using_fallback else "ok"
+    resp = {
+        "status": status,
         "database": db_kind,
         "db_ok": db_ok,
         "timestamp": datetime.now().isoformat(),
-    })
+    }
+    if using_fallback:
+        resp["warning"] = "Using temporary SQLite. Fix DATABASE_URL to use Postgres for persistent data."
+    return jsonify(resp)
 
 
 if __name__ == "__main__":
