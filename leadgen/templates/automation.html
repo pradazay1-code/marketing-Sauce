@@ -58,7 +58,11 @@
     <div class="card">
         <h3 style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
             <span id="autoStatus"><span class="status-dot off"></span> Automation</span>
+            <span id="schedulerBadge" style="font-size:11px;padding:3px 8px;border-radius:4px;margin-left:auto;background:#14532d;color:#4ade80;display:none">Scheduler Running</span>
         </h3>
+        <div id="schedulerInfo" style="font-size:12px;color:#64748b;margin-bottom:12px;display:none">
+            Last run: <span id="lastRunTime">—</span>
+        </div>
 
         <div class="config-row">
             <label>Auto-Discovery</label>
@@ -203,6 +207,28 @@ async function loadConfig() {
         if (cfg.discovery_enabled || cfg.sequence_enabled) {
             dot.classList.remove('off');
             dot.classList.add('on');
+        }
+    } catch(e) {}
+
+    try {
+        const statusResp = await fetch('/api/automation/status');
+        const status = await statusResp.json();
+        const badge = document.getElementById('schedulerBadge');
+        const info = document.getElementById('schedulerInfo');
+        if (status.scheduler_running) {
+            badge.style.display = 'inline';
+            badge.textContent = 'Scheduler Active';
+            badge.style.background = '#14532d';
+            badge.style.color = '#4ade80';
+        } else {
+            badge.style.display = 'inline';
+            badge.textContent = 'Scheduler Off';
+            badge.style.background = '#7f1d1d';
+            badge.style.color = '#fca5a5';
+        }
+        if (status.scheduler_last_run) {
+            info.style.display = 'block';
+            document.getElementById('lastRunTime').textContent = status.scheduler_last_run.substring(0, 19);
         }
     } catch(e) {}
 }

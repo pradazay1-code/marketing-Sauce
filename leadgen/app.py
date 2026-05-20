@@ -27,8 +27,9 @@ from database import (
     save_email_template, get_email_templates, get_email_template, delete_email_template,
     get_email_log, log_email, get_recent_leads,
     get_campaigns, save_campaign, get_automation_jobs, get_funnel_analytics,
+    wipe_all_leads,
 )
-from utils import enrich_lead, normalize_phone, is_valid_phone, is_valid_email, calculate_lead_score
+from utils import enrich_lead, normalize_phone
 from email_service import send_email, send_bulk_emails, render_template as render_email_template, DEFAULT_TEMPLATES
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
@@ -45,6 +46,15 @@ def request_too_large(e):
 
 with app.app_context():
     init_db()
+
+# Start automation scheduler as a background thread (checks config before running)
+try:
+    from automation_engine import AutomationScheduler
+    _auto_scheduler = AutomationScheduler(interval_hours=12)
+    _auto_scheduler.start()
+except Exception as e:
+    print(f"[Automation] Scheduler failed to start: {e}")
+    _auto_scheduler = None
 
 
 def check_auth(f):
@@ -123,13 +133,13 @@ def api_content_generate():
     pillar = data.get("pillar")
     city = data.get("city")
     count = min(int(data.get("count", 1)), 30)
-    owner = data.get("owner", "Kunal Patel")
-    brand = data.get("brand", "Akira Real Estate")
+    owner = data.get("owner", "")
+    brand = data.get("brand", "")
 
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), "execution"))
     from generate_instagram import (
         generate_post, generate_carousel, generate_reel,
-        generate_story, generate_calendar, format_calendar_markdown,
+        generate_story, generate_calendar,
     )
 
     if content_type == "post":
@@ -667,7 +677,10 @@ def automation_page():
 @check_auth
 def api_automation_status():
     from automation_engine import get_automation_status
-    return jsonify(get_automation_status())
+    status = get_automation_status()
+    status["scheduler_running"] = _auto_scheduler.running if _auto_scheduler else False
+    status["scheduler_last_run"] = _auto_scheduler.last_run if _auto_scheduler else None
+    return jsonify(status)
 
 
 @app.route("/api/automation/config", methods=["GET"])
@@ -761,6 +774,116 @@ def api_campaign_save():
         return jsonify({"error": "name and campaign_key required"}), 400
     save_campaign(name, key, data.get("target_filters"), data.get("sequence_steps"), data.get("id"))
     return jsonify({"success": True})
+
+
+@app.route("/api/leads/wipe", methods=["POST"])
+@check_auth
+def api_wipe_leads():
+    """Delete ALL leads and related data. Fresh start."""
+    wipe_all_leads()
+    return jsonify({"success": True, "message": "All leads wiped"})
+
+
+# --- City coordinates for map (server-side) ---
+CITY_COORDS = {
+    "Boston,MA":[42.3601,-71.0589],"Worcester,MA":[42.2626,-71.8023],"Springfield,MA":[42.1015,-72.5898],
+    "Brockton,MA":[42.0834,-71.0184],"New Bedford,MA":[41.6362,-70.9342],"Lowell,MA":[42.6334,-71.3162],
+    "Fall River,MA":[41.7015,-71.155],"Taunton,MA":[41.9006,-71.0898],"Plymouth,MA":[41.9584,-70.6673],
+    "Framingham,MA":[42.2793,-71.4162],"Cambridge,MA":[42.3736,-71.1097],"Quincy,MA":[42.2529,-71.0023],
+    "Newton,MA":[42.337,-71.2092],"Somerville,MA":[42.3876,-71.0995],"Pittsfield,MA":[42.45,-73.25],
+    "Haverhill,MA":[42.7762,-71.0773],"Lynn,MA":[42.4668,-70.9495],"Lawrence,MA":[42.707,-71.1631],
+    "Medford,MA":[42.4184,-71.1062],"Malden,MA":[42.4251,-71.0662],"Waltham,MA":[42.3765,-71.2356],
+    "Brookline,MA":[42.3318,-71.1212],"Revere,MA":[42.4084,-71.012],"Peabody,MA":[42.528,-70.9286],
+    "Methuen,MA":[42.7262,-71.1909],"Attleboro,MA":[41.9445,-71.2856],"Leominster,MA":[42.5251,-71.7598],
+    "Fitchburg,MA":[42.5834,-71.8023],"Salem,MA":[42.5195,-70.8967],"Beverly,MA":[42.5584,-70.88],
+    "Chicopee,MA":[42.1487,-72.6079],"Holyoke,MA":[42.2042,-72.6162],"Westfield,MA":[42.1251,-72.7495],
+    "Gloucester,MA":[42.6159,-70.6628],"Marlborough,MA":[42.3459,-71.5523],"Natick,MA":[42.2834,-71.3495],
+    "Weymouth,MA":[42.2209,-70.9395],"Barnstable,MA":[41.7003,-70.2962],"Falmouth,MA":[41.5514,-70.6148],
+    "Norwood,MA":[42.1945,-71.1995],"Needham,MA":[42.2834,-71.2328],"Dedham,MA":[42.2418,-71.1662],
+    "Braintree,MA":[42.2034,-70.998],"Randolph,MA":[42.1626,-71.0412],"Stoughton,MA":[42.1251,-71.0995],
+    "Canton,MA":[42.1584,-71.1448],"Franklin,MA":[42.0834,-71.3967],"Milford,MA":[42.14,-71.5162],
+    "Mansfield,MA":[42.0334,-71.2195],"Bridgewater,MA":[41.9901,-70.975],"Easton,MA":[42.0234,-71.1295],
+    "Abington,MA":[42.1051,-70.9445],"Rockland,MA":[42.1309,-70.9078],"Hanover,MA":[42.1126,-70.8128],
+    "Hingham,MA":[42.2301,-70.8895],"Northampton,MA":[42.3259,-72.6412],"Amherst,MA":[42.3751,-72.5195],
+    "Providence,RI":[41.824,-71.4128],"Warwick,RI":[41.7001,-71.4162],"Cranston,RI":[41.7798,-71.4373],
+    "Pawtucket,RI":[41.8787,-71.3826],"East Providence,RI":[41.8137,-71.3701],"Newport,RI":[41.4901,-71.3128],
+    "Woonsocket,RI":[42.0029,-71.5148],"Coventry,RI":[41.6898,-71.5673],"North Providence,RI":[41.8501,-71.4595],
+    "Cumberland,RI":[41.9701,-71.4328],"West Warwick,RI":[41.697,-71.5218],"Johnston,RI":[41.8218,-71.5128],
+    "North Kingstown,RI":[41.5501,-71.4628],"South Kingstown,RI":[41.4434,-71.5228],"Westerly,RI":[41.378,-71.827],
+    "Bristol,RI":[41.6737,-71.2662],"Barrington,RI":[41.7401,-71.3078],"Middletown,RI":[41.5184,-71.2878],
+    "Tiverton,RI":[41.6251,-71.2128],"Lincoln,RI":[41.9201,-71.4378],"Smithfield,RI":[41.9001,-71.5278],
+    "Central Falls,RI":[41.8901,-71.3928],"Warren,RI":[41.7301,-71.2828],
+    "Hartford,CT":[41.7658,-72.6734],"New Haven,CT":[41.3083,-72.9279],"Bridgeport,CT":[41.1865,-73.1952],
+    "Stamford,CT":[41.0534,-73.5387],"Waterbury,CT":[41.5582,-73.0515],"Norwalk,CT":[41.1177,-73.4082],
+    "Danbury,CT":[41.4015,-73.454],"New Britain,CT":[41.6612,-72.7795],"West Hartford,CT":[41.762,-72.742],
+    "Meriden,CT":[41.5382,-72.807],"Middletown,CT":[41.5623,-72.6506],"Bristol,CT":[41.6718,-72.9462],
+    "Manchester,CT":[41.7759,-72.5215],"East Hartford,CT":[41.7826,-72.6182],"Enfield,CT":[41.9762,-72.5918],
+    "Milford,CT":[41.2226,-73.0568],"Shelton,CT":[41.2068,-73.1318],"Stratford,CT":[41.1845,-73.1318],
+    "Torrington,CT":[41.8007,-73.1212],"Groton,CT":[41.3501,-72.0778],"New London,CT":[41.3557,-72.0995],
+    "Norwich,CT":[41.5242,-72.0762],"Hamden,CT":[41.3959,-72.8968],"West Haven,CT":[41.2712,-72.947],
+    "Guilford,CT":[41.2884,-72.6818],"Branford,CT":[41.2784,-72.8151],"Wallingford,CT":[41.457,-72.8232],
+    "Southington,CT":[41.5959,-72.8779],"Farmington,CT":[41.7198,-72.832],"Newington,CT":[41.698,-72.7246],
+    "Glastonbury,CT":[41.7123,-72.608],"Wethersfield,CT":[41.7143,-72.6529],
+}
+
+
+@app.route("/api/map-data")
+@check_auth
+def api_map_data():
+    """Return leads with coordinates for the map. Fills in lat/lng from city lookup when missing."""
+    filters = {}
+    for key in ["state", "category", "priority"]:
+        val = request.args.get(key)
+        if val:
+            filters[key] = val
+    if request.args.get("has_website") not in (None, ""):
+        filters["has_website"] = request.args.get("has_website") == "1"
+
+    leads = get_leads(filters, limit=2000, offset=0, sort_by="lead_score", sort_dir="DESC")
+
+    result = []
+    for lead in leads:
+        lat = lead.get("latitude")
+        lng = lead.get("longitude")
+
+        if not lat or not lng:
+            city = (lead.get("city") or "").strip()
+            state = (lead.get("state") or "").strip()
+            key = f"{city},{state}"
+            coords = CITY_COORDS.get(key)
+            if not coords:
+                key_lower = key.lower()
+                for k, v in CITY_COORDS.items():
+                    if k.lower() == key_lower:
+                        coords = v
+                        break
+            if coords:
+                lat, lng = coords[0], coords[1]
+
+        if lat and lng:
+            result.append({
+                "id": lead["id"],
+                "business_name": lead["business_name"],
+                "category": lead.get("category", ""),
+                "phone": lead.get("phone", ""),
+                "email": lead.get("email", ""),
+                "address": lead.get("address", ""),
+                "city": lead.get("city", ""),
+                "state": lead.get("state", ""),
+                "has_website": lead.get("has_website", 0),
+                "website_url": lead.get("website_url", ""),
+                "priority": lead.get("priority", ""),
+                "lead_score": lead.get("lead_score", 0),
+                "status": lead.get("status", "new"),
+                "lat": lat,
+                "lng": lng,
+            })
+
+    return jsonify({
+        "leads": result,
+        "total_in_db": count_leads(filters),
+        "mapped": len(result),
+    })
 
 
 @app.route("/api/health")

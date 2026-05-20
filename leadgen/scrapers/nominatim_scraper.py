@@ -12,6 +12,7 @@ Etiquette: max 1 req/sec, must include User-Agent with contact email.
 
 import requests
 import time
+from scrapers.chain_filter import is_chain
 
 HEADERS = {
     "User-Agent": "AventisAI/2.0 (lead-generation; contact@aventismarketing.com)",
@@ -96,11 +97,13 @@ def parse_result(item, fallback_city, state, our_category):
     if not name or len(name) < 2:
         return None
 
+    if is_chain(name):
+        return None
+
     phone = (extratags.get("contact:phone") or extratags.get("phone") or "").strip()
     website = (extratags.get("contact:website") or extratags.get("website") or "").strip()
     email = (extratags.get("contact:email") or extratags.get("email") or "").strip()
 
-    # Skip results with no contact info — can't outreach to them
     if not phone and not email and not website:
         return None
 
@@ -131,6 +134,14 @@ def parse_result(item, fallback_city, state, our_category):
     else:
         priority = "low"
 
+    lat = None
+    lng = None
+    try:
+        lat = float(item.get("lat")) if item.get("lat") else None
+        lng = float(item.get("lon")) if item.get("lon") else None
+    except (ValueError, TypeError):
+        pass
+
     return {
         "business_name": name,
         "category": our_category,
@@ -148,6 +159,8 @@ def parse_result(item, fallback_city, state, our_category):
         "priority": priority,
         "source": "Nominatim/OSM",
         "notes": "",
+        "latitude": lat,
+        "longitude": lng,
     }
 
 

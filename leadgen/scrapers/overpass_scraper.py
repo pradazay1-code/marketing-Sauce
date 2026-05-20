@@ -13,6 +13,7 @@ Returns leads with phone, address, website status, social presence.
 import requests
 import time
 from collections import defaultdict
+from scrapers.chain_filter import is_chain
 
 # Browser-like User-Agent + valid contact email per Overpass etiquette.
 # Servers will reject requests without a proper UA (HTTP 403).
@@ -183,10 +184,23 @@ def category_for_element(element):
     return "Other"
 
 
+def _element_coords(element):
+    """Extract lat/lng from an Overpass element (node, way center, relation center)."""
+    if element.get("type") == "node":
+        return element.get("lat"), element.get("lon")
+    center = element.get("center", {})
+    if center:
+        return center.get("lat"), center.get("lon")
+    return None, None
+
+
 def parse_element(element, city, state):
     tags = element.get("tags", {})
     name = (tags.get("name") or "").strip()
     if not name:
+        return None
+
+    if is_chain(name):
         return None
 
     phone = (tags.get("contact:phone") or tags.get("phone") or "").strip()
@@ -225,6 +239,8 @@ def parse_element(element, city, state):
 
     social_links = ", ".join([s for s in [fb, ig] if s])
 
+    lat, lng = _element_coords(element)
+
     return {
         "business_name": name,
         "category": category_for_element(element),
@@ -242,6 +258,8 @@ def parse_element(element, city, state):
         "priority": priority,
         "source": "OpenStreetMap",
         "notes": (tags.get("description") or "").strip()[:200],
+        "latitude": lat,
+        "longitude": lng,
     }
 
 

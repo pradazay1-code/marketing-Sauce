@@ -4,6 +4,9 @@
 
 {% block extra_css %}
 @import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+@import url('https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css');
+@import url('https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css');
+
 #map { height: calc(100vh - 220px); border-radius: 12px; border: 1px solid #334155; }
 .map-controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
 .map-controls select { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
@@ -11,13 +14,21 @@
 .map-stat { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px 14px; font-size: 12px; color: #94a3b8; }
 .map-stat strong { color: #f8fafc; font-size: 16px; display: block; }
 .map-legend { display: flex; gap: 14px; align-items: center; font-size: 11px; color: #94a3b8; margin-left: auto; }
-.legend-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 4px; }
-.geocode-status { font-size: 11px; color: #64748b; margin-left: 8px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 4px; vertical-align: middle; }
+.map-loading { color: #64748b; font-size: 12px; margin-left: 8px; }
+
+/* Override cluster colors for dark theme */
+.marker-cluster-small { background-color: rgba(59, 130, 246, 0.5); }
+.marker-cluster-small div { background-color: rgba(59, 130, 246, 0.8); color: #fff; }
+.marker-cluster-medium { background-color: rgba(251, 191, 36, 0.5); }
+.marker-cluster-medium div { background-color: rgba(251, 191, 36, 0.8); color: #000; }
+.marker-cluster-large { background-color: rgba(239, 68, 68, 0.5); }
+.marker-cluster-large div { background-color: rgba(239, 68, 68, 0.8); color: #fff; }
 {% endblock %}
 
 {% block content %}
 <h2 style="font-size:24px;color:#f8fafc;margin-bottom:8px">Lead Map</h2>
-<p style="color:#94a3b8;margin-bottom:16px;font-size:13px">Geographic view of your leads — click markers to see businesses in each area</p>
+<p style="color:#94a3b8;margin-bottom:16px;font-size:13px">Every pin is a real business — click to view details, filter by state/category/priority</p>
 
 <div class="map-controls">
     <select id="filterState" onchange="loadMap()">
@@ -40,19 +51,20 @@
     <select id="filterCategory" onchange="loadMap()">
         <option value="">All Categories</option>
     </select>
-    <span class="geocode-status" id="geocodeStatus"></span>
+    <span class="map-loading" id="mapLoading"></span>
     <div class="map-legend">
-        <span><span class="legend-dot" style="background:#ef4444"></span>5+ no-website</span>
-        <span><span class="legend-dot" style="background:#fbbf24"></span>2-4 no-website</span>
-        <span><span class="legend-dot" style="background:#3b82f6"></span>0-1 no-website</span>
+        <span><span class="legend-dot" style="background:#ef4444"></span>High priority</span>
+        <span><span class="legend-dot" style="background:#fbbf24"></span>Medium</span>
+        <span><span class="legend-dot" style="background:#3b82f6"></span>Low</span>
+        <span><span class="legend-dot" style="background:#22c55e"></span>Has website</span>
     </div>
 </div>
 
-<div class="map-summary" id="mapSummary">
-    <div class="map-stat"><strong id="statTotal">0</strong>Leads on map</div>
-    <div class="map-stat"><strong id="statCities">0</strong>Cities</div>
+<div class="map-summary">
+    <div class="map-stat"><strong id="statTotal">0</strong>Total in DB</div>
+    <div class="map-stat"><strong id="statMapped">0</strong>On map</div>
     <div class="map-stat"><strong id="statNoSite">0</strong>No website</div>
-    <div class="map-stat"><strong id="statUnmapped">0</strong>Unmapped</div>
+    <div class="map-stat"><strong id="statHigh">0</strong>High priority</div>
 </div>
 
 <div id="map"></div>
@@ -60,70 +72,22 @@
 
 {% block scripts %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script>
-const CITY_COORDS = {
-    "Boston,MA":[42.3601,-71.0589],"Worcester,MA":[42.2626,-71.8023],"Springfield,MA":[42.1015,-72.5898],
-    "Brockton,MA":[42.0834,-71.0184],"New Bedford,MA":[41.6362,-70.9342],"Lowell,MA":[42.6334,-71.3162],
-    "Fall River,MA":[41.7015,-71.155],"Taunton,MA":[41.9006,-71.0898],"Plymouth,MA":[41.9584,-70.6673],
-    "Framingham,MA":[42.2793,-71.4162],"Cambridge,MA":[42.3736,-71.1097],"Quincy,MA":[42.2529,-71.0023],
-    "Newton,MA":[42.337,-71.2092],"Somerville,MA":[42.3876,-71.0995],"Pittsfield,MA":[42.45,-73.25],
-    "Haverhill,MA":[42.7762,-71.0773],"Roxbury,MA":[42.3294,-71.0951],"West Springfield,MA":[42.107,-72.6203],
-    "Lynn,MA":[42.4668,-70.9495],"Lawrence,MA":[42.707,-71.1631],"Medford,MA":[42.4184,-71.1062],
-    "Malden,MA":[42.4251,-71.0662],"Waltham,MA":[42.3765,-71.2356],"Brookline,MA":[42.3318,-71.1212],
-    "Revere,MA":[42.4084,-71.012],"Peabody,MA":[42.528,-70.9286],"Methuen,MA":[42.7262,-71.1909],
-    "Attleboro,MA":[41.9445,-71.2856],"Leominster,MA":[42.5251,-71.7598],"Fitchburg,MA":[42.5834,-71.8023],
-    "Salem,MA":[42.5195,-70.8967],"Beverly,MA":[42.5584,-70.88],"Chicopee,MA":[42.1487,-72.6079],
-    "Holyoke,MA":[42.2042,-72.6162],"Westfield,MA":[42.1251,-72.7495],"Gloucester,MA":[42.6159,-70.6628],
-    "Marlborough,MA":[42.3459,-71.5523],"Natick,MA":[42.2834,-71.3495],"Weymouth,MA":[42.2209,-70.9395],
-    "Barnstable,MA":[41.7003,-70.2962],"Falmouth,MA":[41.5514,-70.6148],"Sandwich,MA":[41.7589,-70.4942],
-    "Wareham,MA":[41.7617,-70.7253],"Middleborough,MA":[41.8934,-70.9118],"Northampton,MA":[42.3259,-72.6412],
-    "Amherst,MA":[42.3751,-72.5195],"Easthampton,MA":[42.2668,-72.668],"Norwood,MA":[42.1945,-71.1995],
-    "Needham,MA":[42.2834,-71.2328],"Dedham,MA":[42.2418,-71.1662],"Milton,MA":[42.2501,-71.0662],
-    "Braintree,MA":[42.2034,-70.998],"Randolph,MA":[42.1626,-71.0412],"Stoughton,MA":[42.1251,-71.0995],
-    "Canton,MA":[42.1584,-71.1448],"Sharon,MA":[42.1251,-71.1785],"Franklin,MA":[42.0834,-71.3967],
-    "Milford,MA":[42.14,-71.5162],"Hopkinton,MA":[42.2287,-71.5223],"Bellingham,MA":[42.0868,-71.4745],
-    "Mansfield,MA":[42.0334,-71.2195],"Bridgewater,MA":[41.9901,-70.975],"Raynham,MA":[41.9434,-71.0498],
-    "Easton,MA":[42.0234,-71.1295],"Abington,MA":[42.1051,-70.9445],"Rockland,MA":[42.1309,-70.9078],
-    "Hanover,MA":[42.1126,-70.8128],"Marshfield,MA":[42.0918,-70.7078],"Pembroke,MA":[42.0618,-70.7978],
-    "Duxbury,MA":[42.0384,-70.6728],"Kingston,MA":[41.9934,-70.7228],"Carver,MA":[41.8834,-70.7628],
-    "Hingham,MA":[42.2301,-70.8895],"Scituate,MA":[42.1951,-70.7545],"Cohasset,MA":[42.2418,-70.8045],
-    "Hull,MA":[42.3018,-70.8878],
-    "Providence,RI":[41.824,-71.4128],"Warwick,RI":[41.7001,-71.4162],"Cranston,RI":[41.7798,-71.4373],
-    "Pawtucket,RI":[41.8787,-71.3826],"East Providence,RI":[41.8137,-71.3701],"Newport,RI":[41.4901,-71.3128],
-    "Woonsocket,RI":[42.0029,-71.5148],"Coventry,RI":[41.6898,-71.5673],"North Providence,RI":[41.8501,-71.4595],
-    "Cumberland,RI":[41.9701,-71.4328],"West Warwick,RI":[41.697,-71.5218],"Johnston,RI":[41.8218,-71.5128],
-    "North Kingstown,RI":[41.5501,-71.4628],"South Kingstown,RI":[41.4434,-71.5228],"Westerly,RI":[41.378,-71.827],
-    "Bristol,RI":[41.6737,-71.2662],"Barrington,RI":[41.7401,-71.3078],"Middletown,RI":[41.5184,-71.2878],
-    "Tiverton,RI":[41.6251,-71.2128],"Lincoln,RI":[41.9201,-71.4378],"Smithfield,RI":[41.9001,-71.5278],
-    "Central Falls,RI":[41.8901,-71.3928],"Warren,RI":[41.7301,-71.2828],
-    "Hartford,CT":[41.7658,-72.6734],"New Haven,CT":[41.3083,-72.9279],"Bridgeport,CT":[41.1865,-73.1952],
-    "Stamford,CT":[41.0534,-73.5387],"Waterbury,CT":[41.5582,-73.0515],"Norwalk,CT":[41.1177,-73.4082],
-    "Danbury,CT":[41.4015,-73.454],"New Britain,CT":[41.6612,-72.7795],"West Hartford,CT":[41.762,-72.742],
-    "Meriden,CT":[41.5382,-72.807],"Middletown,CT":[41.5623,-72.6506],"Bristol,CT":[41.6718,-72.9462],
-    "Manchester,CT":[41.7759,-72.5215],"East Hartford,CT":[41.7826,-72.6182],"Enfield,CT":[41.9762,-72.5918],
-    "Milford,CT":[41.2226,-73.0568],"Shelton,CT":[41.2068,-73.1318],"Stratford,CT":[41.1845,-73.1318],
-    "Torrington,CT":[41.8007,-73.1212],"Naugatuck,CT":[41.4862,-73.0507],"Groton,CT":[41.3501,-72.0778],
-    "New London,CT":[41.3557,-72.0995],"Norwich,CT":[41.5242,-72.0762],"Vernon,CT":[41.836,-72.4568],
-    "Glastonbury,CT":[41.7123,-72.608],"Newington,CT":[41.698,-72.7246],"Hamden,CT":[41.3959,-72.8968],
-    "West Haven,CT":[41.2712,-72.947],"East Haven,CT":[41.2762,-72.8679],"Guilford,CT":[41.2884,-72.6818],
-    "Branford,CT":[41.2784,-72.8151],"Cheshire,CT":[41.499,-72.9007],"Wallingford,CT":[41.457,-72.8232],
-    "Southington,CT":[41.5959,-72.8779],"Farmington,CT":[41.7198,-72.832],"Avon,CT":[41.8098,-72.8304],
-    "Simsbury,CT":[41.8798,-72.812],"Wethersfield,CT":[41.7143,-72.6529],"Rocky Hill,CT":[41.6643,-72.6395],
-    "Cromwell,CT":[41.5959,-72.6462],"Plainville,CT":[41.6718,-72.8579]
-};
-
-const geocodeCache = {};
-let geocodeQueue = [];
-let geocoding = false;
-
 const map = L.map('map').setView([41.9, -71.8], 8);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap',
     maxZoom: 18
 }).addTo(map);
 
-let markers = [];
-let markerGroup = L.layerGroup().addTo(map);
+let clusterGroup = L.markerClusterGroup({
+    maxClusterRadius: 50,
+    spiderfyOnMaxZoom: true,
+    showCoverageOnHover: false,
+    zoomToBoundsOnClick: true,
+    disableClusteringAtZoom: 16,
+});
+map.addLayer(clusterGroup);
 
 fetch('/api/categories').then(r=>r.json()).then(cats => {
     const sel = document.getElementById('filterCategory');
@@ -132,32 +96,29 @@ fetch('/api/categories').then(r=>r.json()).then(cats => {
         opt.value = c; opt.textContent = c;
         sel.appendChild(opt);
     });
-});
+}).catch(()=>{});
 
-async function geocodeCity(city, state) {
-    const key = `${city},${state}`;
-    if (CITY_COORDS[key]) return CITY_COORDS[key];
-    if (geocodeCache[key]) return geocodeCache[key];
-    if (geocodeCache[key] === null) return null;
+function markerColor(lead) {
+    if (lead.priority === 'high') return '#ef4444';
+    if (lead.priority === 'medium') return '#fbbf24';
+    if (lead.has_website) return '#22c55e';
+    return '#3b82f6';
+}
 
-    try {
-        const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city + ', ' + state + ', USA')}&limit=1`, {
-            headers: {'User-Agent': 'AventisAI-CRM/1.0'}
-        });
-        const data = await resp.json();
-        if (data.length > 0) {
-            const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-            geocodeCache[key] = coords;
-            CITY_COORDS[key] = coords;
-            return coords;
-        }
-    } catch(e) {}
-    geocodeCache[key] = null;
-    return null;
+function markerIcon(lead) {
+    const color = markerColor(lead);
+    return L.divIcon({
+        className: '',
+        html: `<div style="width:12px;height:12px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.4)"></div>`,
+        iconSize: [12, 12],
+        iconAnchor: [6, 6],
+        popupAnchor: [0, -8],
+    });
 }
 
 async function loadMap() {
-    markerGroup.clearLayers();
+    const loading = document.getElementById('mapLoading');
+    loading.textContent = 'Loading leads...';
 
     const params = new URLSearchParams();
     const state = document.getElementById('filterState').value;
@@ -168,107 +129,67 @@ async function loadMap() {
     if (website) params.set('has_website', website);
     if (priority) params.set('priority', priority);
     if (category) params.set('category', category);
-    params.set('limit', '2000');
 
-    const resp = await fetch('/api/leads?' + params.toString());
-    const data = await resp.json();
+    try {
+        const resp = await fetch('/api/map-data?' + params.toString());
+        const data = await resp.json();
 
-    const grouped = {};
-    data.leads.forEach(lead => {
-        const city = (lead.city || '').trim();
-        const st = (lead.state || '').trim();
-        if (!city || !st) return;
-        const key = `${city},${st}`;
-        if (!grouped[key]) grouped[key] = [];
-        grouped[key].push(lead);
-    });
+        clusterGroup.clearLayers();
 
-    const keys = Object.keys(grouped);
-    const knownKeys = keys.filter(k => CITY_COORDS[k]);
-    const unknownKeys = keys.filter(k => !CITY_COORDS[k]);
+        let noSite = 0;
+        let highPri = 0;
 
-    knownKeys.forEach(key => addCluster(key, grouped[key]));
+        data.leads.forEach(lead => {
+            if (!lead.has_website) noSite++;
+            if (lead.priority === 'high') highPri++;
 
-    let totalLeads = data.leads.length;
-    let mappedLeads = knownKeys.reduce((s, k) => s + grouped[k].length, 0);
-    let unmapped = totalLeads - mappedLeads;
-    let noSiteTotal = data.leads.filter(l => !l.has_website).length;
+            const marker = L.marker([lead.lat, lead.lng], { icon: markerIcon(lead) });
 
-    document.getElementById('statTotal').textContent = mappedLeads;
-    document.getElementById('statCities').textContent = knownKeys.length;
-    document.getElementById('statNoSite').textContent = noSiteTotal;
-    document.getElementById('statUnmapped').textContent = unmapped;
+            const phoneHtml = lead.phone ? `<div style="color:#555;font-size:12px">${escHtml(lead.phone)}</div>` : '';
+            const emailHtml = lead.email ? `<div style="color:#1e40af;font-size:12px">${escHtml(lead.email)}</div>` : '';
+            const websiteTag = lead.has_website
+                ? `<span style="color:#15803d;font-size:11px;font-weight:600">HAS WEBSITE</span>`
+                : `<span style="color:#dc2626;font-size:11px;font-weight:600">NO WEBSITE</span>`;
+            const priBadge = lead.priority === 'high'
+                ? '<span style="background:#7f1d1d;color:#fca5a5;padding:1px 6px;border-radius:3px;font-size:10px;margin-left:6px">HIGH</span>'
+                : lead.priority === 'medium'
+                ? '<span style="background:#713f12;color:#fde047;padding:1px 6px;border-radius:3px;font-size:10px;margin-left:6px">MED</span>'
+                : '';
 
-    if (unknownKeys.length > 0) {
-        document.getElementById('geocodeStatus').textContent = `Geocoding ${unknownKeys.length} cities...`;
-        let geocoded = 0;
-        for (const key of unknownKeys) {
-            const [city, st] = key.split(',');
-            const coords = await geocodeCity(city, st);
-            if (coords) {
-                addCluster(key, grouped[key]);
-                mappedLeads += grouped[key].length;
-                geocoded++;
-            }
-            await new Promise(r => setTimeout(r, 1100));
+            marker.bindPopup(`
+                <div style="min-width:220px;max-width:300px;font-family:system-ui,sans-serif">
+                    <div style="font-weight:700;font-size:14px;margin-bottom:4px">
+                        <a href="/lead/${lead.id}" style="color:#1d4ed8;text-decoration:none">${escHtml(lead.business_name)}</a>
+                        ${priBadge}
+                    </div>
+                    <div style="color:#666;font-size:12px;margin-bottom:6px">${escHtml(lead.category || '')} &middot; ${escHtml(lead.city)}, ${escHtml(lead.state)}</div>
+                    ${lead.address ? `<div style="color:#555;font-size:12px">${escHtml(lead.address)}</div>` : ''}
+                    ${phoneHtml}
+                    ${emailHtml}
+                    <div style="margin-top:6px">${websiteTag}</div>
+                    ${lead.website_url ? `<div style="font-size:11px;margin-top:2px"><a href="${escHtml(lead.website_url)}" target="_blank" style="color:#2563eb">${escHtml(lead.website_url.substring(0,40))}</a></div>` : ''}
+                    <div style="margin-top:8px;font-size:11px;color:#888">Score: ${lead.lead_score} &middot; Status: ${escHtml(lead.status)}</div>
+                </div>
+            `, { maxWidth: 320 });
+
+            clusterGroup.addLayer(marker);
+        });
+
+        document.getElementById('statTotal').textContent = data.total_in_db;
+        document.getElementById('statMapped').textContent = data.mapped;
+        document.getElementById('statNoSite').textContent = noSite;
+        document.getElementById('statHigh').textContent = highPri;
+
+        if (data.leads.length > 0) {
+            const bounds = L.latLngBounds(data.leads.map(l => [l.lat, l.lng]));
+            map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });
         }
-        unmapped = totalLeads - mappedLeads;
-        document.getElementById('statTotal').textContent = mappedLeads;
-        document.getElementById('statCities').textContent = knownKeys.length + geocoded;
-        document.getElementById('statUnmapped').textContent = unmapped;
-        document.getElementById('geocodeStatus').textContent = geocoded > 0 ? `Geocoded ${geocoded} new cities` : '';
+
+        loading.textContent = data.mapped > 0 ? '' : 'No leads to display — run the scraper first';
+    } catch(e) {
+        loading.textContent = 'Error loading map data';
+        console.error('Map load error:', e);
     }
-
-    if (markerGroup.getLayers().length > 0) {
-        const bounds = L.latLngBounds(markerGroup.getLayers().map(m => m.getLatLng()));
-        map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });
-    }
-}
-
-function addCluster(key, leads) {
-    const coords = CITY_COORDS[key];
-    if (!coords) return;
-
-    const noSite = leads.filter(l => !l.has_website).length;
-    const withPhone = leads.filter(l => l.phone).length;
-    const withEmail = leads.filter(l => l.email).length;
-    const highPri = leads.filter(l => l.priority === 'high').length;
-
-    const color = noSite >= 5 ? '#ef4444' : noSite >= 2 ? '#fbbf24' : '#3b82f6';
-    const radius = Math.min(10 + leads.length * 2, 35);
-
-    const marker = L.circleMarker(coords, {
-        radius, color, fillColor: color, fillOpacity: 0.6, weight: 2
-    });
-
-    const [city, st] = key.split(',');
-    const list = leads.slice(0, 10).map(l =>
-        `<div style="padding:5px 0;border-bottom:1px solid #eee;font-size:12px">
-            <a href="/lead/${l.id}" style="color:#1d4ed8;font-weight:600">${escHtml(l.business_name)}</a>
-            <span style="color:#666;font-size:11px;margin-left:4px">${escHtml(l.category || '')}</span>
-            ${l.phone ? `<br><span style="color:#555">${escHtml(l.phone)}</span>` : ''}
-            ${l.email ? `<br><span style="color:#1e40af">${escHtml(l.email)}</span>` : ''}
-            ${l.has_website ? '<span style="color:#a16207;font-size:10px"> has site</span>' : '<span style="color:#dc2626;font-size:10px;font-weight:600"> NO SITE</span>'}
-        </div>`
-    ).join('');
-
-    marker.bindPopup(`
-        <div style="min-width:280px;max-height:350px;overflow-y:auto">
-            <h4 style="margin:0 0 6px;font-size:15px">${escHtml(city)}, ${escHtml(st)}</h4>
-            <div style="display:flex;gap:12px;font-size:11px;color:#666;margin-bottom:8px;flex-wrap:wrap">
-                <span><strong>${leads.length}</strong> leads</span>
-                <span style="color:#dc2626"><strong>${noSite}</strong> no website</span>
-                <span><strong>${withPhone}</strong> with phone</span>
-                <span><strong>${highPri}</strong> high priority</span>
-            </div>
-            ${list}
-            ${leads.length > 10 ? `<div style="font-size:11px;color:#666;margin-top:6px;padding:4px 0">
-                <a href="/leads?city=${encodeURIComponent(city)}&state=${st}" style="color:#2563eb">View all ${leads.length} leads &rarr;</a>
-            </div>` : ''}
-        </div>
-    `, { maxWidth: 350, maxHeight: 400 });
-
-    marker.addTo(markerGroup);
 }
 
 loadMap();

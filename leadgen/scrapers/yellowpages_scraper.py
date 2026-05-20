@@ -13,6 +13,7 @@ import time
 import requests
 from urllib.parse import quote_plus
 from bs4 import BeautifulSoup
+from scrapers.chain_filter import is_chain
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
@@ -194,6 +195,9 @@ def scrape_yellowpages(state="MA", categories=None, cities=None, max_per_combo=1
             for r in results:
                 if count >= max_per_combo:
                     break
+
+                if is_chain(r["name"]):
+                    continue
 
                 if only_no_website and r["has_website"]:
                     continue

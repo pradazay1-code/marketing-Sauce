@@ -16,6 +16,7 @@ ALLOWED_COLUMNS = {
     "created_at", "updated_at",
     "tech_stack_json", "review_count", "review_rating", "employee_count",
     "icp_score", "email_verified", "segment",
+    "latitude", "longitude",
 }
 
 PIPELINE_STAGES = ["new", "contacted", "responded", "qualified", "proposal", "won", "lost"]
@@ -212,6 +213,8 @@ def _init_db_inner():
         ("icp_score", "ALTER TABLE leads ADD COLUMN icp_score INTEGER DEFAULT 0"),
         ("email_verified", "ALTER TABLE leads ADD COLUMN email_verified INTEGER DEFAULT 0"),
         ("segment", "ALTER TABLE leads ADD COLUMN segment TEXT DEFAULT ''"),
+        ("latitude", "ALTER TABLE leads ADD COLUMN latitude REAL DEFAULT NULL"),
+        ("longitude", "ALTER TABLE leads ADD COLUMN longitude REAL DEFAULT NULL"),
     ]:
         if col not in existing_cols:
             try:
@@ -1125,6 +1128,21 @@ def get_funnel_analytics():
 
     conn.close()
     return analytics
+
+
+def wipe_all_leads():
+    """Delete ALL leads, activities, email logs, and sequence runs. Fresh start."""
+    conn = get_db()
+    try:
+        conn.execute("DELETE FROM activities")
+        conn.execute("DELETE FROM email_log")
+        conn.execute("DELETE FROM sequence_runs")
+        conn.execute("DELETE FROM scrape_log")
+        conn.execute("DELETE FROM automation_jobs")
+        conn.execute("DELETE FROM leads")
+        conn.commit()
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":

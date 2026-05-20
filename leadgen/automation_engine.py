@@ -265,12 +265,20 @@ class AutomationScheduler:
         self.running = False
 
     def _loop(self):
+        time.sleep(30)
         while self.running:
             try:
                 config = load_config()
                 if config.get("discovery_enabled"):
+                    print(f"[Automation] Running scheduled discovery...")
                     run_daily_discovery(config)
+                if config.get("sequence_enabled"):
+                    followups = check_followups()
+                    count = followups.get("count", 0)
+                    if count > 0:
+                        print(f"[Automation] {count} follow-ups pending")
                 self.last_run = datetime.now().isoformat()
+                print(f"[Automation] Cycle complete at {self.last_run}")
             except Exception as e:
                 print(f"[Automation] Error in scheduled run: {e}")
 

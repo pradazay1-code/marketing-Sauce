@@ -46,6 +46,12 @@ except Exception as e:
     print(f"[WARN] Could not import database module: {e}")
     HAS_DB = False
 
+try:
+    from scrapers.chain_filter import is_chain
+    HAS_CHAIN_FILTER = True
+except Exception:
+    HAS_CHAIN_FILTER = False
+
 GOOGLE_PLACES_KEY = os.environ.get("GOOGLE_PLACES_API_KEY", "")
 HUNTER_KEY = os.environ.get("HUNTER_API_KEY", "")
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
@@ -579,6 +585,10 @@ def save_lead_to_db(lead):
         "notes": lead.get("notes", ""),
         "tags": lead.get("tags", ""),
     }
+    if lead.get("latitude"):
+        db_lead["latitude"] = lead["latitude"]
+    if lead.get("longitude"):
+        db_lead["longitude"] = lead["longitude"]
     try:
         return add_lead(db_lead)
     except Exception as e:
@@ -647,6 +657,18 @@ def demo_search(city, state, business_type=None, count=20):
 # Main Pipeline
 # ---------------------------------------------------------------------------
 
+def _filter_chains(leads):
+    """Remove chains/franchises from discovered leads."""
+    if not HAS_CHAIN_FILTER:
+        return leads
+    before = len(leads)
+    filtered = [l for l in leads if not is_chain(l.get("business_name", ""))]
+    removed = before - len(filtered)
+    if removed:
+        print(f"  [Chain Filter] Removed {removed} chain/franchise businesses")
+    return filtered
+
+
 def discover_leads(city, state, business_type=None, count=20, demo=False):
     """Discover leads using the best available source."""
     print(f"\n=== DISCOVERY: {business_type or 'all types'} in {city}, {state} ===")
@@ -659,12 +681,12 @@ def discover_leads(city, state, business_type=None, count=20, demo=False):
         print("[Source] Using Google Places API")
         leads = google_places_search(city, state, business_type, count)
         if leads:
-            return leads
+            return _filter_chains(leads)
 
     print("[Source] Using OpenStreetMap Overpass (free)")
     leads = osm_overpass_search(city, state, business_type, count)
     if leads:
-        return leads
+        return _filter_chains(leads)
 
     print("[Source] All external sources unreachable, falling back to demo data")
     print("        (Set GOOGLE_PLACES_API_KEY for real lead data)")

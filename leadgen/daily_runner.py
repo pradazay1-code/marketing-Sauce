@@ -38,6 +38,7 @@ from scrapers.overpass_scraper import scrape_overpass
 from scrapers.nominatim_scraper import scrape_nominatim
 from scrapers.yellowpages_scraper import scrape_yellowpages
 from scrapers.business_age_verifier import filter_new_businesses
+from scrapers.chain_filter import filter_chains
 
 
 def filter_through_verifier(leads, source_label):
@@ -80,6 +81,10 @@ def run_overpass(states=None, max_per_city=30, only_no_website=False, only_new=F
                                         only_no_website=only_no_website,
                                         progress_cb=cb)
 
+        leads, chains_removed = filter_chains(leads)
+        if chains_removed:
+            print(f"  Filtered out {chains_removed} chain/franchise businesses")
+
         for lead in leads:
             enrich_lead(lead)
             lead["date_found"] = date.today().isoformat()
@@ -113,6 +118,10 @@ def run_nominatim(states=None, max_per_query=10, only_no_website=False, only_new
                                          only_no_website=only_no_website,
                                          progress_cb=cb)
 
+        leads, chains_removed = filter_chains(leads)
+        if chains_removed:
+            print(f"  Filtered out {chains_removed} chain/franchise businesses")
+
         for lead in leads:
             enrich_lead(lead)
             lead["date_found"] = date.today().isoformat()
@@ -145,6 +154,10 @@ def run_yellowpages(states=None, max_per_combo=10, only_no_website=False, only_n
         print(f"\n[YellowPages] Searching {state}...")
         leads, error = scrape_yellowpages(state, max_per_combo=max_per_combo,
                                            only_no_website=only_no_website)
+
+        leads, chains_removed = filter_chains(leads)
+        if chains_removed:
+            print(f"  Filtered out {chains_removed} chain/franchise businesses")
 
         for lead in leads:
             enrich_lead(lead)
