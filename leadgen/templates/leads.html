@@ -551,8 +551,21 @@ async function loadLeads() {
 
         updateBulkBar();
         buildPagination(data.count);
+        const urlP = new URLSearchParams();
+        const get = id => document.getElementById(id).value;
+        if (get('filterWebsite') !== '') urlP.set('has_website', get('filterWebsite'));
+        if (get('filterPriority')) urlP.set('priority', get('filterPriority'));
+        if (get('filterStatus')) urlP.set('status', get('filterStatus'));
+        if (get('filterState')) urlP.set('state', get('filterState'));
+        if (get('filterCategory')) urlP.set('category', get('filterCategory'));
+        if (get('search')) urlP.set('search', get('search'));
+        if (get('filterMinScore')) urlP.set('min_score', get('filterMinScore'));
+        if (get('filterDateRange')) urlP.set('date', get('filterDateRange'));
+        const qs = urlP.toString();
+        history.replaceState(null, '', qs ? '/leads?' + qs : '/leads');
     } catch(e) {
         tbody.innerHTML = '<tr><td colspan="13" class="loading">Error loading leads</td></tr>';
+        showToast('Failed to load leads', 'error');
     }
 }
 
@@ -870,6 +883,31 @@ async function delSaved(id) {
 document.getElementById('editModal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
 });
+
+/* ── Read URL params on load (for dashboard quick-filter links) ── */
+function applyUrlParams() {
+    const p = new URLSearchParams(window.location.search);
+    const mapping = {
+        'has_website': 'filterWebsite',
+        'priority': 'filterPriority',
+        'status': 'filterStatus',
+        'state': 'filterState',
+        'category': 'filterCategory',
+        'search': 'search',
+        'min_score': 'filterMinScore',
+    };
+    for (const [param, elId] of Object.entries(mapping)) {
+        const val = p.get(param);
+        if (val !== null) {
+            const el = document.getElementById(elId);
+            if (el) el.value = val;
+        }
+    }
+    if (p.get('date') === 'today') {
+        document.getElementById('filterDateRange').value = 'today';
+    }
+}
+applyUrlParams();
 
 /* ── Init ── */
 loadLeads();

@@ -50,7 +50,9 @@
         .badge-nosite { background: #7f1d1d; color: #fca5a5; }
         .badge-basic { background: #713f12; color: #fde047; }
 
-        #toast { position: fixed; bottom: 24px; right: 24px; background: #22c55e; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; z-index: 1000; }
+        #toast { position: fixed; bottom: 24px; right: 24px; background: #22c55e; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.3); transition: opacity 0.3s; }
+        #toast.toast-error { background: #ef4444; }
+        #toast.toast-warn { background: #f59e0b; color: #000; }
 
         @media (max-width: 768px) {
             .sidebar { display: none; }
@@ -122,13 +124,22 @@
 
     <div id="toast"></div>
     <script>
-        function showToast(msg) {
+        function showToast(msg, type) {
             const t = document.getElementById('toast');
             t.textContent = msg;
+            t.className = '';
+            if (type === 'error') t.classList.add('toast-error');
+            else if (type === 'warn') t.classList.add('toast-warn');
             t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3000);
+            t.style.opacity = '1';
+            setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.style.display = 'none', 300); }, 3000);
         }
         function escHtml(s) { if (s===null||s===undefined) return ''; const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.show, .preview-modal.active').forEach(m => m.classList.remove('show', 'active'));
+            }
+        });
     </script>
     {% block scripts %}{% endblock %}
 </body>

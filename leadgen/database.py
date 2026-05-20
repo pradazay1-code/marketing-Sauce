@@ -728,7 +728,29 @@ def get_scrape_status():
     conn = get_db()
     row = conn.execute("SELECT * FROM scrape_status WHERE id = 1").fetchone()
     conn.close()
-    return dict(row) if row else {"running": 0}
+    if not row:
+        return {"running": 0}
+    status = dict(row)
+    if status.get("running") and status.get("started_at"):
+        try:
+            started = datetime.fromisoformat(status["started_at"].replace("Z", "+00:00").split("+")[0])
+            if (datetime.now() - started).total_seconds() > 1800:
+                reset_scrape_status("Stale run auto-cleared (>30 min)")
+                status["running"] = 0
+                status["current_step"] = "Stale run auto-cleared"
+        except (ValueError, TypeError):
+            pass
+    return status
+
+
+def reset_scrape_status(message="Reset by user"):
+    conn = get_db()
+    conn.execute(
+        "UPDATE scrape_status SET running = 0, progress_pct = 0, current_step = ?, updated_at = ? WHERE id = 1",
+        (message, datetime.now().isoformat())
+    )
+    conn.commit()
+    conn.close()
 
 
 # --- Email system ---

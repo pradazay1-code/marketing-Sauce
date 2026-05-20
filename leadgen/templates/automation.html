@@ -260,7 +260,7 @@ async function saveConfig() {
         }
         showToast('Config saved');
     } catch(e) {
-        showToast('Failed to save config');
+        showToast('Failed to save config', 'error');
     }
 }
 
@@ -277,7 +277,7 @@ async function runDiscover(demo) {
         showToast('Discovery job started — check jobs table below');
         setTimeout(loadJobs, 3000);
     } catch(e) {
-        showToast('Error starting discovery');
+        showToast('Error starting discovery', 'error');
     }
 }
 
@@ -292,7 +292,7 @@ async function runOutreach(campaign) {
         showToast(`${campaign} outreach started (dry run)`);
         setTimeout(loadJobs, 3000);
     } catch(e) {
-        showToast('Error starting outreach');
+        showToast('Error starting outreach', 'error');
     }
 }
 
@@ -302,7 +302,7 @@ async function checkFollowups() {
         const data = await resp.json();
         renderFollowups(data);
     } catch(e) {
-        showToast('Error checking follow-ups');
+        showToast('Error checking follow-ups', 'error');
     }
 }
 

@@ -505,7 +505,10 @@
 <div class="live-progress" id="liveProgress">
     <div class="header">
         <h3><span class="pulse"></span> <span id="lpTitle">Scraper running</span></h3>
-        <span style="font-size:12px;color:#94a3b8" id="lpPct">0%</span>
+        <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:12px;color:#94a3b8" id="lpPct">0%</span>
+            <button class="btn btn-sm btn-danger" id="lpCancel" onclick="cancelScraper()" style="font-size:11px;padding:4px 10px">Cancel</button>
+        </div>
     </div>
     <div class="step" id="lpStep">Initializing...</div>
     <div class="stats-row">
@@ -671,18 +674,18 @@ async function runScraper(source) {
         });
         const data = await resp.json();
         if (resp.status === 409) {
-            showToast('A scraper is already running');
+            showToast('A scraper is already running', 'warn');
             startPolling();
             return;
         }
         if (data.error) {
-            showToast('Error: ' + data.error);
+            showToast('Error: ' + data.error, 'error');
             return;
         }
         showToast('Scraper started — watch live progress below');
         startPolling();
     } catch(e) {
-        showToast('Network error starting scraper');
+        showToast('Network error starting scraper', 'error');
     }
 }
 
@@ -779,7 +782,10 @@ async function pollStatus() {
 
         if (s.started_at) {
             const t = new Date(s.started_at);
-            document.getElementById('lpStarted').textContent = t.toLocaleTimeString();
+            const elapsed = Math.floor((Date.now() - t.getTime()) / 1000);
+            const mins = Math.floor(elapsed / 60);
+            const secs = elapsed % 60;
+            document.getElementById('lpStarted').textContent = `${mins}m ${secs}s ago`;
         }
 
         if (!s.running) {
@@ -815,6 +821,19 @@ async function uploadCSV(input) {
         showToast('Upload failed');
     }
     input.value = '';
+}
+
+async function cancelScraper() {
+    if (!confirm('Cancel the running scraper?')) return;
+    try {
+        await fetch('/api/scraper-status/reset', {method: 'POST'});
+        showToast('Scraper cancelled');
+        if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+        document.getElementById('liveProgress').classList.remove('active');
+        setTimeout(() => location.reload(), 1000);
+    } catch(e) {
+        showToast('Failed to cancel scraper');
+    }
 }
 
 // Auto-resume polling if scraper was running when page loaded

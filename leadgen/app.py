@@ -22,7 +22,7 @@ from database import (
     delete_lead, get_stats, get_scrape_logs, clear_scrape_logs, export_csv, add_leads_bulk,
     add_activity, get_activities, get_recent_activities, get_pipeline_data,
     save_search, get_saved_searches, delete_saved_search, PIPELINE_STAGES,
-    update_scrape_status, get_scrape_status,
+    update_scrape_status, get_scrape_status, reset_scrape_status,
     get_email_settings, update_email_settings,
     save_email_template, get_email_templates, get_email_template, delete_email_template,
     get_email_log, log_email, get_recent_leads,
@@ -46,6 +46,13 @@ def request_too_large(e):
 
 with app.app_context():
     init_db()
+    try:
+        status = get_scrape_status()
+        if status.get("running"):
+            reset_scrape_status("Cleared on app startup")
+            print("[Startup] Reset stuck scraper status")
+    except Exception:
+        pass
 
 # Start automation scheduler as a background thread (checks config before running)
 try:
@@ -410,6 +417,13 @@ def api_run_scraper():
 def api_scraper_status():
     """Live status of the running scraper. UI polls this every 2s."""
     return jsonify(get_scrape_status())
+
+
+@app.route("/api/scraper-status/reset", methods=["POST"])
+@check_auth
+def api_scraper_reset():
+    reset_scrape_status("Cancelled by user")
+    return jsonify({"success": True, "message": "Scraper status reset"})
 
 
 @app.route("/api/test-scrape", methods=["POST"])
