@@ -1,0 +1,19 @@
+{
+  "discovery_enabled": true,
+  "discovery_cities": [
+    "Boston",
+    "Worcester",
+    "Springfield",
+    "Providence",
+    "Hartford"
+  ],
+  "discovery_state": "MA",
+  "discovery_count": 20,
+  "discovery_type": null,
+  "enrichment_enabled": true,
+  "sequence_enabled": true,
+  "sequence_followup_1_days": 3,
+  "sequence_followup_2_days": 7,
+  "sequence_breakup_days": 14,
+  "daily_send_limit": 50
+}
