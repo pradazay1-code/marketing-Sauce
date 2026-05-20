@@ -125,13 +125,16 @@ class PGConnection:
         sql = _convert_sql(sql)
         statements = [s.strip() for s in sql.split(";") if s.strip()]
         cursor = self._conn.cursor()
-        for stmt in statements:
+        for i, stmt in enumerate(statements):
             if not stmt or stmt.upper() in ("SELECT 1", "BEGIN", "COMMIT"):
                 continue
+            sp = f"sp_{i}"
             try:
+                cursor.execute(f"SAVEPOINT {sp}")
                 cursor.execute(stmt)
+                cursor.execute(f"RELEASE SAVEPOINT {sp}")
             except psycopg2.Error as e:
-                self._conn.rollback()
+                cursor.execute(f"ROLLBACK TO SAVEPOINT {sp}")
                 print(f"[PG] Warning: {str(e)[:100]}")
                 continue
         self._conn.commit()
