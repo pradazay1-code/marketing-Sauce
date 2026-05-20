@@ -44,6 +44,34 @@ MAX_CSV_LEADS = 25000
 def request_too_large(e):
     return jsonify({"error": "Upload exceeds 16 MB limit"}), 413
 
+
+@app.errorhandler(500)
+def internal_error(e):
+    err_str = str(e)
+    if "PostgreSQL unavailable" in err_str or "psycopg2" in err_str:
+        title = "Database Unavailable"
+        message = "Cannot connect to PostgreSQL. Check that DATABASE_URL is correct and the database server is online."
+    else:
+        title = "Internal Server Error"
+        message = "The server encountered an unexpected error. Please try again."
+    if request.path.startswith("/api/"):
+        return jsonify({"error": title, "details": err_str[:300]}), 500
+    return render_template("error.html", title=title, message=message, details=err_str[:500]), 500
+
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    err_str = str(e)
+    if "PostgreSQL unavailable" in err_str or "psycopg2" in err_str:
+        title = "Database Unavailable"
+        message = "Cannot connect to PostgreSQL. Check that DATABASE_URL is correct and the database server is online."
+    else:
+        title = "Server Error"
+        message = "The server encountered an unexpected error. Please try again."
+    if request.path.startswith("/api/"):
+        return jsonify({"error": title, "details": err_str[:300]}), 500
+    return render_template("error.html", title=title, message=message, details=err_str[:500]), 500
+
 with app.app_context():
     init_db()
     try:
