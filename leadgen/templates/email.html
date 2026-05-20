@@ -72,7 +72,7 @@
                 <div class="hint">Use {{business_name}}, {{owner_name}}, {{city}}, {{state}}, {{category}} for personalization</div>
 
                 <div style="display:flex;gap:8px;margin-top:16px">
-                    <button class="btn btn-primary" onclick="sendEmail()">Send Email</button>
+                    <button class="btn btn-primary" onclick="sendEmailSafe()">Send Email</button>
                     <button class="btn btn-outline" onclick="previewEmail()">Preview</button>
                 </div>
             </div>
@@ -239,7 +239,11 @@ async function sendEmail() {
     });
     const data = await resp.json();
     if (data.success) showToast('Email sent!');
-    else showToast('Error: ' + (data.error || 'Unknown'));
+    else showToast(data.error || 'Failed to send email', 'error');
+}
+
+async function sendEmailSafe() {
+    try { await sendEmail(); } catch(e) { showToast('Network error sending email', 'error'); }
 }
 
 async function previewEmail() {
@@ -278,14 +282,24 @@ async function bulkSend() {
 
     document.getElementById('bulkStatus').textContent = `Sending to ${ids.length} leads...`;
 
-    const resp = await fetch('/api/email/send-bulk', {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({lead_ids: ids, subject, body})
-    });
-    const data = await resp.json();
-    document.getElementById('bulkStatus').textContent =
-        `Sent ${data.sent} emails` + (data.errors?.length ? `. Errors: ${data.errors.length}` : '');
-    showToast(`Sent ${data.sent} emails`);
+    try {
+        const resp = await fetch('/api/email/send-bulk', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({lead_ids: ids, subject, body})
+        });
+        const data = await resp.json();
+        if (data.error) {
+            document.getElementById('bulkStatus').textContent = 'Error: ' + data.error;
+            showToast(data.error, 'error');
+            return;
+        }
+        document.getElementById('bulkStatus').textContent =
+            `Sent ${data.sent} emails` + (data.errors?.length ? `. Errors: ${data.errors.length}` : '');
+        showToast(`Sent ${data.sent} emails`);
+    } catch(e) {
+        document.getElementById('bulkStatus').textContent = 'Network error — please retry';
+        showToast('Bulk send failed', 'error');
+    }
 }
 
 function editTemplate(tid) {
@@ -344,11 +358,16 @@ async function saveSettings() {
     const pass = document.getElementById('smtpPass').value;
     if (pass) data.smtp_pass = pass;
 
-    await fetch('/api/email/settings', {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-    });
-    showToast('Settings saved');
+    try {
+        const resp = await fetch('/api/email/settings', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        if (!resp.ok) throw new Error('Save failed');
+        showToast('Settings saved');
+    } catch(e) {
+        showToast('Failed to save settings', 'error');
+    }
 }
 </script>
 {% endblock %}

@@ -83,16 +83,29 @@ async function handleDrop(e, stage) {
     e.target.closest('.pipeline-col').classList.remove('drag-over');
     if (!draggedId) return;
 
-    await fetch(`/api/leads/${draggedId}`, {
-        method: 'PUT', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({status: stage})
-    });
-    showToast('Moved to ' + stage);
+    try {
+        const resp = await fetch(`/api/leads/${draggedId}`, {
+            method: 'PUT', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({status: stage})
+        });
+        if (!resp.ok) throw new Error('Update failed');
+        showToast('Moved to ' + stage);
+    } catch(err) {
+        showToast('Failed to move lead', 'error');
+    }
     draggedId = null;
     loadPipeline();
 }
 
-loadPipeline();
-setInterval(loadPipeline, 30000);
+async function loadPipelineSafe() {
+    try {
+        await loadPipeline();
+    } catch(e) {
+        showToast('Failed to load pipeline', 'error');
+    }
+}
+
+loadPipelineSafe();
+setInterval(loadPipelineSafe, 15000);
 </script>
 {% endblock %}

@@ -195,17 +195,23 @@ function generateContent() {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(payload),
     })
-    .then(r => r.json())
+    .then(r => { if (!r.ok) throw new Error('Server error ' + r.status); return r.json(); })
     .then(data => {
         btn.disabled = false;
         btn.textContent = 'Generate Content';
-        if (!data.success) { output.innerHTML = `<p style="color:#ef4444">${escHtml(data.error)}</p>`; return; }
+        if (!data.success) {
+            output.innerHTML = `<div style="color:#ef4444;padding:24px;text-align:center">${escHtml(data.error)}</div>`;
+            showToast('Generation failed', 'error');
+            return;
+        }
         renderOutput(data.content, data.type);
+        showToast('Content generated');
     })
     .catch(err => {
         btn.disabled = false;
         btn.textContent = 'Generate Content';
-        output.innerHTML = `<p style="color:#ef4444">Error: ${escHtml(err.message)}</p>`;
+        output.innerHTML = `<div style="color:#ef4444;padding:24px;text-align:center">Error: ${escHtml(err.message)}<br><small style="color:#94a3b8">The content generator may need a moment — try again.</small></div>`;
+        showToast('Generation failed', 'error');
     });
 }
 

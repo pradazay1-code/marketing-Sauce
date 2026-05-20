@@ -434,6 +434,30 @@
     </a>
 </div>
 
+<!-- ═══════════ FOLLOW-UP REMINDERS ═══════════ -->
+{% if followup_leads is defined and followup_leads %}
+<div class="card" style="margin-bottom:28px;border-color:#f59e0b44;background:linear-gradient(135deg,#1e293b 0%,#431407 200%)">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h3 style="margin-bottom:0;color:#fbbf24">Needs Follow-Up</h3>
+        <a href="/leads?status=contacted" class="view-all-link">View all &rarr;</a>
+    </div>
+    <table class="rl-table">
+        <thead><tr><th>Business</th><th>Location</th><th>Phone</th><th>Status</th><th>Since</th></tr></thead>
+        <tbody>
+            {% for lead in followup_leads %}
+            <tr onclick="window.location='/lead/{{ lead.id }}'">
+                <td><a href="/lead/{{ lead.id }}" class="biz-name">{{ lead.business_name }}</a></td>
+                <td>{{ lead.city or '' }}{% if lead.city and lead.state %}, {% endif %}{{ lead.state or '' }}</td>
+                <td>{% if lead.phone %}<a href="tel:{{ lead.phone }}" style="color:#60a5fa">{{ lead.phone }}</a>{% else %}—{% endif %}</td>
+                <td><span class="badge badge-contacted">contacted</span></td>
+                <td class="date-col">{{ lead.contact_date[:10] if lead.contact_date else lead.updated_at[:10] if lead.updated_at else '—' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
 <!-- ═══════════ RECENT LEADS PREVIEW ═══════════ -->
 <div class="card recent-leads-card">
     <div class="card-header">

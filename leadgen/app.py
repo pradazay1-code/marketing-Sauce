@@ -86,7 +86,12 @@ def dashboard():
     logs = get_scrape_logs(10)
     activities = get_recent_activities(10)
     recent_leads = get_recent_leads(5)
-    return render_template("dashboard.html", stats=stats, logs=logs, activities=activities, recent_leads=recent_leads)
+    followup_leads = get_leads(
+        filters={"status": "contacted"},
+        limit=5, sort_by="date_found", sort_dir="ASC"
+    )
+    return render_template("dashboard.html", stats=stats, logs=logs, activities=activities,
+                           recent_leads=recent_leads, followup_leads=followup_leads)
 
 
 @app.route("/leads")

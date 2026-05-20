@@ -214,6 +214,7 @@
 async function loadAnalytics() {
     try {
         const resp = await fetch('/api/analytics/funnel');
+        if (!resp.ok) throw new Error('Server returned ' + resp.status);
         const data = await resp.json();
 
         // Conversion flow

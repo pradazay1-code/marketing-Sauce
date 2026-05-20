@@ -479,6 +479,7 @@ async function loadLeads() {
 
     try {
         const resp = await fetch('/api/leads?' + buildQuery());
+        if (!resp.ok) throw new Error('Server returned ' + resp.status);
         const data = await resp.json();
         tbody.innerHTML = '';
         totalLeads = data.total || 0;
