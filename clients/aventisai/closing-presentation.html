@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AventisAI — Closing Presentation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0a0e27;
+  --navy-light:#111640;
+  --blue:#2563eb;
+  --blue-light:#3b82f6;
+  --blue-glow:#60a5fa;
+  --cyan:#06b6d4;
+  --white:#ffffff;
+  --gray:#94a3b8;
+  --gray-light:#cbd5e1;
+  --green:#10b981;
+  --red:#ef4444;
+  --gold:#f59e0b;
+}
+html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
+body{font-family:'Inter',sans-serif;background:var(--navy);color:var(--white);overflow-x:hidden}
+
+.slide{
+  min-height:100vh;width:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 80px;position:relative;
+  scroll-snap-align:start;
+  overflow:hidden;
+}
+.slide::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%, rgba(37,99,235,0.08) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+/* Navigation */
+.nav-dots{
+  position:fixed;right:30px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:12px;z-index:100;
+}
+.nav-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);
+  cursor:pointer;transition:all 0.3s;
+}
+.nav-dot:hover,.nav-dot.active{
+  background:var(--blue);border-color:var(--blue-light);
+  box-shadow:0 0 12px rgba(37,99,235,0.5);transform:scale(1.3);
+}
+
+/* Logo */
+.logo-mark{display:flex;align-items:center;gap:14px}
+.logo-mark svg{width:48px;height:48px}
+.logo-text{display:flex;flex-direction:column;line-height:1.1}
+.logo-text .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;letter-spacing:3px;color:var(--white)}
+.logo-text .sub{font-weight:400;font-size:11px;letter-spacing:5px;color:var(--blue-light);text-transform:uppercase}
+
+.top-bar{
+  position:fixed;top:0;left:0;right:0;z-index:99;
+  padding:20px 40px;display:flex;justify-content:space-between;align-items:center;
+  background:linear-gradient(180deg,rgba(10,14,39,0.95) 0%,transparent 100%);
+}
+.slide-counter{font-size:13px;color:var(--gray);font-weight:500;letter-spacing:1px}
+
+/* Title Slide */
+.title-slide .hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 20px;border-radius:100px;
+  background:rgba(37,99,235,0.12);border:1px solid rgba(37,99,235,0.3);
+  font-size:13px;font-weight:500;color:var(--blue-light);
+  margin-bottom:40px;letter-spacing:1px;
+}
+.title-slide h1{
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(40px,5.5vw,72px);
+  font-weight:800;line-height:1.08;text-align:center;
+  max-width:900px;margin-bottom:24px;
+  background:linear-gradient(135deg,var(--white) 0%,var(--blue-glow) 50%,var(--cyan) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.title-slide .subtitle{
+  font-size:clamp(16px,1.8vw,22px);color:var(--gray-light);
+  text-align:center;max-width:600px;line-height:1.6;font-weight:300;
+  margin-bottom:48px;
+}
+.title-slide .cta-row{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn-primary{
+  padding:14px 36px;border-radius:12px;font-size:15px;font-weight:600;
+  background:linear-gradient(135deg,var(--blue) 0%,#1d4ed8 100%);
+  color:var(--white);border:none;cursor:pointer;
+  box-shadow:0 4px 24px rgba(37,99,235,0.35);
+  transition:all 0.3s;letter-spacing:0.5px;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(37,99,235,0.5)}
+.btn-outline{
+  padding:14px 36px;border-radius:12px;font-size:15px;font-weight:500;
+  background:transparent;color:var(--white);
+  border:1px solid rgba(255,255,255,0.2);cursor:pointer;
+  transition:all 0.3s;
+}
+.btn-outline:hover{border-color:var(--blue-light);background:rgba(37,99,235,0.08)}
+
+/* Decorative elements */
+.glow-orb{
+  position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none;opacity:0.15;
+}
+.glow-orb.blue{background:var(--blue);width:400px;height:400px}
+.glow-orb.cyan{background:var(--cyan);width:300px;height:300px}
+
+/* Section Headers */
+.section-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 16px;border-radius:100px;
+  background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.25);
+  font-size:12px;font-weight:600;color:var(--blue-light);
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;
+}
+.slide h2{
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,3.5vw,48px);
+  font-weight:700;text-align:center;margin-bottom:16px;line-height:1.15;
+}
+.slide .section-sub{
+  font-size:clamp(14px,1.3vw,18px);color:var(--gray);text-align:center;
+  max-width:650px;line-height:1.6;margin-bottom:48px;font-weight:300;
+}
+
+/* Problem Slide — Tool Chaos */
+.tool-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:16px;max-width:900px;width:100%;margin-bottom:40px;
+}
+.tool-card{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;padding:20px;text-align:center;
+  transition:all 0.3s;position:relative;overflow:hidden;
+}
+.tool-card::after{
+  content:'';position:absolute;top:8px;right:8px;width:8px;height:8px;
+  border-radius:50%;background:var(--red);opacity:0.8;
+}
+.tool-card .tool-name{font-weight:600;font-size:14px;margin-bottom:4px}
+.tool-card .tool-cost{font-size:13px;color:var(--red);font-weight:500}
+.total-waste{
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,3vw,40px);
+  font-weight:800;color:var(--red);text-align:center;
+}
+.total-waste span{color:var(--gray);font-size:16px;font-weight:400;display:block;margin-top:4px}
+
+/* Solution Slide */
+.solution-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;max-width:1000px;width:100%;
+}
+.feature-card{
+  background:linear-gradient(135deg,rgba(37,99,235,0.06) 0%,rgba(6,182,212,0.04) 100%);
+  border:1px solid rgba(37,99,235,0.15);border-radius:16px;
+  padding:28px 24px;transition:all 0.3s;
+}
+.feature-card:hover{border-color:var(--blue);transform:translateY(-4px);box-shadow:0 12px 40px rgba(37,99,235,0.15)}
+.feature-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(37,99,235,0.12);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:16px;font-size:20px;
+}
+.feature-card h3{font-size:16px;font-weight:600;margin-bottom:6px}
+.feature-card p{font-size:13px;color:var(--gray);line-height:1.5}
+
+/* Value Equation Slide */
+.equation-box{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(37,99,235,0.2);
+  border-radius:20px;padding:48px;max-width:800px;width:100%;
+  text-align:center;position:relative;
+}
+.equation-formula{
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(18px,2.2vw,28px);
+  font-weight:600;margin-bottom:32px;line-height:1.8;
+}
+.eq-top{color:var(--green);font-weight:700}
+.eq-bottom{color:var(--red);font-weight:700}
+.eq-divider{
+  width:100%;max-width:500px;height:2px;margin:8px auto;
+  background:linear-gradient(90deg,transparent,var(--blue),transparent);
+}
+.eq-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:32px;
+}
+.eq-item{
+  padding:20px;border-radius:12px;text-align:left;
+}
+.eq-item.maximize{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2)}
+.eq-item.minimize{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2)}
+.eq-item .eq-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:8px}
+.eq-item.maximize .eq-label{color:var(--green)}
+.eq-item.minimize .eq-label{color:var(--red)}
+.eq-item .eq-text{font-size:14px;color:var(--gray-light);line-height:1.5}
+
+/* Case Study Slide */
+.case-study{max-width:1000px;width:100%}
+.case-header{
+  display:flex;align-items:center;gap:24px;margin-bottom:36px;
+  padding:24px 32px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(37,99,235,0.08) 0%,rgba(6,182,212,0.05) 100%);
+  border:1px solid rgba(37,99,235,0.15);
+}
+.case-avatar{
+  width:64px;height:64px;border-radius:16px;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:800;color:var(--white);
+  font-family:'Space Grotesk',sans-serif;flex-shrink:0;
+}
+.case-info h3{font-size:20px;font-weight:700;margin-bottom:4px}
+.case-info p{font-size:14px;color:var(--gray)}
+.case-info a{color:var(--blue-light);text-decoration:none;font-size:13px}
+.case-results{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;margin-bottom:32px;
+}
+.result-card{
+  padding:24px;border-radius:14px;text-align:center;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+}
+.result-card .result-number{
+  font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:800;
+  background:linear-gradient(135deg,var(--blue-light),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.result-card .result-label{font-size:12px;color:var(--gray);margin-top:4px;font-weight:500}
+.case-services{
+  display:flex;flex-wrap:wrap;gap:10px;
+}
+.service-tag{
+  padding:8px 16px;border-radius:100px;font-size:12px;font-weight:500;
+  background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.2);
+  color:var(--blue-light);
+}
+
+/* Value Stack Slide */
+.value-stack{max-width:800px;width:100%}
+.stack-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 24px;border-bottom:1px solid rgba(255,255,255,0.06);
+  transition:background 0.2s;
+}
+.stack-item:hover{background:rgba(37,99,235,0.04)}
+.stack-item .item-name{font-size:15px;font-weight:500;flex:1}
+.stack-item .item-value{
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;
+  color:var(--green);white-space:nowrap;
+}
+.stack-total{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:24px;margin-top:8px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(16,185,129,0.1) 0%,rgba(6,182,212,0.08) 100%);
+  border:1px solid rgba(16,185,129,0.25);
+}
+.stack-total .item-name{font-size:18px;font-weight:700}
+.stack-total .item-value{font-size:24px;color:var(--green)}
+.stack-vs{
+  text-align:center;margin-top:32px;
+}
+.stack-vs .you-pay{
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,3.5vw,44px);
+  font-weight:800;margin:12px 0;
+  background:linear-gradient(135deg,var(--blue-light),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.stack-vs .ratio{font-size:18px;color:var(--gold);font-weight:600}
+
+/* CLOSER Framework */
+.closer-grid{max-width:900px;width:100%}
+.closer-step{
+  display:flex;gap:20px;padding:20px 0;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.closer-letter{
+  width:48px;height:48px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;
+  background:linear-gradient(135deg,var(--blue),#1d4ed8);
+  box-shadow:0 4px 16px rgba(37,99,235,0.3);
+}
+.closer-content h3{font-size:16px;font-weight:600;margin-bottom:4px}
+.closer-content p{font-size:14px;color:var(--gray);line-height:1.5}
+
+/* Guarantee Slide */
+.guarantee-box{
+  max-width:700px;width:100%;padding:48px;text-align:center;
+  border-radius:20px;position:relative;
+  background:linear-gradient(135deg,rgba(16,185,129,0.08) 0%,rgba(37,99,235,0.06) 100%);
+  border:1px solid rgba(16,185,129,0.2);
+}
+.guarantee-icon{
+  width:72px;height:72px;border-radius:50%;margin:0 auto 24px;
+  background:rgba(16,185,129,0.12);
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;
+}
+.guarantee-box h3{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:12px}
+.guarantee-box p{font-size:16px;color:var(--gray-light);line-height:1.7;max-width:500px;margin:0 auto}
+.guarantee-box .guarantee-highlight{
+  display:inline-block;margin-top:20px;padding:10px 24px;border-radius:100px;
+  background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);
+  color:var(--green);font-weight:600;font-size:15px;
+}
+
+/* Close Slide */
+.close-slide{text-align:center}
+.close-slide h2{
+  font-size:clamp(32px,4vw,56px);margin-bottom:24px;
+  background:linear-gradient(135deg,var(--white) 0%,var(--blue-glow) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.close-slide .close-sub{
+  font-size:clamp(16px,1.5vw,20px);color:var(--gray-light);
+  max-width:550px;margin:0 auto 40px;line-height:1.6;font-weight:300;
+}
+.close-steps{
+  display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;
+}
+.close-step{
+  padding:24px 28px;border-radius:16px;text-align:center;min-width:180px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+}
+.close-step .step-num{
+  font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:800;
+  color:var(--blue-light);margin-bottom:8px;
+}
+.close-step .step-text{font-size:13px;color:var(--gray-light);font-weight:500}
+
+/* Bonuses */
+.bonus-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:16px;max-width:900px;width:100%;
+}
+.bonus-card{
+  padding:24px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(245,158,11,0.06) 0%,rgba(37,99,235,0.04) 100%);
+  border:1px solid rgba(245,158,11,0.2);
+  text-align:center;
+}
+.bonus-card .bonus-tag{
+  display:inline-block;padding:4px 12px;border-radius:100px;
+  background:rgba(245,158,11,0.15);color:var(--gold);
+  font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.bonus-card h4{font-size:15px;font-weight:600;margin-bottom:4px}
+.bonus-card .bonus-value{font-size:13px;color:var(--gold);font-weight:600}
+
+/* Comparison */
+.compare-table{
+  max-width:800px;width:100%;border-collapse:separate;border-spacing:0;
+  border-radius:16px;overflow:hidden;
+}
+.compare-table th{
+  padding:16px 20px;text-align:left;font-size:13px;
+  font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  background:rgba(37,99,235,0.12);color:var(--blue-light);
+}
+.compare-table td{
+  padding:14px 20px;font-size:14px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table .check{color:var(--green);font-weight:700;font-size:18px}
+.compare-table .cross{color:var(--red);font-weight:700;font-size:18px}
+.compare-table .col-aventis{
+  background:rgba(37,99,235,0.05);
+}
+.compare-table th.col-aventis{
+  background:linear-gradient(135deg,var(--blue),#1d4ed8);color:var(--white);
+}
+
+/* Before/After */
+.before-after{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:32px;
+  max-width:900px;width:100%;align-items:start;
+}
+.ba-col{padding:32px;border-radius:16px}
+.ba-col.before{
+  background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);
+}
+.ba-col.after{
+  background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);
+}
+.ba-col h3{font-size:18px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.ba-col.before h3{color:var(--red)}
+.ba-col.after h3{color:var(--green)}
+.ba-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.ba-col li{font-size:14px;color:var(--gray-light);display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.ba-col.before li::before{content:'✕';color:var(--red);font-weight:700;flex-shrink:0}
+.ba-col.after li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+.ba-arrow{
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;color:var(--blue-light);align-self:center;
+}
+
+/* Responsive */
+@media(max-width:768px){
+  .slide{padding:40px 24px}
+  .tool-grid{grid-template-columns:repeat(2,1fr)}
+  .solution-grid{grid-template-columns:1fr}
+  .eq-grid{grid-template-columns:1fr}
+  .before-after{grid-template-columns:1fr;gap:16px}
+  .ba-arrow{transform:rotate(90deg)}
+  .case-header{flex-direction:column;text-align:center}
+  .close-steps{flex-direction:column;align-items:center}
+  .nav-dots{right:12px}
+  .top-bar{padding:12px 20px}
+  .equation-box{padding:28px 20px}
+  .bonus-grid{grid-template-columns:1fr}
+  .compare-table{font-size:12px}
+  .compare-table th,.compare-table td{padding:10px 12px}
+}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeUp 0.7s ease-out both}
+.delay-1{animation-delay:0.1s}
+.delay-2{animation-delay:0.2s}
+.delay-3{animation-delay:0.3s}
+.delay-4{animation-delay:0.4s}
+
+/* Print / Fullscreen */
+@media print{
+  .nav-dots,.top-bar{display:none}
+  .slide{page-break-after:always;min-height:auto;padding:40px}
+}
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="logo-mark">
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="logoGrad" x1="0" y1="48" x2="48" y2="0">
+          <stop offset="0%" stop-color="#1d4ed8"/>
+          <stop offset="50%" stop-color="#3b82f6"/>
+          <stop offset="100%" stop-color="#60a5fa"/>
+        </linearGradient>
+      </defs>
+      <path d="M24 4L42 40H6L24 4Z" fill="url(#logoGrad)" opacity="0.9"/>
+      <path d="M24 16L16 34H22L24 28L26 34H32L24 16Z" fill="#ffffff"/>
+      <path d="M34 32C36 30 40 31 42 33" stroke="url(#logoGrad)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    </svg>
+    <div class="logo-text">
+      <span class="brand">AVENTIS</span>
+      <span class="sub">Marketing</span>
+    </div>
+  </div>
+  <div class="slide-counter" id="slideCounter">01 / 10</div>
+</div>
+
+<!-- Navigation Dots -->
+<div class="nav-dots" id="navDots"></div>
+
+<!-- =============================== -->
+<!-- SLIDE 1: Title -->
+<!-- =============================== -->
+<section class="slide title-slide" id="slide-1">
+  <div class="glow-orb blue" style="top:-200px;left:-100px"></div>
+  <div class="glow-orb cyan" style="bottom:-150px;right:-50px"></div>
+
+  <div class="hero-badge animate">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="3" fill="#3b82f6"/><circle cx="7" cy="7" r="6" stroke="#3b82f6" stroke-width="1" opacity="0.4"/></svg>
+    AI-Powered Business Software
+  </div>
+
+  <h1 class="animate delay-1">One Platform.<br>Every Tool.<br>AI Built In.</h1>
+
+  <p class="subtitle animate delay-2">Stop paying for 10 different tools that don't talk to each other. AventisAI replaces them all — for less than you're spending now.</p>
+
+  <div class="cta-row animate delay-3">
+    <button class="btn-primary" onclick="scrollToSlide(2)">See How It Works</button>
+    <button class="btn-outline" onclick="scrollToSlide(7)">View Case Study</button>
+  </div>
+</section>
+
+<!-- =============================== -->
+<!-- SLIDE 2: The Problem -->
+<!-- =============================== -->
+<section class="slide" id="slide-2">
+  <div class="glow-orb blue" style="top:50%;right:-200px"></div>
+
+  <div class="section-badge">The Problem</div>
+  <h2>How many tools are<br>you paying for?</h2>
+  <p class="section-sub">Most small businesses are duct-taping together 5-10 separate platforms. Each one costs money, wastes time, and nothing connects.</p>
+
+  <div class="tool-grid">
+    <div class="tool-card">
+      <div class="tool-name">CRM</div>
+      <div class="tool-cost">$50–$300/mo</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">Email Marketing</div>
+      <div class="tool-cost">$30–$150/mo</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">SMS / Texting</div>
+      <div class="tool-cost">$50–$200/mo</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">Website Builder</div>
+      <div class="tool-cost">$20–$50/mo</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">Booking / Calendar</div>
+      <div class="tool-cost">$15–$30/mo</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">Review Mgmt</div>
+      <div class="tool-cost">$100–$300/mo</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">Funnel Builder</div>
+      <div class="tool-cost">$97–$297/mo</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">AI Chatbot</div>
+      <div class="tool-cost">$75–$200/mo</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">Social Scheduler</div>
+      <div class="tool-cost">$30–$100/mo</div>
+    </div>
+  </div>
+
+  <div class="total-waste">
+    $467 – $1,627/mo wasted
+    <span>On tools that don't even talk to each other</span>
+  </div>
+</section>
+
+<!-- =============================== -->
+<!-- SLIDE 3: Before vs After -->
+<!-- =============================== -->
+<section class="slide" id="slide-3">
+  <div class="glow-orb cyan" style="top:-100px;left:50%;transform:translateX(-50%)"></div>
+
+  <div class="section-badge">The Shift</div>
+  <h2>Before vs. After AventisAI</h2>
+  <p class="section-sub">Here's what changes when you consolidate everything into one intelligent platform.</p>
+
+  <div class="before-after">
+    <div class="ba-col before">
+      <h3>&#9888; Without AventisAI</h3>
+      <ul>
+        <li>Paying for 5-10 separate subscriptions</li>
+        <li>Leads fall through the cracks</li>
+        <li>Reviews go unanswered for weeks</li>
+        <li>No automated follow-up system</li>
+        <li>Manually posting to social media</li>
+        <li>Hours wasted switching between tools</li>
+        <li>No unified view of your customers</li>
+        <li>Paying more, getting less</li>
+      </ul>
+    </div>
+    <div class="ba-arrow">&#10132;</div>
+    <div class="ba-col after">
+      <h3>&#10003; With AventisAI</h3>
+      <ul>
+        <li>One platform, one login, one bill</li>
+        <li>Every lead is captured and followed up</li>
+        <li>AI responds to reviews automatically</li>
+        <li>Smart automations nurture every prospect</li>
+        <li>AI-generated content ready to post</li>
+        <li>Everything connected in one dashboard</li>
+        <li>Complete customer journey, tracked</li>
+        <li>Paying less, getting more</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== -->
+<!-- SLIDE 4: The Solution -->
+<!-- =============================== -->
+<section class="slide" id="slide-4">
+  <div class="glow-orb blue" style="bottom:-100px;left:-100px"></div>
+
+  <div class="section-badge">The Solution</div>
+  <h2>Everything in One Platform</h2>
+  <p class="section-sub">AventisAI combines CRM, marketing, AI, and automation — so your business runs while you sleep.</p>
+
+  <div class="solution-grid">
+    <div class="feature-card">
+      <div class="feature-icon">&#128202;</div>
+      <h3>CRM & Pipeline</h3>
+      <p>Track every lead, deal, and client. Visual pipelines that show exactly where your revenue is.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#9993;</div>
+      <h3>Email & SMS Marketing</h3>
+      <p>Send campaigns, drip sequences, and automated follow-ups. Never lose a lead again.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#129302;</div>
+      <h3>AI Chatbot (24/7)</h3>
+      <p>Trained on your business. Answers questions, captures leads, and books appointments while you sleep.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127775;</div>
+      <h3>AI Review Management</h3>
+      <p>Automatically responds to every Google and Yelp review. Protects your reputation 24/7.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128247;</div>
+      <h3>AI Content Creation</h3>
+      <p>Branded Instagram posts, carousels, and reels — generated weekly by AI, custom for your business.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128197;</div>
+      <h3>Booking & Calendar</h3>
+      <p>Clients book directly. Automated reminders reduce no-shows by up to 80%.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127760;</div>
+      <h3>Websites & Funnels</h3>
+      <p>Professional sites and landing pages that convert. Built-in, no extra cost.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128241;</div>
+      <h3>Mobile App</h3>
+      <p>Manage everything from your phone. Your brand, your app — available on iOS and Android.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== -->
+<!-- SLIDE 5: Value Equation (Hormozi) -->
+<!-- =============================== -->
+<section class="slide" id="slide-5">
+  <div class="glow-orb cyan" style="top:-150px;right:-100px"></div>
+
+  <div class="section-badge">The Value Equation</div>
+  <h2>Why This Works</h2>
+  <p class="section-sub">We maximize what matters and eliminate what holds you back.</p>
+
+  <div class="equation-box">
+    <div class="equation-formula">
+      <span class="eq-top">Dream Outcome &nbsp;×&nbsp; Perceived Likelihood</span>
+      <div class="eq-divider"></div>
+      <span class="eq-bottom">Time Delay &nbsp;×&nbsp; Effort & Sacrifice</span>
+    </div>
+
+    <div class="eq-grid">
+      <div class="eq-item maximize">
+        <div class="eq-label">&#9650; Maximize: Dream Outcome</div>
+        <div class="eq-text">All your marketing, CRM, and AI in one place. Leads come in, follow-ups are automated, reviews get answered, content is created. Your business runs while you sleep.</div>
+      </div>
+      <div class="eq-item maximize">
+        <div class="eq-label">&#9650; Maximize: Likelihood of Success</div>
+        <div class="eq-text">Live demos, real case studies, real results. We show you it works before you commit — then guarantee it in writing.</div>
+      </div>
+      <div class="eq-item minimize">
+        <div class="eq-label">&#9660; Minimize: Time Delay</div>
+        <div class="eq-text">You're live in 48 hours, not 3 months. Fast onboarding is our weapon — we set everything up for you.</div>
+      </div>
+      <div class="eq-item minimize">
+        <div class="eq-label">&#9660; Minimize: Effort & Sacrifice</div>
+        <div class="eq-text">Done-for-you setup. We import your contacts, build your pipelines, configure your automations. You don't lift a finger.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== -->
+<!-- SLIDE 6: Comparison Table -->
+<!-- =============================== -->
+<section class="slide" id="slide-6">
+  <div class="glow-orb blue" style="bottom:-200px;right:-150px"></div>
+
+  <div class="section-badge">Why Us</div>
+  <h2>AventisAI vs. Everyone Else</h2>
+  <p class="section-sub">See how we stack up against the tools you're already paying for.</p>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>DIY Tools</th>
+        <th>HubSpot</th>
+        <th class="col-aventis">AventisAI</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>CRM & Contacts</td>
+        <td class="check">&#10003;</td>
+        <td class="check">&#10003;</td>
+        <td class="col-aventis check">&#10003;</td>
+      </tr>
+      <tr>
+        <td>Email Marketing</td>
+        <td class="check">&#10003;</td>
+        <td class="check">&#10003;</td>
+        <td class="col-aventis check">&#10003;</td>
+      </tr>
+      <tr>
+        <td>SMS Marketing</td>
+        <td class="cross">&#10005;</td>
+        <td class="cross">&#10005;</td>
+        <td class="col-aventis check">&#10003;</td>
+      </tr>
+      <tr>
+        <td>AI Chatbot (24/7)</td>
+        <td class="cross">&#10005;</td>
+        <td style="color:var(--gold)">Add-on</td>
+        <td class="col-aventis check">&#10003;</td>
+      </tr>
+      <tr>
+        <td>AI Phone Answering</td>
+        <td class="cross">&#10005;</td>
+        <td class="cross">&#10005;</td>
+        <td class="col-aventis check">&#10003;</td>
+      </tr>
+      <tr>
+        <td>AI Review Responses</td>
+        <td class="cross">&#10005;</td>
+        <td class="cross">&#10005;</td>
+        <td class="col-aventis check">&#10003;</td>
+      </tr>
+      <tr>
+        <td>AI Content Creation</td>
+        <td class="cross">&#10005;</td>
+        <td class="cross">&#10005;</td>
+        <td class="col-aventis check">&#10003;</td>
+      </tr>
+      <tr>
+        <td>Funnels & Websites</td>
+        <td style="color:var(--gold)">Extra $</td>
+        <td style="color:var(--gold)">Extra $</td>
+        <td class="col-aventis check">&#10003;</td>
+      </tr>
+      <tr>
+        <td>Booking & Calendar</td>
+        <td style="color:var(--gold)">Extra $</td>
+        <td class="check">&#10003;</td>
+        <td class="col-aventis check">&#10003;</td>
+      </tr>
+      <tr>
+        <td>Done-For-You Setup</td>
+        <td class="cross">&#10005;</td>
+        <td class="cross">&#10005;</td>
+        <td class="col-aventis check">&#10003;</td>
+      </tr>
+      <tr>
+        <td>Branded Mobile App</td>
+        <td class="cross">&#10005;</td>
+        <td class="cross">&#10005;</td>
+        <td class="col-aventis check">&#10003;</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700">Monthly Cost</td>
+        <td style="color:var(--red);font-weight:700">$500–$1,600</td>
+        <td style="color:var(--red);font-weight:700">$800+</td>
+        <td class="col-aventis" style="font-weight:700;color:var(--green)">Way Less</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =============================== -->
+<!-- SLIDE 7: Case Study — Akira Real Estate -->
+<!-- =============================== -->
+<section class="slide" id="slide-7">
+  <div class="glow-orb blue" style="top:-100px;left:-150px"></div>
+  <div class="glow-orb cyan" style="bottom:-100px;right:-100px"></div>
+
+  <div class="section-badge">Case Study</div>
+  <h2>Akira Real Estate</h2>
+  <p class="section-sub">See what Aventis Marketing built for a real client — a full-service real estate brokerage in Massachusetts.</p>
+
+  <div class="case-study">
+    <div class="case-header">
+      <div class="case-avatar">A</div>
+      <div class="case-info">
+        <h3>Akira Real Estate Agency</h3>
+        <p>Kunal Patel — Real Estate Brokerage, Massachusetts</p>
+        <a href="https://Akirarealestateagency.com" target="_blank">Akirarealestateagency.com &#8599;</a>
+      </div>
+    </div>
+
+    <div class="case-results">
+      <div class="result-card">
+        <div class="result-number">100%</div>
+        <div class="result-label">Custom Website Built</div>
+      </div>
+      <div class="result-card">
+        <div class="result-number">7-Day</div>
+        <div class="result-label">Content Calendar Created</div>
+      </div>
+      <div class="result-card">
+        <div class="result-number">AI</div>
+        <div class="result-label">Branded Visuals Generated</div>
+      </div>
+      <div class="result-card">
+        <div class="result-number">Full</div>
+        <div class="result-label">Social Strategy Deployed</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <h4 style="font-size:14px;font-weight:600;margin-bottom:12px;color:var(--gray-light)">Services Delivered by Aventis:</h4>
+      <div class="case-services">
+        <span class="service-tag">Professional Website</span>
+        <span class="service-tag">AI Content Creation</span>
+        <span class="service-tag">Instagram Strategy</span>
+        <span class="service-tag">Branded Visual Posts</span>
+        <span class="service-tag">Carousel Graphics</span>
+        <span class="service-tag">Reel Covers</span>
+        <span class="service-tag">Story Templates</span>
+        <span class="service-tag">Content Calendar</span>
+        <span class="service-tag">SEO Optimization</span>
+        <span class="service-tag">Lead Generation CRM</span>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;border-radius:14px;background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.15);margin-top:12px">
+      <p style="font-size:14px;color:var(--gray-light);line-height:1.6;font-style:italic">
+        "Aventis delivered a complete digital presence for Akira Real Estate — from a professional website to a full week of AI-generated, branded Instagram content including posts, carousels, reels, and stories. Everything was tailored to their market and brand identity."
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== -->
+<!-- SLIDE 8: Value Stack -->
+<!-- =============================== -->
+<section class="slide" id="slide-8">
+  <div class="glow-orb cyan" style="top:50%;left:-200px"></div>
+
+  <div class="section-badge">The Value Stack</div>
+  <h2>What You Get</h2>
+  <p class="section-sub">If you bought each piece separately, here's what it would cost.</p>
+
+  <div class="value-stack">
+    <div class="stack-item">
+      <span class="item-name">AventisAI Platform — CRM, email, SMS, funnels, websites, booking, automations</span>
+      <span class="item-value">$1,500/mo</span>
+    </div>
+    <div class="stack-item">
+      <span class="item-name">AI Chatbot — trained on your business, answers 24/7</span>
+      <span class="item-value">$500/mo</span>
+    </div>
+    <div class="stack-item">
+      <span class="item-name">AI Phone Answering — never miss a call</span>
+      <span class="item-value">$400/mo</span>
+    </div>
+    <div class="stack-item">
+      <span class="item-name">AI Review Management — auto-responds to every review</span>
+      <span class="item-value">$300/mo</span>
+    </div>
+    <div class="stack-item">
+      <span class="item-name">AI Content Creation — branded posts, carousels, reels weekly</span>
+      <span class="item-value">$2,000/mo</span>
+    </div>
+    <div class="stack-item">
+      <span class="item-name">AI Email/SMS Follow-Up Sequences — pre-built, automated</span>
+      <span class="item-value">$500/mo</span>
+    </div>
+    <div class="stack-item">
+      <span class="item-name">Done-For-You Onboarding — full setup, contact import, pipeline config</span>
+      <span class="item-value">$1,500</span>
+    </div>
+    <div class="stack-item">
+      <span class="item-name">Monthly Strategy Call (30 min)</span>
+      <span class="item-value">$500/mo</span>
+    </div>
+    <div class="stack-item">
+      <span class="item-name">Custom Automation Buildout</span>
+      <span class="item-value">$1,000</span>
+    </div>
+    <div class="stack-item">
+      <span class="item-name">Priority Support + Branded Mobile App</span>
+      <span class="item-value">$300/mo</span>
+    </div>
+
+    <div class="stack-total">
+      <span class="item-name">Total Value</span>
+      <span class="item-value">$7,200+/mo</span>
+    </div>
+
+    <div class="stack-vs">
+      <p style="color:var(--gray);font-size:14px;font-weight:500">What you actually pay</p>
+      <div class="you-pay">A fraction of that.</div>
+      <div class="ratio">Would you give me $1 if I gave you $7?</div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== -->
+<!-- SLIDE 9: Bonuses + Guarantee -->
+<!-- =============================== -->
+<section class="slide" id="slide-9">
+  <div class="glow-orb blue" style="top:-100px;right:-100px"></div>
+
+  <div class="section-badge">Limited Time</div>
+  <h2>Exclusive Bonuses</h2>
+  <p class="section-sub">For the first 10 businesses only — these disappear once we're full.</p>
+
+  <div class="bonus-grid" style="margin-bottom:48px">
+    <div class="bonus-card">
+      <div class="bonus-tag">Bonus #1</div>
+      <h4>Free Website Redesign</h4>
+      <p style="font-size:13px;color:var(--gray);margin:8px 0">Complete professional site built inside AventisAI</p>
+      <div class="bonus-value">$2,000 value</div>
+    </div>
+    <div class="bonus-card">
+      <div class="bonus-tag">Bonus #2</div>
+      <h4>30-Day Content Calendar</h4>
+      <p style="font-size:13px;color:var(--gray);margin:8px 0">Done-for-you Instagram strategy with AI-branded visuals</p>
+      <div class="bonus-value">$1,500 value</div>
+    </div>
+    <div class="bonus-card">
+      <div class="bonus-tag">Bonus #3</div>
+      <h4>Google Business Optimization</h4>
+      <p style="font-size:13px;color:var(--gray);margin:8px 0">Full GBP audit, keyword optimization, and review strategy</p>
+      <div class="bonus-value">$500 value</div>
+    </div>
+  </div>
+
+  <div class="guarantee-box">
+    <div class="guarantee-icon">&#128170;</div>
+    <h3>The Aventis Guarantee</h3>
+    <p>Try AventisAI for 30 days. If you don't see the value — if it doesn't save you time, money, and headaches — we'll refund every penny. No questions asked. No hoops. No hassle.</p>
+    <div class="guarantee-highlight">30-Day Money-Back Guarantee &mdash; Zero Risk</div>
+  </div>
+</section>
+
+<!-- =============================== -->
+<!-- SLIDE 10: The Close -->
+<!-- =============================== -->
+<section class="slide close-slide" id="slide-10">
+  <div class="glow-orb blue" style="top:-150px;left:50%;transform:translateX(-50%);width:600px;height:600px;opacity:0.1"></div>
+
+  <div class="section-badge">Next Steps</div>
+  <h2>Ready to Replace<br>10 Tools with 1?</h2>
+  <p class="close-sub">Here's exactly what happens when you say yes. No contracts. No surprises. Just results.</p>
+
+  <div class="close-steps">
+    <div class="close-step">
+      <div class="step-num">01</div>
+      <div class="step-text">You say "I'm in"</div>
+    </div>
+    <div class="close-step">
+      <div class="step-num">02</div>
+      <div class="step-text">We set everything up<br>within 48 hours</div>
+    </div>
+    <div class="close-step">
+      <div class="step-num">03</div>
+      <div class="step-text">AI chatbot live on<br>your website by Friday</div>
+    </div>
+    <div class="close-step">
+      <div class="step-num">04</div>
+      <div class="step-text">Your business starts<br>running on autopilot</div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:36px;text-align:center">
+    <p style="font-size:16px;color:var(--gray-light);margin-bottom:24px;line-height:1.6;max-width:550px;margin-left:auto;margin-right:auto">
+      No contracts. Month-to-month. Cancel anytime.<br>
+      But we're only offering this to <strong style="color:var(--gold)">10 businesses</strong> at this level — then the offer changes.
+    </p>
+    <button class="btn-primary" style="font-size:18px;padding:18px 48px;border-radius:14px" onclick="scrollToSlide(1)">
+      Let's Go &#10132;
+    </button>
+  </div>
+
+  <div style="margin-top:40px;text-align:center;opacity:0.6">
+    <div class="logo-mark" style="justify-content:center">
+      <svg viewBox="0 0 48 48" fill="none" width="36" height="36">
+        <defs><linearGradient id="logoGrad2" x1="0" y1="48" x2="48" y2="0"><stop offset="0%" stop-color="#1d4ed8"/><stop offset="50%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient></defs>
+        <path d="M24 4L42 40H6L24 4Z" fill="url(#logoGrad2)" opacity="0.9"/>
+        <path d="M24 16L16 34H22L24 28L26 34H32L24 16Z" fill="#ffffff"/>
+        <path d="M34 32C36 30 40 31 42 33" stroke="url(#logoGrad2)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <p style="font-size:12px;color:var(--gray);margin-top:12px;letter-spacing:2px">AVENTIS MARKETING &bull; 2026</p>
+  </div>
+</section>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const totalSlides = slides.length;
+const navDotsContainer = document.getElementById('navDots');
+const slideCounter = document.getElementById('slideCounter');
+
+// Create nav dots
+slides.forEach((_, i) => {
+  const dot = document.createElement('div');
+  dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  dot.onclick = () => scrollToSlide(i + 1);
+  navDotsContainer.appendChild(dot);
+});
+
+function scrollToSlide(n) {
+  document.getElementById('slide-' + n).scrollIntoView({ behavior: 'smooth' });
+}
+
+// Track current slide
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const idx = Array.from(slides).indexOf(entry.target);
+      // Update counter
+      slideCounter.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(totalSlides).padStart(2, '0');
+      // Update dots
+      document.querySelectorAll('.nav-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === idx);
+      });
+    }
+  });
+}, { threshold: 0.5 });
+
+slides.forEach(s => observer.observe(s));
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  const currentIdx = Array.from(document.querySelectorAll('.nav-dot')).findIndex(d => d.classList.contains('active'));
+  if ((e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') && currentIdx < totalSlides - 1) {
+    e.preventDefault();
+    scrollToSlide(currentIdx + 2);
+  } else if ((e.key === 'ArrowUp' || e.key === 'ArrowLeft') && currentIdx > 0) {
+    e.preventDefault();
+    scrollToSlide(currentIdx);
+  }
+});
+</script>
+</body>
+</html>
