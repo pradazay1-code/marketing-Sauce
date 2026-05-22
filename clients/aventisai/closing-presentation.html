@@ -428,6 +428,85 @@ body{font-family:'Inter',sans-serif;background:var(--navy);color:var(--white);ov
 .delay-3{animation-delay:0.3s}
 .delay-4{animation-delay:0.4s}
 
+/* Pricing Slide */
+.pricing-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:24px;max-width:1100px;width:100%;align-items:stretch;
+}
+.pricing-card{
+  border-radius:20px;padding:36px 28px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+  display:flex;flex-direction:column;position:relative;
+  transition:all 0.3s;
+}
+.pricing-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.3)}
+.pricing-card.featured{
+  background:linear-gradient(135deg,rgba(37,99,235,0.1) 0%,rgba(6,182,212,0.06) 100%);
+  border:2px solid var(--blue);
+  transform:scale(1.04);
+  box-shadow:0 8px 40px rgba(37,99,235,0.2);
+}
+.pricing-card.featured:hover{transform:scale(1.04) translateY(-4px)}
+.pricing-popular{
+  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  padding:6px 20px;border-radius:100px;
+  background:linear-gradient(135deg,var(--blue),#1d4ed8);
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  white-space:nowrap;box-shadow:0 4px 16px rgba(37,99,235,0.4);
+}
+.pricing-tier{font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--blue-light);margin-bottom:8px}
+.pricing-name{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;margin-bottom:4px}
+.pricing-desc{font-size:13px;color:var(--gray);margin-bottom:20px;line-height:1.5}
+.pricing-price{
+  display:flex;align-items:baseline;gap:4px;margin-bottom:6px;
+}
+.pricing-dollar{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--white);align-self:flex-start;margin-top:8px}
+.pricing-amount{font-family:'Space Grotesk',sans-serif;font-size:48px;font-weight:800;color:var(--white);line-height:1}
+.pricing-period{font-size:14px;color:var(--gray);font-weight:400;margin-left:2px}
+.pricing-anchor{
+  font-size:12px;color:var(--gray);text-decoration:line-through;margin-bottom:20px;
+}
+.pricing-divider{
+  width:100%;height:1px;background:rgba(255,255,255,0.08);margin:4px 0 20px;
+}
+.pricing-features{list-style:none;display:flex;flex-direction:column;gap:10px;flex:1;margin-bottom:24px}
+.pricing-features li{
+  font-size:13px;color:var(--gray-light);display:flex;align-items:flex-start;gap:8px;line-height:1.4;
+}
+.pricing-features li .pf-check{color:var(--green);font-weight:700;flex-shrink:0;font-size:14px}
+.pricing-features li .pf-x{color:rgba(255,255,255,0.15);font-weight:700;flex-shrink:0;font-size:14px}
+.pricing-features li.disabled{color:rgba(255,255,255,0.25)}
+.pricing-cta{
+  padding:14px;border-radius:12px;font-size:14px;font-weight:600;
+  text-align:center;cursor:pointer;transition:all 0.3s;border:none;width:100%;
+  letter-spacing:0.5px;
+}
+.pricing-cta.primary{
+  background:linear-gradient(135deg,var(--blue) 0%,#1d4ed8 100%);color:var(--white);
+  box-shadow:0 4px 20px rgba(37,99,235,0.35);
+}
+.pricing-cta.primary:hover{box-shadow:0 8px 28px rgba(37,99,235,0.5);transform:translateY(-1px)}
+.pricing-cta.secondary{
+  background:rgba(255,255,255,0.06);color:var(--white);border:1px solid rgba(255,255,255,0.12);
+}
+.pricing-cta.secondary:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2)}
+.pricing-savings{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 12px;border-radius:100px;margin-bottom:16px;
+  background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);
+  font-size:11px;font-weight:600;color:var(--green);
+}
+.pricing-footer{
+  text-align:center;margin-top:36px;max-width:600px;
+}
+.pricing-footer p{font-size:14px;color:var(--gray);line-height:1.6}
+
+@media(max-width:900px){
+  .pricing-grid{grid-template-columns:1fr;max-width:400px}
+  .pricing-card.featured{transform:scale(1)}
+  .pricing-card.featured:hover{transform:translateY(-4px)}
+}
+
 /* Print / Fullscreen */
 @media print{
   .nav-dots,.top-bar{display:none}
@@ -892,16 +971,126 @@ body{font-family:'Inter',sans-serif;background:var(--navy);color:var(--white);ov
 
     <div class="stack-vs">
       <p style="color:var(--gray);font-size:14px;font-weight:500">What you actually pay</p>
-      <div class="you-pay">A fraction of that.</div>
+      <div class="you-pay">Starting at $500/mo</div>
       <div class="ratio">Would you give me $1 if I gave you $7?</div>
     </div>
   </div>
 </section>
 
 <!-- =============================== -->
-<!-- SLIDE 9: Bonuses + Guarantee -->
+<!-- SLIDE 9: Pricing -->
 <!-- =============================== -->
 <section class="slide" id="slide-9">
+  <div class="glow-orb blue" style="top:-100px;left:50%;transform:translateX(-50%);width:500px;height:500px;opacity:0.08"></div>
+
+  <div class="section-badge">Choose Your Plan</div>
+  <h2>Simple, Transparent Pricing</h2>
+  <p class="section-sub">Three tiers. No contracts. No hidden fees. Cancel anytime. Every plan replaces $2,500+ in separate tools.</p>
+
+  <div class="pricing-grid">
+
+    <!-- Tier 1: Software -->
+    <div class="pricing-card">
+      <div class="pricing-tier">Starter</div>
+      <div class="pricing-name">AventisAI Software</div>
+      <div class="pricing-desc">The full AI-powered platform — you run the tools, we give you the firepower.</div>
+      <div class="pricing-price">
+        <span class="pricing-dollar">$</span>
+        <span class="pricing-amount">500</span>
+        <span class="pricing-period">/mo</span>
+      </div>
+      <div class="pricing-anchor">Replaces $2,500+/mo in tools</div>
+      <div class="pricing-savings">Save $2,000+/mo</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li><span class="pf-check">&#10003;</span> CRM & Pipeline Management</li>
+        <li><span class="pf-check">&#10003;</span> Email & SMS Marketing</li>
+        <li><span class="pf-check">&#10003;</span> AI Chatbot — 24/7 on Your Website</li>
+        <li><span class="pf-check">&#10003;</span> Online Booking & Calendar</li>
+        <li><span class="pf-check">&#10003;</span> 1 Website or Funnel</li>
+        <li><span class="pf-check">&#10003;</span> Reputation Monitoring</li>
+        <li><span class="pf-check">&#10003;</span> Automated Follow-Up Sequences</li>
+        <li><span class="pf-check">&#10003;</span> Mobile App (Your Brand)</li>
+        <li class="disabled"><span class="pf-x">&#10005;</span> AI Content Creation</li>
+        <li class="disabled"><span class="pf-x">&#10005;</span> Done-for-You Marketing</li>
+        <li class="disabled"><span class="pf-x">&#10005;</span> AI Phone Answering</li>
+        <li class="disabled"><span class="pf-x">&#10005;</span> Strategy Calls</li>
+      </ul>
+      <button class="pricing-cta secondary">Get Started</button>
+    </div>
+
+    <!-- Tier 2: Software + Marketing -->
+    <div class="pricing-card featured">
+      <div class="pricing-popular">Most Popular</div>
+      <div class="pricing-tier">Growth</div>
+      <div class="pricing-name">Software + Marketing</div>
+      <div class="pricing-desc">Everything in Software, plus we actively market your business with AI-powered tools.</div>
+      <div class="pricing-price">
+        <span class="pricing-dollar">$</span>
+        <span class="pricing-amount">700</span>
+        <span class="pricing-period">/mo</span>
+      </div>
+      <div class="pricing-anchor">Replaces $4,700+/mo in tools & services</div>
+      <div class="pricing-savings">Save $4,000+/mo &mdash; Best Value</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li><span class="pf-check">&#10003;</span> <strong>Everything in Software</strong></li>
+        <li><span class="pf-check">&#10003;</span> AI Review Auto-Responses</li>
+        <li><span class="pf-check">&#10003;</span> AI Content Writer</li>
+        <li><span class="pf-check">&#10003;</span> AI Conversation Bot (SMS + Web + Social)</li>
+        <li><span class="pf-check">&#10003;</span> Unlimited Funnels & Websites</li>
+        <li><span class="pf-check">&#10003;</span> Advanced Automations & Workflows</li>
+        <li><span class="pf-check">&#10003;</span> Up to 25,000 Contacts</li>
+        <li><span class="pf-check">&#10003;</span> Done-For-You Onboarding & Setup</li>
+        <li><span class="pf-check">&#10003;</span> Monthly Marketing Guidance</li>
+        <li class="disabled"><span class="pf-x">&#10005;</span> Full Done-for-You Marketing</li>
+        <li class="disabled"><span class="pf-x">&#10005;</span> AI Phone Answering</li>
+        <li class="disabled"><span class="pf-x">&#10005;</span> Weekly Strategy Calls</li>
+      </ul>
+      <button class="pricing-cta primary">Get Started</button>
+    </div>
+
+    <!-- Tier 3: Software + Full Marketing -->
+    <div class="pricing-card">
+      <div class="pricing-tier">Elite</div>
+      <div class="pricing-name">Software + Full Marketing</div>
+      <div class="pricing-desc">We run everything. You focus on your business — we handle all marketing, content, and growth.</div>
+      <div class="pricing-price">
+        <span class="pricing-dollar">$</span>
+        <span class="pricing-amount">1,200</span>
+        <span class="pricing-period">/mo</span>
+      </div>
+      <div class="pricing-anchor">Replaces $7,200+/mo in tools, staff & agency</div>
+      <div class="pricing-savings">Save $6,000+/mo &mdash; Full Service</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li><span class="pf-check">&#10003;</span> <strong>Everything in Growth</strong></li>
+        <li><span class="pf-check">&#10003;</span> AI Phone Answering (Receptionist)</li>
+        <li><span class="pf-check">&#10003;</span> Weekly AI Instagram Content</li>
+        <li><span class="pf-check">&#10003;</span> Branded Posts, Carousels, Reels & Stories</li>
+        <li><span class="pf-check">&#10003;</span> Full Done-for-You Marketing Execution</li>
+        <li><span class="pf-check">&#10003;</span> Monthly Strategy Call (30 min)</li>
+        <li><span class="pf-check">&#10003;</span> Custom Automation Buildout</li>
+        <li><span class="pf-check">&#10003;</span> Priority Support (Same-Day)</li>
+        <li><span class="pf-check">&#10003;</span> Unlimited Contacts</li>
+        <li><span class="pf-check">&#10003;</span> Google Business Profile Management</li>
+        <li><span class="pf-check">&#10003;</span> Ad Campaign Setup & Optimization</li>
+        <li><span class="pf-check">&#10003;</span> Dedicated Account Manager</li>
+      </ul>
+      <button class="pricing-cta secondary">Get Started</button>
+    </div>
+
+  </div>
+
+  <div class="pricing-footer">
+    <p>All plans include a <strong style="color:var(--green)">30-day money-back guarantee</strong>. No contracts, no setup fees. You're live in 48 hours.</p>
+  </div>
+</section>
+
+<!-- =============================== -->
+<!-- SLIDE 10: Bonuses + Guarantee -->
+<!-- =============================== -->
+<section class="slide" id="slide-10">
   <div class="glow-orb blue" style="top:-100px;right:-100px"></div>
 
   <div class="section-badge">Limited Time</div>
@@ -938,9 +1127,9 @@ body{font-family:'Inter',sans-serif;background:var(--navy);color:var(--white);ov
 </section>
 
 <!-- =============================== -->
-<!-- SLIDE 10: The Close -->
+<!-- SLIDE 11: The Close -->
 <!-- =============================== -->
-<section class="slide close-slide" id="slide-10">
+<section class="slide close-slide" id="slide-11">
   <div class="glow-orb blue" style="top:-150px;left:50%;transform:translateX(-50%);width:600px;height:600px;opacity:0.1"></div>
 
   <div class="section-badge">Next Steps</div>
