@@ -1,0 +1,50 @@
+{
+  "slug": "wood-wide-web",
+  "title": "The internet has been growing underground for 400 million years",
+  "format": "shorts-nature",
+  "voice": "en-US-AvaMultilingualNeural",
+  "no_captions": true,
+  "voiceover": "Under every forest you have ever walked through, there is a network. It is made of fungi. Threads thinner than a human hair, spreading through the soil, connecting tree to tree, root to root, for miles. Scientists call it the Wood Wide Web. Trees use it to share food. To send chemical warnings about insects. To care for their own dying siblings. A mother tree on her last day will pump her remaining sugar through this network to feed her offspring. It has been running for four hundred million years. It existed before the dinosaurs. It will exist after us. And it is alive right now, beneath your feet.",
+  "shots": [
+    {
+      "query": "old growth forest sunlight",
+      "duration": 5
+    },
+    {
+      "query": "forest floor moss closeup",
+      "duration": 4
+    },
+    {
+      "query": "mushroom mycelium underground",
+      "duration": 5
+    },
+    {
+      "query": "fungi network roots",
+      "duration": 5
+    },
+    {
+      "query": "ancient redwood trees",
+      "duration": 5
+    },
+    {
+      "query": "tree roots underground",
+      "duration": 4
+    },
+    {
+      "query": "mother tree forest light",
+      "duration": 5
+    },
+    {
+      "query": "forest mist morning peaceful",
+      "duration": 5
+    },
+    {
+      "query": "rainforest canopy from below",
+      "duration": 5
+    },
+    {
+      "query": "soil dirt closeup macro",
+      "duration": 4
+    }
+  ]
+}

@@ -324,37 +324,42 @@ def main() -> int:
         logger=None,
     )
 
-    print("[5/6] Generating captions (.ass)...")
-    ass_path = out_dir / "captions.ass"
-    hook = script.get("hook") or script.get("title", "").split(":")[0]
-    generate_ass(words, script.get("emphasis", []), hook, ass_path)
+    if script.get("no_captions"):
+        out_path = out_dir / "base.mp4"
+        print(f"[5/5] no_captions=true — finalizing without subtitles -> {out_path}")
+        temp_mp4.rename(out_path)
+    else:
+        print("[5/6] Generating captions (.ass)...")
+        ass_path = out_dir / "captions.ass"
+        hook = script.get("hook") or script.get("title", "").split(":")[0]
+        generate_ass(words, script.get("emphasis", []), hook, ass_path)
 
-    out_path = out_dir / "base.mp4"
-    print(f"[6/6] Burning captions -> {out_path}")
-    ass_escaped = str(ass_path).replace("\\", "/").replace(":", r"\:")
-    subprocess.run(
-        [
-            "ffmpeg",
-            "-y",
-            "-i",
-            str(temp_mp4),
-            "-vf",
-            f"subtitles={ass_escaped}",
-            "-c:a",
-            "copy",
-            "-c:v",
-            "libx264",
-            "-preset",
-            "medium",
-            "-crf",
-            "20",
-            "-loglevel",
-            "error",
-            str(out_path),
-        ],
-        check=True,
-    )
-    temp_mp4.unlink(missing_ok=True)
+        out_path = out_dir / "base.mp4"
+        print(f"[6/6] Burning captions -> {out_path}")
+        ass_escaped = str(ass_path).replace("\\", "/").replace(":", r"\:")
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-i",
+                str(temp_mp4),
+                "-vf",
+                f"subtitles={ass_escaped}",
+                "-c:a",
+                "copy",
+                "-c:v",
+                "libx264",
+                "-preset",
+                "medium",
+                "-crf",
+                "20",
+                "-loglevel",
+                "error",
+                str(out_path),
+            ],
+            check=True,
+        )
+        temp_mp4.unlink(missing_ok=True)
 
     print(f"\nDone -> {out_path}")
     return 0
