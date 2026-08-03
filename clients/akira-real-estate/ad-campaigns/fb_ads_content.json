@@ -1,0 +1,168 @@
+[
+  {
+    "day": 1,
+    "date": "2026_ad1_value",
+    "content_type": "post",
+    "pillar": "market_stats",
+    "content": {
+      "type": "post",
+      "pillar": "market_stats",
+      "hook": "Your home is worth more than you think.",
+      "caption": "The average MA homeowner is sitting on $180K+ in equity right now.\n\nHomes in our area are selling in 18 days on average \u2014 many above asking.\n\nGet a FREE, no-pressure home valuation:\n\n> Your home's exact 2026 market value\n> Recent comparable sales in your area\n> Custom strategy to maximize your sale price\n> Zero pressure. Zero commitment.\n\nComment VALUE below or click to get your report today.",
+      "cta": "Get your free home valuation today.",
+      "city": "Massachusetts"
+    }
+  },
+  {
+    "day": 2,
+    "date": "2026_ad2_offmarket",
+    "content_type": "carousel",
+    "pillar": "education",
+    "content": {
+      "type": "carousel",
+      "pillar": "education",
+      "title": "Homes You'll Never See on Zillow",
+      "slides": [
+        {
+          "slide_number": 1,
+          "text": "The truth about the MA market\nMost buyers are fighting for the same 3 houses everyone sees online."
+        },
+        {
+          "slide_number": 2,
+          "text": "94% of buyers use Zillow.\nSo does every competitor you're bidding against \u2014 that's why you keep losing."
+        },
+        {
+          "slide_number": 3,
+          "text": "The best MA homes get sold BEFORE they hit the MLS.\nQuiet listings. Off-market deals. Pocket inventory."
+        },
+        {
+          "slide_number": 4,
+          "text": "Our clients get first access.\nWe show them homes 24-72 hours before the public \u2014 no bidding wars, no drama."
+        },
+        {
+          "slide_number": 5,
+          "text": "How it works:\n> DM us your must-haves\n> We match you to off-market inventory\n> You tour before anyone else knows"
+        },
+        {
+          "slide_number": 6,
+          "text": "Serious about buying in MA?\nStop competing on public listings. Get the inside track."
+        }
+      ],
+      "cta": "Message us for early access to off-market MA homes."
+    }
+  },
+  {
+    "day": 3,
+    "date": "2026_ad3_ftb_reel",
+    "content_type": "reel",
+    "pillar": "education",
+    "content": {
+      "type": "reel",
+      "pillar": "education",
+      "title": "First-Time Buyer's Guide MA 2026",
+      "hook": "You don't need 20% down. Here's what MA first-time buyers actually need to know.",
+      "duration": "30 seconds",
+      "scenes": [
+        {
+          "time": "0-3s",
+          "text": "MA has 4 programs that will PAY you to buy your first home."
+        },
+        {
+          "time": "3-10s",
+          "text": "The state offers up to $15K in down payment assistance."
+        },
+        {
+          "time": "10-20s",
+          "text": "Your credit score doesn't need to be perfect. 620 is enough."
+        },
+        {
+          "time": "20-30s",
+          "text": "Comment GUIDE for the full 2026 First-Time Buyer's Guide (free)."
+        }
+      ],
+      "cta": "Comment GUIDE for our free 2026 First-Time Buyer's Guide."
+    }
+  },
+  {
+    "day": 4,
+    "date": "2026_ad4_justsold",
+    "content_type": "post",
+    "pillar": "testimonial",
+    "content": {
+      "type": "post",
+      "pillar": "testimonial",
+      "hook": "JUST CLOSED: $32K over asking in 6 days.",
+      "caption": "Another happy family. Another home closed above asking.\n\nListed for 6 days. 4 offers received. Closed $32,000 above list price.\n\nWhat our sellers get that others don't:\n\n> Professional photography + drone footage\n> Full marketing across 40+ platforms\n> Custom social media campaigns\n> Aggressive pricing strategy based on live market data\n> White-glove service from listing to closing\n\nThinking about selling in 2026?\n\nLet's talk about what your home could realistically sell for right now.",
+      "cta": "Message us for a free selling consultation.",
+      "city": "Massachusetts"
+    }
+  },
+  {
+    "day": 5,
+    "date": "2026_ad5_neighborhood",
+    "content_type": "reel",
+    "pillar": "community",
+    "content": {
+      "type": "reel",
+      "pillar": "community",
+      "title": "3 Underrated MA Neighborhoods for 2026",
+      "hook": "Nobody's talking about these MA neighborhoods yet \u2014 but they should be.",
+      "duration": "45 seconds",
+      "scenes": [
+        {
+          "time": "0-3s",
+          "text": "The 3 smartest places to buy in MA right now"
+        },
+        {
+          "time": "3-15s",
+          "text": "1. Taunton \u2014 15% below MA average, growth incoming"
+        },
+        {
+          "time": "15-30s",
+          "text": "2. Attleboro \u2014 hidden gem for commuters, big value"
+        },
+        {
+          "time": "30-45s",
+          "text": "3. Norton \u2014 top schools, quiet charm, under the radar"
+        }
+      ],
+      "cta": "Comment NEIGHBORHOOD for the full breakdown."
+    }
+  },
+  {
+    "day": 6,
+    "date": "2026_ad6_stories",
+    "content_type": "story",
+    "pillar": "market_stats",
+    "content": {
+      "type": "story",
+      "pillar": "market_stats",
+      "frames": [
+        {
+          "type": "text",
+          "content": "MA Market Update\nAugust 2026"
+        },
+        {
+          "type": "text",
+          "content": "Median home price:\n$589,000\nUp 4.2% year-over-year"
+        },
+        {
+          "type": "text",
+          "content": "Average days on market:\n18 days\nDown from 24 last year"
+        },
+        {
+          "type": "text",
+          "content": "Mortgage rates:\n6.3% average\nLowest since 2022"
+        },
+        {
+          "type": "poll",
+          "content": "Buying vs. Waiting?"
+        },
+        {
+          "type": "text",
+          "content": "Ready to make a move?\nDM us your goals \u2014 free consultation."
+        }
+      ]
+    }
+  }
+]
