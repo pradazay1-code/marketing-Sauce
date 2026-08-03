@@ -297,6 +297,189 @@ def text_height(draw, text, font):
 # Branding elements
 # ---------------------------------------------------------------------------
 
+def load_background_photo(photo_path, size):
+    """Load a local photo and resize/crop to fit target size (cover behavior)."""
+    if not photo_path or not os.path.exists(photo_path):
+        return None
+    try:
+        img = Image.open(photo_path).convert("RGB")
+        target_w, target_h = size
+        src_w, src_h = img.size
+        scale = max(target_w / src_w, target_h / src_h)
+        new_w, new_h = int(src_w * scale), int(src_h * scale)
+        img = img.resize((new_w, new_h), Image.LANCZOS)
+        left = (new_w - target_w) // 2
+        top = (new_h - target_h) // 2
+        return img.crop((left, top, left + target_w, top + target_h))
+    except Exception as e:
+        print(f"  [BG] Failed to load {photo_path}: {e}")
+        return None
+
+
+def generate_procedural_background(size, style="sunset_home", brand=None):
+    """Generate a photo-style architectural background using PIL primitives.
+    Styles: sunset_home, city_dusk, warm_interior, night_luxury."""
+    import random
+    w, h = size
+    img = Image.new("RGB", size)
+    draw = ImageDraw.Draw(img)
+
+    if style == "sunset_home":
+        for y in range(h):
+            t = y / h
+            if t < 0.55:
+                r = int(20 + (255 - 20) * (t / 0.55) * 0.85)
+                g = int(30 + (140 - 30) * (t / 0.55) * 0.75)
+                b = int(60 + (90 - 60) * (t / 0.55) * 0.5)
+            else:
+                lt = (t - 0.55) / 0.45
+                r = int(217 * (1 - lt) + 25 * lt)
+                g = int(105 * (1 - lt) + 30 * lt)
+                b = int(75 * (1 - lt) + 55 * lt)
+            draw.line([(0, y), (w, y)], fill=(r, g, b))
+        sun_y = int(h * 0.48)
+        for r in range(120, 0, -2):
+            alpha = 1 - (r / 120)
+            fill = (int(255 * alpha + 220 * (1 - alpha)),
+                    int(210 * alpha + 130 * (1 - alpha)),
+                    int(150 * alpha + 90 * (1 - alpha)))
+            draw.ellipse([w // 2 - r, sun_y - r, w // 2 + r, sun_y + r], fill=fill)
+        skyline_y = int(h * 0.62)
+        base_dark = (18, 22, 35)
+        random.seed(42)
+        x = 0
+        while x < w:
+            bw = random.randint(40, 90)
+            bh = random.randint(60, 180)
+            draw.rectangle([x, skyline_y - bh, x + bw, h], fill=base_dark)
+            wy = skyline_y - bh + 12
+            while wy < skyline_y - 8:
+                wx = x + 6
+                while wx < x + bw - 10:
+                    if random.random() > 0.4:
+                        draw.rectangle([wx, wy, wx + 6, wy + 8],
+                                       fill=(240, 200, 120))
+                    wx += 12
+                wy += 14
+            x += bw
+
+    elif style == "city_dusk":
+        for y in range(h):
+            t = y / h
+            r = int(15 + (60 - 15) * t)
+            g = int(20 + (85 - 20) * t)
+            b = int(50 + (140 - 50) * t)
+            draw.line([(0, y), (w, y)], fill=(r, g, b))
+        random.seed(7)
+        for _ in range(30):
+            sx = random.randint(0, w)
+            sy = random.randint(0, int(h * 0.5))
+            sr = random.randint(1, 3)
+            draw.ellipse([sx - sr, sy - sr, sx + sr, sy + sr], fill=(255, 245, 220))
+        skyline_y = int(h * 0.55)
+        x = 0
+        while x < w:
+            bw = random.randint(50, 120)
+            bh = random.randint(80, 240)
+            base = (10, 15, 30)
+            draw.rectangle([x, skyline_y - bh, x + bw, h], fill=base)
+            wy = skyline_y - bh + 10
+            while wy < skyline_y:
+                wx = x + 4
+                while wx < x + bw - 8:
+                    if random.random() > 0.35:
+                        c = (255, 210, 130) if random.random() > 0.3 else (200, 220, 255)
+                        draw.rectangle([wx, wy, wx + 5, wy + 7], fill=c)
+                    wx += 10
+                wy += 12
+            x += bw
+
+    elif style == "warm_interior":
+        for y in range(h):
+            t = y / h
+            r = int(45 + (95 - 45) * (1 - abs(t - 0.5) * 1.4))
+            g = int(30 + (65 - 30) * (1 - abs(t - 0.5) * 1.4))
+            b = int(25 + (50 - 25) * (1 - abs(t - 0.5) * 1.4))
+            draw.line([(0, y), (w, y)], fill=(max(r, 20), max(g, 15), max(b, 15)))
+        cx, cy = w // 2, int(h * 0.35)
+        for r in range(int(w * 0.7), 0, -8):
+            alpha = 1 - (r / (w * 0.7))
+            alpha = alpha ** 2
+            fill = (int(255 * alpha + 45 * (1 - alpha)),
+                    int(190 * alpha + 30 * (1 - alpha)),
+                    int(110 * alpha + 25 * (1 - alpha)))
+            draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=fill)
+
+    elif style == "night_luxury":
+        for y in range(h):
+            t = y / h
+            r = int(8 + (28 - 8) * t)
+            g = int(12 + (35 - 12) * t)
+            b = int(28 + (55 - 28) * t)
+            draw.line([(0, y), (w, y)], fill=(r, g, b))
+        accent = hex_to_rgb(brand["accent"]) if brand else (226, 176, 74)
+        for i in range(20):
+            y_line = int(h * (0.3 + i * 0.03))
+            alpha = max(0.05, 0.3 - i * 0.015)
+            c = tuple(int(accent[j] * alpha + 20 * (1 - alpha)) for j in range(3))
+            draw.line([(0, y_line), (w, y_line)], fill=c, width=1)
+
+    else:
+        c_start = hex_to_rgb(brand["gradient_start"]) if brand else (26, 26, 46)
+        c_end = hex_to_rgb(brand["gradient_end"]) if brand else (15, 52, 96)
+        for y in range(h):
+            t = y / (h - 1)
+            c = lerp_color(c_start, c_end, t)
+            draw.line([(0, y), (w, y)], fill=c)
+
+    return img
+
+
+def apply_dark_overlay(img, opacity_top=0.55, opacity_bottom=0.85, gradient=True):
+    """Apply a dark gradient overlay to make text legible over photos."""
+    w, h = img.size
+    overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+    if gradient:
+        for y in range(h):
+            t = y / (h - 1)
+            alpha = int(255 * (opacity_top + (opacity_bottom - opacity_top) * t))
+            draw.line([(0, y), (w, y)], fill=(10, 12, 25, alpha))
+    else:
+        alpha = int(255 * opacity_top)
+        draw.rectangle([0, 0, w, h], fill=(10, 12, 25, alpha))
+    base = img.convert("RGBA")
+    combined = Image.alpha_composite(base, overlay)
+    return combined.convert("RGB")
+
+
+def build_background(size, content, brand):
+    """Build the background layer for a post/reel — photo, procedural, or gradient."""
+    bg_photo = content.get("background_image") or content.get("bg_photo")
+    if bg_photo:
+        photo = load_background_photo(bg_photo, size)
+        if photo:
+            return apply_dark_overlay(photo, 0.55, 0.85)
+    style = content.get("bg_style")
+    if not style:
+        pillar = content.get("pillar", "education")
+        style_map = {
+            "listing": "sunset_home",
+            "market_stats": "night_luxury",
+            "education": "city_dusk",
+            "testimonial": "warm_interior",
+            "community": "sunset_home",
+            "behind_the_scenes": "night_luxury",
+        }
+        style = style_map.get(pillar, "night_luxury")
+    procedural = generate_procedural_background(size, style, brand)
+    return apply_dark_overlay(procedural, 0.4, 0.75)
+
+
+# ---------------------------------------------------------------------------
+# Original branding elements
+# ---------------------------------------------------------------------------
+
 def draw_branding_footer(draw, width, height, brand, fade_from=None):
     footer_h = 100
     fade_h = 40
@@ -514,13 +697,13 @@ def generate_carousel_images(content, brand):
 # ---------------------------------------------------------------------------
 
 def generate_post_image(content, brand):
-    img = Image.new("RGB", POST_SIZE)
+    img = build_background(POST_SIZE, content, brand)
     draw = ImageDraw.Draw(img)
     pillar = content.get("pillar", "education")
     accent = hex_to_rgb(brand["accent"])
 
     if pillar == "listing":
-        draw_gradient(draw, *POST_SIZE, "#0a0a14", brand["primary"])
+        pass  # background already applied
         draw.rectangle([0, 0, POST_SIZE[0], 5], fill=accent)
         draw.rectangle([0, POST_SIZE[1] - 105, POST_SIZE[0], POST_SIZE[1] - 102], fill=accent)
 
@@ -573,11 +756,15 @@ def generate_post_image(content, brand):
                 break
 
     elif pillar in ("market_stats", "education"):
-        draw_gradient(draw, *POST_SIZE, brand["primary"], brand["card_bg"])
-
         card_m = 50
-        draw_rounded_rect(draw, (card_m, card_m, POST_SIZE[0] - card_m, POST_SIZE[1] - 115),
-                          hex_to_rgb(brand["secondary"]), radius=28)
+        card_overlay = Image.new("RGBA", POST_SIZE, (0, 0, 0, 0))
+        card_draw = ImageDraw.Draw(card_overlay)
+        card_c = hex_to_rgb(brand["secondary"])
+        card_draw.rounded_rectangle(
+            (card_m, card_m, POST_SIZE[0] - card_m, POST_SIZE[1] - 115),
+            radius=28, fill=(card_c[0], card_c[1], card_c[2], 235))
+        img = Image.alpha_composite(img.convert("RGBA"), card_overlay).convert("RGB")
+        draw = ImageDraw.Draw(img)
 
         inner_x = card_m + 40
         inner_w = POST_SIZE[0] - card_m * 2 - 80
@@ -618,7 +805,6 @@ def generate_post_image(content, brand):
                 break
 
     elif pillar == "testimonial":
-        draw_gradient(draw, *POST_SIZE, brand["gradient_start"], brand["gradient_end"])
         draw_corner_accents(draw, *POST_SIZE, accent, margin=40, length=60, thickness=3,
                             skip_bottom=True)
 
@@ -661,7 +847,7 @@ def generate_post_image(content, brand):
                 break
 
     elif pillar == "behind_the_scenes":
-        draw_gradient(draw, *POST_SIZE, brand["primary"], brand["secondary"])
+        pass  # background already applied
 
         badge_font = load_font(14, bold=True)
         draw_pill_badge(draw, "BEHIND THE SCENES", POST_SIZE[0] // 2, 65, badge_font,
@@ -698,7 +884,6 @@ def generate_post_image(content, brand):
                 break
 
     else:
-        draw_gradient(draw, *POST_SIZE, brand["gradient_start"], brand["gradient_end"])
         draw_corner_accents(draw, *POST_SIZE, accent, margin=40, length=60, thickness=3,
                             skip_bottom=True)
         hook = strip_emoji(content.get("hook", content.get("caption", "")[:100]))
@@ -723,11 +908,9 @@ def generate_post_image(content, brand):
 # ---------------------------------------------------------------------------
 
 def generate_reel_cover(content, brand):
-    img = Image.new("RGB", REEL_COVER_SIZE)
+    img = build_background(REEL_COVER_SIZE, content, brand)
     draw = ImageDraw.Draw(img)
     w, h = REEL_COVER_SIZE
-
-    draw_gradient(draw, w, h, brand["gradient_start"], brand["gradient_end"], "vertical")
     accent = hex_to_rgb(brand["accent"])
 
     draw_corner_accents(draw, w, h, accent, margin=50, length=80, thickness=3, skip_bottom=True)
