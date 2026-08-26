@@ -5,17 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OneVision Growth Package | Full-Service Marketing Partnership</title>
 
-<!-- Favicon — OneVision Marketing brand logo -->
-<link rel="icon" type="image/png" href="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png">
-<link rel="shortcut icon" type="image/png" href="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png">
-<link rel="apple-touch-icon" href="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png">
+<!-- Inline SVG favicon — works everywhere, no external requests -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%231e3a5f'><path d='M50 6L38 24h8v18h8V24h8z'/><path d='M50 94L38 76h8V58h8v18h8z'/><path d='M6 50l18-12v8h18v8H24v8z'/><path d='M94 50L76 38v8H58v8h18v8z'/><path d='M50 46l4 4-4 4-4-4z'/></g></svg>">
 
 <!-- SEO meta -->
 <meta name="description" content="One Vision Marketing helps Massachusetts small businesses grow with full-service marketing, custom CRM, AI content, and lead generation systems.">
 <meta name="author" content="Isaiah Wright">
 <meta property="og:title" content="One Vision Marketing Agency | Massachusetts Marketing">
 <meta property="og:description" content="Full-service marketing partnership for Massachusetts small businesses. Websites, content, ads, CRM & AI in one system.">
-<meta property="og:image" content="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <style>
@@ -81,15 +78,33 @@ nav{
 }
 .logo{display:flex;align-items:center;text-decoration:none}
 
-/* OneVision Brand Logo (image) — blends with light backgrounds */
-.brand-logo{
-  display:block;height:auto;width:auto;
-  mix-blend-mode:multiply;
-  background:transparent;
+/* OneVision Brand Logo (inline SVG + text — always loads) */
+.brand-lockup{display:inline-flex;align-items:center;gap:14px;text-decoration:none}
+.brand-lockup.stacked{flex-direction:column;gap:14px}
+.brand-lockup .icon-mark{display:block;flex-shrink:0}
+.brand-lockup .icon-mark path{fill:var(--navy)}
+.brand-lockup .wordmark{display:flex;flex-direction:column;line-height:1}
+.brand-lockup .wordmark .brand-name{
+  font-family:'Space Grotesk',sans-serif;font-weight:700;
+  color:var(--navy);letter-spacing:3px;
 }
-.brand-logo.nav-size{height:52px;max-width:220px}
-.brand-logo.hero-size{height:180px;max-width:340px;margin:0 auto}
-.brand-logo.footer-size{height:80px;max-width:260px;margin:0 auto}
+.brand-lockup .wordmark .brand-sub{
+  font-weight:500;text-transform:uppercase;letter-spacing:4px;
+  color:var(--navy-light);
+}
+
+.brand-lockup.nav-size .icon-mark{width:42px;height:42px}
+.brand-lockup.nav-size .brand-name{font-size:15px}
+.brand-lockup.nav-size .brand-sub{font-size:9px;margin-top:3px}
+
+.brand-lockup.hero-size .icon-mark{width:120px;height:120px}
+.brand-lockup.hero-size .brand-name{font-size:32px;letter-spacing:6px}
+.brand-lockup.hero-size .brand-sub{font-size:12px;letter-spacing:8px;margin-top:6px}
+.brand-lockup.hero-size .wordmark{align-items:center;text-align:center}
+
+.brand-lockup.footer-size .icon-mark{width:56px;height:56px}
+.brand-lockup.footer-size .brand-name{font-size:18px;letter-spacing:4px}
+.brand-lockup.footer-size .brand-sub{font-size:10px;letter-spacing:5px;margin-top:4px}
 .nav-cta{
   padding:11px 24px;border-radius:8px;font-size:13px;font-weight:600;
   background:var(--navy);color:var(--white);
@@ -410,16 +425,16 @@ section{padding:100px 0;position:relative}
 .guarantee-section::before{
   content:'';position:absolute;top:50%;right:-140px;transform:translateY(-50%);
   width:520px;height:520px;pointer-events:none;
-  background-image:url('https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png');
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%231e3a5f'><path d='M50 6L38 24h8v18h8V24h8z'/><path d='M50 94L38 76h8V58h8v18h8z'/><path d='M6 50l18-12v8h18v8H24v8z'/><path d='M94 50L76 38v8H58v8h18v8z'/><path d='M50 46l4 4-4 4-4-4z'/></g></svg>");
   background-size:contain;background-position:center;background-repeat:no-repeat;
-  opacity:0.04;mix-blend-mode:multiply;
+  opacity:0.05;
 }
 .guarantee-section::after{
   content:'';position:absolute;top:50%;left:-140px;transform:translateY(-50%);
   width:520px;height:520px;pointer-events:none;
-  background-image:url('https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png');
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%231e3a5f'><path d='M50 6L38 24h8v18h8V24h8z'/><path d='M50 94L38 76h8V58h8v18h8z'/><path d='M6 50l18-12v8h18v8H24v8z'/><path d='M94 50L76 38v8H58v8h18v8z'/><path d='M50 46l4 4-4 4-4-4z'/></g></svg>");
   background-size:contain;background-position:center;background-repeat:no-repeat;
-  opacity:0.04;mix-blend-mode:multiply;
+  opacity:0.05;
 }
 .guarantee-box{
   max-width:750px;margin:0 auto;padding:56px;
@@ -455,9 +470,9 @@ section{padding:100px 0;position:relative}
 .cta-final::after{
   content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   width:700px;height:700px;pointer-events:none;
-  background-image:url('https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png');
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%23ffffff'><path d='M50 6L38 24h8v18h8V24h8z'/><path d='M50 94L38 76h8V58h8v18h8z'/><path d='M6 50l18-12v8h18v8H24v8z'/><path d='M94 50L76 38v8H58v8h18v8z'/><path d='M50 46l4 4-4 4-4-4z'/></g></svg>");
   background-size:contain;background-position:center;background-repeat:no-repeat;
-  opacity:0.06;filter:invert(1) brightness(2);
+  opacity:0.06;
 }
 .cta-content{max-width:800px;margin:0 auto;text-align:center;position:relative;z-index:2}
 .cta-content .badge{
@@ -554,10 +569,9 @@ footer .copyright{font-size:11px;color:var(--gray-400);margin-top:24px;letter-sp
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="logo" aria-label="One Vision Marketing Agency">
-    <img class="brand-logo nav-size"
-         src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png"
-         alt="One Vision Marketing Agency" />
+  <a href="#" class="logo brand-lockup nav-size" aria-label="One Vision Marketing Agency">
+    <svg class="icon-mark" viewBox="0 0 100 100" aria-hidden="true"><g><path d="M50 6L38 24h8v18h8V24h8z"/><path d="M50 94L38 76h8V58h8v18h8z"/><path d="M6 50l18-12v8h18v8H24v8z"/><path d="M94 50L76 38v8H58v8h18v8z"/><path d="M50 46l4 4-4 4-4-4z"/></g></svg>
+    <span class="wordmark"><span class="brand-name">ONE VISION</span><span class="brand-sub">Marketing Agency</span></span>
   </a>
   <a href="https://calendly.com/onevisionmarketing/overview" target="_blank" rel="noopener" class="nav-cta">Book Strategy Call</a>
 </nav>
@@ -566,9 +580,10 @@ footer .copyright{font-size:11px;color:var(--gray-400);margin-top:24px;letter-sp
 <section class="hero">
   <div class="container hero-content">
     <div class="hero-logo-mark">
-      <img class="brand-logo hero-size"
-           src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png"
-           alt="One Vision Marketing Agency" />
+      <div class="brand-lockup stacked hero-size" aria-label="One Vision Marketing Agency">
+        <svg class="icon-mark" viewBox="0 0 100 100" aria-hidden="true"><g><path d="M50 6L38 24h8v18h8V24h8z"/><path d="M50 94L38 76h8V58h8v18h8z"/><path d="M6 50l18-12v8h18v8H24v8z"/><path d="M94 50L76 38v8H58v8h18v8z"/><path d="M50 46l4 4-4 4-4-4z"/></g></svg>
+        <span class="wordmark"><span class="brand-name">ONE VISION</span><span class="brand-sub">Marketing Agency</span></span>
+      </div>
     </div>
     <div class="hero-tagline">One Vision · One Team · Real Growth</div>
     <h1>The <span class="gold-text">Growth</span> Package</h1>
@@ -1065,10 +1080,9 @@ footer .copyright{font-size:11px;color:var(--gray-400);margin-top:24px;letter-sp
 <!-- FOOTER -->
 <footer>
   <div class="container">
-    <a href="#" class="logo" aria-label="One Vision Marketing Agency">
-      <img class="brand-logo footer-size"
-           src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png"
-           alt="One Vision Marketing Agency" />
+    <a href="#" class="logo brand-lockup footer-size" aria-label="One Vision Marketing Agency">
+      <svg class="icon-mark" viewBox="0 0 100 100" aria-hidden="true"><g><path d="M50 6L38 24h8v18h8V24h8z"/><path d="M50 94L38 76h8V58h8v18h8z"/><path d="M6 50l18-12v8h18v8H24v8z"/><path d="M94 50L76 38v8H58v8h18v8z"/><path d="M50 46l4 4-4 4-4-4z"/></g></svg>
+      <span class="wordmark"><span class="brand-name">ONE VISION</span><span class="brand-sub">Marketing Agency</span></span>
     </a>
     <p><strong>One Vision · One Team · Real Growth</strong></p>
     <p>Isaiah Wright, Founder · Bridgewater State University B.A. Marketing</p>

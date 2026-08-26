@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>OneVision Growth Package — One Page</title>
-<link rel="icon" type="image/png" href="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%231e3a5f'><path d='M50 6L38 24h8v18h8V24h8z'/><path d='M50 94L38 76h8V58h8v18h8z'/><path d='M6 50l18-12v8h18v8H24v8z'/><path d='M94 50L76 38v8H58v8h18v8z'/><path d='M50 46l4 4-4 4-4-4z'/></g></svg>">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap');
 
@@ -42,13 +42,13 @@ html,body{
   background:var(--white);
 }
 
-/* Subtle watermark */
+/* Subtle watermark — inline SVG so it always renders */
 .page::before{
   content:'';position:absolute;top:50%;right:-2in;transform:translateY(-50%);
   width:6in;height:6in;pointer-events:none;z-index:0;
-  background-image:url('https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png');
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%231e3a5f'><path d='M50 6L38 24h8v18h8V24h8z'/><path d='M50 94L38 76h8V58h8v18h8z'/><path d='M6 50l18-12v8h18v8H24v8z'/><path d='M94 50L76 38v8H58v8h18v8z'/><path d='M50 46l4 4-4 4-4-4z'/></g></svg>");
   background-size:contain;background-position:center;background-repeat:no-repeat;
-  opacity:0.035;mix-blend-mode:multiply;
+  opacity:0.04;
 }
 
 .page > *{position:relative;z-index:1}
@@ -60,9 +60,9 @@ html,body{
 }
 .header-left{display:flex;align-items:center;gap:14px}
 .header-logo{
-  width:70px;height:auto;
-  mix-blend-mode:multiply;
+  width:56px;height:56px;display:block;
 }
+.header-logo path{fill:var(--navy)}
 .header-title h1{
   font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;
   color:var(--navy);letter-spacing:-0.3px;line-height:1.1;
@@ -242,9 +242,7 @@ html,body{
   <!-- HEADER -->
   <div class="header">
     <div class="header-left">
-      <img class="header-logo"
-           src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png"
-           alt="One Vision Marketing Agency" />
+      <svg class="header-logo" viewBox="0 0 100 100" aria-label="One Vision Marketing Agency"><g><path d="M50 6L38 24h8v18h8V24h8z"/><path d="M50 94L38 76h8V58h8v18h8z"/><path d="M6 50l18-12v8h18v8H24v8z"/><path d="M94 50L76 38v8H58v8h18v8z"/><path d="M50 46l4 4-4 4-4-4z"/></g></svg>
       <div class="header-title">
         <h1>One Vision Marketing</h1>
         <div class="subtitle">One Vision · One Team · Real Growth</div>
