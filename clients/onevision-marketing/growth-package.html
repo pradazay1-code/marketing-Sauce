@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OneVision Growth Package | Full-Service Marketing Partnership</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0a0e27;
+  --navy-mid:#0f1533;
+  --navy-light:#1a2145;
+  --blue:#2563eb;
+  --blue-bright:#3b82f6;
+  --blue-glow:#60a5fa;
+  --cyan:#06b6d4;
+  --cyan-bright:#22d3ee;
+  --white:#ffffff;
+  --gray:#94a3b8;
+  --gray-light:#cbd5e1;
+  --gray-dark:#64748b;
+  --green:#10b981;
+  --gold:#f59e0b;
+  --red:#ef4444;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',-apple-system,sans-serif;
+  background:var(--navy);color:var(--white);
+  overflow-x:hidden;line-height:1.6;
+}
+
+/* Reusable */
+.container{max-width:1200px;margin:0 auto;padding:0 32px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;border-radius:100px;
+  font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  background:rgba(37,99,235,0.12);border:1px solid rgba(37,99,235,0.3);
+  color:var(--blue-glow);
+}
+.gradient-text{
+  background:linear-gradient(135deg,var(--white) 0%,var(--blue-glow) 50%,var(--cyan-bright) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* Nav */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:16px 32px;display:flex;justify-content:space-between;align-items:center;
+  background:rgba(10,14,39,0.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:36px;height:36px;position:relative}
+.logo-text{display:flex;flex-direction:column;line-height:1.1}
+.logo-text .brand{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:16px;letter-spacing:2px}
+.logo-text .sub{font-size:9px;letter-spacing:4px;color:var(--blue-glow);text-transform:uppercase;font-weight:500}
+.nav-cta{
+  padding:10px 22px;border-radius:100px;font-size:13px;font-weight:600;
+  background:linear-gradient(135deg,var(--blue),#1d4ed8);color:var(--white);
+  text-decoration:none;transition:all 0.3s;
+}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(37,99,235,0.4)}
+
+/* HERO */
+.hero{
+  min-height:100vh;padding:120px 0 80px;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 30%, rgba(37,99,235,0.15) 0%, transparent 60%);
+  pointer-events:none;
+}
+.hero::after{
+  content:'';position:absolute;inset:0;
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(6,182,212,0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(96,165,250,0.08) 0%, transparent 40%);
+  pointer-events:none;
+}
+.hero-content{position:relative;z-index:2;text-align:center;max-width:900px}
+.hero-badge{margin-bottom:32px}
+.hero h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(44px,7vw,84px);
+  font-weight:800;line-height:1.02;letter-spacing:-2px;
+  margin-bottom:28px;
+}
+.hero-sub{
+  font-size:clamp(17px,1.8vw,22px);color:var(--gray-light);
+  max-width:640px;margin:0 auto 48px;font-weight:300;line-height:1.6;
+}
+.hero-cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:60px}
+.btn-primary{
+  padding:16px 36px;border-radius:12px;font-size:15px;font-weight:600;
+  background:linear-gradient(135deg,var(--blue) 0%,#1d4ed8 100%);
+  color:var(--white);border:none;cursor:pointer;text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;
+  box-shadow:0 8px 32px rgba(37,99,235,0.3);
+  transition:all 0.3s;letter-spacing:0.3px;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(37,99,235,0.5)}
+.btn-outline{
+  padding:16px 36px;border-radius:12px;font-size:15px;font-weight:500;
+  background:transparent;color:var(--white);text-decoration:none;
+  border:1px solid rgba(255,255,255,0.15);cursor:pointer;transition:all 0.3s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-outline:hover{border-color:var(--blue-bright);background:rgba(37,99,235,0.06)}
+
+/* Live proof strip */
+.proof-strip{
+  display:flex;justify-content:center;gap:40px;flex-wrap:wrap;
+  padding:24px 0;border-top:1px solid rgba(255,255,255,0.06);
+  border-bottom:1px solid rgba(255,255,255,0.06);margin-top:40px;
+}
+.proof-item{text-align:center}
+.proof-num{
+  font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:24px;
+  background:linear-gradient(135deg,var(--blue-bright),var(--cyan-bright));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.proof-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--gray);margin-top:2px}
+
+/* Sections */
+section{padding:100px 0;position:relative}
+.section-head{text-align:center;max-width:700px;margin:0 auto 64px}
+.section-head .badge{margin-bottom:20px}
+.section-head h2{
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(32px,4vw,52px);
+  font-weight:700;line-height:1.15;margin-bottom:16px;letter-spacing:-1px;
+}
+.section-head p{font-size:17px;color:var(--gray-light);font-weight:300;line-height:1.7}
+
+/* Founder Section */
+.founder{
+  background:linear-gradient(180deg,var(--navy) 0%,var(--navy-mid) 100%);
+  position:relative;
+}
+.founder-card{
+  max-width:900px;margin:0 auto;padding:56px;
+  background:linear-gradient(135deg,rgba(37,99,235,0.06) 0%,rgba(6,182,212,0.03) 100%);
+  border:1px solid rgba(37,99,235,0.15);border-radius:24px;
+  position:relative;overflow:hidden;
+}
+.founder-card::before{
+  content:'';position:absolute;top:-50%;right:-20%;width:60%;height:200%;
+  background:radial-gradient(circle,rgba(6,182,212,0.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+.founder-grid{
+  display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center;
+  position:relative;z-index:2;
+}
+.founder-avatar{
+  width:140px;height:140px;border-radius:24px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Grotesk',sans-serif;font-size:56px;font-weight:800;
+  color:var(--white);box-shadow:0 12px 40px rgba(37,99,235,0.3);
+  position:relative;
+}
+.founder-avatar::after{
+  content:'';position:absolute;inset:-3px;border-radius:26px;
+  background:linear-gradient(135deg,var(--blue-bright),var(--cyan-bright));
+  z-index:-1;filter:blur(20px);opacity:0.5;
+}
+.founder-info h3{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;margin-bottom:4px}
+.founder-info .title{font-size:14px;color:var(--blue-glow);font-weight:500;margin-bottom:16px;letter-spacing:1px}
+.founder-info p{font-size:15px;color:var(--gray-light);line-height:1.7;margin-bottom:12px}
+.credentials{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.cred{
+  padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;
+  background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.2);
+  color:var(--blue-glow);
+}
+
+/* Problem/Solution Split */
+.split-section{
+  background:var(--navy-mid);
+  border-top:1px solid rgba(255,255,255,0.05);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.split-grid{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:40px;align-items:stretch;
+  max-width:1100px;margin:0 auto;
+}
+.split-col{padding:40px;border-radius:20px}
+.split-col.pain{background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.15)}
+.split-col.gain{background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15)}
+.split-col h3{
+  font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;margin-bottom:24px;
+  display:flex;align-items:center;gap:10px;
+}
+.split-col.pain h3{color:#fca5a5}
+.split-col.gain h3{color:#6ee7b7}
+.split-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.split-col li{font-size:14px;color:var(--gray-light);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+.split-col.pain li::before{content:'✕';color:var(--red);font-weight:700;flex-shrink:0;font-size:16px}
+.split-col.gain li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0;font-size:16px}
+.split-arrow{
+  display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--blue-glow);
+  align-self:center;
+}
+
+/* Value Equation */
+.equation-section{background:var(--navy)}
+.equation-box{
+  max-width:800px;margin:0 auto;padding:56px;
+  background:linear-gradient(180deg,rgba(37,99,235,0.06) 0%,rgba(6,182,212,0.03) 100%);
+  border:1px solid rgba(37,99,235,0.2);border-radius:24px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.equation-formula{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(20px,2.6vw,32px);font-weight:600;
+  margin:24px 0;line-height:1.6;
+}
+.eq-up{color:var(--green)}
+.eq-down{color:var(--red)}
+.eq-bar{width:80%;max-width:500px;height:2px;margin:8px auto;
+  background:linear-gradient(90deg,transparent,var(--blue-bright),transparent);
+}
+.eq-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:36px;text-align:left;
+}
+.eq-item{padding:20px;border-radius:14px}
+.eq-item.up{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15)}
+.eq-item.down{background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15)}
+.eq-item-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.eq-item.up .eq-item-label{color:#6ee7b7}
+.eq-item.down .eq-item-label{color:#fca5a5}
+.eq-item-text{font-size:14px;color:var(--gray-light);line-height:1.5}
+
+/* Value Stack Table */
+.stack-section{background:var(--navy-mid)}
+.stack-container{max-width:900px;margin:0 auto}
+.stack-list{
+  background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px;overflow:hidden;
+}
+.stack-row{
+  display:grid;grid-template-columns:60px 1fr auto;gap:20px;align-items:center;
+  padding:22px 28px;border-bottom:1px solid rgba(255,255,255,0.05);
+  transition:background 0.2s;
+}
+.stack-row:hover{background:rgba(37,99,235,0.04)}
+.stack-row:last-child{border-bottom:none}
+.stack-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(37,99,235,0.15),rgba(6,182,212,0.1));
+  border:1px solid rgba(37,99,235,0.2);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  flex-shrink:0;
+}
+.stack-content h4{font-size:15px;font-weight:600;margin-bottom:2px}
+.stack-content p{font-size:13px;color:var(--gray);line-height:1.4}
+.stack-value{
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;
+  color:var(--green);white-space:nowrap;
+}
+.stack-total-row{
+  display:grid;grid-template-columns:1fr auto;gap:20px;
+  padding:28px;margin-top:16px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(16,185,129,0.1) 0%,rgba(6,182,212,0.08) 100%);
+  border:1px solid rgba(16,185,129,0.3);
+  align-items:center;
+}
+.stack-total-row .label{font-size:16px;font-weight:700}
+.stack-total-row .value{
+  font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:28px;color:var(--green);
+}
+
+/* Pricing */
+.pricing-section{
+  background:linear-gradient(180deg,var(--navy) 0%,var(--navy-mid) 100%);
+  position:relative;
+}
+.pricing-hero{max-width:900px;margin:0 auto;text-align:center;position:relative;z-index:2}
+.pricing-anchor{
+  display:inline-flex;align-items:center;gap:8px;margin:12px 0;
+  font-size:16px;color:var(--gray);text-decoration:line-through;
+}
+.pricing-reveal{
+  margin:32px 0;position:relative;padding:60px 40px;
+  background:linear-gradient(135deg,rgba(37,99,235,0.08) 0%,rgba(6,182,212,0.05) 100%);
+  border:1px solid rgba(37,99,235,0.2);border-radius:24px;
+  overflow:hidden;
+}
+.pricing-reveal::before{
+  content:'';position:absolute;top:-50%;left:-30%;width:80%;height:200%;
+  background:radial-gradient(circle,rgba(37,99,235,0.15) 0%,transparent 60%);
+  pointer-events:none;animation:pulse 4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+.pricing-tag{
+  display:inline-block;padding:6px 18px;border-radius:100px;
+  background:linear-gradient(135deg,var(--gold),#ea580c);color:var(--white);
+  font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:20px;
+}
+.pricing-name{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:800;margin-bottom:12px}
+.pricing-price{
+  display:flex;align-items:baseline;justify-content:center;gap:4px;margin:20px 0;
+  position:relative;z-index:2;
+}
+.pricing-dollar{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:var(--white);align-self:flex-start;margin-top:20px}
+.pricing-amount{
+  font-family:'Space Grotesk',sans-serif;font-size:96px;font-weight:900;line-height:1;
+  background:linear-gradient(135deg,var(--white) 0%,var(--blue-glow) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.pricing-range{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;color:var(--gray-light);margin:0 8px}
+.pricing-period{font-size:20px;color:var(--gray);font-weight:400;margin-left:6px}
+.pricing-note{font-size:14px;color:var(--gray);margin-top:12px}
+.pricing-savings{
+  display:inline-flex;align-items:center;gap:6px;margin-top:20px;
+  padding:10px 22px;border-radius:100px;
+  background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);
+  color:var(--green);font-size:14px;font-weight:600;
+}
+
+/* Included Grid */
+.included-section{background:var(--navy)}
+.included-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;max-width:1100px;margin:0 auto;
+}
+.include-card{
+  padding:28px;border-radius:16px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+  transition:all 0.3s;position:relative;
+}
+.include-card:hover{
+  border-color:var(--blue-bright);transform:translateY(-4px);
+  box-shadow:0 12px 40px rgba(37,99,235,0.15);
+}
+.include-icon{
+  width:48px;height:48px;border-radius:14px;margin-bottom:18px;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  color:var(--white);
+}
+.include-card h3{font-size:17px;font-weight:700;margin-bottom:8px}
+.include-card p{font-size:13px;color:var(--gray);line-height:1.6;margin-bottom:14px}
+.include-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.include-list li{font-size:12px;color:var(--gray-light);display:flex;align-items:flex-start;gap:6px}
+.include-list li::before{content:'→';color:var(--blue-glow);flex-shrink:0}
+
+/* CLOSER Framework */
+.closer-section{background:var(--navy-mid)}
+.closer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:1100px;margin:0 auto}
+.closer-card{
+  padding:24px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(37,99,235,0.05),rgba(6,182,212,0.03));
+  border:1px solid rgba(37,99,235,0.12);
+}
+.closer-letter{
+  font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:900;
+  background:linear-gradient(135deg,var(--blue-bright),var(--cyan-bright));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;margin-bottom:8px;
+}
+.closer-card h4{font-size:14px;font-weight:700;margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;color:var(--blue-glow)}
+.closer-card p{font-size:13px;color:var(--gray);line-height:1.5}
+
+/* Guarantee */
+.guarantee-section{background:var(--navy)}
+.guarantee-box{
+  max-width:750px;margin:0 auto;padding:56px;
+  background:linear-gradient(135deg,rgba(16,185,129,0.08) 0%,rgba(37,99,235,0.05) 100%);
+  border:1px solid rgba(16,185,129,0.2);border-radius:24px;
+  text-align:center;
+}
+.guarantee-seal{
+  width:100px;height:100px;border-radius:50%;margin:0 auto 24px;
+  background:linear-gradient(135deg,var(--green),#059669);
+  display:flex;align-items:center;justify-content:center;font-size:48px;
+  color:var(--white);box-shadow:0 12px 40px rgba(16,185,129,0.3);
+}
+.guarantee-box h3{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;margin-bottom:16px}
+.guarantee-box p{font-size:16px;color:var(--gray-light);line-height:1.7;max-width:550px;margin:0 auto 20px}
+.guarantee-highlight{
+  display:inline-block;padding:12px 28px;border-radius:100px;
+  background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);
+  color:var(--green);font-weight:700;font-size:15px;
+}
+
+/* CTA Final */
+.cta-final{
+  background:linear-gradient(180deg,var(--navy) 0%,var(--navy-mid) 100%);
+  position:relative;overflow:hidden;
+}
+.cta-final::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:800px;height:800px;border-radius:50%;
+  background:radial-gradient(circle,rgba(37,99,235,0.15) 0%,transparent 60%);
+  pointer-events:none;
+}
+.cta-content{max-width:800px;margin:0 auto;text-align:center;position:relative;z-index:2}
+.cta-content h2{
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(36px,5vw,64px);
+  font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-1px;
+}
+.cta-content p{font-size:18px;color:var(--gray-light);margin-bottom:36px;line-height:1.6}
+.cta-steps{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin:40px 0}
+.cta-step{
+  padding:20px 28px;border-radius:14px;text-align:center;min-width:180px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+}
+.cta-step .num{
+  font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:800;
+  color:var(--blue-glow);margin-bottom:6px;
+}
+.cta-step .text{font-size:13px;color:var(--gray-light)}
+
+/* Footer */
+footer{
+  padding:48px 0 32px;border-top:1px solid rgba(255,255,255,0.06);
+  background:var(--navy);text-align:center;
+}
+footer .logo{justify-content:center;margin-bottom:16px}
+footer p{font-size:13px;color:var(--gray);margin-top:16px}
+footer .copyright{font-size:11px;color:var(--gray-dark);margin-top:24px;letter-spacing:2px}
+
+/* Responsive */
+@media(max-width:768px){
+  .container,section{padding-left:20px;padding-right:20px}
+  section{padding:60px 0}
+  .founder-grid{grid-template-columns:1fr;text-align:center}
+  .founder-avatar{margin:0 auto}
+  .split-grid{grid-template-columns:1fr;gap:16px}
+  .split-arrow{transform:rotate(90deg)}
+  .eq-grid{grid-template-columns:1fr}
+  .founder-card,.equation-box,.pricing-reveal,.guarantee-box{padding:32px 24px}
+  .pricing-amount{font-size:64px}
+  .pricing-range{font-size:24px}
+  .stack-row{grid-template-columns:auto 1fr;gap:12px;padding:18px}
+  .stack-value{grid-column:2;text-align:right;padding-top:4px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <svg class="logo-icon" viewBox="0 0 40 40" fill="none">
+      <defs>
+        <linearGradient id="logoG" x1="0" y1="40" x2="40" y2="0">
+          <stop offset="0%" stop-color="#1d4ed8"/>
+          <stop offset="100%" stop-color="#60a5fa"/>
+        </linearGradient>
+      </defs>
+      <circle cx="20" cy="20" r="16" fill="none" stroke="url(#logoG)" stroke-width="3"/>
+      <circle cx="20" cy="20" r="6" fill="url(#logoG)"/>
+    </svg>
+    <div class="logo-text">
+      <span class="brand">ONEVISION</span>
+      <span class="sub">Marketing</span>
+    </div>
+  </div>
+  <a href="#pricing" class="nav-cta">Book Free Strategy Call</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-content">
+    <div class="hero-badge badge">Full-Service Marketing Partnership</div>
+    <h1>The <span class="gradient-text">OneVision Growth</span><br>Package</h1>
+    <p class="hero-sub">
+      Everything your business needs to attract, close, and keep more customers —
+      built into one predictable monthly investment. No agencies to juggle.
+      No freelancers to chase. One team. One vision. Real growth.
+    </p>
+    <div class="hero-cta-row">
+      <a href="#pricing" class="btn-primary">See the Package &rarr;</a>
+      <a href="#value" class="btn-outline">Why It Works</a>
+    </div>
+
+    <div class="proof-strip">
+      <div class="proof-item">
+        <div class="proof-num">5-10x</div>
+        <div class="proof-label">Return on investment</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-num">$5,500+</div>
+        <div class="proof-label">In monthly value</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-num">48-hr</div>
+        <div class="proof-label">Onboarding start</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-num">Zero</div>
+        <div class="proof-label">Long-term contracts</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="founder">
+  <div class="container">
+    <div class="section-head">
+      <div class="badge">Who You're Working With</div>
+      <h2>You're not hiring an agency.<br>You're hiring a partner.</h2>
+    </div>
+
+    <div class="founder-card">
+      <div class="founder-grid">
+        <div class="founder-avatar">IW</div>
+        <div class="founder-info">
+          <h3>Isaiah Wright</h3>
+          <div class="title">FOUNDER · ONEVISION MARKETING</div>
+          <p>
+            I built OneVision because I saw too many small businesses getting sold
+            expensive services from agencies that didn't understand them — or worse,
+            didn't care about the outcome. That ends here.
+          </p>
+          <p>
+            Every OneVision client gets my direct attention: strategy calls, hands-on
+            campaign management, and honest advice. You're not another logo on a client list.
+            You're a partner I'm invested in growing with.
+          </p>
+          <div class="credentials">
+            <span class="cred">🎓 Bridgewater State University · B.A. Marketing</span>
+            <span class="cred">📍 Massachusetts-Based</span>
+            <span class="cred">🤝 Direct 1-on-1 Access</span>
+            <span class="cred">⚡ AI-Powered Execution</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM / SOLUTION -->
+<section class="split-section" id="value">
+  <div class="container">
+    <div class="section-head">
+      <div class="badge">The Shift</div>
+      <h2>Stop juggling. Start growing.</h2>
+      <p>Most small businesses waste $500-$2,000 a month on scattered tools and freelancers that don't work together. OneVision consolidates it all.</p>
+    </div>
+
+    <div class="split-grid">
+      <div class="split-col pain">
+        <h3>⚠️ Without OneVision</h3>
+        <ul>
+          <li>Paying $50-$300/mo for CRM, $30-$150 for email, $100+ for content, $50+ for scheduling</li>
+          <li>Different agencies pointing fingers when something breaks</li>
+          <li>Marketing that "posts" but doesn't actually generate leads</li>
+          <li>No system for capturing leads or following up automatically</li>
+          <li>Hours wasted every week logging into 8 different tools</li>
+          <li>No strategy — just random posts hoping something works</li>
+          <li>You're spending time on marketing instead of running your business</li>
+        </ul>
+      </div>
+      <div class="split-arrow">→</div>
+      <div class="split-col gain">
+        <h3>✓ With OneVision</h3>
+        <ul>
+          <li>ONE system. ONE bill. ONE partner accountable for results</li>
+          <li>Custom CRM, content, ads, strategy — all in one place</li>
+          <li>AI-powered systems that follow up every lead automatically</li>
+          <li>Weekly strategy calls with Isaiah — no account managers</li>
+          <li>Data-driven decisions based on live performance metrics</li>
+          <li>Marketing that actually converts — not just "engagement"</li>
+          <li>You focus on running your business. We handle everything else</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE EQUATION -->
+<section class="equation-section">
+  <div class="container">
+    <div class="section-head">
+      <div class="badge">The Hormozi Value Equation</div>
+      <h2>Why the OneVision offer works</h2>
+      <p>Grand Slam Offers maximize what you want and minimize what stops you from getting it. Here's how we deliver it.</p>
+    </div>
+
+    <div class="equation-box">
+      <div class="equation-formula">
+        <div class="eq-up">Dream Outcome &nbsp;×&nbsp; Perceived Likelihood</div>
+        <div class="eq-bar"></div>
+        <div class="eq-down">Time Delay &nbsp;×&nbsp; Effort & Sacrifice</div>
+      </div>
+
+      <div class="eq-grid">
+        <div class="eq-item up">
+          <div class="eq-item-label">▲ Dream Outcome</div>
+          <div class="eq-item-text">"More qualified leads, more closed deals, and a business that markets itself while I sleep."</div>
+        </div>
+        <div class="eq-item up">
+          <div class="eq-item-label">▲ Likelihood of Success</div>
+          <div class="eq-item-text">Real strategy from a marketing degree holder + proven case studies + a 30-day guarantee.</div>
+        </div>
+        <div class="eq-item down">
+          <div class="eq-item-label">▼ Time Delay</div>
+          <div class="eq-item-text">48-hour onboarding. First content and campaigns launch within 5 business days.</div>
+        </div>
+        <div class="eq-item down">
+          <div class="eq-item-label">▼ Effort & Sacrifice</div>
+          <div class="eq-item-text">Done-for-you setup. We build the system, manage the tools, run the strategy. You approve.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE STACK -->
+<section class="stack-section">
+  <div class="container">
+    <div class="section-head">
+      <div class="badge">The Value Stack</div>
+      <h2>What You Actually Get</h2>
+      <p>Priced separately, every component here would run $5,500+/mo. Bundled through OneVision, it's a fraction of that.</p>
+    </div>
+
+    <div class="stack-container">
+      <div class="stack-list">
+        <div class="stack-row">
+          <div class="stack-icon">🧠</div>
+          <div class="stack-content">
+            <h4>Full-Service Marketing Strategy</h4>
+            <p>Custom roadmap, quarterly planning, hyper-focused execution</p>
+          </div>
+          <div class="stack-value">$1,200/mo value</div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-icon">💻</div>
+          <div class="stack-content">
+            <h4>Custom CRM Software</h4>
+            <p>Lead capture, pipeline management, automated follow-ups, reporting</p>
+          </div>
+          <div class="stack-value">$500/mo value</div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-icon">🎨</div>
+          <div class="stack-content">
+            <h4>Weekly Content Creation</h4>
+            <p>Reels, carousels, posts, stories — branded to your business</p>
+          </div>
+          <div class="stack-value">$1,500/mo value</div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-icon">🤖</div>
+          <div class="stack-content">
+            <h4>AI Assistance & Automation</h4>
+            <p>AI-generated visuals, copy, callback bots, and workflow automation</p>
+          </div>
+          <div class="stack-value">$700/mo value</div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-icon">📈</div>
+          <div class="stack-content">
+            <h4>Lead Generation Systems</h4>
+            <p>Facebook + Google ad management, landing pages, opt-in funnels</p>
+          </div>
+          <div class="stack-value">$800/mo value</div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-icon">📱</div>
+          <div class="stack-content">
+            <h4>Organic Content & Social Media</h4>
+            <p>Consistent posting, community engagement, brand growth</p>
+          </div>
+          <div class="stack-value">$400/mo value</div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-icon">🤝</div>
+          <div class="stack-content">
+            <h4>Direct 1-on-1 Access to Isaiah</h4>
+            <p>Weekly strategy calls, hyper-focused game planning, direct DM</p>
+          </div>
+          <div class="stack-value">$500/mo value</div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-icon">📊</div>
+          <div class="stack-content">
+            <h4>Monthly Performance Reports</h4>
+            <p>Real metrics: leads generated, cost per lead, ROI, optimization plan</p>
+          </div>
+          <div class="stack-value">$200/mo value</div>
+        </div>
+      </div>
+
+      <div class="stack-total-row">
+        <div class="label">Total Monthly Value</div>
+        <div class="value">$5,800+/mo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <div class="section-head">
+      <div class="badge">Investment</div>
+      <h2>Everything above.<br>For less than one lost sale.</h2>
+      <p>You'd give someone $1 if they gave you $10 back, right? That's what this is.</p>
+    </div>
+
+    <div class="pricing-hero">
+      <div class="pricing-reveal">
+        <div class="pricing-tag">The Growth Package</div>
+        <div class="pricing-name">OneVision Growth</div>
+
+        <div class="pricing-anchor">
+          <span>Comparable services elsewhere: $5,800+/mo</span>
+        </div>
+
+        <div class="pricing-price">
+          <span class="pricing-dollar">$</span>
+          <span class="pricing-amount">300</span>
+          <span class="pricing-range">—</span>
+          <span class="pricing-dollar">$</span>
+          <span class="pricing-amount">500</span>
+          <span class="pricing-period">/mo</span>
+        </div>
+
+        <div class="pricing-note">Sliding scale based on ad spend & campaign scope</div>
+
+        <div class="pricing-savings">
+          💰 Save $5,300+/month vs. building this stack yourself
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INCLUDED IN DETAIL -->
+<section class="included-section">
+  <div class="container">
+    <div class="section-head">
+      <div class="badge">Everything Included</div>
+      <h2>The full breakdown</h2>
+      <p>No fine print. No hidden fees. Here's exactly what you get every month.</p>
+    </div>
+
+    <div class="included-grid">
+      <div class="include-card">
+        <div class="include-icon">🧠</div>
+        <h3>Marketing Strategy</h3>
+        <p>Not just posts — a real roadmap tailored to your business goals.</p>
+        <ul class="include-list">
+          <li>Custom quarterly strategy plan</li>
+          <li>Competitor analysis</li>
+          <li>Positioning & messaging framework</li>
+          <li>Ongoing strategy refinement</li>
+        </ul>
+      </div>
+
+      <div class="include-card">
+        <div class="include-icon">💻</div>
+        <h3>CRM Software Access</h3>
+        <p>Custom-built CRM with everything you need to run your business.</p>
+        <ul class="include-list">
+          <li>Contact & pipeline management</li>
+          <li>Email + SMS follow-up automation</li>
+          <li>Booking calendar integration</li>
+          <li>Deal tracking + reporting</li>
+          <li>Mobile access anywhere</li>
+        </ul>
+      </div>
+
+      <div class="include-card">
+        <div class="include-icon">🎨</div>
+        <h3>Content Creation</h3>
+        <p>Fresh, branded content going live consistently — every week.</p>
+        <ul class="include-list">
+          <li>Weekly reels, carousels, posts</li>
+          <li>Branded visuals for every platform</li>
+          <li>Copywriting for every post</li>
+          <li>Story templates & content batching</li>
+        </ul>
+      </div>
+
+      <div class="include-card">
+        <div class="include-icon">🤖</div>
+        <h3>AI Assistance</h3>
+        <p>Cutting-edge AI tools working for you 24/7.</p>
+        <ul class="include-list">
+          <li>AI-powered visual generation</li>
+          <li>AI callback bot for instant lead response</li>
+          <li>Automated email/SMS sequences</li>
+          <li>Content ideation engine</li>
+        </ul>
+      </div>
+
+      <div class="include-card">
+        <div class="include-icon">📈</div>
+        <h3>Lead Generation</h3>
+        <p>Real systems that turn strangers into paying customers.</p>
+        <ul class="include-list">
+          <li>Facebook & Instagram ad management</li>
+          <li>Landing page creation</li>
+          <li>Lead magnet campaigns</li>
+          <li>Retargeting campaigns</li>
+        </ul>
+      </div>
+
+      <div class="include-card">
+        <div class="include-icon">📱</div>
+        <h3>Organic Social</h3>
+        <p>Consistent brand presence that builds trust and authority.</p>
+        <ul class="include-list">
+          <li>Weekly posting schedule</li>
+          <li>Community engagement (comments/DMs)</li>
+          <li>Hashtag & timing strategy</li>
+          <li>Multi-platform distribution</li>
+        </ul>
+      </div>
+
+      <div class="include-card">
+        <div class="include-icon">🤝</div>
+        <h3>Isaiah's Direct Time</h3>
+        <p>The founder's attention on YOUR business — not an account manager.</p>
+        <ul class="include-list">
+          <li>Weekly strategy calls</li>
+          <li>Hyper-focused game planning</li>
+          <li>Direct DM/text access</li>
+          <li>Rapid response on decisions</li>
+        </ul>
+      </div>
+
+      <div class="include-card">
+        <div class="include-icon">📊</div>
+        <h3>Monthly Reporting</h3>
+        <p>Full transparency into what's working — and what we're improving.</p>
+        <ul class="include-list">
+          <li>Detailed performance metrics</li>
+          <li>Cost per lead + ROI breakdown</li>
+          <li>Next-month game plan</li>
+          <li>Wins & lessons learned</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSER FRAMEWORK -->
+<section class="closer-section">
+  <div class="container">
+    <div class="section-head">
+      <div class="badge">Our Process</div>
+      <h2>The CLOSER Framework</h2>
+      <p>Every OneVision engagement follows Alex Hormozi's proven CLOSER framework — a 6-step system built to move you from "curious" to "closing more deals."</p>
+    </div>
+
+    <div class="closer-grid">
+      <div class="closer-card">
+        <div class="closer-letter">C</div>
+        <h4>Clarify</h4>
+        <p>We clarify your goals, your customers, and what's actually working (or not) right now.</p>
+      </div>
+      <div class="closer-card">
+        <div class="closer-letter">L</div>
+        <h4>Label</h4>
+        <p>We label the exact bottleneck — leads, follow-up, brand, or conversion — killing your growth.</p>
+      </div>
+      <div class="closer-card">
+        <div class="closer-letter">O</div>
+        <h4>Overview</h4>
+        <p>We overview a personalized system to fix it — not generic templates or one-size-fits-all.</p>
+      </div>
+      <div class="closer-card">
+        <div class="closer-letter">S</div>
+        <h4>Sell the Value</h4>
+        <p>We show the ROI — real numbers, real case studies, real results. Not vague promises.</p>
+      </div>
+      <div class="closer-card">
+        <div class="closer-letter">E</div>
+        <h4>Explain</h4>
+        <p>We explain exactly what happens next — 48-hour onboarding, week 1 launch, week 2 optimize.</p>
+      </div>
+      <div class="closer-card">
+        <div class="closer-letter">R</div>
+        <h4>Reinforce</h4>
+        <p>We back it with a 30-day money-back guarantee. Zero risk to try. Full upside if it works.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GUARANTEE -->
+<section class="guarantee-section">
+  <div class="container">
+    <div class="section-head">
+      <div class="badge">Zero Risk</div>
+      <h2>The OneVision Guarantee</h2>
+    </div>
+
+    <div class="guarantee-box">
+      <div class="guarantee-seal">🛡️</div>
+      <h3>30-Day Money-Back Promise</h3>
+      <p>
+        Try the OneVision Growth Package for 30 days. If you don't see real value —
+        if the systems aren't set up, the content isn't going out, and you don't feel
+        like you're getting more from us than you're paying — we'll refund every penny.
+        No hoops. No hassle. No hard feelings.
+      </p>
+      <div class="guarantee-highlight">30-Day Money-Back &mdash; No Contracts &mdash; Cancel Anytime</div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-final">
+  <div class="container cta-content">
+    <div class="badge">Next Steps</div>
+    <h2>Ready to <span class="gradient-text">grow?</span></h2>
+    <p>Book a free 15-minute strategy call. We'll audit your current marketing, show you exactly what we'd fix, and give you a personalized game plan — whether you work with us or not.</p>
+
+    <div class="cta-steps">
+      <div class="cta-step">
+        <div class="num">01</div>
+        <div class="text">Book your free<br>strategy call</div>
+      </div>
+      <div class="cta-step">
+        <div class="num">02</div>
+        <div class="text">Get your custom<br>growth game plan</div>
+      </div>
+      <div class="cta-step">
+        <div class="num">03</div>
+        <div class="text">Onboard in 48 hours<br>+ start growing</div>
+      </div>
+    </div>
+
+    <a href="#" class="btn-primary" style="font-size:17px;padding:20px 48px">
+      Book My Free Strategy Call &rarr;
+    </a>
+    <p style="margin-top:20px;font-size:13px;color:var(--gray)">
+      No pressure. No pitch. Just honest advice.
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none">
+        <defs>
+          <linearGradient id="logoG2" x1="0" y1="40" x2="40" y2="0">
+            <stop offset="0%" stop-color="#1d4ed8"/>
+            <stop offset="100%" stop-color="#60a5fa"/>
+          </linearGradient>
+        </defs>
+        <circle cx="20" cy="20" r="16" fill="none" stroke="url(#logoG2)" stroke-width="3"/>
+        <circle cx="20" cy="20" r="6" fill="url(#logoG2)"/>
+      </svg>
+      <div class="logo-text">
+        <span class="brand">ONEVISION</span>
+        <span class="sub">Marketing</span>
+      </div>
+    </div>
+    <p><strong>One vision. One team. Real growth.</strong></p>
+    <p>Isaiah Wright, Founder · Bridgewater State University B.A. Marketing</p>
+    <p>Serving Massachusetts and businesses nationwide</p>
+    <div class="copyright">© 2026 ONEVISION MARKETING · ALL RIGHTS RESERVED</div>
+  </div>
+</footer>
+
+</body>
+</html>
