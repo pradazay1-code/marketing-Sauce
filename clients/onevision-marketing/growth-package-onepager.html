@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OneVision Growth Package — One Page</title>
+<link rel="icon" type="image/png" href="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#1e3a5f;
+  --navy-deep:#152a45;
+  --navy-mid:#264566;
+  --navy-light:#3a5a80;
+  --accent:#3a5a80;
+  --accent-light:#5a7a9f;
+  --white:#ffffff;
+  --off-white:#fafbfc;
+  --gray-100:#f1f5f9;
+  --gray-200:#e2e8f0;
+  --gray-400:#94a3b8;
+  --gray-500:#64748b;
+  --gray-600:#475569;
+  --gray-700:#334155;
+  --green:#059669;
+}
+
+@page{size:letter;margin:0}
+
+html,body{
+  width:8.5in;height:11in;
+  font-family:'Inter',-apple-system,sans-serif;
+  background:var(--white);color:var(--navy);
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+
+.page{
+  width:8.5in;height:11in;padding:0.45in;
+  display:flex;flex-direction:column;gap:0.14in;
+  position:relative;overflow:hidden;
+  background:var(--white);
+}
+
+/* Subtle watermark */
+.page::before{
+  content:'';position:absolute;top:50%;right:-2in;transform:translateY(-50%);
+  width:6in;height:6in;pointer-events:none;z-index:0;
+  background-image:url('https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png');
+  background-size:contain;background-position:center;background-repeat:no-repeat;
+  opacity:0.035;mix-blend-mode:multiply;
+}
+
+.page > *{position:relative;z-index:1}
+
+/* Header */
+.header{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding-bottom:14px;border-bottom:2px solid var(--navy);
+}
+.header-left{display:flex;align-items:center;gap:14px}
+.header-logo{
+  width:70px;height:auto;
+  mix-blend-mode:multiply;
+}
+.header-title h1{
+  font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;
+  color:var(--navy);letter-spacing:-0.3px;line-height:1.1;
+}
+.header-title .subtitle{
+  font-size:10px;letter-spacing:2.5px;color:var(--accent-light);
+  text-transform:uppercase;font-weight:600;margin-top:2px;
+}
+.header-right{text-align:right}
+.header-right .badge{
+  display:inline-block;padding:6px 14px;border-radius:100px;
+  background:var(--navy);color:var(--white);
+  font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+}
+.header-right .founder-line{
+  font-size:10px;color:var(--gray-500);margin-top:6px;
+}
+
+/* Hero */
+.hero-mini{
+  text-align:center;padding:12px 0 6px;
+}
+.hero-mini h2{
+  font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;
+  color:var(--navy);line-height:1.1;letter-spacing:-0.5px;margin-bottom:6px;
+}
+.hero-mini h2 .accent{color:var(--accent-light)}
+.hero-mini p{
+  font-size:11px;color:var(--gray-600);line-height:1.5;
+  max-width:5.5in;margin:0 auto;
+}
+
+/* Value Stack */
+.stack-section{
+  display:flex;flex-direction:column;gap:6px;
+}
+.section-label{
+  font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);
+  display:flex;align-items:center;gap:8px;margin-bottom:4px;
+}
+.section-label::after{
+  content:'';flex:1;height:1px;background:var(--gray-200);
+}
+
+.stack-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;
+}
+.stack-row{
+  display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;
+  padding:6px 10px;border-radius:6px;
+  background:var(--off-white);border:1px solid var(--gray-100);
+}
+.stack-icon{
+  width:22px;height:22px;border-radius:5px;
+  background:var(--navy);color:var(--white);
+  display:flex;align-items:center;justify-content:center;font-size:11px;
+}
+.stack-name{
+  font-size:10px;font-weight:600;color:var(--navy);line-height:1.25;
+}
+.stack-value{
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:10px;
+  color:var(--green);white-space:nowrap;
+}
+
+.stack-total{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 14px;margin-top:4px;border-radius:8px;
+  background:var(--navy);color:var(--white);
+}
+.stack-total .lbl{font-size:11px;font-weight:600;letter-spacing:0.5px}
+.stack-total .val{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:18px;color:var(--white)}
+
+/* Price */
+.price-block{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+  padding:16px;border-radius:10px;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);
+  color:var(--white);
+  position:relative;overflow:hidden;
+}
+.price-block::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--accent-light);
+}
+.price-left{padding-right:12px;border-right:1px solid rgba(255,255,255,0.15)}
+.price-tag-mini{
+  display:inline-block;padding:4px 12px;border-radius:100px;
+  background:rgba(255,255,255,0.15);color:var(--white);
+  font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:8px;
+}
+.price-name{
+  font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;
+  margin-bottom:4px;line-height:1.15;
+}
+.price-desc{font-size:10px;color:rgba(255,255,255,0.75);line-height:1.4}
+
+.price-right{text-align:center;display:flex;flex-direction:column;justify-content:center}
+.price-anchor{font-size:10px;color:rgba(255,255,255,0.55);text-decoration:line-through;margin-bottom:4px}
+.price-amount{
+  font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:800;
+  color:var(--white);line-height:1;letter-spacing:-0.5px;
+}
+.price-amount .dollar{font-size:20px;vertical-align:top;margin-top:6px;display:inline-block}
+.price-amount .dash{color:rgba(255,255,255,0.5);margin:0 4px;font-weight:500}
+.price-amount .period{font-size:12px;color:rgba(255,255,255,0.7);font-weight:400;margin-left:4px}
+.price-note{font-size:9px;color:rgba(255,255,255,0.7);margin-top:6px;line-height:1.3}
+.price-savings{
+  display:inline-block;padding:4px 12px;margin-top:8px;border-radius:100px;
+  background:rgba(255,255,255,0.15);
+  color:var(--white);font-size:10px;font-weight:600;
+}
+
+/* Guarantee */
+.guarantee-bar{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 16px;border-radius:8px;
+  background:var(--white);border:1.5px solid var(--accent);
+}
+.guarantee-icon{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:var(--navy);color:var(--white);
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+}
+.guarantee-text{flex:1}
+.guarantee-text strong{font-size:11px;color:var(--navy);display:block;margin-bottom:2px}
+.guarantee-text p{font-size:9px;color:var(--gray-600);line-height:1.35}
+
+/* Footer CTA */
+.footer-cta{
+  display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;
+  padding:12px 16px;border-radius:10px;
+  background:var(--navy);color:var(--white);
+  margin-top:auto;
+}
+.footer-cta-left h3{
+  font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;
+  color:var(--white);margin-bottom:4px;line-height:1.1;
+}
+.footer-cta-left p{
+  font-size:10px;color:rgba(255,255,255,0.75);line-height:1.4;
+}
+.footer-cta-links{
+  display:flex;flex-direction:column;gap:4px;text-align:right;
+}
+.footer-cta-links a{
+  color:var(--white);text-decoration:none;font-size:10px;font-weight:500;
+  display:flex;align-items:center;justify-content:flex-end;gap:6px;
+}
+.footer-cta-links a .icon{
+  width:14px;height:14px;flex-shrink:0;
+}
+.footer-cta-links a strong{color:var(--white);font-weight:700}
+.footer-cta-links a.primary{
+  padding:8px 14px;border-radius:6px;
+  background:var(--white);color:var(--navy);
+  font-weight:700;font-size:11px;
+  justify-content:center;
+}
+
+/* Bottom brand strip */
+.brand-strip{
+  display:flex;justify-content:center;align-items:center;gap:10px;
+  padding:8px 0;
+  font-size:9px;color:var(--gray-500);letter-spacing:2px;text-transform:uppercase;
+  border-top:1px solid var(--gray-200);margin-top:4px;
+}
+.brand-strip strong{color:var(--navy);letter-spacing:2.5px}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <img class="header-logo"
+           src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/8AEJH376GgjEtkXo2BtR/media/6a15f0105e09acb033d6b0ed.png"
+           alt="One Vision Marketing Agency" />
+      <div class="header-title">
+        <h1>One Vision Marketing</h1>
+        <div class="subtitle">One Vision · One Team · Real Growth</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="badge">Growth Package</div>
+      <div class="founder-line">Isaiah Wright, Founder<br>Bridgewater State University · B.A. Marketing</div>
+    </div>
+  </div>
+
+  <!-- HERO MINI -->
+  <div class="hero-mini">
+    <h2>Full-Service Marketing Partnership <span class="accent">Built to Grow</span></h2>
+    <p>Everything your business needs to attract, close, and keep more customers — in one predictable monthly investment. No agencies to juggle. No freelancers to chase. One partner. One vision. Real results.</p>
+  </div>
+
+  <!-- VALUE STACK -->
+  <div class="stack-section">
+    <div class="section-label">What's Included</div>
+
+    <div class="stack-grid">
+      <div class="stack-row">
+        <div class="stack-icon">🧠</div>
+        <div class="stack-name">Full-Service Marketing Strategy</div>
+        <div class="stack-value">$1,200/mo</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-icon">💻</div>
+        <div class="stack-name">Custom CRM Software</div>
+        <div class="stack-value">$500/mo</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-icon">🎨</div>
+        <div class="stack-name">Weekly Content Creation</div>
+        <div class="stack-value">$1,500/mo</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-icon">🤖</div>
+        <div class="stack-name">AI Assistance & Automation</div>
+        <div class="stack-value">$700/mo</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-icon">📈</div>
+        <div class="stack-name">Lead Generation Systems</div>
+        <div class="stack-value">$800/mo</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-icon">📱</div>
+        <div class="stack-name">Organic Content & Social</div>
+        <div class="stack-value">$400/mo</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-icon">🤝</div>
+        <div class="stack-name">1-on-1 Access to Isaiah</div>
+        <div class="stack-value">$500/mo</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-icon">📊</div>
+        <div class="stack-name">Monthly Performance Reports</div>
+        <div class="stack-value">$200/mo</div>
+      </div>
+    </div>
+
+    <div class="stack-total">
+      <div class="lbl">Total Monthly Value</div>
+      <div class="val">$5,800+/mo</div>
+    </div>
+  </div>
+
+  <!-- PRICE BLOCK -->
+  <div class="price-block">
+    <div class="price-left">
+      <div class="price-tag-mini">Your Investment</div>
+      <div class="price-name">OneVision Growth Package</div>
+      <div class="price-desc">Everything above bundled into one predictable monthly rate. Sliding scale based on ad spend and campaign scope.</div>
+    </div>
+    <div class="price-right">
+      <div class="price-anchor">Comparable services: $5,800+/mo</div>
+      <div class="price-amount">
+        <span class="dollar">$</span>300
+        <span class="dash">—</span>
+        <span class="dollar">$</span>500<span class="period">/mo</span>
+      </div>
+      <div class="price-note">No contracts. Cancel anytime.</div>
+      <div class="price-savings">💰 Save $5,300+/month</div>
+    </div>
+  </div>
+
+  <!-- GUARANTEE -->
+  <div class="guarantee-bar">
+    <div class="guarantee-icon">🛡</div>
+    <div class="guarantee-text">
+      <strong>30-Day Money-Back Guarantee — Zero Risk</strong>
+      <p>Try the Growth Package for 30 days. If you don't see real value, we refund every penny. No hoops, no hassle. Cancel anytime.</p>
+    </div>
+  </div>
+
+  <!-- FOOTER CTA -->
+  <div class="footer-cta">
+    <div class="footer-cta-left">
+      <h3>Ready to grow? Book your free strategy call.</h3>
+      <p>15 minutes. No pressure. Custom game plan for your business — whether you work with us or not.</p>
+    </div>
+    <div class="footer-cta-links">
+      <a class="primary" href="https://calendly.com/onevisionmarketing/overview">Book Free Call →</a>
+      <a href="https://instagram.com/onevisionmarketing1">
+        <span>Follow us on Instagram <strong>@onevisionmarketing1</strong></span>
+      </a>
+    </div>
+  </div>
+
+  <!-- BRAND STRIP -->
+  <div class="brand-strip">
+    <strong>ONE VISION MARKETING AGENCY</strong> · Serving Massachusetts and businesses nationwide · © 2026
+  </div>
+
+</div>
+
+</body>
+</html>
