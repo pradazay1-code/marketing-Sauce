@@ -1,0 +1,11 @@
+{
+  "crons": [
+    { "path": "/api/cron/sync",          "schedule": "0 */2 * * *" },
+    { "path": "/api/cron/watchdog",      "schedule": "15 * * * *" },
+    { "path": "/api/cron/morning-brief", "schedule": "30 11 * * *" },
+    { "path": "/api/cron/client-review", "schedule": "0 13 * * 1" }
+  ],
+  "functions": {
+    "app/api/**/*.ts": { "maxDuration": 300 }
+  }
+}
