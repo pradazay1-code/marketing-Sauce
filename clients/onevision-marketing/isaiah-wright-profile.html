@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Isaiah Wright &amp; One Vision Marketing Agency — Profile</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%231e3a5f'/><text x='50' y='68' font-family='Arial,sans-serif' font-size='56' font-weight='800' text-anchor='middle' fill='white'>OV</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --navy:#1e3a5f;
+  --navy-deep:#152a45;
+  --navy-mid:#2f5b8d;
+  --navy-light:#3a5a80;
+  --accent:#5a7a9f;
+  --white:#ffffff;
+  --off-white:#fbfcfd;
+  --gray-100:#f1f5f9;
+  --gray-200:#e2e8f0;
+  --gray-300:#cbd5e1;
+  --gray-500:#64748b;
+  --gray-600:#475569;
+  --gray-700:#334155;
+  --green:#059669;
+}
+
+@page{size:8.5in 11in;margin:0}
+
+html,body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--white);color:var(--gray-700);
+  line-height:1.6;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+
+.page{
+  width:8.5in;min-height:11in;
+  padding:0.7in 0.75in;
+  background:var(--white);
+  position:relative;
+  page-break-after:always;
+  display:flex;flex-direction:column;
+}
+.page:last-child{page-break-after:auto}
+
+/* ===== COVER ===== */
+.cover{
+  padding:0;justify-content:stretch;
+}
+.cover-top{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-deep) 100%);
+  padding:1.5in 0.75in 1.2in;
+  position:relative;overflow:hidden;
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+}
+.cover-top::after{
+  content:'';position:absolute;top:-25%;right:-15%;
+  width:480px;height:480px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 65%);
+}
+.cover-brand{position:relative;z-index:2;margin-bottom:0.9in}
+.cover-brand .name{
+  font-size:24px;font-weight:800;color:var(--white);letter-spacing:6px;
+  display:block;
+}
+.cover-brand .rule{
+  width:54px;height:2px;background:rgba(255,255,255,0.5);
+  border-radius:2px;margin:11px 0 9px;
+}
+.cover-brand .sub{
+  font-size:9.5px;font-weight:600;color:rgba(255,255,255,0.7);
+  letter-spacing:5px;text-transform:uppercase;
+}
+.cover-title{position:relative;z-index:2}
+.cover-title .eyebrow{
+  display:inline-block;font-size:10px;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:rgba(255,255,255,0.7);
+  padding:6px 16px;border-radius:100px;
+  border:1px solid rgba(255,255,255,0.25);margin-bottom:22px;
+}
+.cover-title h1{
+  font-size:52px;font-weight:800;color:var(--white);
+  line-height:1.04;letter-spacing:-1.5px;margin-bottom:16px;
+}
+.cover-title .lede{
+  font-size:15px;color:rgba(255,255,255,0.78);line-height:1.65;
+  max-width:5in;font-weight:400;
+}
+.cover-bottom{
+  background:var(--off-white);padding:0.55in 0.75in;
+  border-top:3px solid var(--accent);
+}
+.cover-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:16px 30px}
+.cover-meta-item .label{
+  font-size:8.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--accent);margin-bottom:3px;
+}
+.cover-meta-item .value{font-size:12.5px;color:var(--navy);font-weight:600}
+
+/* ===== SECTION CHROME ===== */
+.page-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  padding-bottom:11px;border-bottom:2px solid var(--navy);
+  margin-bottom:0.34in;flex-shrink:0;
+}
+.page-head .sec-num{
+  font-size:9px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--accent);
+}
+.page-head h2{
+  font-size:25px;font-weight:800;color:var(--navy);letter-spacing:-0.4px;
+}
+
+h3{
+  font-size:14.5px;font-weight:800;color:var(--navy-mid);
+  margin:0.26in 0 0.09in;letter-spacing:0.1px;
+}
+h3:first-of-type{margin-top:0}
+
+p{font-size:12.2px;color:var(--gray-700);line-height:1.72;margin-bottom:0.13in}
+p strong{color:var(--navy);font-weight:700}
+
+ul{list-style:none;margin:0.06in 0 0.16in}
+li{
+  font-size:12.2px;color:var(--gray-700);line-height:1.62;
+  padding-left:17px;position:relative;margin-bottom:7px;
+}
+li::before{
+  content:'';position:absolute;left:0;top:8px;
+  width:5px;height:5px;border-radius:50%;background:var(--accent);
+}
+li strong{color:var(--navy);font-weight:700}
+
+/* Callout */
+.callout{
+  background:var(--off-white);border-left:3px solid var(--navy);
+  padding:0.19in 0.24in;margin:0.2in 0;border-radius:0 7px 7px 0;
+}
+.callout p{margin-bottom:0;font-size:12px;color:var(--gray-600)}
+.callout .quote{
+  font-size:13px;color:var(--navy);font-weight:600;
+  font-style:italic;line-height:1.6;
+}
+
+/* Fact grid */
+.fact-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:0.16in;
+  margin:0.16in 0;
+}
+.fact{
+  border:1px solid var(--gray-200);border-radius:8px;
+  padding:0.17in 0.19in;background:var(--white);
+}
+.fact .k{
+  font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--accent);margin-bottom:5px;
+}
+.fact .v{font-size:12px;color:var(--gray-700);line-height:1.5}
+.fact .v strong{color:var(--navy)}
+
+/* Service cards */
+.svc{
+  display:grid;grid-template-columns:22px 1fr;gap:11px;
+  padding:0.13in 0;border-bottom:1px solid var(--gray-100);
+  align-items:start;
+}
+.svc:last-child{border-bottom:none}
+.svc-num{
+  font-size:11px;font-weight:800;color:var(--accent);
+  padding-top:1px;
+}
+.svc-body .t{font-size:12.5px;font-weight:700;color:var(--navy);margin-bottom:2px}
+.svc-body .d{font-size:11.5px;color:var(--gray-600);line-height:1.55}
+
+/* Client table */
+table{width:100%;border-collapse:collapse;margin:0.14in 0}
+th{
+  text-align:left;font-size:8.5px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--white);background:var(--navy);
+  padding:9px 11px;
+}
+td{
+  font-size:11.5px;color:var(--gray-700);padding:10px 11px;
+  border-bottom:1px solid var(--gray-200);vertical-align:top;
+}
+td strong{color:var(--navy);font-weight:700}
+tr:last-child td{border-bottom:none}
+
+/* Pricing strip */
+.price-strip{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-deep) 100%);
+  color:var(--white);border-radius:10px;padding:0.26in 0.3in;
+  margin:0.2in 0;display:grid;grid-template-columns:1fr auto;
+  gap:22px;align-items:center;
+}
+.price-strip .ps-label{
+  font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  color:rgba(255,255,255,0.65);margin-bottom:5px;
+}
+.price-strip .ps-name{font-size:17px;font-weight:800;color:var(--white);margin-bottom:4px}
+.price-strip .ps-desc{font-size:11px;color:rgba(255,255,255,0.72);line-height:1.5}
+.price-strip .ps-amount{
+  font-size:34px;font-weight:800;color:var(--white);
+  line-height:1;white-space:nowrap;text-align:right;
+}
+.price-strip .ps-per{
+  font-size:10.5px;color:rgba(255,255,255,0.65);
+  text-align:right;margin-top:5px;
+}
+
+/* Footer */
+.page-foot{
+  margin-top:auto;padding-top:0.2in;
+  border-top:1px solid var(--gray-200);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:8.5px;color:var(--gray-500);letter-spacing:1.5px;
+  text-transform:uppercase;flex-shrink:0;
+}
+.page-foot strong{color:var(--navy);font-weight:700;letter-spacing:2px}
+
+/* Two column */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0.3in}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin:0.1in 0 0.16in}
+.tag{
+  font-size:10px;font-weight:600;padding:5px 11px;border-radius:100px;
+  background:var(--gray-100);color:var(--navy);border:1px solid var(--gray-200);
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== PAGE 1 — COVER ==================== -->
+<div class="page cover">
+  <div class="cover-top">
+    <div class="cover-brand">
+      <span class="name">ONE VISION</span>
+      <div class="rule"></div>
+      <span class="sub">Marketing Agency</span>
+    </div>
+    <div class="cover-title">
+      <div class="eyebrow">Founder &amp; Company Profile</div>
+      <h1>Isaiah Wright</h1>
+      <p class="lede">A marketing operator building systems, not services — and a Massachusetts agency structured to give small businesses the infrastructure normally reserved for companies ten times their size.</p>
+    </div>
+  </div>
+  <div class="cover-bottom">
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Founder</div>
+        <div class="value">Isaiah Wright</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Company</div>
+        <div class="value">One Vision Marketing Agency</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Based In</div>
+        <div class="value">Bridgewater, Massachusetts</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Service Area</div>
+        <div class="value">MA · RI · CT · Nationwide</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Education</div>
+        <div class="value">Bridgewater State University, B.A. Marketing</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Web</div>
+        <div class="value">Onevisionmarketingagency.com</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 2 — THE FOUNDER ==================== -->
+<div class="page">
+  <div class="page-head">
+    <h2>The Founder</h2>
+    <span class="sec-num">01</span>
+  </div>
+
+  <h3>Background</h3>
+  <p>Isaiah Wright is the founder and operator of One Vision Marketing Agency, based in Bridgewater, Massachusetts. He holds a <strong>B.A. in Marketing from Bridgewater State University</strong>, and his formal training shows up in how he runs the business — he thinks in positioning, offer construction, and measurable funnels rather than in deliverables and hours.</p>
+
+  <p>Before building the agency into its current form, he conducted marketing research for <strong>RECNA (Regional Economic Center for New Americans)</strong> in Bridgewater, helping the organization expand its reach and community impact. That work is a useful lens on him: his earliest professional marketing experience was in service of a community organization, not a corporate brand, and the community-first orientation has persisted into how he structures client relationships today.</p>
+
+  <h3>What Distinguishes Him</h3>
+  <p>Most small marketing agencies are staffed by generalists who outsource the technical work. Isaiah does the opposite — he <strong>builds the infrastructure himself</strong>. He has developed a custom CRM application, automated lead-generation tooling, an AI-powered content visual generator, and an AI voice callback system that phones new leads within sixty seconds of form submission. These are not tools he resells; they are tools he wrote.</p>
+
+  <p>The practical consequence is that his agency's cost structure and capability set look different from a comparable shop. He can offer software, content production, and strategy inside a single monthly retainer because the underlying systems are automated rather than manual.</p>
+
+  <div class="callout">
+    <p class="quote">"You're not hiring an agency. You're hiring a partner."</p>
+    <p style="margin-top:8px">This line appears in his sales materials, and it accurately describes the delivery model — clients work directly with him, not an account manager.</p>
+  </div>
+
+  <h3>Working Style</h3>
+  <ul>
+    <li><strong>Systems-first.</strong> When a task recurs, he builds a script or a template for it rather than repeating manual work. His operating repository is organized around reusable directives and execution scripts.</li>
+    <li><strong>Ships fast, iterates in public.</strong> He prefers a working draft today over a perfect draft next week, then refines through rapid cycles.</li>
+    <li><strong>Tests like an end user.</strong> He checks deliverables on his own phone before they reach a client and pushes back hard when something renders incorrectly — a discipline most agencies skip.</li>
+    <li><strong>Receptive to honest counsel.</strong> When told a goal was unrealistic — for example, ranking for a head keyword dominated by billion-dollar competitors — he adjusted strategy rather than insisting.</li>
+    <li><strong>Bootstrapper's economics.</strong> He consistently seeks the free or low-cost path first, and scales spend only against demonstrated return.</li>
+  </ul>
+
+  <div class="page-foot">
+    <span><strong>One Vision Marketing Agency</strong></span>
+    <span>Founder Profile · Page 2</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 3 — THE COMPANY ==================== -->
+<div class="page">
+  <div class="page-head">
+    <h2>The Company</h2>
+    <span class="sec-num">02</span>
+  </div>
+
+  <h3>Positioning</h3>
+  <p>One Vision Marketing Agency is a <strong>full-service marketing partnership</strong> for small and mid-sized businesses. Its central thesis is consolidation: most small businesses are paying separately for a CRM, an email platform, a website builder, a scheduler, a review tool, and a social scheduler — spending between $500 and $1,600 per month on tools that do not communicate with one another and that nobody is accountable for.</p>
+
+  <p>One Vision replaces that stack with a single system, a single invoice, and a single accountable partner.</p>
+
+  <div class="callout">
+    <p class="quote">One Vision. One Team. Real Growth.</p>
+  </div>
+
+  <h3>Brand Evolution</h3>
+  <p>The company previously operated as <strong>Aventis Marketing</strong> and has since consolidated under the One Vision brand. A parallel venture, <strong>AventisAI</strong>, was developed as a white-label software play — a rebranded all-in-one platform sold as a monthly subscription, modeled on reselling GoHighLevel's SaaS tier at 80–95% margin. The business plan for that venture is fully documented, and its underlying logic — build once, deliver to many — informs how the agency is structured today.</p>
+
+  <h3>Service Area &amp; Target Client</h3>
+  <div class="fact-grid">
+    <div class="fact">
+      <div class="k">Geography</div>
+      <div class="v">Massachusetts, Rhode Island, and Connecticut as the core market, with capacity to serve clients nationwide.</div>
+    </div>
+    <div class="fact">
+      <div class="k">Client Size</div>
+      <div class="v">Small to mid-sized businesses, roughly <strong>5–50 employees</strong>, typically owner-operated.</div>
+    </div>
+    <div class="fact">
+      <div class="k">Verticals</div>
+      <div class="v">Real estate, contractors and trades, salons and barbershops, restaurants, tattoo studios, and local service businesses.</div>
+    </div>
+    <div class="fact">
+      <div class="k">Buyer Profile</div>
+      <div class="v">Hands-on owners who know they need marketing but lack the time, staff, or technical depth to execute it themselves.</div>
+    </div>
+  </div>
+
+  <h3>Voice &amp; Client Posture</h3>
+  <ul>
+    <li><strong>Professional and genuine</strong> — deliberately not salesy or high-pressure.</li>
+    <li><strong>Relationship-first</strong> — the work is framed as helping a business grow, not as selling a package.</li>
+    <li><strong>Plain language</strong> — jargon is avoided on principle.</li>
+    <li><strong>Confident but unshowy</strong> — the stated preference is to let the work speak.</li>
+  </ul>
+
+  <div class="page-foot">
+    <span><strong>One Vision Marketing Agency</strong></span>
+    <span>Founder Profile · Page 3</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 4 — WHAT THEY DO ==================== -->
+<div class="page">
+  <div class="page-head">
+    <h2>What They Do</h2>
+    <span class="sec-num">03</span>
+  </div>
+
+  <p>The flagship offering is the <strong>One Vision Growth Package</strong>, a single monthly engagement containing eight components that would ordinarily be purchased separately.</p>
+
+  <div class="svc">
+    <div class="svc-num">01</div>
+    <div class="svc-body">
+      <div class="t">Full-Service Marketing Strategy</div>
+      <div class="d">Custom quarterly roadmap, competitor analysis, positioning and messaging framework, and continuous refinement against results.</div>
+    </div>
+  </div>
+  <div class="svc">
+    <div class="svc-num">02</div>
+    <div class="svc-body">
+      <div class="t">Custom CRM Software</div>
+      <div class="d">Contact and pipeline management, email and SMS follow-up automation, booking calendar integration, deal tracking, and mobile access.</div>
+    </div>
+  </div>
+  <div class="svc">
+    <div class="svc-num">03</div>
+    <div class="svc-body">
+      <div class="t">Weekly Content Creation</div>
+      <div class="d">Reels, carousels, posts, and stories — branded per client, with copywriting included. Produced partly through a proprietary AI visual generator.</div>
+    </div>
+  </div>
+  <div class="svc">
+    <div class="svc-num">04</div>
+    <div class="svc-body">
+      <div class="t">AI Assistance &amp; Automation</div>
+      <div class="d">AI-generated visuals and copy, an AI voice callback bot that phones inbound leads within 60 seconds, and automated email/SMS sequences.</div>
+    </div>
+  </div>
+  <div class="svc">
+    <div class="svc-num">05</div>
+    <div class="svc-body">
+      <div class="t">Lead Generation</div>
+      <div class="d">Facebook and Instagram ad management, landing page construction, lead magnet campaigns, and retargeting.</div>
+    </div>
+  </div>
+  <div class="svc">
+    <div class="svc-num">06</div>
+    <div class="svc-body">
+      <div class="t">Organic Social &amp; Community Management</div>
+      <div class="d">Consistent posting schedule, comment and DM engagement, hashtag and timing strategy, multi-platform distribution.</div>
+    </div>
+  </div>
+  <div class="svc">
+    <div class="svc-num">07</div>
+    <div class="svc-body">
+      <div class="t">Direct Founder Access</div>
+      <div class="d">Weekly strategy calls with Isaiah, focused game planning, and direct messaging access. No account managers in between.</div>
+    </div>
+  </div>
+  <div class="svc">
+    <div class="svc-num">08</div>
+    <div class="svc-body">
+      <div class="t">Monthly Performance Reporting</div>
+      <div class="d">Leads generated, cost per lead, return on investment, and the following month's plan — delivered in plain language.</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:0.28in">Additional Capabilities</h3>
+  <div class="tag-row">
+    <span class="tag">Website Design &amp; Build</span>
+    <span class="tag">Website Hosting</span>
+    <span class="tag">SEO Audits</span>
+    <span class="tag">Local SEO / Google Business Profile</span>
+    <span class="tag">Google Ads</span>
+    <span class="tag">Brand Development</span>
+    <span class="tag">Schema &amp; Technical SEO</span>
+    <span class="tag">Cold Email Outreach</span>
+    <span class="tag">AI Phone Answering</span>
+  </div>
+
+  <div class="page-foot">
+    <span><strong>One Vision Marketing Agency</strong></span>
+    <span>Founder Profile · Page 4</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 5 — HOW HE PRICES & SELLS ==================== -->
+<div class="page">
+  <div class="page-head">
+    <h2>Offer &amp; Sales Approach</h2>
+    <span class="sec-num">04</span>
+  </div>
+
+  <h3>The Pricing Model</h3>
+  <p>The Growth Package is priced on a sliding scale tied to ad spend and campaign scope. The stack is valued at roughly <strong>$5,800 per month</strong> if each component were purchased individually, and is sold well below that figure — a deliberate price-to-value gap rather than a discount.</p>
+
+  <div class="price-strip">
+    <div>
+      <div class="ps-label">Flagship Offering</div>
+      <div class="ps-name">One Vision Growth Package</div>
+      <div class="ps-desc">Strategy, CRM, content, AI, lead generation, organic social, founder access, and reporting — bundled.</div>
+    </div>
+    <div>
+      <div class="ps-amount">$300–$500</div>
+      <div class="ps-per">per month · sliding scale</div>
+    </div>
+  </div>
+
+  <ul>
+    <li><strong>No contracts.</strong> Month-to-month, cancel anytime.</li>
+    <li><strong>30-day money-back guarantee.</strong> Full refund if the client does not see value.</li>
+    <li><strong>48-hour onboarding.</strong> Systems configured and first deliverables moving within the first week.</li>
+  </ul>
+
+  <h3>Sales Methodology</h3>
+  <p>Isaiah's sales approach is built explicitly on <strong>Alex Hormozi's offer and closing frameworks</strong>, applied with unusual rigor for an agency of this size.</p>
+
+  <ul>
+    <li><strong>The Value Equation.</strong> Offers are constructed to maximize dream outcome and perceived likelihood of success while minimizing time delay and client effort. Fast onboarding and done-for-you setup are treated as competitive weapons, not conveniences.</li>
+    <li><strong>Grand Slam Offer construction.</strong> The value stack is itemized line by line with individual dollar figures, then anchored against a materially lower price.</li>
+    <li><strong>The CLOSER framework.</strong> Clarify, Label, Overview, Sell the value, Explain next steps, Reinforce with a guarantee — used as the actual structure of discovery and closing calls.</li>
+    <li><strong>Risk reversal.</strong> The guarantee is positioned prominently rather than buried, on the reasoning that a larger guarantee closes more business.</li>
+  </ul>
+
+  <h3>Lead Generation for the Agency Itself</h3>
+  <p>He applies the same systems thinking to his own pipeline: cold email at scale, LinkedIn outreach, free marketing audits as a lead magnet, short-form video content, Facebook group prospecting with a value-first posture, referral incentives, and local partnerships with accountants and business consultants.</p>
+
+  <div class="callout">
+    <p>Notably, his stated policy for group and community outreach is to <strong>lead with genuine help and never with a pitch</strong> — commenting publicly with useful advice first, and only moving to a direct conversation after the other party engages.</p>
+  </div>
+
+  <div class="page-foot">
+    <span><strong>One Vision Marketing Agency</strong></span>
+    <span>Founder Profile · Page 5</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 6 — OPERATING SYSTEM ==================== -->
+<div class="page">
+  <div class="page-head">
+    <h2>How He Operates</h2>
+    <span class="sec-num">05</span>
+  </div>
+
+  <h3>The Operating Architecture</h3>
+  <p>Isaiah runs his agency on a deliberately structured three-layer model that separates intent from execution:</p>
+
+  <ul>
+    <li><strong>Directive layer.</strong> Standard operating procedures written in plain language — one document per recurring task, defining goals, inputs, tools, outputs, and edge cases.</li>
+    <li><strong>Orchestration layer.</strong> Decision-making and routing — reading the directive, selecting the right tool, handling errors, and updating the procedure with what was learned.</li>
+    <li><strong>Execution layer.</strong> Deterministic scripts that do the actual work — API calls, data processing, file operations, image generation.</li>
+  </ul>
+
+  <p>The reasoning he applies is straightforwardly quantitative: at 90% accuracy per step, a five-step process succeeds only 59% of the time. Pushing complexity into deterministic code rather than repeated human judgment is how he keeps quality consistent as volume grows.</p>
+
+  <h3>Technology Stack</h3>
+  <div class="fact-grid">
+    <div class="fact">
+      <div class="k">Client Platform</div>
+      <div class="v"><strong>GoHighLevel</strong> — white-labeled CRM, funnels, scheduling, and content publishing.</div>
+    </div>
+    <div class="fact">
+      <div class="k">Custom Software</div>
+      <div class="v"><strong>Purpose-built CRM</strong> (Python/Flask) deployed on Render with a Supabase Postgres backend.</div>
+    </div>
+    <div class="fact">
+      <div class="k">AI Voice</div>
+      <div class="v"><strong>Bland.ai callback system</strong> with industry-specific prompt library for instant lead response.</div>
+    </div>
+    <div class="fact">
+      <div class="k">Content Production</div>
+      <div class="v">Proprietary <strong>Python/Pillow visual generator</strong> producing branded posts, carousels, reels, and stories.</div>
+    </div>
+    <div class="fact">
+      <div class="k">Design</div>
+      <div class="v"><strong>Canva</strong> for client-facing collateral; hand-built self-contained HTML for premium deliverables.</div>
+    </div>
+    <div class="fact">
+      <div class="k">Delivery Standard</div>
+      <div class="v">Single-file HTML with zero external dependencies — works offline, on mobile, and in email.</div>
+    </div>
+  </div>
+
+  <h3>A Notable Detail</h3>
+  <p>His delivery standard for client websites and documents is that every file must be <strong>fully self-contained</strong> — all styling, scripts, and graphics embedded inline, no external requests. This is not an aesthetic preference. It is a reliability decision: a file that depends on a content delivery network will eventually fail to load on a client's phone, on a restricted network, or offline. He has tested for and corrected exactly this failure mode.</p>
+
+  <div class="page-foot">
+    <span><strong>One Vision Marketing Agency</strong></span>
+    <span>Founder Profile · Page 6</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 7 — CLIENTS & DIRECTION ==================== -->
+<div class="page">
+  <div class="page-head">
+    <h2>Clients &amp; Direction</h2>
+    <span class="sec-num">06</span>
+  </div>
+
+  <h3>Client Portfolio</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:29%">Client</th>
+        <th style="width:24%">Industry</th>
+        <th style="width:47%">Scope Delivered</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Akira Real Estate Agency</strong><br><span style="color:var(--gray-500);font-size:10.5px">Kunal Patel · Dedham, MA</span></td>
+        <td>Residential Real Estate</td>
+        <td>Custom website, AI-generated Instagram content calendar, branded visual library, five-campaign paid social program, full local SEO and schema package, CRM configuration.</td>
+      </tr>
+      <tr>
+        <td><strong>North Atlantic Tattoo</strong><br><span style="color:var(--gray-500);font-size:10.5px">New Bedford, MA</span></td>
+        <td>Custom Tattoo Studio</td>
+        <td>Website design, build, and hosting. Delivered March 2026.</td>
+      </tr>
+      <tr>
+        <td><strong>E&amp;J Hardscaping<br>&amp; Landscaping Inc.</strong><br><span style="color:var(--gray-500);font-size:10.5px">MA / RI</span></td>
+        <td>Hardscaping Contractor</td>
+        <td>Web presence and ongoing marketing support.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>The Client Experience Model</h3>
+  <p>In September 2026 he launched a <strong>monthly community update program</strong> — a recurring briefing sent to every client covering what is being rolled out that month. The first edition covered expanded SEO keyword research, new CRM automation features, and the introduction of a monthly giveaway in which the top-performing client receives a full month of service at no cost.</p>
+
+  <p>The design intent is worth noting: the program reframes the client base as a <strong>community</strong> rather than a list of accounts, creates a recurring reason for positive contact that is not an invoice or an upsell, and introduces a light competitive dynamic that rewards engagement.</p>
+
+  <h3>Where It Is Headed</h3>
+  <ul>
+    <li><strong>Productization.</strong> Continued movement from custom service delivery toward repeatable, software-supported packages that scale without proportional labor.</li>
+    <li><strong>Software as a second revenue line.</strong> The AI callback system and CRM tooling are built to be resold to clients as standalone add-ons at high margin.</li>
+    <li><strong>Content-led inbound.</strong> An acknowledged priority to build a personal brand through consistent short-form video, on the reasoning that clients hire people rather than logos.</li>
+    <li><strong>Local market depth.</strong> Rather than competing for national head terms, the strategy targets winnable local and long-tail positions across specific Massachusetts markets.</li>
+  </ul>
+
+  <h3>Summary Assessment</h3>
+  <p>Isaiah Wright operates less like a traditional agency owner and more like a <strong>solo technical founder who happens to sell marketing</strong>. He writes his own software, structures offers using tested frameworks, prices aggressively against a stacked value proposition, and builds systems that let one person deliver what would normally require a small team. The company is early, deliberately lean, and constructed to scale through automation rather than headcount.</p>
+
+  <div class="page-foot">
+    <span><strong>One Vision Marketing Agency</strong></span>
+    <span>Founder Profile · Page 7</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 8 — CONTACT ==================== -->
+<div class="page" style="justify-content:center;align-items:center;text-align:center">
+  <div style="max-width:5.4in">
+    <div style="margin-bottom:0.5in">
+      <span style="font-size:30px;font-weight:800;color:var(--navy);letter-spacing:8px;display:block">ONE VISION</span>
+      <div style="width:64px;height:2px;background:var(--accent);border-radius:2px;margin:14px auto 11px"></div>
+      <span style="font-size:11px;font-weight:600;color:var(--navy-light);letter-spacing:6px;text-transform:uppercase">Marketing Agency</span>
+    </div>
+
+    <p style="font-size:18px;font-weight:800;color:var(--navy);margin-bottom:0.28in;line-height:1.35">One Vision. One Team. Real Growth.</p>
+
+    <p style="font-size:12.5px;color:var(--gray-600);line-height:1.75;margin-bottom:0.4in">Full-service marketing partnership for small businesses across Massachusetts, Rhode Island, Connecticut, and nationwide.</p>
+
+    <div style="border-top:1px solid var(--gray-200);border-bottom:1px solid var(--gray-200);padding:0.28in 0;margin-bottom:0.34in">
+      <div style="display:grid;grid-template-columns:1fr;gap:11px">
+        <div>
+          <div style="font-size:8.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:3px">Founder</div>
+          <div style="font-size:13px;color:var(--navy);font-weight:600">Isaiah Wright &mdash; Bridgewater State University, B.A. Marketing</div>
+        </div>
+        <div>
+          <div style="font-size:8.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:3px">Website</div>
+          <div style="font-size:13px;color:var(--navy);font-weight:600">Onevisionmarketingagency.com</div>
+        </div>
+        <div>
+          <div style="font-size:8.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:3px">Instagram</div>
+          <div style="font-size:13px;color:var(--navy);font-weight:600">@onevisionmarketing1</div>
+        </div>
+        <div>
+          <div style="font-size:8.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:3px">Book a Strategy Call</div>
+          <div style="font-size:13px;color:var(--navy);font-weight:600">calendly.com/onevisionmarketing/overview</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:9px;color:var(--gray-500);letter-spacing:2px;text-transform:uppercase">&copy; 2026 One Vision Marketing Agency</p>
+  </div>
+</div>
+
+</body>
+</html>
