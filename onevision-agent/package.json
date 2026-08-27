@@ -2,14 +2,15 @@
   "name": "onevision-agent",
   "version": "1.0.0",
   "private": true,
-  "description": "VERA — business agent for One Vision Marketing Agency",
+  "description": "VERA \u2014 business agent for One Vision Marketing Agency",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "db:push": "psql \"$DATABASE_URL\" -f db/schema.sql"
+    "db:push": "psql \"$DATABASE_URL\" -f db/schema.sql",
+    "setup": "node scripts/setup.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.0",
@@ -25,5 +26,7 @@
     "@types/react-dom": "^19.1.0",
     "typescript": "^5.7.0"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  }
 }
