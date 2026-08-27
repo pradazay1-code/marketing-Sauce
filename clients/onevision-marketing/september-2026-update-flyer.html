@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>One Vision Marketing — September 2026 Community Update</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%231e3a5f'/><text x='50' y='68' font-family='Arial,sans-serif' font-size='56' font-weight='800' text-anchor='middle' fill='white'>OV</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --navy:#1e3a5f;
+  --navy-deep:#152a45;
+  --navy-mid:#2f5b8d;
+  --navy-light:#3a5a80;
+  --accent:#5a7a9f;
+  --white:#ffffff;
+  --off-white:#fbfcfd;
+  --gray-100:#f1f5f9;
+  --gray-200:#e2e8f0;
+  --gray-500:#64748b;
+  --gray-600:#475569;
+  --gray-700:#334155;
+}
+
+@page{size:11in 8.5in;margin:0}
+
+html,body{
+  width:11in;height:8.5in;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--white);color:var(--navy);
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+
+.flyer{
+  width:11in;height:8.5in;
+  display:flex;flex-direction:column;
+  background:var(--white);
+  overflow:hidden;position:relative;
+}
+
+/* ============ HEADER ============ */
+.header{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-deep) 100%);
+  padding:0.42in 0.6in 0.38in;
+  position:relative;overflow:hidden;
+  flex-shrink:0;
+}
+.header::after{
+  content:'';position:absolute;top:-40%;right:-8%;
+  width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 65%);
+  pointer-events:none;
+}
+.header-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:30px;position:relative;z-index:2;
+}
+
+/* Brand lockup */
+.brand{display:flex;flex-direction:column;line-height:1;flex-shrink:0}
+.brand .name{
+  font-size:26px;font-weight:800;color:var(--white);
+  letter-spacing:5px;
+}
+.brand .rule{
+  width:52px;height:2px;background:rgba(255,255,255,0.55);
+  border-radius:2px;margin:9px 0 8px;
+}
+.brand .sub{
+  font-size:9.5px;font-weight:600;color:rgba(255,255,255,0.72);
+  letter-spacing:4.5px;text-transform:uppercase;
+}
+
+.header-title{text-align:right}
+.header-title .eyebrow{
+  display:inline-block;
+  font-size:10px;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:rgba(255,255,255,0.75);
+  padding:5px 15px;border-radius:100px;
+  border:1px solid rgba(255,255,255,0.28);
+  margin-bottom:11px;
+}
+.header-title h1{
+  font-size:43px;font-weight:800;color:var(--white);
+  letter-spacing:-0.8px;line-height:1;
+}
+.header-title .month-sub{
+  font-size:14px;font-weight:400;color:rgba(255,255,255,0.8);
+  margin-top:8px;letter-spacing:0.3px;
+}
+
+/* ============ BODY ============ */
+.body{
+  flex:1;padding:0.42in 0.6in 0.3in;
+  display:flex;flex-direction:column;
+  background:var(--off-white);
+}
+
+.intro{
+  text-align:center;margin-bottom:0.34in;
+  flex-shrink:0;
+}
+.intro h2{
+  font-size:21px;font-weight:700;color:var(--navy-mid);
+  letter-spacing:0.2px;margin-bottom:9px;
+}
+.intro p{
+  font-size:13px;color:var(--gray-600);line-height:1.6;
+  max-width:6.6in;margin:0 auto;
+}
+
+/* Three columns */
+.updates{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:0.32in;flex:1;align-items:stretch;
+}
+.card{
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:11px;
+  padding:0.28in 0.24in 0.26in;
+  display:flex;flex-direction:column;
+  position:relative;
+  box-shadow:0 2px 14px rgba(30,58,95,0.05);
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--navy);
+  border-radius:11px 11px 0 0;
+}
+
+.card-num{
+  position:absolute;top:0.22in;right:0.24in;
+  font-size:34px;font-weight:800;
+  color:var(--gray-100);line-height:1;
+  letter-spacing:-1px;
+}
+
+.icon-wrap{
+  width:52px;height:52px;border-radius:12px;
+  background:var(--navy);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:0.17in;flex-shrink:0;
+  position:relative;z-index:2;
+}
+.icon-wrap svg{width:27px;height:27px;fill:none;stroke:var(--white);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.card h3{
+  font-size:15px;font-weight:800;color:var(--navy-mid);
+  letter-spacing:0.4px;line-height:1.25;
+  margin-bottom:0.06in;text-transform:uppercase;
+  position:relative;z-index:2;
+}
+.card .divider{
+  width:36px;height:2px;background:var(--accent);
+  border-radius:2px;margin:0.1in 0 0.13in;
+}
+.card p{
+  font-size:11.7px;color:var(--gray-600);line-height:1.62;
+  flex:1;
+}
+.card p strong{color:var(--navy-mid);font-weight:700}
+
+.card .tag{
+  display:inline-block;align-self:flex-start;
+  margin-top:0.14in;padding:4px 11px;
+  border-radius:100px;font-size:9px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;
+  background:rgba(47,91,141,0.08);
+  color:var(--navy-mid);
+  border:1px solid rgba(47,91,141,0.16);
+}
+
+/* ============ FOOTER ============ */
+.footer{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-deep) 100%);
+  padding:0.24in 0.6in;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:24px;flex-shrink:0;position:relative;
+}
+.footer::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),rgba(90,122,159,0.25),var(--accent));
+}
+.footer .tagline{
+  font-size:16px;font-weight:800;color:var(--white);
+  letter-spacing:0.4px;
+}
+.footer .support{
+  font-size:10.5px;color:rgba(255,255,255,0.65);
+  margin-top:3px;
+}
+.footer-contact{
+  display:flex;align-items:center;gap:22px;
+}
+.contact-item{
+  display:flex;align-items:center;gap:7px;
+  font-size:11.5px;color:rgba(255,255,255,0.92);
+  font-weight:500;
+}
+.contact-item svg{
+  width:14px;height:14px;flex-shrink:0;
+  fill:rgba(255,255,255,0.85);
+}
+</style>
+</head>
+<body>
+
+<div class="flyer">
+
+  <!-- ============ HEADER ============ -->
+  <div class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="name">ONE VISION</span>
+        <div class="rule"></div>
+        <span class="sub">Marketing Agency</span>
+      </div>
+      <div class="header-title">
+        <div class="eyebrow">Monthly Community Update</div>
+        <h1>September 2026</h1>
+        <div class="month-sub">Three new rollouts for our client community</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BODY ============ -->
+  <div class="body">
+
+    <div class="intro">
+      <h2>Growing Together, Every Month</h2>
+      <p>We're rolling out monthly updates to keep our community informed, supported, and moving forward. Here's what's new for you this September.</p>
+    </div>
+
+    <div class="updates">
+
+      <!-- CARD 1 — SEO -->
+      <div class="card">
+        <div class="card-num">01</div>
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <circle cx="10.5" cy="10.5" r="6.5"/>
+            <line x1="15.5" y1="15.5" x2="21" y2="21"/>
+            <polyline points="7.5,12 9.5,9.5 11.5,11 13.5,7.5"/>
+          </svg>
+        </div>
+        <h3>SEO &amp; Website Optimization</h3>
+        <div class="divider"></div>
+        <p>Every month we run <strong>fresh keyword research</strong> tailored to your market, analyze what your top competitors are ranking for, and optimize your <strong>Google Business Profile</strong>. Faster pages, sharper local targeting, and a monthly ranking report so you see exactly where you're climbing.</p>
+        <span class="tag">Rank Higher on Google</span>
+      </div>
+
+      <!-- CARD 2 — CRM -->
+      <div class="card">
+        <div class="card-num">02</div>
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <path d="M13 2L4.5 13H11l-1 9 8.5-11H12l1-9z"/>
+          </svg>
+        </div>
+        <h3>CRM Updates &mdash; More Automation</h3>
+        <div class="divider"></div>
+        <p>Your CRM just got more powerful. <strong>Automated follow-up sequences</strong> fire the moment a lead comes in, smart routing sends every inquiry to the right place, and <strong>missed-call text-back</strong> keeps conversations alive. Appointment reminders and review requests now run in the background too.</p>
+        <span class="tag">Never Miss a Lead</span>
+      </div>
+
+      <!-- CARD 3 — GIVEAWAY -->
+      <div class="card">
+        <div class="card-num">03</div>
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <path d="M7 4h10v6a5 5 0 0 1-10 0V4z"/>
+            <path d="M7 6H4.5v1.5A3.5 3.5 0 0 0 7 11"/>
+            <path d="M17 6h2.5v1.5A3.5 3.5 0 0 1 17 11"/>
+            <line x1="12" y1="15" x2="12" y2="18"/>
+            <path d="M8.5 21h7l-.7-3h-5.6l-.7 3z"/>
+          </svg>
+        </div>
+        <h3>New Monthly Giveaway</h3>
+        <div class="divider"></div>
+        <p>We're celebrating the clients who show up and grow. Each month our top performer wins <strong>one full month of service free</strong> &mdash; no cost, no catch. Every client is <strong>automatically entered</strong>, and September's winner will be announced at the end of the month.</p>
+        <span class="tag">1 Month Free &mdash; Auto Entered</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <div class="footer">
+    <div>
+      <div class="tagline">One Vision. One Team. Real Growth.</div>
+      <div class="support">Questions about any of this? Reach out anytime &mdash; we're here to help.</div>
+    </div>
+    <div class="footer-contact">
+      <div class="contact-item">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm6.93 6h-2.95a15.65 15.65 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.93 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14A7.9 7.9 0 0 1 4 12c0-.69.1-1.36.26-2h3.38a16.6 16.6 0 0 0 0 4H4.26zm.81 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.99 7.99 0 0 1 5.07 16zm2.95-8H5.07a7.99 7.99 0 0 1 4.33-3.56A15.65 15.65 0 0 0 8.02 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66a14.3 14.3 0 0 1 0-4h4.68a14.3 14.3 0 0 1 0 4zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56zM16.36 14a16.6 16.6 0 0 0 0-4h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg>
+        <span>Onevisionmarketingagency.com</span>
+      </div>
+      <div class="contact-item">
+        <svg viewBox="0 0 24 24"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.27.07 1.65.07 4.85 0 3.2-.01 3.58-.07 4.85-.15 3.23-1.66 4.77-4.92 4.92-1.27.06-1.64.07-4.85.07-3.2 0-3.58-.01-4.85-.07-3.26-.15-4.77-1.7-4.92-4.92-.06-1.27-.07-1.64-.07-4.85 0-3.2.01-3.58.07-4.85.15-3.23 1.66-4.77 4.92-4.92C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07 2.7.27.27 2.69.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.2 4.36 2.62 6.78 6.98 6.98C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c4.35-.2 6.78-2.62 6.98-6.98.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.2-4.35-2.62-6.78-6.98-6.98C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg>
+        <span>@onevisionmarketing1</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
