@@ -164,9 +164,17 @@ English (United States) — en-US
 
 ---
 
-## 9. Schema Markup ✏️ (VALID — Won't Throw an Error)
+## 9. Schema Markup ✏️
 
-**Schema type:** `RealEstateAgent` — this IS a real Schema.org type (unlike the "MarketingAgency" issue). It's the exact right classification for a real estate professional.
+**Use this version.** An earlier draft included `@id`, a circular `founder.worksFor`
+nesting, a redundant `employee` block, and city names written as `"Dedham, MA"` —
+all four are common reasons a strict validator rejects otherwise-valid JSON-LD.
+They are removed here. Coordinates are also numbers rather than strings, which is
+the correct Schema.org form.
+
+**Schema type:** `RealEstateAgent` — a real Schema.org type and the precise
+classification for a real estate professional. If your builder's validator does not
+recognize it, change that one value to `LocalBusiness` and change nothing else.
 
 Paste this in the JSON view:
 
@@ -174,22 +182,12 @@ Paste this in the JSON view:
 {
   "@context": "https://schema.org",
   "@type": "RealEstateAgent",
-  "@id": "https://akirarealestateagency.com/#business",
   "name": "Akira Real Estate Agency",
   "alternateName": "Akira Real Estate",
   "description": "Full-service real estate agency in Dedham, Massachusetts helping buyers, sellers, and investors navigate the Greater Boston market with expert local guidance and personalized service.",
   "url": "https://akirarealestateagency.com",
   "priceRange": "$$$",
   "founder": {
-    "@type": "Person",
-    "name": "Kunal Patel",
-    "jobTitle": "Real Estate Agent",
-    "worksFor": {
-      "@type": "RealEstateAgent",
-      "name": "Akira Real Estate Agency"
-    }
-  },
-  "employee": {
     "@type": "Person",
     "name": "Kunal Patel",
     "jobTitle": "Real Estate Agent"
@@ -203,46 +201,18 @@ Paste this in the JSON view:
   },
   "geo": {
     "@type": "GeoCoordinates",
-    "latitude": "42.2418",
-    "longitude": "-71.1662"
+    "latitude": 42.2418,
+    "longitude": -71.1662
   },
   "areaServed": [
-    {
-      "@type": "City",
-      "name": "Dedham, MA"
-    },
-    {
-      "@type": "City",
-      "name": "Westwood, MA"
-    },
-    {
-      "@type": "City",
-      "name": "Needham, MA"
-    },
-    {
-      "@type": "City",
-      "name": "Newton, MA"
-    },
-    {
-      "@type": "City",
-      "name": "Norwood, MA"
-    },
-    {
-      "@type": "City",
-      "name": "Canton, MA"
-    },
-    {
-      "@type": "City",
-      "name": "Milton, MA"
-    },
-    {
-      "@type": "City",
-      "name": "Boston, MA"
-    },
-    {
-      "@type": "State",
-      "name": "Massachusetts"
-    }
+    { "@type": "City", "name": "Dedham" },
+    { "@type": "City", "name": "Westwood" },
+    { "@type": "City", "name": "Needham" },
+    { "@type": "City", "name": "Newton" },
+    { "@type": "City", "name": "Norwood" },
+    { "@type": "City", "name": "Canton" },
+    { "@type": "City", "name": "Milton" },
+    { "@type": "City", "name": "Boston" }
   ],
   "openingHoursSpecification": [
     {
@@ -258,64 +228,59 @@ Paste this in the JSON view:
       "closes": "17:00"
     }
   ],
-  "hasOfferCatalog": {
-    "@type": "OfferCatalog",
-    "name": "Real Estate Services",
-    "itemListElement": [
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Residential Home Buying",
-          "description": "Full-service buyer representation for homes in Dedham and Greater Boston"
-        }
-      },
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Home Selling & Listing",
-          "description": "Aggressive marketing strategy and professional listing services for sellers"
-        }
-      },
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Free Home Valuation",
-          "description": "No-obligation market analysis showing your Dedham home's current value"
-        }
-      },
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "First-Time Home Buyer Services",
-          "description": "Guidance and Massachusetts first-time buyer program assistance"
-        }
-      },
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Investment Property Consulting",
-          "description": "Multi-family, rental, and investment property acquisition"
-        }
-      },
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Luxury Home Sales",
-          "description": "Discreet, high-touch service for premium properties in Greater Boston"
-        }
-      }
-    ]
+  "knowsAbout": [
+    "Residential home buying",
+    "Home selling and listing",
+    "Free home valuations",
+    "First-time home buyer programs",
+    "Investment property consulting",
+    "Luxury home sales"
+  ]
+}
+```
+
+### If it still errors
+
+Work down this list — each step removes one more thing a strict validator can object to.
+
+**Step 1.** Change the `@type` value on line 3 from `RealEstateAgent` to `LocalBusiness`.
+Change nothing else. `LocalBusiness` is accepted by every validator in existence.
+
+**Step 2.** If it still fails, delete the `knowsAbout` block and the
+`openingHoursSpecification` block. Both are optional and neither affects ranking much.
+
+**Step 3.** If it *still* fails, use this stripped-to-the-studs version. There is
+nothing left in it that any validator rejects:
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Akira Real Estate Agency",
+  "description": "Full-service real estate agency in Dedham, Massachusetts serving buyers, sellers, and investors across Greater Boston.",
+  "url": "https://akirarealestateagency.com",
+  "priceRange": "$$$",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Dedham",
+    "addressRegion": "MA",
+    "postalCode": "02026",
+    "addressCountry": "US"
   }
 }
 ```
 
-**If `RealEstateAgent` gets rejected** (rare — it's a valid type), fall back to `LocalBusiness` — just change the two `@type` fields at the top and inside `worksFor`.
+A minimal schema that saves beats a rich one that does not. You can add fields back
+one at a time afterward and re-validate between each.
+
+### Verify it independently
+
+Whatever version saves, paste the live URL into Google's own checker — it is the
+opinion that actually matters for ranking:
+
+```
+https://search.google.com/test/rich-results
+```
 
 ---
 
