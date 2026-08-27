@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/auth";
 import { sql } from "@/lib/db";
+import { providerStatus } from "@/lib/agent/provider";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -41,9 +42,11 @@ export async function GET(req: Request) {
   const checks: Check[] = [];
 
   // ---- env presence ----
+  const prov = providerStatus();
+
   const envs: [string, boolean, string][] = [
     ["DATABASE_URL", true, "Postgres connection"],
-    ["ANTHROPIC_API_KEY", true, "Claude API access"],
+    [prov.keyEnv, true, `${prov.id} API access (${prov.model})`],
     ["DASHBOARD_PASSWORD", true, "Login password"],
     ["CRON_SECRET", true, "Cron auth + session signing"],
     ["TELEGRAM_BOT_TOKEN", false, "Telegram alerts"],
@@ -133,28 +136,74 @@ export async function GET(req: Request) {
     }
   }
 
-  // ---- Anthropic reachable ----
-  if (process.env.ANTHROPIC_API_KEY) {
+  // ---- model provider reachable + configured model exists ----
+  if (prov.keySet) {
     try {
-      const res = await fetch("https://api.anthropic.com/v1/models?limit=1", {
-        headers: {
-          "x-api-key": process.env.ANTHROPIC_API_KEY,
-          "anthropic-version": "2023-06-01",
-        },
-      });
-      checks.push({
-        name: "anthropic: key",
-        required: true,
-        ok: res.ok,
-        detail: res.ok ? "key accepted" : `rejected (HTTP ${res.status})`,
-        fix: res.ok ? undefined : "Verify the key at console.anthropic.com",
-      });
+      if (prov.id === "gemini") {
+        const key = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models?key=${key}&pageSize=200`,
+        );
+        if (!res.ok) {
+          checks.push({
+            name: "gemini: key",
+            required: true,
+            ok: false,
+            detail: `key rejected (HTTP ${res.status})`,
+            fix: "Get a free key at aistudio.google.com/apikey",
+          });
+        } else {
+          const body = (await res.json()) as {
+            models?: { name?: string; supportedGenerationMethods?: string[] }[];
+          };
+          const ids = (body.models ?? [])
+            .filter((m) =>
+              (m.supportedGenerationMethods ?? []).includes("generateContent"),
+            )
+            .map((m) => (m.name ?? "").replace(/^models\//, ""))
+            .filter(Boolean);
+
+          checks.push({
+            name: "gemini: key",
+            required: true,
+            ok: true,
+            detail: `key accepted — ${ids.length} models available`,
+          });
+
+          const exists = ids.includes(prov.model);
+          checks.push({
+            name: "gemini: model",
+            required: true,
+            ok: exists,
+            detail: exists
+              ? `${prov.model} is available`
+              : `"${prov.model}" not found. Available: ${ids.slice(0, 12).join(", ")}`,
+            fix: exists
+              ? undefined
+              : "Set GEMINI_MODEL to one of the available IDs listed above",
+          });
+        }
+      } else {
+        const res = await fetch("https://api.anthropic.com/v1/models?limit=1", {
+          headers: {
+            "x-api-key": process.env.ANTHROPIC_API_KEY!,
+            "anthropic-version": "2023-06-01",
+          },
+        });
+        checks.push({
+          name: "anthropic: key",
+          required: true,
+          ok: res.ok,
+          detail: res.ok ? `key accepted — model ${prov.model}` : "key rejected",
+          fix: res.ok ? undefined : "Verify the key at console.anthropic.com",
+        });
+      }
     } catch {
       checks.push({
-        name: "anthropic: key",
+        name: `${prov.id}: key`,
         required: true,
         ok: false,
-        detail: "network error reaching api.anthropic.com",
+        detail: "network error reaching the provider",
       });
     }
   }

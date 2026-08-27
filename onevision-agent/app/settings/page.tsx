@@ -5,6 +5,7 @@ import { gmailStatus, gmailConfigured } from "@/lib/integrations/gmail";
 import { stripeConfigured } from "@/lib/integrations/stripe";
 import { telegramConfigured } from "@/lib/integrations/telegram";
 import { ago } from "@/lib/format";
+import { providerStatus } from "@/lib/agent/provider";
 import RunJobs from "../components/RunJobs";
 
 export const dynamic = "force-dynamic";
@@ -35,12 +36,14 @@ export default async function SettingsPage({
 
   const jobMap = Object.fromEntries(jobs.map((j) => [j.job, j]));
 
+  const prov = providerStatus();
+
   const rows = [
     {
-      name: "Anthropic",
-      need: "ANTHROPIC_API_KEY",
-      on: Boolean(process.env.ANTHROPIC_API_KEY),
-      detail: `Model: ${process.env.AGENT_MODEL || "claude-opus-5"}`,
+      name: prov.id === "gemini" ? "Google Gemini" : "Anthropic",
+      need: prov.keyEnv,
+      on: prov.keySet,
+      detail: `Model: ${prov.model}`,
       required: true,
     },
     {

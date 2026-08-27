@@ -1,4 +1,4 @@
-import type Anthropic from "@anthropic-ai/sdk";
+import type { ToolDef } from "./provider";
 import { sql, one, type Client } from "../db";
 import { remember, recall, memoriesForClient } from "./memory";
 import { sendTelegram } from "../integrations/telegram";
@@ -11,7 +11,7 @@ import { sendTelegram } from "../integrations/telegram";
  * cache for every subsequent block. Add new tools at the END of the array.
  */
 
-export const TOOLS: Anthropic.Tool[] = [
+export const TOOLS: ToolDef[] = [
   {
     name: "list_clients",
     description:

@@ -2,7 +2,7 @@
   "name": "onevision-agent",
   "version": "1.0.0",
   "private": true,
-  "description": "VERA \u2014 business agent for One Vision Marketing Agency",
+  "description": "VERA — business agent for One Vision Marketing Agency",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.0",
+    "@google/genai": "^2.19.0",
     "next": "^15.5.4",
     "pg": "^8.16.3",
     "react": "^19.1.0",
