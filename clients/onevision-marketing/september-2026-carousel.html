@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>One Vision Marketing — September 2026 Instagram Carousel</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --navy:#1e3a5f;
+  --navy-deep:#152a45;
+  --navy-mid:#2f5b8d;
+  --accent:#5a7a9f;
+  --white:#ffffff;
+  --off-white:#fbfcfd;
+  --gray-100:#f1f5f9;
+  --gray-200:#e2e8f0;
+  --gray-600:#475569;
+}
+
+html,body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#8a95a3;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+
+.stage{display:flex;flex-direction:column;align-items:center;gap:40px;padding:40px}
+
+.slide{
+  width:1080px;height:1350px;
+  display:flex;flex-direction:column;
+  background:var(--off-white);
+  overflow:hidden;position:relative;
+  flex-shrink:0;
+}
+
+/* ============ SHARED BANDS ============ */
+.band{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-deep) 100%);
+  flex-shrink:0;position:relative;overflow:hidden;
+}
+.band.top{padding:52px 72px 46px;text-align:center}
+.band.top::after{
+  content:'';position:absolute;top:-55%;right:-10%;
+  width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.07) 0%,transparent 65%);
+}
+.eyebrow{
+  display:inline-block;
+  font-size:16px;font-weight:700;letter-spacing:5px;
+  text-transform:uppercase;color:rgba(255,255,255,0.78);
+  padding:8px 22px;border-radius:100px;
+  border:1px solid rgba(255,255,255,0.3);
+  margin-bottom:20px;position:relative;z-index:2;
+}
+.band.top h1{
+  font-size:46px;font-weight:800;color:var(--white);
+  letter-spacing:-0.5px;line-height:1.08;
+  position:relative;z-index:2;
+}
+.band.top .month{
+  font-size:22px;font-weight:500;color:rgba(255,255,255,0.8);
+  margin-top:12px;letter-spacing:1px;
+  position:relative;z-index:2;
+}
+
+.band.bottom{
+  padding:34px 72px;text-align:center;margin-top:auto;
+}
+.band.bottom::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),rgba(90,122,159,0.2),var(--accent));
+}
+.band.bottom .tagline{
+  font-size:26px;font-weight:800;color:var(--white);letter-spacing:0.4px;
+}
+.band.bottom .handle{
+  font-size:16px;color:rgba(255,255,255,0.62);margin-top:8px;letter-spacing:0.6px;
+}
+
+/* ============ CONTENT CORE ============ */
+.core{
+  flex:1;padding:56px 72px 40px;
+  display:flex;flex-direction:column;
+}
+
+.step{
+  font-size:15px;font-weight:800;letter-spacing:4px;text-transform:uppercase;
+  color:var(--accent);margin-bottom:22px;
+}
+
+.icon-wrap{
+  width:96px;height:96px;border-radius:22px;
+  background:var(--navy);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:26px;flex-shrink:0;
+}
+.icon-wrap svg{
+  width:50px;height:50px;fill:none;stroke:var(--white);
+  stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;
+}
+
+.core h2{
+  font-size:40px;font-weight:800;color:var(--navy-mid);
+  letter-spacing:0.2px;line-height:1.18;text-transform:uppercase;
+}
+.kicker{
+  font-size:20px;font-weight:500;color:var(--gray-600);
+  margin-top:10px;font-style:italic;
+}
+.divider{
+  width:64px;height:3px;background:var(--accent);
+  border-radius:3px;margin:26px 0 30px;
+}
+
+ul.points{list-style:none;display:flex;flex-direction:column;gap:28px}
+ul.points li{
+  display:block;position:relative;padding-left:42px;
+  font-size:25px;line-height:1.52;color:var(--gray-600);
+}
+ul.points li::before{
+  content:'\2192';
+  position:absolute;left:0;top:0;
+  color:var(--navy-mid);font-weight:800;font-size:26px;
+  line-height:1.45;
+}
+ul.points li strong{color:var(--navy-mid);font-weight:700}
+
+.callout{
+  margin-top:auto;
+  background:rgba(47,91,141,0.07);
+  border:1px solid rgba(47,91,141,0.18);
+  border-left:5px solid var(--navy-mid);
+  border-radius:12px;
+  padding:26px 30px;
+  font-size:24px;line-height:1.5;color:var(--gray-600);
+}
+.callout strong{color:var(--navy-mid);font-weight:800}
+
+/* ============ COVER (slide 1) ============ */
+.slide.cover{
+  background:linear-gradient(150deg,var(--navy) 0%,var(--navy-deep) 100%);
+  justify-content:center;padding:0 82px;
+}
+.slide.cover::after{
+  content:'';position:absolute;top:-18%;right:-16%;
+  width:680px;height:680px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.07) 0%,transparent 62%);
+}
+.cover-inner{position:relative;z-index:2}
+.cover .brand{
+  font-size:26px;font-weight:800;color:var(--white);
+  letter-spacing:8px;
+}
+.cover .brand-sub{
+  font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);
+  letter-spacing:5px;text-transform:uppercase;margin-top:10px;
+}
+.cover .rule{
+  width:72px;height:3px;background:rgba(255,255,255,0.5);
+  border-radius:3px;margin:38px 0;
+}
+.cover h1{
+  font-size:80px;font-weight:800;color:var(--white);
+  line-height:1.02;letter-spacing:-2px;
+}
+.cover .month{
+  font-size:26px;font-weight:600;color:var(--accent);
+  letter-spacing:5px;text-transform:uppercase;margin-top:22px;
+}
+.cover .lead{
+  font-size:27px;line-height:1.55;color:rgba(255,255,255,0.85);
+  margin-top:34px;max-width:800px;
+}
+.toc{margin-top:52px;display:flex;flex-direction:column;gap:22px}
+.toc-item{
+  display:flex;align-items:center;gap:22px;
+  padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.16);
+}
+.toc-item:last-child{border-bottom:none;padding-bottom:0}
+.toc-num{
+  font-size:22px;font-weight:800;color:var(--accent);
+  letter-spacing:1px;width:44px;flex-shrink:0;
+}
+.toc-label{font-size:28px;font-weight:600;color:var(--white)}
+.cover .swipe{
+  position:absolute;bottom:64px;left:82px;
+  font-size:19px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:rgba(255,255,255,0.6);
+  z-index:2;
+}
+
+/* ============ CTA (slide 5) ============ */
+.slide.cta{
+  background:linear-gradient(150deg,var(--navy) 0%,var(--navy-deep) 100%);
+  justify-content:center;padding:0 82px;text-align:center;
+  align-items:center;
+}
+.slide.cta::after{
+  content:'';position:absolute;bottom:-20%;left:-16%;
+  width:640px;height:640px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.07) 0%,transparent 62%);
+}
+.cta-inner{position:relative;z-index:2;max-width:840px}
+.cta h1{
+  font-size:56px;font-weight:800;color:var(--white);
+  line-height:1.14;letter-spacing:-1px;
+}
+.cta .rule{
+  width:72px;height:3px;background:var(--accent);
+  border-radius:3px;margin:34px auto;
+}
+.cta p{
+  font-size:26px;line-height:1.6;color:rgba(255,255,255,0.85);
+  margin-bottom:26px;
+}
+.cta p.small{font-size:23px;color:rgba(255,255,255,0.68)}
+.cta .btn{
+  display:inline-block;margin-top:16px;
+  background:var(--white);color:var(--navy);
+  font-size:25px;font-weight:800;letter-spacing:0.4px;
+  padding:22px 52px;border-radius:100px;
+}
+.cta .meta{
+  margin-top:46px;font-size:20px;color:rgba(255,255,255,0.62);
+  line-height:1.8;letter-spacing:0.5px;
+}
+.cta .tagline{
+  margin-top:34px;font-size:24px;font-weight:800;
+  color:var(--white);letter-spacing:0.5px;
+}
+</style>
+</head>
+<body>
+<div class="stage">
+
+<!-- ==================== SLIDE 1 — COVER ==================== -->
+<section class="slide cover" id="s1">
+  <div class="cover-inner">
+    <div class="brand">ONE VISION</div>
+    <div class="brand-sub">Marketing Agency</div>
+    <div class="rule"></div>
+    <h1>Monthly<br>Community<br>Update</h1>
+    <div class="month">September 2026</div>
+    <div class="lead">Three upgrades now live in every OneVision account.</div>
+    <div class="toc">
+      <div class="toc-item">
+        <div class="toc-num">01</div>
+        <div class="toc-label">SEO &amp; Website Optimization</div>
+      </div>
+      <div class="toc-item">
+        <div class="toc-num">02</div>
+        <div class="toc-label">CRM &amp; Automation</div>
+      </div>
+      <div class="toc-item">
+        <div class="toc-num">03</div>
+        <div class="toc-label">New Monthly Giveaway</div>
+      </div>
+    </div>
+  </div>
+  <div class="swipe">Swipe &rarr;</div>
+</section>
+
+<!-- ==================== SLIDE 2 — SEO ==================== -->
+<section class="slide" id="s2">
+  <div class="band top">
+    <div class="eyebrow">Monthly Community Update</div>
+    <h1>What's New This Month</h1>
+    <div class="month">September 2026</div>
+  </div>
+  <div class="core">
+    <div class="step">01 &mdash; Search Visibility</div>
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24">
+        <circle cx="10.5" cy="10.5" r="6.5"/>
+        <line x1="15.5" y1="15.5" x2="21" y2="21"/>
+        <polyline points="7.5,12 9.5,9.5 11.5,11 13.5,7.5"/>
+      </svg>
+    </div>
+    <h2>SEO &amp; Website Optimization</h2>
+    <div class="kicker">Rebuilt monthly &mdash; not set once and forgotten</div>
+    <div class="divider"></div>
+    <ul class="points">
+      <li><strong>Fresh keyword research every month</strong>, tuned to what your market is actually searching for right now</li>
+      <li><strong>Competitor teardown</strong> &mdash; we track who's outranking you and reverse-engineer exactly why</li>
+      <li><strong>Google Business Profile optimization</strong> &mdash; categories, services, photos, posts, and review responses</li>
+      <li><strong>Speed &amp; mobile fixes</strong> so you stop losing visitors before the page even loads</li>
+    </ul>
+    <div class="callout">
+      <strong>New this month:</strong> a ranking report showing every keyword you moved on &mdash; up or down &mdash; so progress isn't a guess.
+    </div>
+  </div>
+  <div class="band bottom">
+    <div class="tagline">One Vision. One Team. Real Growth.</div>
+    <div class="handle">@onevisionmarketing1 &nbsp;&middot;&nbsp; Bridgewater, MA</div>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 3 — CRM ==================== -->
+<section class="slide" id="s3">
+  <div class="band top">
+    <div class="eyebrow">Monthly Community Update</div>
+    <h1>What's New This Month</h1>
+    <div class="month">September 2026</div>
+  </div>
+  <div class="core">
+    <div class="step">02 &mdash; Speed to Lead</div>
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24">
+        <path d="M13 2L4.5 13H11l-1 9 8.5-11H12l1-9z"/>
+      </svg>
+    </div>
+    <h2>CRM &amp; Automation</h2>
+    <div class="kicker">Your biggest upgrade this month</div>
+    <div class="divider"></div>
+    <ul class="points">
+      <li><strong>Instant follow-up.</strong> New leads get a text and email within 60 seconds &mdash; day, night, weekend, doesn't matter.</li>
+      <li><strong>Missed-call text-back.</strong> Every unanswered call triggers an automatic text, so the lead doesn't just dial your competitor next.</li>
+      <li><strong>Smart routing</strong> sends each inquiry to the right person the first time.</li>
+      <li><strong>Appointment reminders</strong> cut no-shows, and <strong>review requests</strong> fire automatically after every completed job.</li>
+    </ul>
+    <div class="callout">
+      Speed to lead decides who gets the customer. <strong>Yours is now measured in seconds.</strong>
+    </div>
+  </div>
+  <div class="band bottom">
+    <div class="tagline">One Vision. One Team. Real Growth.</div>
+    <div class="handle">@onevisionmarketing1 &nbsp;&middot;&nbsp; Bridgewater, MA</div>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 4 — GIVEAWAY ==================== -->
+<section class="slide" id="s4">
+  <div class="band top">
+    <div class="eyebrow">Monthly Community Update</div>
+    <h1>What's New This Month</h1>
+    <div class="month">September 2026</div>
+  </div>
+  <div class="core">
+    <div class="step">03 &mdash; Client Rewards</div>
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24">
+        <path d="M7 4h10v6a5 5 0 0 1-10 0V4z"/>
+        <path d="M7 6H4.5v1.5A3.5 3.5 0 0 0 7 11"/>
+        <path d="M17 6h2.5v1.5A3.5 3.5 0 0 1 17 11"/>
+        <line x1="12" y1="15" x2="12" y2="18"/>
+        <path d="M8.5 21h7l-.7-3h-5.6l-.7 3z"/>
+      </svg>
+    </div>
+    <h2>New: Monthly Giveaway</h2>
+    <div class="kicker">Because we win when you win</div>
+    <div class="divider"></div>
+    <ul class="points">
+      <li>Each month, one OneVision client wins <strong>a full month of service &mdash; free.</strong> No cost, no catch.</li>
+      <li><strong>Every active client is entered automatically.</strong> Nothing to sign up for, nothing to claim.</li>
+      <li><strong>The winner is our top performer</strong> &mdash; the client who shows up, engages, and grows.</li>
+      <li><strong>September's winner is announced</strong> at the end of the month.</li>
+    </ul>
+    <div class="callout">
+      We say we win when you win. <strong>This is what that looks like on paper.</strong>
+    </div>
+  </div>
+  <div class="band bottom">
+    <div class="tagline">One Vision. One Team. Real Growth.</div>
+    <div class="handle">@onevisionmarketing1 &nbsp;&middot;&nbsp; Bridgewater, MA</div>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 5 — CTA ==================== -->
+<section class="slide cta" id="s5">
+  <div class="cta-inner">
+    <h1>This goes out<br>every month.</h1>
+    <div class="rule"></div>
+    <p>Every OneVision client gets a written record of exactly what we shipped. No mystery retainers. No &ldquo;we're working on it.&rdquo;</p>
+    <p class="small">Not a client yet? Book a free 20-minute strategy call and we'll show you the biggest gap costing you leads right now.</p>
+    <div class="btn">Link in Bio &rarr;</div>
+    <div class="meta">
+      Bridgewater, MA &mdash; serving MA &amp; RI<br>
+      Onevisionmarketingagency.com &nbsp;&middot;&nbsp; @onevisionmarketing1
+    </div>
+    <div class="tagline">One Vision. One Team. Real Growth.</div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
