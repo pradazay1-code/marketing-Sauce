@@ -330,6 +330,120 @@ insurance.
 
 ---
 
+
+---
+
+# GOHIGHLEVEL SETUP — TWILIO PATH
+
+Verified against HighLevel's own documentation. Ringless voicemail is a **native
+GHL workflow action**. No third-party service required — not Drop Cowboy, not
+Slybroadcast. Your own Twilio number works exactly the same as an LC Phone number.
+
+## Step 0 — Start A2P 10DLC registration TODAY
+
+Do this before anything else. It takes days to approve and everything else waits on it.
+
+Without A2P 10DLC registration, your **SMS messages get filtered or blocked outright**
+by carriers. The voicemail drops will land fine, but the text follow-up — which is where
+most of your replies come from — silently dies.
+
+In GHL: **Settings → Phone Numbers → Trust Center** (or A2P registration). Submit your
+business info, EIN, and use case. Then continue with the steps below while it processes.
+
+## Step 1 — Connect Twilio at the agency level
+
+1. Switch to **Agency View** (top-left account switcher)
+2. **Settings → Phone Integration** (may appear as Phone Services or Phone Routing)
+3. Paste your Twilio **Account SID** and **Auth Token**
+   - Both are on the Twilio Console home page, top right
+4. Save
+
+## Step 2 — Assign the number to your sub-account
+
+1. Stay on the Phone Integration page
+2. Switch to the **Sub Account Settings** tab
+3. Find your sub-account, click the **pencil icon** on the right
+4. Assign or import the Twilio number you want to send from
+5. Save
+
+Verify: open the sub-account, go to Settings → Phone Numbers. The number should appear.
+
+## Step 3 — Record and export the audio
+
+Record VM 1 on your phone. Then export with these exact specs:
+
+| Setting | Value |
+|---|---|
+| Format | MP3 or WAV |
+| **Bitrate** | **64 kbps** |
+| Length | 22–28 seconds |
+
+**The bitrate is not optional.** Not 128, not 320. Wrong bitrate causes either an upload
+rejection or a silent delivery failure. Set it in your editor's export dialog before saving.
+
+Free tools that let you set bitrate: Audacity (desktop), or any online MP3 converter.
+
+## Step 4 — Build the workflow
+
+1. In the **sub-account**, go to **Automation → Workflows**
+2. **+ Create Workflow → Start from Scratch**
+3. Name it: `Cold Lead — Voicemail to Callback`
+4. **Add Trigger** → *Contact Tag Added* → tag `cold-outreach`
+5. Click the **+** button to add an action
+6. **Scroll down the action list to "Voicemail"** — it sits below the common actions, keep scrolling
+7. **Upload your 64 kbps MP3**
+8. Save
+
+## Step 5 — Add the rest of the sequence
+
+Continue adding actions beneath the voicemail, following the sequence table above:
+Wait 3 min → SMS 1 → Wait 1 day → Email 1 → and so on.
+
+## Step 6 — Add the exit condition
+
+**Do not skip this.** At the top of the workflow, add:
+
+**Trigger:** *Customer Replied* → **Actions:** remove from this workflow, add tag
+`warm-lead`, send yourself an internal notification.
+
+Without it, someone who replies "yes, send it" still receives your closing-the-file text
+four days later. That kills more deals than a weak script does.
+
+## Step 7 — Workflow settings
+
+Under the workflow's **Settings** tab:
+
+- Send window: **9:00 AM – 7:00 PM**
+- Timezone: **Contact's timezone** (not yours)
+- Skip: **Sundays**
+- Allow re-entry: **Off**
+
+## Step 8 — Feed it a list
+
+1. **Contacts → Import**
+2. Upload a CSV. Required columns: `First Name`, `Phone`. Add `Company` if you have it —
+   the SMS copy references it.
+3. On the import screen, **apply the tag `cold-outreach`** to the whole batch
+4. Finish import
+
+The tag fires the trigger. Every contact in that CSV enters the sequence automatically.
+To run it again later, import a new list with the same tag — you never touch the workflow.
+
+**Start with 20 rows.** Watch 48 hours before scaling. Dropping 500 on an untested script
+burns 500 contacts you cannot easily re-approach.
+
+## Consent — GHL states this as a requirement
+
+From HighLevel's own documentation:
+
+> *"If you already have a Twilio number set up in your sub-account and have obtained
+> prior express consent from your contacts, you can start sending ringless voicemail
+> drops right away."*
+
+The platform is stating consent as a condition of use, not a suggestion. Combine that with
+the TCPA notes above and treat listed business numbers as your floor.
+
+
 ## Files
 
 - Campaign: `clients/onevision-marketing/voicemail-drop-campaign.md`
