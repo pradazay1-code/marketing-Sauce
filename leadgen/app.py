@@ -996,10 +996,56 @@ def api_find_duplicates():
 @app.route("/api/map-config")
 @check_auth
 def api_map_config():
-    cfg = mapbox_client.style_config()
-    cfg.pop("token", None)          # never leak the token into a JSON response
-    cfg["has_token"] = mapbox_client.is_configured()
-    return jsonify(cfg)
+    """Map tile config. Only ever returns a public (pk.) token."""
+    return jsonify(mapbox_client.style_config(for_browser=True))
+
+
+@app.route("/api/leads/geocode", methods=["POST"])
+@check_auth
+def api_geocode_leads():
+    """Fill latitude/longitude for leads that have none, so they hit the map.
+
+    Batched and capped: Mapbox bills permanent geocoding per request, and a
+    runaway loop over a large CRM is exactly the mistake worth preventing.
+    """
+    if not mapbox_client.is_configured():
+        return jsonify({"error": "MAPBOX_ACCESS_TOKEN is not set"}), 400
+
+    d = request.get_json() or {}
+    limit = max(1, min(int(d.get("limit", 25)), 100))
+
+    rows = get_leads(filters={}, limit=2000)
+    todo = [r for r in rows
+            if not r.get("latitude") and (r.get("city") or r.get("address"))][:limit]
+
+    done, failed, errors = 0, 0, []
+    for lead in todo:
+        g = mapbox_client.geocode_lead(lead)
+        if g.get("ok"):
+            update_lead(lead["id"],
+                        {"latitude": g["lat"], "longitude": g["lng"]},
+                        log_activity=False)
+            done += 1
+        else:
+            failed += 1
+            msg = g.get("error", "")
+            if msg and msg not in errors:
+                errors.append(msg[:200])
+            # A plan or auth problem repeats for every row -- stop rather than
+            # burning the whole batch discovering the same thing 25 times.
+            if "403" in msg or "401" in msg:
+                break
+
+    remaining = sum(1 for r in rows
+                    if not r.get("latitude") and (r.get("city") or r.get("address")))
+    return jsonify({
+        "success": True,
+        "geocoded": done,
+        "failed": failed,
+        "remaining": max(remaining - done, 0),
+        "errors": errors,
+        "permanent": not os.getenv("MAPBOX_ALLOW_TEMPORARY"),
+    })
 
 
 def _cron_authorized():

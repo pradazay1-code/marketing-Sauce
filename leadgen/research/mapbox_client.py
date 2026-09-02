@@ -119,15 +119,44 @@ def geocode_lead(lead):
     )
 
 
-def style_config():
-    """Values the map template needs to render Mapbox tiles.
+def is_public_token(token=None):
+    """True only for a `pk.` token.
 
-    Falls back to OpenStreetMap via Leaflet when no token is configured, so the
-    map page keeps working either way.
+    Mapbox issues two kinds. `pk.` is public, designed to sit in a web page and
+    restricted by URL. `sk.` is secret and carries full account access --
+    putting one in client-side HTML hands over the account. This distinction
+    decides whether the token may be sent to the browser at all.
+    """
+    t = token if token is not None else access_token()
+    return bool(t) and t.startswith("pk.")
+
+
+def style_config(for_browser=False):
+    """Config for the map view.
+
+    With `for_browser=True` the token is included ONLY if it is public. A secret
+    token still works for server-side geocoding, but the map falls back to
+    OpenStreetMap tiles rather than leaking it.
     """
     token = access_token()
-    return {
+    cfg = {
         "enabled": bool(token),
-        "token": token,
         "style": os.getenv("MAPBOX_STYLE", "mapbox/streets-v12"),
+        "has_token": bool(token),
+        "token_is_public": is_public_token(token),
     }
+    if for_browser:
+        if is_public_token(token):
+            cfg["token"] = token
+            cfg["tiles"] = True
+        else:
+            cfg["token"] = ""
+            cfg["tiles"] = False
+            cfg["note"] = (
+                "A secret (sk.) token cannot be used in the browser. Geocoding "
+                "still works server-side; for Mapbox map tiles add a public "
+                "(pk.) token instead." if token else
+                "No MAPBOX_ACCESS_TOKEN set — using OpenStreetMap tiles.")
+    else:
+        cfg["token"] = token
+    return cfg

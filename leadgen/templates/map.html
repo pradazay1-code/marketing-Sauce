@@ -65,6 +65,18 @@
     <div class="map-stat"><strong id="statMapped">0</strong>On map</div>
     <div class="map-stat"><strong id="statNoSite">0</strong>No website</div>
     <div class="map-stat"><strong id="statHigh">0</strong>High priority</div>
+    <div class="map-stat" style="flex:1;text-align:right;font-size:11px;color:#64748b">
+        Tiles: <span id="mapSource">loading…</span>
+    </div>
+</div>
+
+<div id="geoBar" style="display:none;background:#1e293b;border:1px solid #334155;
+     border-radius:9px;padding:11px 14px;margin-bottom:12px;display:flex;
+     align-items:center;gap:12px;flex-wrap:wrap">
+    <span id="geoMsg" style="font-size:13px;color:#cbd5e1"></span>
+    <button class="btn btn-sm btn-primary" id="geoBtn" onclick="geocodeBatch()"
+            style="margin-left:auto">Geocode next 25</button>
+    <span id="geoNote" style="font-size:11.5px;color:#64748b"></span>
 </div>
 
 <div id="map"></div>
@@ -75,10 +87,33 @@
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script>
 const map = L.map('map').setView([41.9, -71.8], 8);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap',
-    maxZoom: 18
-}).addTo(map);
+
+// Mapbox tiles when a PUBLIC (pk.) token is configured, OpenStreetMap
+// otherwise. The server never sends a secret (sk.) token to the browser, so
+// this falls back rather than failing when only a secret one is set.
+let baseLayer = null;
+function useOSM() {
+    baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap', maxZoom: 18
+    }).addTo(map);
+}
+
+fetch('/api/map-config').then(r => r.json()).then(cfg => {
+    if (cfg.tiles && cfg.token) {
+        baseLayer = L.tileLayer(
+            `https://api.mapbox.com/styles/v1/${cfg.style}/tiles/512/{z}/{x}/{y}@2x?access_token=${cfg.token}`,
+            {   // 512px tiles need zoomOffset -1 or every label renders too small
+                tileSize: 512, zoomOffset: -1, maxZoom: 19,
+                attribution: '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+        const b = document.getElementById('mapSource');
+        if (b) b.textContent = 'Mapbox';
+    } else {
+        useOSM();
+        const b = document.getElementById('mapSource');
+        if (b) b.textContent = cfg.note ? 'OpenStreetMap — ' + cfg.note : 'OpenStreetMap';
+    }
+}).catch(() => useOSM());
 
 let clusterGroup = L.markerClusterGroup({
     maxClusterRadius: 50,
@@ -88,6 +123,31 @@ let clusterGroup = L.markerClusterGroup({
     disableClusteringAtZoom: 16,
 });
 map.addLayer(clusterGroup);
+
+// Geocoding is batched and capped server-side — Mapbox bills permanent
+// geocoding per request, so this is a deliberate click, not a background job.
+async function geocodeBatch() {
+    const btn = document.getElementById('geoBtn');
+    const note = document.getElementById('geoNote');
+    btn.disabled = true; btn.textContent = 'Geocoding…';
+    try {
+        const r = await fetch('/api/leads/geocode', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({limit: 25})
+        });
+        const d = await r.json();
+        if (d.error) { note.textContent = d.error; return; }
+        note.textContent = `Geocoded ${d.geocoded}` +
+            (d.failed ? `, ${d.failed} failed` : '') +
+            (d.remaining ? ` · ${d.remaining} left` : ' · all done');
+        if ((d.errors || []).length) note.textContent += ' — ' + d.errors[0];
+        if (d.geocoded > 0) loadMap();
+    } catch(e) {
+        note.textContent = 'Geocoding request failed';
+    } finally {
+        btn.disabled = false; btn.textContent = 'Geocode next 25';
+    }
+}
 
 fetch('/api/categories').then(r=>r.json()).then(cats => {
     const sel = document.getElementById('filterCategory');
@@ -179,6 +239,18 @@ async function loadMap() {
         document.getElementById('statMapped').textContent = data.mapped;
         document.getElementById('statNoSite').textContent = noSite;
         document.getElementById('statHigh').textContent = highPri;
+
+        // Leads with no coordinates are invisible here. Surface the gap and
+        // offer to fix it rather than silently showing a partial map.
+        const missing = (data.total_in_db || 0) - (data.mapped || 0);
+        const bar = document.getElementById('geoBar');
+        if (missing > 0) {
+            bar.style.display = 'flex';
+            document.getElementById('geoMsg').innerHTML =
+                `<strong>${missing}</strong> lead${missing===1?'':'s'} ${missing===1?'is':'are'} not on the map yet — no coordinates.`;
+        } else {
+            bar.style.display = 'none';
+        }
 
         if (data.leads.length > 0) {
             const bounds = L.latLngBounds(data.leads.map(l => [l.lat, l.lng]));
