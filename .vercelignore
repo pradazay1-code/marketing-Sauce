@@ -1,0 +1,40 @@
+# Keep the Vercel deployment to just the CRM.
+#
+# This file is Vercel-only, so nothing here affects the Render deployment --
+# render.yaml, Procfile and nixpacks.toml all keep working there.
+
+# ---- competing platform config -------------------------------------------
+# runtime.txt pins python-3.11.9 for Render. Vercel does not support Python
+# 3.11 at all (3.12 default, 3.13, 3.14), so leaving it visible risks the
+# build resolving an unavailable runtime. Hidden here, defaulted to 3.12 there.
+runtime.txt
+Procfile
+nixpacks.toml
+render.yaml
+DEPLOY.md
+
+# ---- the separate Next.js app --------------------------------------------
+# VERA is its own Vercel project. Shipping it inside this one only bloats the
+# upload and gives framework detection something else to find.
+onevision-agent/
+
+# ---- agent tooling, not runtime code -------------------------------------
+# NOTE: execution/ stays. app.py imports generate_instagram from it for the
+# Content AI route, so excluding it would 500 that page.
+.claude/
+.github/
+directives/
+context/
+*.md
+!VERCEL_DEPLOY.md
+
+# ---- local artefacts ------------------------------------------------------
+__pycache__/
+*.pyc
+*.db
+*.sqlite3
+.env
+.env.local
+.venv/
+venv/
+.pytest_cache/
