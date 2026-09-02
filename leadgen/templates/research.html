@@ -66,6 +66,19 @@
   table.bd td { padding:9px 0; border-bottom:1px solid #1e293b; color:#cbd5e1; }
   .bar { height:5px; background:#334155; border-radius:3px; overflow:hidden; width:88px; }
   .bar span { display:block; height:100%; background:#3b82f6; }
+
+  .prog { margin-top:14px; }
+  .pbar { height:6px; background:#334155; border-radius:4px; overflow:hidden; }
+  .pbar span { display:block; height:100%; width:0; background:#3b82f6; transition:width .25s; }
+  .pnote { font-size:12px; color:#94a3b8; margin-top:7px; font-variant-numeric:tabular-nums; }
+
+  .conf { display:inline-block; min-width:38px; text-align:center; padding:3px 8px;
+          border-radius:6px; font-weight:800; font-size:12px; }
+  .c-hi  { background:rgba(34,197,94,.16);  color:#4ade80; }
+  .c-mid { background:rgba(234,179,8,.16);  color:#facc15; }
+  .c-lo  { background:rgba(148,163,184,.14);color:#94a3b8; }
+  .srcs { font-size:11px; color:#64748b; }
+  .flag { font-size:11px; color:#fbbf24; }
 {% endblock %}
 
 {% block content %}
@@ -92,13 +105,16 @@
 
   <!-- ================= DISCOVER ================= -->
   <div class="panel">
-    <h2>Find new prospects</h2>
+    <h2>Find new prospects — multi-source consensus</h2>
     <div class="sub">
-      Searches the live web for businesses in one industry and town, filters out
-      directory pages, and deduplicates against every lead already in the CRM
-      before anything is saved. A business you have already contacted will not
-      come back as a new lead.
+      Queries every configured source across several search terms, then clusters
+      the results into one record per real business and scores each by how many
+      independent sources corroborate it. A business four sources agree on is a
+      far better lead than one a single web search saw. Everything is
+      deduplicated against the whole CRM before it is saved.
     </div>
+
+    <div id="srcChips" class="integ" style="margin-bottom:16px"></div>
 
     <div class="row">
       <div class="field">
@@ -120,12 +136,34 @@
         <input type="text" id="dCity" placeholder="Brockton" value="Brockton">
       </div>
       <div class="field">
-        <label>Results per search term</label>
-        <input type="number" id="dLimit" value="10" min="1" max="20">
+        <label>Search terms per industry</label>
+        <input type="number" id="dTerms" value="3" min="1" max="6">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Confidence mode</label>
+        <select id="dMode">
+          <option value="balanced" selected>Balanced — good signal, good volume</option>
+          <option value="strict">Strict — only well-corroborated businesses</option>
+          <option value="wide">Wide — maximum volume, expect noise</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Minimum sources per lead</label>
+        <select id="dMinSources">
+          <option value="1" selected>1 — keep single-source finds</option>
+          <option value="2">2 — require corroboration</option>
+          <option value="3">3 — heavily corroborated only</option>
+        </select>
       </div>
     </div>
 
-    <button class="btn" id="dBtn" onclick="discover()">Find prospects</button>
+    <button class="btn" id="dBtn" onclick="discover()">Run consensus search</button>
+    <div class="prog" id="dProg" style="display:none">
+      <div class="pbar"><span id="pFill"></span></div>
+      <div class="pnote" id="pNote"></div>
+    </div>
     <div class="out" id="dOut"></div>
   </div>
 
@@ -205,34 +243,107 @@ function busy(id, on, label){
   const b=document.getElementById(id); b.disabled=on; b.textContent = on ? 'Working…' : label;
 }
 
+// ---- source status chips ----
+async function loadSources(){
+  try {
+    const d = await (await fetch('/api/research/sources')).json();
+    document.getElementById('srcChips').innerHTML = (d.sources||[]).map(s =>
+      `<span class="chip ${s.configured?'on':'off'}"><span class="dot"></span>
+       ${esc(s.name.replace(/_/g,' '))} ${s.configured?'ready':'add '+esc(s.env||'key')}</span>`
+    ).join('');
+  } catch(e){ /* chips are cosmetic */ }
+}
+loadSources();
+
+function confClass(c){ return c>=75 ? 'c-hi' : c>=50 ? 'c-mid' : 'c-lo'; }
+
+// A consensus run is many source calls. Each is driven as its own request so no
+// single one approaches the serverless timeout, and progress stays visible.
 async function discover(){
   busy('dBtn', true);
-  out('dOut', '<div class="line dim">Searching the web…</div>');
+  const prog = document.getElementById('dProg');
+  prog.style.display = 'block';
+  document.getElementById('pFill').style.width = '0%';
+  document.getElementById('pNote').textContent = 'Planning…';
+  out('dOut', '');
+
+  const body = {
+    industry: dIndustry.value, city: dCity.value.trim(),
+    state: dState.value, terms: parseInt(dTerms.value)||3,
+  };
+
   try {
-    const r = await fetch('/api/research/discover', {
+    const plan = await (await fetch('/api/research/plan', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        industry: dIndustry.value, city: dCity.value.trim(),
-        state: dState.value, limit: parseInt(dLimit.value)||10,
-      })
-    });
-    const d = await r.json();
+      body: JSON.stringify(body)})).json();
+    if (plan.error) { out('dOut', `<div class="line bad">${esc(plan.error)}</div>`); return; }
+
+    const steps = plan.steps || [];
+    let found = 0;
+    for (let i = 0; i < steps.length; i++) {
+      const s = steps[i];
+      document.getElementById('pNote').textContent =
+        `${i+1} / ${steps.length} — ${s.source.replace(/_/g,' ')}: "${s.term}" · ${found} candidates so far`;
+      const r = await (await fetch('/api/research/step', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({step:s, pool_key:plan.pool_key})})).json();
+      found += (r.found || 0);
+      document.getElementById('pFill').style.width = ((i+1)/steps.length*100) + '%';
+    }
+
+    document.getElementById('pNote').textContent =
+      `Clustering ${found} candidates and scoring consensus…`;
+
+    const d = await (await fetch('/api/research/finalize', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({...body, pool_key: plan.pool_key,
+                            mode: dMode.value,
+                            min_sources: parseInt(dMinSources.value)||1})})).json();
     if (d.error) { out('dOut', `<div class="line bad">${esc(d.error)}</div>`); return; }
 
     let h = `<div class="line"><strong class="ok">Added ${d.added} new lead${d.added===1?'':'s'}</strong>
-             <span class="dim"> — ${d.candidates} found, ${d.duplicate_count} already in CRM</span></div>`;
+      <span class="dim"> — ${d.raw_candidates} raw results from ${d.sources_used.length} source${d.sources_used.length===1?'':'s'},
+      clustered to ${d.clustered} businesses, ${d.rejected_low_confidence} below confidence,
+      ${d.duplicate_count} already in CRM</span></div>`;
+
+    h += `<div class="line dim">Per source: ` +
+      Object.entries(d.per_source||{}).map(([k,v])=>`${esc(k.replace(/_/g,' '))} ${v}`).join(' · ') +
+      `</div>`;
+
+    (d.preview||[]).forEach(x => {
+      h += `<div class="line">
+        <span class="conf ${confClass(x.confidence)}">${x.confidence}</span>
+        <strong style="margin-left:8px">${esc(x.business_name)}</strong>
+        ${x.has_website ? '' : '<span class="warn" style="margin-left:6px">no website</span>'}
+        <div class="srcs" style="margin-left:46px;margin-top:3px">
+          ${x.source_count} source${x.source_count===1?'':'s'}: ${x.sources.map(esc).join(', ')}
+          ${x.phone ? ' · '+esc(x.phone) : ''}
+        </div>
+        ${(x.conflicts||[]).map(c=>`<div class="flag" style="margin-left:46px">! ${esc(c)}</div>`).join('')}
+      </div>`;
+    });
+
     if (d.duplicate_count) {
-      h += `<div class="line dim" style="margin-top:6px">Skipped as duplicates:</div>`;
-      d.duplicates.slice(0,12).forEach(x =>
+      h += `<div class="line dim" style="margin-top:8px">Skipped as already in CRM:</div>`;
+      (d.duplicates||[]).slice(0,10).forEach(x =>
         h += `<div class="line"><span class="warn">${esc(x.name)}</span>
               <span class="dim"> — ${esc(x.reason)}</span></div>`);
+    }
+    if ((d.rejected_preview||[]).length) {
+      h += `<div class="line dim" style="margin-top:8px">Rejected below confidence:</div>`;
+      d.rejected_preview.slice(0,10).forEach(x =>
+        h += `<div class="line dim">${esc(x.business_name)} — ${esc(x.reason)}</div>`);
     }
     if (d.added) h += `<div class="line" style="margin-top:8px">
         <a href="/leads?industry=${encodeURIComponent(d.industry)}" style="color:#60a5fa">
         View them in All Leads →</a></div>`;
     out('dOut', h);
-  } catch(e) { out('dOut', `<div class="line bad">Network error</div>`); }
-  finally { busy('dBtn', false, 'Find prospects'); }
+  } catch(e) {
+    out('dOut', `<div class="line bad">Run failed: ${esc(String(e).slice(0,160))}</div>`);
+  } finally {
+    busy('dBtn', false, 'Run consensus search');
+    document.getElementById('pNote').textContent = 'Done.';
+  }
 }
 
 async function runAudit(){

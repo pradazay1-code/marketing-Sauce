@@ -743,6 +743,103 @@ def api_research_discover():
     return jsonify(result)
 
 
+@app.route("/api/research/sources")
+@check_auth
+def api_research_sources():
+    from research import discovery
+    return jsonify({
+        "sources": discovery.source_status(),
+        "configured": discovery.configured_source_names(),
+        "modes": discovery.THRESHOLDS,
+    })
+
+
+@app.route("/api/research/plan", methods=["POST"])
+@check_auth
+def api_research_plan():
+    """Build the step list for a thorough multi-source run.
+
+    Returned rather than executed so the client can drive the steps one request
+    at a time and stay inside the serverless function budget.
+    """
+    from research import discovery
+    d = request.get_json() or {}
+    industry = (d.get("industry") or "").strip()
+    city = (d.get("city") or "").strip()
+    state = (d.get("state") or "MA").strip().upper()
+
+    if industry not in industries_mod.INDUSTRIES:
+        return jsonify({"error": f"Unknown industry: {industry}"}), 400
+    if not city:
+        return jsonify({"error": "City is required"}), 400
+
+    steps = discovery.plan_run(
+        industry, city, state,
+        terms_per_industry=max(1, min(int(d.get("terms", 3)), 6)),
+        sources=d.get("sources") or None)
+    if not steps:
+        return jsonify({"error": "No sources configured — add an API key "
+                                 "(GOOGLE_PLACES_API_KEY, SERPER_API_KEY, "
+                                 "YELP_API_KEY, FOURSQUARE_API_KEY or "
+                                 "FIRECRAWL_API_KEY). OpenStreetMap needs no "
+                                 "key and should always be available."}), 400
+
+    key = discovery.pool_key(industry, city, state)
+    discovery.pool_clear(key)
+    return jsonify({"success": True, "pool_key": key, "steps": steps,
+                    "total_steps": len(steps),
+                    "sources": sorted({s["source"] for s in steps})})
+
+
+@app.route("/api/research/step", methods=["POST"])
+@check_auth
+def api_research_step():
+    """Run one (source, term) step and add its results to the run's pool."""
+    from research import discovery
+    d = request.get_json() or {}
+    step = d.get("step") or {}
+    key = d.get("pool_key") or ""
+    if not step.get("source") or not key:
+        return jsonify({"error": "step and pool_key are required"}), 400
+
+    rows = discovery.run_step(step, limit=max(1, min(int(d.get("limit", 20)), 30)))
+    if rows:
+        discovery.pool_append(key, rows)
+    return jsonify({"success": True, "source": step["source"],
+                    "term": step.get("term", ""), "found": len(rows)})
+
+
+@app.route("/api/research/finalize", methods=["POST"])
+@check_auth
+def api_research_finalize():
+    """Cluster the pool, score by consensus, dedupe, and save the survivors."""
+    from research import discovery
+    d = request.get_json() or {}
+    industry = (d.get("industry") or "").strip()
+    city = (d.get("city") or "").strip()
+    state = (d.get("state") or "MA").strip().upper()
+    key = d.get("pool_key") or discovery.pool_key(industry, city, state)
+
+    pooled = discovery.pool_read(key)
+    if not pooled:
+        return jsonify({"error": "Nothing pooled — run the steps first"}), 400
+
+    per_source = {}
+    for c in pooled:
+        per_source[c.source] = per_source.get(c.source, 0) + 1
+
+    result = discovery.finalize(
+        pooled, industry, city, state,
+        threshold=discovery.THRESHOLDS.get(d.get("mode", "balanced"),
+                                           discovery.THRESHOLDS["balanced"]),
+        per_source=per_source,
+        save=bool(d.get("save", True)),
+        min_sources=max(1, min(int(d.get("min_sources", 1)), 4)),
+    )
+    discovery.pool_clear(key)
+    return jsonify(result)
+
+
 @app.route("/api/leads/classify-industries", methods=["POST"])
 @check_auth
 def api_classify_industries():
