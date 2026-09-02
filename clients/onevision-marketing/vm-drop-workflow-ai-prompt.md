@@ -193,17 +193,90 @@ it is a six-minute job:
 
 ## Loading the list
 
+**Clean the CSV first — always.** GHL dedupes on import by *exact* phone match,
+so `(508) 555-1234`, `508-555-1234` and `+15085551234` become three contact
+records for one person, and each one runs the full five-week sequence.
+
+```bash
+# see what would be removed, change nothing
+python execution/dedupe_vm_list.py --input raw_leads.csv
+
+# write the clean file and record the numbers as sent
+python execution/dedupe_vm_list.py \
+    --input raw_leads.csv \
+    --output clients/leads/ready_to_import.csv \
+    --commit
+```
+
+The script normalizes every number to E.164, drops invalid numbers, drops
+in-file duplicates, drops anyone already in `clients/leads/vm-drop-history.csv`,
+and drops anyone in `clients/leads/vm-drop-suppression.csv`. Only `--commit`
+writes to history, so dry-run as often as you like.
+
+Then:
+
 1. **Contacts → Import**
-2. CSV with columns `First Name` and `Phone`. Add `Company` if you have it.
+2. Upload the **cleaned** file (`First Name`, `Phone`, `Company`)
 3. On the import screen, **apply tag `vm-drop` to the entire batch**
 4. Finish
 
-The tag fires the trigger. To run a new list later, import with the same tag —
-you never reopen the workflow.
+The tag fires the trigger. To run a new list later, clean it and import with the
+same tag — you never reopen the workflow.
 
 **First run: 20 rows.** Wait 48 hours. Confirm drops are landing and the
 recording sounds right on a real phone before scaling. A bad recording sent to
 500 people burns 500 contacts you cannot easily re-approach.
+
+---
+
+## Never hitting the same person twice
+
+Four layers, because each one catches what the others miss.
+
+### Layer 1 — Workflow re-entry
+
+**Settings → Allow Re-Entry: OFF.** Blocks the same contact record from running
+the sequence twice. This is the primary guard and you already have it.
+
+### Layer 2 — Trigger filter
+
+**Trigger → Add Filter →** `Contact Tag` · **does not include** ·
+`vm-drop-complete`
+
+Step 9 removes the `vm-drop` tag, which means a re-import could re-fire the
+trigger if re-entry ever gets toggled on or the workflow gets rebuilt. This
+filter closes that hole: anyone who finished the sequence cannot re-enter,
+regardless of any other setting.
+
+### Layer 3 — CSV hygiene before import
+
+The `dedupe_vm_list.py` step above. This is the layer that matters most, because
+layers 1 and 2 both key off the *contact record* — and a differently-formatted
+phone number creates a brand new record that no workflow setting can catch.
+
+### Layer 4 — Suppression list
+
+`clients/leads/vm-drop-suppression.csv` — anyone who must never be contacted
+again. Add a row the moment someone asks:
+
+```csv
+phone,reason,date_added
+508-555-0001,asked to stop,2026-09-02
+508-555-0002,DNC registry,2026-09-02
+```
+
+Format does not matter; the script normalizes on read. This file is the one
+piece of the system with legal weight — an opt-out you fail to honor is a
+separate TCPA violation on top of the original send.
+
+### Catching duplicates already in GHL
+
+If contacts were imported before you started cleaning files, build a smart list
+to find them:
+
+**Contacts → Smart Lists → + Add** → filter `Tags` includes `vm-drop`, sort by
+phone. Duplicates surface adjacent to each other. Merge or delete before the
+next run.
 
 ---
 
