@@ -30,7 +30,13 @@ from database import (
     wipe_all_leads,
     enqueue_scrape_steps, next_scrape_step, finish_scrape_step,
     scrape_queue_progress, clear_scrape_queue,
+    save_research, get_research, get_latest_research,
+    get_leads_needing_research, industry_breakdown, all_lead_dedupe_fields,
 )
+from research import industries as industries_mod
+from research import deep_research
+from research import mapbox_client
+from research.dedupe import dedupe_batch
 from utils import enrich_lead, normalize_phone
 from email_service import send_email, send_bulk_emails, render_template as render_email_template, DEFAULT_TEMPLATES
 
@@ -246,10 +252,25 @@ def lead_detail_page(lead_id):
 def api_leads():
     filters = {}
     for key in ["state", "city", "category", "status", "priority", "search",
-                "date_from", "date_to", "tag", "source"]:
+                "date_from", "date_to", "tag", "source",
+                "industry", "research_status", "grade"]:
         val = request.args.get(key)
         if val:
             filters[key] = val
+
+    # Multi-select industry: ?industries=landscaping,junk_removal
+    if request.args.get("industries"):
+        keys = [k.strip() for k in request.args["industries"].split(",") if k.strip()]
+        keys = [k for k in keys if k in industries_mod.INDUSTRIES]
+        if keys:
+            filters["industries"] = keys
+            filters.pop("industry", None)
+
+    if request.args.get("min_need"):
+        try:
+            filters["min_need"] = int(request.args["min_need"])
+        except (ValueError, TypeError):
+            pass
 
     if request.args.get("has_website") not in (None, ""):
         filters["has_website"] = request.args.get("has_website") == "1"
@@ -604,6 +625,171 @@ def api_scraper_reset():
         # Clear the queue too, or the next cron tick resumes the cancelled run.
         clear_scrape_queue()
     return jsonify({"success": True, "message": "Scraper status reset"})
+
+
+# ---------------------------------------------------------------------------
+# Deep research
+# ---------------------------------------------------------------------------
+
+@app.route("/research")
+@check_auth
+def research_page():
+    return render_template(
+        "research.html",
+        industries=industries_mod.all_industries(),
+        integrations=deep_research.status(),
+        breakdown=industry_breakdown(),
+    )
+
+
+@app.route("/api/industries")
+@check_auth
+def api_industries():
+    return jsonify({
+        "industries": industries_mod.all_industries(),
+        "breakdown": industry_breakdown(),
+    })
+
+
+@app.route("/api/research/status")
+@check_auth
+def api_research_status():
+    return jsonify(deep_research.status())
+
+
+@app.route("/api/research/lead/<int:lead_id>", methods=["POST"])
+@check_auth
+def api_research_lead(lead_id):
+    """Deep-research one lead: locate site, scrape, audit, geocode, store."""
+    lead = get_lead_by_id(lead_id)
+    if not lead:
+        return jsonify({"error": "Lead not found"}), 404
+    try:
+        result = deep_research.research_lead(lead)
+    except Exception as e:
+        return jsonify({"error": str(e)[:300]}), 500
+    return jsonify({
+        "success": True,
+        "lead_id": lead_id,
+        "business_name": lead.get("business_name"),
+        "marketing_need_score": result["marketing_need_score"],
+        "grade": result["grade"],
+        "grade_label": result["grade_label"],
+        "findings": result["findings"],
+        "top_gaps": result["top_gaps"],
+        "pitch_angles": result["pitch_angles"],
+        "one_line_pitch": result["one_line_pitch"],
+        "website": result["website"],
+        "discovered": result["discovered"],
+        "error": result.get("error", ""),
+    })
+
+
+@app.route("/api/research/lead/<int:lead_id>", methods=["GET"])
+@check_auth
+def api_get_research(lead_id):
+    return jsonify({"lead_id": lead_id, "history": get_research(lead_id)})
+
+
+@app.route("/api/research/batch", methods=["POST"])
+@check_auth
+def api_research_batch():
+    """Research the next N unresearched leads, best ICP score first.
+
+    Capped at 5 per call: each lead costs a Firecrawl search plus a scrape, and
+    the batch has to finish inside the serverless function budget.
+    """
+    data = request.get_json() or {}
+    limit = max(1, min(int(data.get("limit", 5)), 5))
+    industry = data.get("industry") or None
+
+    leads = get_leads_needing_research(limit=limit, industry=industry)
+    if not leads:
+        return jsonify({"success": True, "researched": 0,
+                        "message": "No unresearched leads left"})
+    results = deep_research.research_batch(leads)
+    return jsonify({
+        "success": True,
+        "researched": sum(1 for r in results if r.get("ok")),
+        "failed": sum(1 for r in results if not r.get("ok")),
+        "results": results,
+        "remaining": len(get_leads_needing_research(limit=200, industry=industry)),
+    })
+
+
+@app.route("/api/research/discover", methods=["POST"])
+@check_auth
+def api_research_discover():
+    """Find new prospects by industry + location, deduped against the CRM."""
+    data = request.get_json() or {}
+    industry = (data.get("industry") or "").strip()
+    city = (data.get("city") or "").strip()
+    state = (data.get("state") or "MA").strip().upper()
+
+    if industry not in industries_mod.INDUSTRIES:
+        return jsonify({"error": f"Unknown industry: {industry}"}), 400
+    if not city:
+        return jsonify({"error": "City is required"}), 400
+    if state not in {"MA", "RI", "CT"}:
+        return jsonify({"error": "State must be MA, RI or CT"}), 400
+
+    limit = max(1, min(int(data.get("limit", 10)), 20))
+    try:
+        result = deep_research.discover_prospects(
+            industry, city, state, limit=limit,
+            exclude_with_website=bool(data.get("only_no_website")))
+    except Exception as e:
+        return jsonify({"error": str(e)[:300]}), 500
+    return jsonify(result)
+
+
+@app.route("/api/leads/classify-industries", methods=["POST"])
+@check_auth
+def api_classify_industries():
+    """Backfill the industry column for leads that predate it."""
+    leads = get_leads(filters={}, limit=5000)
+    updated = 0
+    for lead in leads:
+        if (lead.get("industry") or "").strip():
+            continue
+        key = industries_mod.classify(
+            lead.get("business_name"), lead.get("category"),
+            lead.get("business_type"))
+        update_lead(lead["id"], {"industry": key}, log_activity=False)
+        updated += 1
+    return jsonify({"success": True, "classified": updated,
+                    "breakdown": industry_breakdown()})
+
+
+@app.route("/api/leads/find-duplicates")
+@check_auth
+def api_find_duplicates():
+    """Report duplicate clusters already sitting in the CRM.
+
+    Reports rather than deletes -- merging is destructive and belongs behind a
+    deliberate click, not a GET.
+    """
+    rows = all_lead_dedupe_fields()
+    unique, dupes = dedupe_batch(rows, [])
+    return jsonify({
+        "total": len(rows),
+        "unique": len(unique),
+        "duplicate_count": len(dupes),
+        "duplicates": [
+            {"id": d[0].get("id"), "business_name": d[0].get("business_name"),
+             "city": d[0].get("city"), "reason": d[1]}
+            for d in dupes[:200]
+        ],
+    })
+
+
+@app.route("/api/map-config")
+@check_auth
+def api_map_config():
+    cfg = mapbox_client.style_config()
+    cfg.pop("token", None)          # never leak the token into a JSON response
+    cfg["has_token"] = mapbox_client.is_configured()
+    return jsonify(cfg)
 
 
 def _cron_authorized():

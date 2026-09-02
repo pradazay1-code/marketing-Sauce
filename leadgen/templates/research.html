@@ -1,0 +1,294 @@
+{% extends "_layout.html" %}
+{% set active = 'research' %}
+{% block title %}Deep Research — AventisAI{% endblock %}
+
+{# extra_css is injected inside the layout's own <style> tag — raw CSS only. #}
+{% block extra_css %}
+  .rhead { margin-bottom:22px; }
+  .rhead h2 { font-size:24px; color:#f8fafc; margin:0 0 4px; }
+  .rhead .lede { font-size:13.5px; color:#94a3b8; }
+  .rg { display:grid; gap:18px; }
+  .panel { background:#1e293b; border:1px solid #334155; border-radius:12px; padding:20px; }
+  .panel h2 { font-size:15px; font-weight:700; color:#f8fafc; margin-bottom:4px; }
+  .panel .sub { font-size:12.5px; color:#94a3b8; margin-bottom:16px; line-height:1.5; }
+
+  .integ { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+  .chip { display:inline-flex; align-items:center; gap:7px; padding:6px 13px; border-radius:100px;
+          font-size:12px; font-weight:600; border:1px solid; }
+  .chip.on  { background:rgba(34,197,94,.12); border-color:#22c55e; color:#4ade80; }
+  .chip.off { background:rgba(148,163,184,.1); border-color:#475569; color:#94a3b8; }
+  .dot { width:7px; height:7px; border-radius:50%; background:currentColor; }
+
+  .field { margin-bottom:14px; }
+  .field label { display:block; font-size:11.5px; font-weight:700; text-transform:uppercase;
+                 letter-spacing:.8px; color:#94a3b8; margin-bottom:6px; }
+  select, input[type=text], input[type=number] {
+    width:100%; background:#0f172a; border:1px solid #334155; border-radius:8px;
+    padding:10px 12px; color:#e2e8f0; font-size:13.5px; font-family:inherit; }
+  select:focus, input:focus { outline:none; border-color:#3b82f6; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  .btn { background:#3b82f6; color:#fff; border:none; border-radius:8px; padding:11px 20px;
+         font-size:13.5px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .btn:hover { background:#2563eb; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .btn.ghost { background:transparent; border:1px solid #475569; color:#cbd5e1; }
+  .btn.ghost:hover { background:#334155; }
+
+  .ind-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:10px; }
+  .ind { background:#0f172a; border:1px solid #334155; border-radius:9px; padding:13px; }
+  .ind.focus { border-color:#3b82f6; }
+  .ind .name { font-size:13px; font-weight:700; color:#f1f5f9; margin-bottom:3px; }
+  .ind .meta { font-size:11px; color:#64748b; margin-bottom:7px; }
+  .ind .why  { font-size:11.5px; color:#94a3b8; line-height:1.5; }
+  .badge { display:inline-block; font-size:9.5px; font-weight:700; letter-spacing:.6px;
+           text-transform:uppercase; padding:2px 7px; border-radius:4px;
+           background:rgba(59,130,246,.15); color:#60a5fa; margin-left:6px; }
+
+  .out { margin-top:16px; background:#0f172a; border:1px solid #334155; border-radius:9px;
+         padding:15px; font-size:13px; color:#cbd5e1; max-height:440px; overflow-y:auto; }
+  .out:empty { display:none; }
+  .line { padding:7px 0; border-bottom:1px solid #1e293b; }
+  .line:last-child { border-bottom:none; }
+  .ok { color:#4ade80; } .warn { color:#fbbf24; } .bad { color:#f87171; } .dim { color:#64748b; }
+
+  .score { display:inline-block; min-width:42px; text-align:center; padding:3px 9px;
+           border-radius:6px; font-weight:800; font-size:12.5px; }
+  .s-a { background:rgba(239,68,68,.16); color:#f87171; }
+  .s-b { background:rgba(249,115,22,.16); color:#fb923c; }
+  .s-c { background:rgba(234,179,8,.16); color:#facc15; }
+  .s-d { background:rgba(148,163,184,.14); color:#94a3b8; }
+  .s-f { background:rgba(34,197,94,.14); color:#4ade80; }
+
+  table.bd { width:100%; border-collapse:collapse; font-size:13px; }
+  table.bd th { text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.7px;
+                color:#64748b; padding:7px 0; border-bottom:1px solid #334155; }
+  table.bd td { padding:9px 0; border-bottom:1px solid #1e293b; color:#cbd5e1; }
+  .bar { height:5px; background:#334155; border-radius:3px; overflow:hidden; width:88px; }
+  .bar span { display:block; height:100%; background:#3b82f6; }
+{% endblock %}
+
+{% block content %}
+<div class="rhead">
+  <h2>Deep Research</h2>
+  <div class="lede">Find businesses that need marketing — and know exactly why before you call</div>
+</div>
+
+<div class="rg">
+
+  <div class="integ">
+    <span class="chip {{ 'on' if integrations.firecrawl.configured else 'off' }}">
+      <span class="dot"></span> Firecrawl
+      {{ 'connected' if integrations.firecrawl.configured else 'set FIRECRAWL_API_KEY' }}
+    </span>
+    <span class="chip {{ 'on' if integrations.mapbox.configured else 'off' }}">
+      <span class="dot"></span> Mapbox
+      {{ 'connected' if integrations.mapbox.configured else 'set MAPBOX_ACCESS_TOKEN' }}
+    </span>
+    {% if integrations.mapbox.configured and integrations.mapbox.permanent %}
+    <span class="chip on"><span class="dot"></span> Permanent geocoding</span>
+    {% endif %}
+  </div>
+
+  <!-- ================= DISCOVER ================= -->
+  <div class="panel">
+    <h2>Find new prospects</h2>
+    <div class="sub">
+      Searches the live web for businesses in one industry and town, filters out
+      directory pages, and deduplicates against every lead already in the CRM
+      before anything is saved. A business you have already contacted will not
+      come back as a new lead.
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>Industry</label>
+        <select id="dIndustry">
+          {% for i in industries %}
+          <option value="{{ i.key }}">{{ i.label }}{% if i.focus %} ★{% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label>State</label>
+        <select id="dState"><option>MA</option><option>RI</option><option>CT</option></select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>City / Town</label>
+        <input type="text" id="dCity" placeholder="Brockton" value="Brockton">
+      </div>
+      <div class="field">
+        <label>Results per search term</label>
+        <input type="number" id="dLimit" value="10" min="1" max="20">
+      </div>
+    </div>
+
+    <button class="btn" id="dBtn" onclick="discover()">Find prospects</button>
+    <div class="out" id="dOut"></div>
+  </div>
+
+  <!-- ================= AUDIT ================= -->
+  <div class="panel">
+    <h2>Audit unresearched leads</h2>
+    <div class="sub">
+      For each lead: finds their website, scrapes it, and scores how badly they
+      need marketing — mobile, SSL, tracking, forms, reviews, content, social.
+      Highest ICP scores are researched first. Five at a time, because each lead
+      costs a search plus a scrape.
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Industry filter</label>
+        <select id="aIndustry">
+          <option value="">All industries</option>
+          {% for i in industries %}<option value="{{ i.key }}">{{ i.label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label>Batch size</label>
+        <input type="number" id="aLimit" value="5" min="1" max="5">
+      </div>
+    </div>
+    <button class="btn" id="aBtn" onclick="runAudit()">Research next batch</button>
+    <button class="btn ghost" onclick="classifyAll()">Backfill industries</button>
+    <button class="btn ghost" onclick="findDupes()">Scan for duplicates</button>
+    <div class="out" id="aOut"></div>
+  </div>
+
+  <!-- ================= BREAKDOWN ================= -->
+  <div class="panel">
+    <h2>Portfolio by industry</h2>
+    <div class="sub">Average need score — higher means more of that industry needs help.</div>
+    <table class="bd">
+      <thead><tr><th>Industry</th><th>Leads</th><th>Avg need</th><th></th></tr></thead>
+      <tbody id="bdBody">
+        {% for b in breakdown %}
+        <tr>
+          <td>{{ b.industry.replace('_',' ').title() }}</td>
+          <td>{{ b.count }}</td>
+          <td>{{ b.avg_need }}</td>
+          <td><div class="bar"><span style="width:{{ b.avg_need }}%"></span></div></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="dim">No leads yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================= REFERENCE ================= -->
+  <div class="panel">
+    <h2>Target industries</h2>
+    <div class="sub">★ marks the three this CRM is tuned for.</div>
+    <div class="ind-grid">
+      {% for i in industries %}
+      <div class="ind {{ 'focus' if i.focus }}">
+        <div class="name">{{ i.label }}{% if i.focus %}<span class="badge">Focus</span>{% endif %}</div>
+        <div class="meta">Peak: {{ i.seasonal_peak or '—' }} · ICP {{ i.icp_weight }}</div>
+        <div class="why">{{ i.why }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function gradeClass(g){ return 's-' + (g||'f').toLowerCase(); }
+function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':s; return d.innerHTML; }
+function out(el, html){ document.getElementById(el).innerHTML = html; }
+function busy(id, on, label){
+  const b=document.getElementById(id); b.disabled=on; b.textContent = on ? 'Working…' : label;
+}
+
+async function discover(){
+  busy('dBtn', true);
+  out('dOut', '<div class="line dim">Searching the web…</div>');
+  try {
+    const r = await fetch('/api/research/discover', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        industry: dIndustry.value, city: dCity.value.trim(),
+        state: dState.value, limit: parseInt(dLimit.value)||10,
+      })
+    });
+    const d = await r.json();
+    if (d.error) { out('dOut', `<div class="line bad">${esc(d.error)}</div>`); return; }
+
+    let h = `<div class="line"><strong class="ok">Added ${d.added} new lead${d.added===1?'':'s'}</strong>
+             <span class="dim"> — ${d.candidates} found, ${d.duplicate_count} already in CRM</span></div>`;
+    if (d.duplicate_count) {
+      h += `<div class="line dim" style="margin-top:6px">Skipped as duplicates:</div>`;
+      d.duplicates.slice(0,12).forEach(x =>
+        h += `<div class="line"><span class="warn">${esc(x.name)}</span>
+              <span class="dim"> — ${esc(x.reason)}</span></div>`);
+    }
+    if (d.added) h += `<div class="line" style="margin-top:8px">
+        <a href="/leads?industry=${encodeURIComponent(d.industry)}" style="color:#60a5fa">
+        View them in All Leads →</a></div>`;
+    out('dOut', h);
+  } catch(e) { out('dOut', `<div class="line bad">Network error</div>`); }
+  finally { busy('dBtn', false, 'Find prospects'); }
+}
+
+async function runAudit(){
+  busy('aBtn', true);
+  out('aOut', '<div class="line dim">Scraping and auditing…</div>');
+  try {
+    const r = await fetch('/api/research/batch', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({limit: parseInt(aLimit.value)||5,
+                            industry: aIndustry.value || null})
+    });
+    const d = await r.json();
+    if (d.error) { out('aOut', `<div class="line bad">${esc(d.error)}</div>`); return; }
+    if (!d.researched && d.message) { out('aOut', `<div class="line dim">${esc(d.message)}</div>`); return; }
+
+    let h = `<div class="line"><strong class="ok">Researched ${d.researched}</strong>`;
+    if (d.failed) h += ` <span class="bad">· ${d.failed} failed</span>`;
+    h += ` <span class="dim">· ${d.remaining} still unresearched</span></div>`;
+
+    (d.results||[]).forEach(x => {
+      if (!x.ok) { h += `<div class="line bad">${esc(x.business_name)} — ${esc(x.error)}</div>`; return; }
+      h += `<div class="line">
+        <span class="score ${gradeClass(x.grade)}">${x.score}</span>
+        <strong style="margin-left:8px">${esc(x.business_name)}</strong>
+        <div class="dim" style="margin-top:3px;margin-left:50px">${(x.top_gaps||[]).map(esc).join(' · ')||'No gaps found'}</div>
+      </div>`;
+    });
+    if (d.remaining > 0) h += `<div class="line" style="margin-top:8px">
+        <button class="btn ghost" onclick="runAudit()">Research next ${Math.min(d.remaining,5)}</button></div>`;
+    out('aOut', h);
+  } catch(e) { out('aOut', `<div class="line bad">Network error</div>`); }
+  finally { busy('aBtn', false, 'Research next batch'); }
+}
+
+async function classifyAll(){
+  out('aOut', '<div class="line dim">Classifying…</div>');
+  const r = await fetch('/api/leads/classify-industries', {method:'POST'});
+  const d = await r.json();
+  let h = `<div class="line ok">Classified ${d.classified} leads by industry</div>`;
+  (d.breakdown||[]).forEach(b => h +=
+    `<div class="line">${esc(b.industry.replace(/_/g,' '))}
+     <span class="dim"> — ${b.count} leads, avg need ${b.avg_need}</span></div>`);
+  out('aOut', h);
+}
+
+async function findDupes(){
+  out('aOut', '<div class="line dim">Scanning for duplicates…</div>');
+  const r = await fetch('/api/leads/find-duplicates');
+  const d = await r.json();
+  let h = `<div class="line"><strong>${d.duplicate_count}</strong> duplicate
+           ${d.duplicate_count===1?'lead':'leads'} in ${d.total} total</div>`;
+  if (!d.duplicate_count) h += `<div class="line ok">Clean — no repeats.</div>`;
+  (d.duplicates||[]).slice(0,30).forEach(x => h +=
+    `<div class="line"><a href="/lead/${x.id}" style="color:#60a5fa">${esc(x.business_name)}</a>
+     <span class="dim"> (${esc(x.city)}) — ${esc(x.reason)}</span></div>`);
+  out('aOut', h);
+}
+</script>
+{% endblock %}

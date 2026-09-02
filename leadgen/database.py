@@ -27,7 +27,23 @@ ALLOWED_COLUMNS = {
     "tech_stack_json", "review_count", "review_rating", "employee_count",
     "icp_score", "email_verified", "segment",
     "latitude", "longitude",
+    # Research + industry targeting
+    "industry", "marketing_need_score", "research_grade", "last_researched",
+    "domain", "research_status",
 }
+
+# Columns added after the original schema shipped. Applied by _ensure_columns()
+# on every init, so an existing Supabase database picks them up without a manual
+# migration -- CREATE TABLE IF NOT EXISTS does nothing to a table that already
+# exists, which is the trap here.
+LEAD_MIGRATIONS = [
+    ("industry", "TEXT DEFAULT ''"),
+    ("marketing_need_score", "INTEGER DEFAULT 0"),
+    ("research_grade", "TEXT DEFAULT ''"),
+    ("last_researched", "TEXT DEFAULT ''"),
+    ("domain", "TEXT DEFAULT ''"),
+    ("research_status", "TEXT DEFAULT 'unresearched'"),
+]
 
 PIPELINE_STAGES = ["new", "contacted", "responded", "qualified", "proposal", "won", "lost"]
 
@@ -165,6 +181,31 @@ def _init_db_inner():
             name TEXT NOT NULL,
             filters TEXT NOT NULL,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        );
+
+        -- Deep research results, one row per scan per lead.
+        --
+        -- Kept separate from `leads` so a re-scan is an append rather than an
+        -- overwrite: you can see what a prospect's site looked like when you
+        -- first pitched them versus now, which is the before/after a renewal
+        -- conversation runs on.
+        CREATE TABLE IF NOT EXISTS lead_research (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            lead_id INTEGER NOT NULL,
+            scanned_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            source TEXT DEFAULT 'firecrawl',
+            url TEXT DEFAULT '',
+            http_ok INTEGER DEFAULT 0,
+            marketing_need_score INTEGER DEFAULT 0,
+            grade TEXT DEFAULT '',
+            findings_json TEXT DEFAULT '[]',
+            signals_json TEXT DEFAULT '{}',
+            contacts_json TEXT DEFAULT '{}',
+            page_title TEXT DEFAULT '',
+            page_description TEXT DEFAULT '',
+            markdown_excerpt TEXT DEFAULT '',
+            word_count INTEGER DEFAULT 0,
+            error TEXT DEFAULT ''
         );
 
         -- Work queue for serverless scraping.
@@ -309,7 +350,17 @@ def _init_db_inner():
         CREATE INDEX IF NOT EXISTS idx_automation_jobs_status ON automation_jobs(status);
         CREATE INDEX IF NOT EXISTS idx_leads_icp_score ON leads(icp_score);
         CREATE INDEX IF NOT EXISTS idx_leads_segment ON leads(segment);
+        CREATE INDEX IF NOT EXISTS idx_research_lead ON lead_research(lead_id);
+        CREATE INDEX IF NOT EXISTS idx_scrape_queue_status ON scrape_queue(status);
     """)
+
+    # Additive migrations for databases created before these columns existed.
+    _ensure_columns(conn)
+    try:
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_leads_industry ON leads(industry)")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_leads_need ON leads(marketing_need_score)")
+    except Exception:
+        pass  # index on a column an old DB has not migrated yet — harmless
 
     conn.commit()
     conn.close()
@@ -486,9 +537,32 @@ def get_leads(filters=None, limit=200, offset=0, sort_by="date_found", sort_dir=
                 placeholders = ", ".join(["?"] * len(id_list))
                 query += f" AND id IN ({placeholders})"
                 params.extend(id_list)
+        if filters.get("industry"):
+            query += " AND industry = ?"
+            params.append(filters["industry"])
+        if filters.get("industries"):
+            keys = [k for k in filters["industries"] if k]
+            if keys:
+                placeholders = ", ".join(["?"] * len(keys))
+                query += f" AND industry IN ({placeholders})"
+                params.extend(keys)
+        if filters.get("min_need") is not None:
+            query += " AND COALESCE(marketing_need_score, 0) >= ?"
+            params.append(int(filters["min_need"]))
+        if filters.get("research_status"):
+            if filters["research_status"] == "unresearched":
+                query += (" AND (research_status IS NULL OR research_status = ''"
+                          " OR research_status = 'unresearched')")
+            else:
+                query += " AND research_status = ?"
+                params.append(filters["research_status"])
+        if filters.get("grade"):
+            query += " AND research_grade = ?"
+            params.append(filters["grade"])
 
     allowed_sorts = {"date_found", "business_name", "city", "state", "lead_score",
-                     "marketing_score", "priority", "created_at", "category", "email"}
+                     "marketing_score", "priority", "created_at", "category", "email",
+                     "marketing_need_score", "industry", "last_researched"}
     if sort_by not in allowed_sorts:
         sort_by = "date_found"
     sort_dir = "ASC" if sort_dir.upper() == "ASC" else "DESC"
@@ -532,6 +606,29 @@ def count_leads(filters=None):
             query += " AND phone != ''"
         if filters.get("has_email"):
             query += " AND email != ''"
+        # Must mirror get_leads() or the pagination total disagrees with the page.
+        if filters.get("industry"):
+            query += " AND industry = ?"
+            params.append(filters["industry"])
+        if filters.get("industries"):
+            keys = [k for k in filters["industries"] if k]
+            if keys:
+                placeholders = ", ".join(["?"] * len(keys))
+                query += f" AND industry IN ({placeholders})"
+                params.extend(keys)
+        if filters.get("min_need") is not None:
+            query += " AND COALESCE(marketing_need_score, 0) >= ?"
+            params.append(int(filters["min_need"]))
+        if filters.get("research_status"):
+            if filters["research_status"] == "unresearched":
+                query += (" AND (research_status IS NULL OR research_status = ''"
+                          " OR research_status = 'unresearched')")
+            else:
+                query += " AND research_status = ?"
+                params.append(filters["research_status"])
+        if filters.get("grade"):
+            query += " AND research_grade = ?"
+            params.append(filters["grade"])
 
     count = conn.execute(query, params).fetchone()[0]
     conn.close()
@@ -670,6 +767,44 @@ def get_stats():
 
     conn.close()
     return stats
+
+
+def _existing_columns(conn, table):
+    """Column names on a table, for both SQLite and Postgres."""
+    try:
+        if is_postgres():
+            cur = conn.execute(
+                "SELECT column_name FROM information_schema.columns "
+                "WHERE table_name = ?", (table,))
+            return {r[0] if not isinstance(r, dict) else r["column_name"]
+                    for r in cur.fetchall()}
+        cur = conn.execute(f"PRAGMA table_info({table})")
+        return {row[1] for row in cur.fetchall()}
+    except Exception as e:
+        print(f"[DB] Could not read columns for {table}: {e}")
+        return set()
+
+
+def _ensure_columns(conn):
+    """Add post-launch columns to an existing `leads` table.
+
+    Idempotent and non-destructive: only ever adds, never drops or retypes, so
+    running it against a populated production database is safe.
+    """
+    have = _existing_columns(conn, "leads")
+    if not have:
+        return
+    for name, ddl in LEAD_MIGRATIONS:
+        if name in have:
+            continue
+        try:
+            conn.execute(f"ALTER TABLE leads ADD COLUMN {name} {ddl}")
+            print(f"[DB] Migrated: added leads.{name}")
+        except Exception as e:
+            # Two workers racing on cold start both try this; losing the race
+            # is fine because the column now exists either way.
+            if "duplicate" not in str(e).lower() and "exists" not in str(e).lower():
+                print(f"[DB] Could not add leads.{name}: {str(e)[:120]}")
 
 
 def table_exists(conn, table_name):
@@ -1192,6 +1327,130 @@ def get_funnel_analytics():
 
     conn.close()
     return analytics
+
+
+# ---------------------------------------------------------------------------
+# Deep research storage
+# ---------------------------------------------------------------------------
+
+def save_research(lead_id, audit_result, page=None, contacts=None,
+                  source="firecrawl", error=""):
+    """Persist one research scan and roll the headline numbers onto the lead.
+
+    The lead row carries the current score so lists can sort and filter on it
+    without a join; lead_research keeps the full history.
+    """
+    page = page or {}
+    meta = page.get("metadata") or {}
+    markdown = page.get("markdown") or ""
+
+    conn = get_db()
+    conn.execute(
+        """INSERT INTO lead_research
+             (lead_id, scanned_at, source, url, http_ok, marketing_need_score,
+              grade, findings_json, signals_json, contacts_json, page_title,
+              page_description, markdown_excerpt, word_count, error)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+        (
+            lead_id, datetime.now().isoformat(), source,
+            page.get("url", ""), 1 if page.get("ok") else 0,
+            audit_result.get("marketing_need_score", 0),
+            audit_result.get("grade", ""),
+            json.dumps(audit_result.get("findings", []))[:60000],
+            json.dumps(audit_result.get("signals", {}))[:8000],
+            json.dumps(contacts or {})[:4000],
+            (meta.get("title") or "")[:300],
+            (meta.get("description") or "")[:600],
+            markdown[:5000],
+            len(markdown.split()),
+            (error or "")[:500],
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+    update_lead(lead_id, {
+        "marketing_need_score": audit_result.get("marketing_need_score", 0),
+        "research_grade": audit_result.get("grade", ""),
+        "last_researched": datetime.now().isoformat(),
+        "research_status": "error" if error else "researched",
+    }, log_activity=False)
+
+    add_activity(
+        lead_id, "research",
+        f"Marketing audit: {audit_result.get('marketing_need_score', 0)}/100 "
+        f"(grade {audit_result.get('grade', '?')}) — "
+        + "; ".join(audit_result.get("top_gaps", [])[:2]),
+    )
+
+
+def get_research(lead_id, limit=10):
+    """Research history for one lead, newest first, JSON already decoded."""
+    conn = get_db()
+    cur = conn.execute(
+        "SELECT * FROM lead_research WHERE lead_id = ? "
+        "ORDER BY scanned_at DESC LIMIT ?", (lead_id, limit))
+    rows = [dict(r) for r in cur.fetchall()]
+    conn.close()
+    for r in rows:
+        for src, dst in (("findings_json", "findings"),
+                         ("signals_json", "signals"),
+                         ("contacts_json", "contacts")):
+            try:
+                r[dst] = json.loads(r.get(src) or ("[]" if dst == "findings" else "{}"))
+            except (ValueError, TypeError):
+                r[dst] = [] if dst == "findings" else {}
+    return rows
+
+
+def get_latest_research(lead_id):
+    rows = get_research(lead_id, limit=1)
+    return rows[0] if rows else None
+
+
+def get_leads_needing_research(limit=25, industry=None):
+    """Unresearched leads, best prospects first.
+
+    Ordered by ICP score so credits are spent on leads most likely to convert
+    rather than whatever happens to be at the top of the table.
+    """
+    conn = get_db()
+    sql = ("SELECT * FROM leads WHERE (research_status IS NULL "
+           "OR research_status = '' OR research_status = 'unresearched')")
+    params = []
+    if industry:
+        sql += " AND industry = ?"
+        params.append(industry)
+    sql += " ORDER BY COALESCE(icp_score, 0) DESC, id DESC LIMIT ?"
+    params.append(limit)
+    cur = conn.execute(sql, params)
+    rows = [dict(r) for r in cur.fetchall()]
+    conn.close()
+    return rows
+
+
+def industry_breakdown():
+    """Lead count and mean marketing-need score per industry."""
+    conn = get_db()
+    cur = conn.execute(
+        """SELECT COALESCE(NULLIF(industry, ''), 'other') AS industry,
+                  COUNT(*) AS n,
+                  AVG(COALESCE(marketing_need_score, 0)) AS avg_need
+             FROM leads GROUP BY 1 ORDER BY n DESC""")
+    rows = [dict(r) for r in cur.fetchall()]
+    conn.close()
+    return [{"industry": r["industry"], "count": int(r["n"]),
+             "avg_need": round(float(r["avg_need"] or 0), 1)} for r in rows]
+
+
+def all_lead_dedupe_fields():
+    """Minimal projection for building a dedupe index without loading the table."""
+    conn = get_db()
+    cur = conn.execute(
+        "SELECT id, business_name, phone, website_url, city, state FROM leads")
+    rows = [dict(r) for r in cur.fetchall()]
+    conn.close()
+    return rows
 
 
 # ---------------------------------------------------------------------------
