@@ -1,6 +1,13 @@
 # Ringless Voicemail → Callback Campaign
 **One Vision Marketing Agency · Isaiah Wright**
-Built for GoHighLevel. Voicemail drop → SMS → Email, 10-day sequence.
+Built for GoHighLevel.
+
+**Two builds live in this file:**
+- **Full sequence** (Parts 1–6) — voicemail + SMS + email over 10 days. Needs
+  A2P 10DLC registration for the SMS half.
+- **[Voice-Only Build](#voice-only-build--the-cheap-no-registration-path)** (end
+  of file) — voicemail drops only, ~2–4¢ each, **no A2P registration, live
+  today**. Start here if you just want to drop voicemails to a list.
 
 ---
 
@@ -309,24 +316,46 @@ was built for — wire it to this workflow and the response is instant.
 
 ## Compliance — read this once
 
-Ringless voicemail sits in genuinely unsettled legal territory. Several courts
-have treated RVM as a "call" under the TCPA, which would mean it needs the same
-consent as a dialed call. It is not settled law, and it is worth knowing before
-you scale volume.
+**This section was corrected in Sept 2026. An earlier version described RVM as
+"unsettled law." That is wrong and out of date.**
 
-Practical risk reduction:
-- **Business numbers, not personal cell numbers.** B2B outreach to a listed
-  business line is materially lower risk than B2C to a mobile.
+On **November 21, 2022** the FCC issued a declaratory ruling holding that
+ringless voicemail delivered to a wireless number **is a "call" under the TCPA**,
+because it uses an artificial or prerecorded voice. The question is settled.
+
+What follows from that:
+
+- Marketing RVM to a **cell phone requires prior express written consent** — a
+  clear disclosure the person actually agreed to, not a pre-checked box.
+- The FCC's **2024 one-to-one consent rule** requires that consent name *you*
+  specifically. Consent given to a lead generator "and its marketing partners"
+  does not cover you.
+- Statutory damages are **$500–$1,500 per message**. That multiplies by list
+  size, which is what makes this the highest-downside channel in the stack.
+
+### Sort every list before it loads
+
+| Source | Verdict |
+|---|---|
+| Filled out your form with consent language | Send |
+| Current or past clients | Send |
+| Listed **business landlines** | Materially lower risk |
+| Referrals who asked to be contacted | Send, document who referred |
+| Purchased or scraped lists | **Do not send** |
+| Cold cell numbers with no prior relationship | **Do not send** |
+
+### Operational shortlist
+
 - **Scrub against the National DNC Registry** before any push.
-- **Honor opt-outs immediately** — GHL does this automatically on STOP, but make
-  sure the workflow's exit condition is actually wired.
-- **Keep records** of where each number came from.
-- **Massachusetts** has its own telemarketing rules on top of federal. Worth a
-  one-time look before you run high volume.
+- **Honor opt-outs immediately** and permanently — wire the workflow exit
+  condition, and keep a suppression list that survives re-imports.
+- **Keep records** of where each number came from and what the person agreed to.
+  Consent you cannot evidence is consent you do not have.
+- **Massachusetts** has its own telemarketing rules layered on federal.
 
-None of this is legal advice — it's the operational shortlist. If this becomes a
-meaningful channel for you, an hour with an attorney who knows TCPA is cheap
-insurance.
+None of this is legal advice — it is the operational shortlist. Given the
+per-message exposure, an hour with a TCPA attorney before scaling volume is
+cheap insurance.
 
 ---
 
@@ -339,16 +368,19 @@ Verified against HighLevel's own documentation. Ringless voicemail is a **native
 GHL workflow action**. No third-party service required — not Drop Cowboy, not
 Slybroadcast. Your own Twilio number works exactly the same as an LC Phone number.
 
-## Step 0 — Start A2P 10DLC registration TODAY
+## Step 0 — A2P 10DLC: only if you are sending SMS
 
-Do this before anything else. It takes days to approve and everything else waits on it.
+**A2P 10DLC is an SMS-only registration. Voice traffic does not touch it.**
 
-Without A2P 10DLC registration, your **SMS messages get filtered or blocked outright**
-by carriers. The voicemail drops will land fine, but the text follow-up — which is where
-most of your replies come from — silently dies.
+- Running the **full sequence** (voicemail + SMS + email)? Start A2P registration
+  first — it takes days to approve, and unregistered SMS gets filtered or blocked
+  outright by carriers. The drops still land; the texts silently die.
+- Running **voice-only** (see the Voice-Only Build at the end of this file)?
+  **Skip this step entirely.** No EIN submission, no carrier wait, no Toll-Free
+  Verification. You can send today.
 
-In GHL: **Settings → Phone Numbers → Trust Center** (or A2P registration). Submit your
-business info, EIN, and use case. Then continue with the steps below while it processes.
+If you do need it — GHL: **Settings → Phone Numbers → Trust Center**. Submit
+business info, EIN, and use case, then continue below while it processes.
 
 ## Step 1 — Connect Twilio at the agency level
 
@@ -443,6 +475,125 @@ From HighLevel's own documentation:
 The platform is stating consent as a condition of use, not a suggestion. Combine that with
 the TCPA notes above and treat listed business numbers as your floor.
 
+
+---
+
+# VOICE-ONLY BUILD — the cheap, no-registration path
+
+Use this when you want **only** voicemail drops to a list. No SMS, no A2P
+registration, no third-party service. This is the fastest thing in this file to
+get live.
+
+## Why stay in GoHighLevel
+
+Voicemail drop is a native GHL workflow action billed as an outgoing call at
+**$0.0180/min**. A 25-second drop lands around **2–4¢**.
+
+| Option | Per drop | 500 leads | Extra monthly |
+|---|---|---|---|
+| **GHL native** | ~$0.02–0.04 | **$10–20** | $0 |
+| Drop Cowboy (BYOC) | $0.004 | $2 | $125/mo plan |
+| Drop Cowboy (pay-per-drop) | ~$0.02 | $10 | $0 |
+| Slybroadcast (pay-as-you-go) | ~$0.10 | $50 | $0 |
+
+Drop Cowboy's $0.004 headline sits behind a $125/mo plan — it needs roughly
+5,000 drops/month before it beats GHL. Below that, native GHL is cheapest
+because the platform cost is already sunk.
+
+## Build (6 steps)
+
+1. **Record.** Export **MP3 or WAV at 64 kbps**, 22–28 seconds. The bitrate is
+   not optional — wrong bitrate fails on upload or silently fails on delivery.
+2. **Automation → Workflows → + Create Workflow → Start from Scratch.**
+   Name it `VM Drop — Callback`.
+3. **Add Trigger** → *Contact Tag Added* → tag `vm-drop`
+4. **+ Add Action** → scroll down past the common actions to **"Voicemail"** →
+   upload the file
+5. **Settings tab:** send window 9:00 AM–7:00 PM · **contact's timezone** ·
+   skip Sundays · allow re-entry **off**
+6. **Feed the list:** Contacts → Import → CSV with `First Name` and `Phone` →
+   **apply tag `vm-drop` to the whole batch on the import screen**
+
+The tag fires the trigger. Re-running later means importing a new list with the
+same tag — you never touch the workflow again.
+
+**Start with 20 rows and wait 48 hours.** Dropping 500 on an untested recording
+burns 500 contacts you cannot easily re-approach.
+
+## The 3-drop sequence
+
+| Step | Wait | Action |
+|---|---|---|
+| 1 | 0 | Voicemail — Drop 1 |
+| 2 | 3 days | Voicemail — Drop 2 |
+| 3 | 5 days | Voicemail — Drop 3 |
+
+**Exit condition (do not skip):** at the top of the workflow add
+**Trigger** *Customer Replied* → remove from workflow + add tag `warm-lead` +
+internal notification to your phone. Without it, someone who calls you back
+still gets the close-out drop five days later.
+
+## Scripts — voice-only
+
+No SMS chaser means the voicemail carries the whole ask. Say the number
+**twice**, second time slower, and ask for a **call** rather than a text.
+
+### Drop 1 — Day 1
+
+> Hey [Name], it's Isaiah with One Vision Marketing, I'm over in Bridgewater.
+>
+> I was looking at [Business] online and noticed something that's probably
+> costing you calls. It's a quick fix, not a big project.
+>
+> Didn't want to leave the whole thing in a voicemail — give me a call back when
+> you get a minute. **[phone]**. That's **[phone, slower]**.
+>
+> Again, Isaiah, One Vision. Talk soon.
+
+### Drop 2 — Day 4
+
+> Hey [Name], Isaiah again, One Vision Marketing.
+>
+> We handle marketing for a few local businesses — a real estate agency in
+> Dedham, a tattoo studio in New Bedford.
+>
+> I wrote up the thing I noticed on [Business]. It's about a page, and it's
+> yours free whether we ever work together or not. Just call me and I'll send it
+> over.
+>
+> **[phone]**. That's **[phone, slower]**. Thanks [Name].
+
+### Drop 3 — Day 9 (close-out)
+
+> Hey [Name], Isaiah with One Vision — last one from me, I don't want to be the
+> guy who keeps showing up in your voicemail.
+>
+> That breakdown on [Business] is still sitting here if you want it. If not, no
+> hard feelings at all.
+>
+> **[phone]** if it's ever worth a look. Take care.
+
+The close-out consistently pulls the highest response of the three. People react
+to a door closing.
+
+## Handling the callbacks
+
+Voice-only means replies come by phone, not text. Two notes:
+
+- **Inbound** texts to your number are fine unregistered. **Sending** automated
+  SMS back through GHL is what needs A2P — reply from your own phone instead, or
+  register A2P later if texting becomes a real channel.
+- **Email costs nothing and needs no registration.** If you want a follow-up
+  layer later without touching A2P, add the email steps from Part 3 rather than
+  the SMS steps.
+
+## Adding this later without rebuilding
+
+The voice-only workflow is a strict subset of the full sequence. When A2P clears,
+add the SMS actions from Part 4's table into the gaps — the trigger, tag, list
+import, and recordings all carry over unchanged.
+
+---
 
 ## Files
 
