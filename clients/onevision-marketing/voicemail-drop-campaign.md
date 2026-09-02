@@ -502,8 +502,9 @@ because the platform cost is already sunk.
 
 ## Build (6 steps)
 
-1. **Record.** Export **MP3 or WAV at 64 kbps**, 22–28 seconds. The bitrate is
-   not optional — wrong bitrate fails on upload or silently fails on delivery.
+1. **Record all four.** Export **MP3 or WAV at 64 kbps**, 22–30 seconds each,
+   named `VM-Drop-1` through `VM-Drop-4`. The bitrate is not optional — wrong
+   bitrate fails on upload or silently fails on delivery.
 2. **Automation → Workflows → + Create Workflow → Start from Scratch.**
    Name it `VM Drop — Callback`.
 3. **Add Trigger** → *Contact Tag Added* → tag `vm-drop`
@@ -520,61 +521,114 @@ same tag — you never touch the workflow again.
 **Start with 20 rows and wait 48 hours.** Dropping 500 on an untested recording
 burns 500 contacts you cannot easily re-approach.
 
-## The 3-drop sequence
+## The 4-drop sequence
 
-| Step | Wait | Action |
-|---|---|---|
-| 1 | 0 | Voicemail — Drop 1 |
-| 2 | 3 days | Voicemail — Drop 2 |
-| 3 | 5 days | Voicemail — Drop 3 |
+| Step | Wait | Action | Lands |
+|---|---|---|---|
+| 1 | 0 | Voicemail — Drop 1 | Day 1 |
+| 2 | 7 days | Voicemail — Drop 2 | Day 8 |
+| 3 | 10 days | Voicemail — Drop 3 | Day 18 |
+| 4 | 14 days | Voicemail — Drop 4 | Day 32 |
 
-**Exit condition (do not skip):** at the top of the workflow add
-**Trigger** *Customer Replied* → remove from workflow + add tag `warm-lead` +
-internal notification to your phone. Without it, someone who calls you back
-still gets the close-out drop five days later.
+**Why the gaps are this wide.** A voicemail every three days from the same
+company reads as pressure and gets the number blocked. Spread across five weeks
+it reads as a business that is genuinely interested but not desperate — and the
+close-out only works if enough time has passed that it feels like a real
+decision rather than a tactic.
 
-## Scripts — voice-only
+**Exit condition (do not skip):** turn on **Stop on Response** in workflow
+settings, or add a *Customer Replied* trigger that removes the contact and tags
+them `warm-lead`. Without it, someone who calls you back in week one still gets
+"I'm closing out your file" in week five, after you have already spoken.
 
-No SMS chaser means the voicemail carries the whole ask. Say the number
-**twice**, second time slower, and ask for a **call** rather than a text.
+## Scripts — voice-only, assistant voice
 
-### Drop 1 — Day 1
+These are written in the voice of a **marketing manager calling on behalf of the
+owner**, not the owner himself. That framing outperforms a direct owner pitch on
+cold lists: it is lower pressure, it implies a team behind the call, and "the
+owner asked me to reach out" gives a reason for the call that does not sound
+like a sales script.
 
-> Hey [Name], it's Isaiah with One Vision Marketing, I'm over in Bridgewater.
+Each drop references the one before it, so the sequence reads as one person
+following up rather than four disconnected blasts.
+
+> **Use a real person's name.** A prerecorded telemarketing message has to
+> truthfully identify who is responsible for the call, and a fabricated employee
+> is a misrepresentation on a recorded, timestamped, mass-distributed message.
+> It also breaks the moment someone calls back and asks for a person who does
+> not exist. If nobody on the team fits, record it as *"this is [real name]
+> calling on behalf of One Vision Marketing"* — the warm assistant framing
+> survives the swap intact.
+
+**Say the callback number twice, second time slower.** A prerecorded
+telemarketing message is required to give the responsible party's phone number,
+and practically: no number means no callback, which means the whole send was
+wasted.
+
+### Drop 1 — Day 1 · The introduction
+
+> Hi, this is [Name], I'm the marketing manager over at One Vision Marketing
+> here in Massachusetts.
 >
-> I was looking at [Business] online and noticed something that's probably
-> costing you calls. It's a quick fix, not a big project.
+> Isaiah, our owner, asked me to reach out — he's been looking at businesses
+> around [Town] and yours came up. We help local businesses get found online and
+> bring in more customers, and he thought there might be a fit here.
 >
-> Didn't want to leave the whole thing in a voicemail — give me a call back when
-> you get a minute. **[phone]**. That's **[phone, slower]**.
+> If you'd like to hear more, just give us a call back at **[phone]**. That's
+> **[phone, slower]**.
 >
-> Again, Isaiah, One Vision. Talk soon.
+> Thanks so much, and have a great day.
 
-### Drop 2 — Day 4
+### Drop 2 — Day 8 · The free thing
 
-> Hey [Name], Isaiah again, One Vision Marketing.
+> Hi [Name], it's [Name] again from One Vision Marketing — I left you a message
+> last week, so I'll keep this one short.
 >
-> We handle marketing for a few local businesses — a real estate agency in
-> Dedham, a tattoo studio in New Bedford.
+> Isaiah put together a quick breakdown of what he'd change about how [Business]
+> shows up online. It's about a page, and it's yours free whether you ever work
+> with us or not.
 >
-> I wrote up the thing I noticed on [Business]. It's about a page, and it's
-> yours free whether we ever work together or not. Just call me and I'll send it
-> over.
+> Just call us back and I'll send it right over. **[phone]**. That's
+> **[phone, slower]**.
 >
-> **[phone]**. That's **[phone, slower]**. Thanks [Name].
+> Thanks, have a good one.
 
-### Drop 3 — Day 9 (close-out)
+### Drop 3 — Day 18 · Local proof
 
-> Hey [Name], Isaiah with One Vision — last one from me, I don't want to be the
-> guy who keeps showing up in your voicemail.
+> Hi [Name], [Name] from One Vision Marketing.
 >
-> That breakdown on [Business] is still sitting here if you want it. If not, no
-> hard feelings at all.
+> I know I've reached out a couple of times — Isaiah asked me to try you once
+> more before we set it aside. We handle marketing for a few businesses around
+> here, a real estate agency in Dedham and a tattoo studio down in New Bedford.
 >
-> **[phone]** if it's ever worth a look. Take care.
+> He still thinks [Business] would be a good fit, and that breakdown is still
+> sitting here with your name on it. **[phone]**. That's **[phone, slower]**.
+>
+> Appreciate your time.
 
-The close-out consistently pulls the highest response of the three. People react
-to a door closing.
+### Drop 4 — Day 32 · The close-out
+
+> Hi [Name], [Name] at One Vision Marketing — this'll be my last message, I
+> don't want to keep filling up your voicemail.
+>
+> I'm closing out your file today. If things ever change and you want that
+> breakdown, we're right here. **[phone]**.
+>
+> Thanks for your time, and best of luck with [Business].
+
+The close-out consistently pulls the highest response of the four. People react
+to a door closing in a way they do not react to being sold.
+
+### Recording notes for this voice
+
+The assistant persona only works if it sounds like an actual person at a desk:
+
+- **Warm and unhurried**, not bright and salesy. Think "returning a call,"
+  not "making a call."
+- **Do not over-enunciate.** A slightly casual read is what sells it.
+- **Let the ending trail off naturally** — "thanks, have a good one" said the way
+  you would actually say it, not landed like a tagline.
+- Take 4 or 5 and pick the least rehearsed one.
 
 ## Handling the callbacks
 

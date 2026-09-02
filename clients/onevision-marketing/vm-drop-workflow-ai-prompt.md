@@ -18,12 +18,17 @@ Have these ready or the build stalls halfway:
 
 | Item | Value |
 |---|---|
-| Audio files | 3 × MP3 or WAV, **64 kbps**, 22–28 sec each |
-| File names | `VM-Drop-1.mp3`, `VM-Drop-2.mp3`, `VM-Drop-3.mp3` |
+| Audio files | 4 × MP3 or WAV, **64 kbps**, 22–30 sec each |
+| File names | `VM-Drop-1.mp3` … `VM-Drop-4.mp3` |
 | Phone number | Connected under Settings → Phone Numbers |
 | Entry tag | `vm-drop` |
 | Completion tag | `vm-drop-complete` |
 | Responder tag | `warm-lead` |
+
+**Cadence:** Day 1 → Day 8 → Day 18 → Day 32. Roughly five weeks end to end.
+Spacing this wide is deliberate — a voicemail every three days from the same
+company reads as pressure, and the close-out only lands if enough time has
+passed that it feels like a real decision rather than a tactic.
 
 Upload the audio first: **Marketing → Voicemails** (or Media Library, depending
 on your version). Naming them exactly as above lets you select them by name
@@ -37,9 +42,10 @@ instead of hunting through a list.
 Create a workflow named: VM Drop — Callback
 
 PURPOSE
-Send three pre-recorded ringless voicemail drops to a list of leads over nine
-days. This is a voice-only campaign. Do NOT add any SMS actions, email actions,
-or internal messages to the contact. Voicemail is the only outbound channel.
+Send four pre-recorded ringless voicemail drops to a list of leads across
+roughly five weeks. This is a voice-only campaign. Do NOT add any SMS actions,
+email actions, or internal messages to the contact. Voicemail is the only
+outbound channel.
 
 TRIGGER
 Type: Contact Tag
@@ -51,28 +57,36 @@ ACTIONS — build in exactly this order:
 
 Step 1 — Voicemail
   Audio file: VM-Drop-1
-  This is the first touch. It fires immediately on entry.
+  First touch. Fires immediately on entry. (Day 1)
 
 Step 2 — Wait
-  Duration: 3 days
+  Duration: 7 days
 
 Step 3 — Voicemail
   Audio file: VM-Drop-2
+  (Day 8)
 
 Step 4 — Wait
-  Duration: 5 days
+  Duration: 10 days
 
 Step 5 — Voicemail
   Audio file: VM-Drop-3
-  This is the final touch.
+  (Day 18)
 
 Step 6 — Wait
-  Duration: 1 day
+  Duration: 14 days
 
-Step 7 — Remove Contact Tag
+Step 7 — Voicemail
+  Audio file: VM-Drop-4
+  Final touch — the close-out. (Day 32)
+
+Step 8 — Wait
+  Duration: 2 days
+
+Step 9 — Remove Contact Tag
   Tag: vm-drop
 
-Step 8 — Add Contact Tag
+Step 10 — Add Contact Tag
   Tag: vm-drop-complete
 
 WORKFLOW SETTINGS
@@ -90,7 +104,8 @@ DO NOT ADD
 - No AI or conversation actions
 - No appointment or calendar actions
 
-Keep the workflow linear: trigger, then the eight steps above in order.
+Keep the workflow linear: trigger, then the ten steps above in order. Do not
+shorten the wait durations — the long gaps are intentional.
 ```
 
 ---
@@ -111,16 +126,22 @@ match.
 
 ### Action sequence
 
-| # | Action | Config | Common AI error |
-|---|---|---|---|
-| 1 | Voicemail | `VM-Drop-1` | Substitutes a Call action — replace it |
-| 2 | Wait | 3 days | Sets hours instead of days |
-| 3 | Voicemail | `VM-Drop-2` | Reuses Drop 1's file |
-| 4 | Wait | 5 days | — |
-| 5 | Voicemail | `VM-Drop-3` | Reuses Drop 1's file |
-| 6 | Wait | 1 day | — |
-| 7 | Remove Tag | `vm-drop` | Removes the wrong tag |
-| 8 | Add Tag | `vm-drop-complete` | Skipped entirely |
+| # | Action | Config | Day | Common AI error |
+|---|---|---|---|---|
+| 1 | Voicemail | `VM-Drop-1` | 1 | Substitutes a Call action — replace it |
+| 2 | Wait | **7 days** | | Shortens it, or sets hours instead of days |
+| 3 | Voicemail | `VM-Drop-2` | 8 | Reuses Drop 1's file |
+| 4 | Wait | **10 days** | | Shortens it |
+| 5 | Voicemail | `VM-Drop-3` | 18 | Reuses Drop 1's file |
+| 6 | Wait | **14 days** | | Shortens it |
+| 7 | Voicemail | `VM-Drop-4` | 32 | Drops the fourth step entirely |
+| 8 | Wait | 2 days | | — |
+| 9 | Remove Tag | `vm-drop` | | Removes the wrong tag |
+| 10 | Add Tag | `vm-drop-complete` | | Skipped entirely |
+
+**Check the wait durations specifically.** The assistant compresses long gaps
+toward a "typical" 2–3 day cadence unless you correct it. Every wait above is
+deliberate.
 
 ### Settings tab
 
