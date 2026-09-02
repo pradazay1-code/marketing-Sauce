@@ -5,7 +5,17 @@ from datetime import datetime, date
 
 from pg_adapter import is_postgres, get_pg_connection, PGConnection
 
-DB_PATH = os.environ.get("LEADGEN_DB_PATH") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "leads.db")
+# On Vercel the deployment bundle is read-only; only /tmp is writable. Point the
+# SQLite fallback there so a Postgres outage degrades to a clear error instead of
+# an OSError on open. That fallback is per-invocation and does not persist --
+# see get_db(), which refuses to use it silently in serverless.
+IS_SERVERLESS = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
+
+DB_PATH = (
+    os.environ.get("LEADGEN_DB_PATH")
+    or ("/tmp/leads.db" if IS_SERVERLESS
+        else os.path.join(os.path.dirname(os.path.abspath(__file__)), "leads.db"))
+)
 
 ALLOWED_COLUMNS = {
     "business_name", "owner_name", "category", "business_type", "phone", "email",
@@ -45,9 +55,24 @@ def get_db():
                 last_err = e
                 _pg_consecutive_errors += 1
                 print(f"[DB] PostgreSQL connection failed (attempt {attempt + 1}/{_pg_max_retries}): {str(e)[:200]}")
+        # Serverless has no durable disk. Falling back to SQLite here would
+        # silently accept writes into /tmp that vanish on the next invocation,
+        # which looks like data loss rather than an outage. Fail loudly instead.
+        if IS_SERVERLESS:
+            raise RuntimeError(
+                "PostgreSQL unavailable and there is no durable fallback on "
+                "serverless. Check DATABASE_URL — Supabase and Neon strings "
+                f"must include ?sslmode=require. Last error: {last_err}"
+            )
         if not _pg_fallback_warned:
             _pg_fallback_warned = True
             print(f"[DB] WARNING: Falling back to SQLite. Data will NOT persist across restarts. Fix DATABASE_URL to use Postgres.")
+    elif IS_SERVERLESS:
+        raise RuntimeError(
+            "DATABASE_URL is not set. On Vercel the filesystem is ephemeral, so "
+            "Postgres is required — add DATABASE_URL in Project Settings → "
+            "Environment Variables and redeploy."
+        )
 
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -140,6 +165,26 @@ def _init_db_inner():
             name TEXT NOT NULL,
             filters TEXT NOT NULL,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        );
+
+        -- Work queue for serverless scraping.
+        --
+        -- On a long-lived server the scraper runs as one background process.
+        -- Serverless functions keep no memory between invocations and are
+        -- capped at 60s, so the run is split into one (source, state) pair per
+        -- row and each HTTP call drains the next pending one. The queue lives
+        -- in the database because it has to survive between invocations.
+        CREATE TABLE IF NOT EXISTS scrape_queue (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            source TEXT NOT NULL,
+            state TEXT NOT NULL,
+            only_no_website INTEGER DEFAULT 0,
+            only_new_businesses INTEGER DEFAULT 0,
+            status TEXT DEFAULT 'pending',
+            leads_added INTEGER DEFAULT 0,
+            error TEXT DEFAULT '',
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            finished_at TEXT
         );
 
         CREATE TABLE IF NOT EXISTS email_templates (
@@ -1147,6 +1192,86 @@ def get_funnel_analytics():
 
     conn.close()
     return analytics
+
+
+# ---------------------------------------------------------------------------
+# Serverless scrape queue
+# ---------------------------------------------------------------------------
+
+def enqueue_scrape_steps(steps):
+    """Queue (source, state) pairs for a serverless scrape run.
+
+    `steps` is a list of dicts: source, state, only_no_website,
+    only_new_businesses. Clears any finished rows first so the queue does not
+    grow without bound.
+    """
+    conn = get_db()
+    conn.execute("DELETE FROM scrape_queue WHERE status != 'pending'")
+    for s in steps:
+        conn.execute(
+            """INSERT INTO scrape_queue
+                 (source, state, only_no_website, only_new_businesses, status)
+               VALUES (?, ?, ?, ?, 'pending')""",
+            (s["source"], s["state"],
+             int(bool(s.get("only_no_website"))),
+             int(bool(s.get("only_new_businesses")))),
+        )
+    conn.commit()
+    conn.close()
+
+
+def next_scrape_step():
+    """Claim the oldest pending step and mark it running. None when drained."""
+    conn = get_db()
+    cur = conn.execute(
+        "SELECT * FROM scrape_queue WHERE status = 'pending' ORDER BY id LIMIT 1")
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return None
+    step = dict(row)
+    conn.execute("UPDATE scrape_queue SET status = 'running' WHERE id = ?",
+                 (step["id"],))
+    conn.commit()
+    conn.close()
+    return step
+
+
+def finish_scrape_step(step_id, leads_added=0, error=""):
+    conn = get_db()
+    conn.execute(
+        """UPDATE scrape_queue
+              SET status = ?, leads_added = ?, error = ?, finished_at = ?
+            WHERE id = ?""",
+        ("failed" if error else "done", leads_added, error[:300],
+         datetime.now().isoformat(), step_id),
+    )
+    conn.commit()
+    conn.close()
+
+
+def scrape_queue_progress():
+    """Return (done_count, total_count, leads_added_so_far)."""
+    conn = get_db()
+    cur = conn.execute(
+        """SELECT
+             COUNT(*) AS total,
+             COALESCE(SUM(CASE WHEN status IN ('done','failed') THEN 1 ELSE 0 END), 0) AS done,
+             COALESCE(SUM(leads_added), 0) AS leads
+           FROM scrape_queue""")
+    row = cur.fetchone()
+    conn.close()
+    if not row:
+        return 0, 0, 0
+    d = dict(row)
+    return int(d["done"] or 0), int(d["total"] or 0), int(d["leads"] or 0)
+
+
+def clear_scrape_queue():
+    conn = get_db()
+    conn.execute("DELETE FROM scrape_queue")
+    conn.commit()
+    conn.close()
 
 
 def wipe_all_leads():

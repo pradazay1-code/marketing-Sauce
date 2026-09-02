@@ -709,6 +709,9 @@ async function runScraper(source) {
         if (resp.status === 409) {
             showToast('A scraper is already running', 'warn');
             startPolling();
+            // Resume driving a queue left behind by a closed tab.
+            const st = await (await fetch('/api/scraper-status')).json();
+            if (st.serverless) driveSteps();
             return;
         }
         if (data.error) {
@@ -717,8 +720,32 @@ async function runScraper(source) {
         }
         showToast('Scraper started — watch live progress below');
         startPolling();
+        if (data.serverless) driveSteps();
     } catch(e) {
         showToast('Network error starting scraper', 'error');
+    }
+}
+
+// On serverless there is no background worker: each (source, state) pair runs
+// inside its own request. This drives the queue one step at a time, sequentially
+// so requests never overlap. Vercel Cron drains anything left if this tab closes.
+let driving = false;
+async function driveSteps() {
+    if (driving) return;
+    driving = true;
+    try {
+        for (;;) {
+            const resp = await fetch('/api/scrape-step', {method: 'POST'});
+            if (!resp.ok) break;
+            const r = await resp.json();
+            if (r.error) console.warn('Step error:', r.error);
+            pollStatus();
+            if (r.done) break;
+        }
+    } catch (e) {
+        showToast('Scraper interrupted — cron will finish the queue', 'warn');
+    } finally {
+        driving = false;
     }
 }
 

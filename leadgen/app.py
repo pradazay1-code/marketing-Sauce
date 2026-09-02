@@ -28,6 +28,8 @@ from database import (
     get_email_log, log_email, get_recent_leads,
     get_campaigns, save_campaign, get_automation_jobs, get_funnel_analytics,
     wipe_all_leads,
+    enqueue_scrape_steps, next_scrape_step, finish_scrape_step,
+    scrape_queue_progress, clear_scrape_queue,
 )
 from utils import enrich_lead, normalize_phone
 from email_service import send_email, send_bulk_emails, render_template as render_email_template, DEFAULT_TEMPLATES
@@ -38,6 +40,17 @@ app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16 MB upload cap
 
 DASHBOARD_PASSWORD = os.getenv("DASHBOARD_PASSWORD", "")
 MAX_CSV_LEADS = 25000
+
+# Vercel sets VERCEL=1 in every deployment. Serverless functions are killed the
+# moment they return a response, so background threads and long subprocesses
+# cannot be used -- scraping is driven one step per HTTP request instead.
+IS_SERVERLESS = bool(os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+
+# Leave headroom under the platform's function timeout so a step that overruns
+# still returns a useful response rather than a 504.
+STEP_BUDGET_SECONDS = int(os.getenv("SCRAPE_STEP_BUDGET", "45"))
+
+CRON_SECRET = os.getenv("CRON_SECRET", "")
 
 
 @app.errorhandler(413)
@@ -73,23 +86,38 @@ def handle_exception(e):
     return render_template("error.html", title=title, message=message, details=err_str[:500]), 500
 
 with app.app_context():
-    init_db()
+    # On serverless this runs on cold start of each instance. CREATE TABLE IF
+    # NOT EXISTS is idempotent, so it is safe -- but a DB outage must not take
+    # the whole import down, or every route 500s instead of just the data ones.
     try:
-        status = get_scrape_status()
-        if status.get("running"):
-            reset_scrape_status("Cleared on app startup")
-            print("[Startup] Reset stuck scraper status")
-    except Exception:
-        pass
+        init_db()
+    except Exception as e:
+        print(f"[Startup] init_db failed: {e}")
 
-# Start automation scheduler as a background thread (checks config before running)
-try:
-    from automation_engine import AutomationScheduler
-    _auto_scheduler = AutomationScheduler(interval_hours=12)
-    _auto_scheduler.start()
-except Exception as e:
-    print(f"[Automation] Scheduler failed to start: {e}")
-    _auto_scheduler = None
+    if not IS_SERVERLESS:
+        # A stuck "running" flag means a previous process died mid-scrape.
+        # Serverless has no process to have died, and clearing the flag here
+        # would abort a scrape that is legitimately mid-queue.
+        try:
+            status = get_scrape_status()
+            if status.get("running"):
+                reset_scrape_status("Cleared on app startup")
+                print("[Startup] Reset stuck scraper status")
+        except Exception:
+            pass
+
+# The automation scheduler is a `while True` loop in a background thread. That
+# requires an always-on process, which serverless does not have -- on Vercel the
+# same work is driven by Vercel Cron hitting /api/cron/automation instead.
+_auto_scheduler = None
+if not IS_SERVERLESS:
+    try:
+        from automation_engine import AutomationScheduler
+        _auto_scheduler = AutomationScheduler(interval_hours=12)
+        _auto_scheduler.start()
+    except Exception as e:
+        print(f"[Automation] Scheduler failed to start: {e}")
+        _auto_scheduler = None
 
 
 def check_auth(f):
@@ -421,6 +449,32 @@ def api_run_scraper():
                          state=state or "ALL", current_step="Initializing...",
                          progress_pct=0, leads_so_far=0)
 
+    if IS_SERVERLESS:
+        # Build the work queue and return immediately. The dashboard's existing
+        # poll loop drains it by calling /api/scrape-step, one (source, state)
+        # pair per request, so no single invocation approaches the timeout.
+        sources = ["overpass", "nominatim", "yp"] if source == "all" else [source]
+        states = [state] if state else ["MA", "RI", "CT"]
+        steps = [
+            {
+                "source": s,
+                "state": st,
+                "only_no_website": data.get("only_no_website"),
+                "only_new_businesses": data.get("only_new_businesses"),
+            }
+            for s in sources for st in states
+        ]
+        enqueue_scrape_steps(steps)
+        update_scrape_status(
+            current_step=f"Queued {len(steps)} steps — starting...",
+            progress_pct=0)
+        return jsonify({
+            "success": True,
+            "message": f"Scraper queued ({len(steps)} steps)",
+            "serverless": True,
+            "steps": len(steps),
+        })
+
     def run_in_background():
         cmd = [sys.executable, "-u",
                os.path.join(os.path.dirname(__file__), "daily_runner.py")]
@@ -453,14 +507,165 @@ def api_run_scraper():
 @check_auth
 def api_scraper_status():
     """Live status of the running scraper. UI polls this every 2s."""
-    return jsonify(get_scrape_status())
+    status = get_scrape_status()
+    status["serverless"] = IS_SERVERLESS
+    if IS_SERVERLESS:
+        done, total, leads = scrape_queue_progress()
+        status["queue_done"] = done
+        status["queue_total"] = total
+    return jsonify(status)
+
+
+def _run_single_source(source, state, only_no_website, only_new):
+    """Run one scraper source against one state, in-process.
+
+    Returns the number of leads added. Imported lazily because daily_runner
+    pulls in every scraper module, which is slow on a cold start and wasted on
+    requests that never scrape.
+    """
+    import daily_runner as dr
+
+    states = [state] if state and state != "ALL" else None
+    if source == "overpass":
+        return dr.run_overpass(states, only_no_website=only_no_website, only_new=only_new)
+    if source == "nominatim":
+        return dr.run_nominatim(states, only_no_website=only_no_website, only_new=only_new)
+    if source == "yp":
+        return dr.run_yellowpages(states, only_no_website=only_no_website, only_new=only_new)
+    if source == "sos":
+        return dr.run_sos_scrapers(states)
+    raise ValueError(f"Unknown source: {source}")
+
+
+@app.route("/api/scrape-step", methods=["POST"])
+@check_auth
+def api_scrape_step():
+    """Drain one step of the serverless scrape queue.
+
+    Each call claims the oldest pending (source, state) pair, runs it inline,
+    and reports whether more remain. The dashboard calls this in a loop; Vercel
+    Cron calls it too, so a queue left half-drained by a closed browser tab
+    still finishes on its own.
+    """
+    if not IS_SERVERLESS:
+        return jsonify({
+            "error": "Not serverless — the scraper runs as a background thread here.",
+            "done": True,
+        }), 400
+
+    step = next_scrape_step()
+    if not step:
+        done, total, leads = scrape_queue_progress()
+        update_scrape_status(running=0, progress_pct=100, leads_so_far=leads,
+                             current_step=f"Complete: {leads} new leads")
+        return jsonify({"done": True, "leads_added": leads,
+                        "queue_done": done, "queue_total": total})
+
+    label = f"{step['source']} · {step['state']}"
+    done, total, _ = scrape_queue_progress()
+    update_scrape_status(running=1, source=step["source"], state=step["state"],
+                         current_step=f"Running {label}...",
+                         progress_pct=int(done / total * 100) if total else 0)
+
+    added, err = 0, ""
+    try:
+        added = _run_single_source(
+            step["source"], step["state"],
+            bool(step["only_no_website"]), bool(step["only_new_businesses"]),
+        ) or 0
+    except Exception as e:
+        err = str(e)
+        print(f"[Scrape] {label} failed: {err[:200]}")
+
+    finish_scrape_step(step["id"], leads_added=added, error=err)
+
+    done, total, leads = scrape_queue_progress()
+    finished = done >= total
+    update_scrape_status(
+        running=0 if finished else 1,
+        progress_pct=100 if finished else int(done / total * 100),
+        leads_so_far=leads,
+        current_step=(f"Complete: {leads} new leads" if finished
+                      else f"Finished {label} (+{added}) — {done}/{total} steps"),
+    )
+
+    return jsonify({
+        "done": finished, "step": label, "leads_added": added,
+        "total_leads": leads, "queue_done": done, "queue_total": total,
+        "error": err[:200],
+    })
 
 
 @app.route("/api/scraper-status/reset", methods=["POST"])
 @check_auth
 def api_scraper_reset():
     reset_scrape_status("Cancelled by user")
+    if IS_SERVERLESS:
+        # Clear the queue too, or the next cron tick resumes the cancelled run.
+        clear_scrape_queue()
     return jsonify({"success": True, "message": "Scraper status reset"})
+
+
+def _cron_authorized():
+    """Vercel Cron sends `Authorization: Bearer $CRON_SECRET`."""
+    if not CRON_SECRET:
+        return True  # not configured — leave the endpoints open, as before
+    auth = request.headers.get("Authorization", "")
+    if auth == f"Bearer {CRON_SECRET}":
+        return True
+    return request.args.get("secret") == CRON_SECRET
+
+
+@app.route("/api/cron/scrape-step", methods=["GET", "POST"])
+def api_cron_scrape_step():
+    """Vercel Cron entry point that advances the queue without a browser open.
+
+    Deliberately separate from /api/scrape-step: cron cannot send HTTP Basic
+    auth, so this authorizes on CRON_SECRET instead.
+    """
+    if not _cron_authorized():
+        return jsonify({"error": "Unauthorized"}), 401
+    if not IS_SERVERLESS:
+        return jsonify({"skipped": "not serverless"}), 200
+
+    step = next_scrape_step()
+    if not step:
+        return jsonify({"done": True, "message": "Queue empty"})
+
+    added, err = 0, ""
+    try:
+        added = _run_single_source(
+            step["source"], step["state"],
+            bool(step["only_no_website"]), bool(step["only_new_businesses"]),
+        ) or 0
+    except Exception as e:
+        err = str(e)
+
+    finish_scrape_step(step["id"], leads_added=added, error=err)
+    done, total, leads = scrape_queue_progress()
+    finished = done >= total
+    update_scrape_status(running=0 if finished else 1, leads_so_far=leads,
+                         progress_pct=100 if finished else int(done / total * 100))
+    return jsonify({"done": finished, "leads_added": added,
+                    "queue_done": done, "queue_total": total, "error": err[:200]})
+
+
+@app.route("/api/cron/automation", methods=["GET", "POST"])
+def api_cron_automation():
+    """Replaces the AutomationScheduler background thread on serverless."""
+    if not _cron_authorized():
+        return jsonify({"error": "Unauthorized"}), 401
+    try:
+        from automation_engine import run_scheduled_cycle
+        result = run_scheduled_cycle()
+        return jsonify({"success": True, "result": result})
+    except ImportError:
+        return jsonify({
+            "success": False,
+            "error": "automation_engine has no run_scheduled_cycle()",
+        }), 501
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)[:300]}), 500
 
 
 @app.route("/api/test-scrape", methods=["POST"])

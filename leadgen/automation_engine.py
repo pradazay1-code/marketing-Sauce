@@ -245,6 +245,44 @@ def get_automation_status():
     }
 
 
+def run_scheduled_cycle():
+    """One automation cycle, callable directly.
+
+    This is the body of AutomationScheduler._loop extracted so it can be driven
+    by a scheduler that is not a thread -- on Vercel, by Cron hitting
+    /api/cron/automation.
+
+    On serverless, discovery is *enqueued* rather than run: run_daily_discovery
+    shells out with a 300s timeout, which exceeds the function limit. The queued
+    steps are drained by /api/cron/scrape-step, one source-state pair per
+    invocation.
+    """
+    is_serverless = bool(os.environ.get("VERCEL")
+                         or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
+    config = load_config()
+    result = {"discovery": None, "followups": None,
+              "ran_at": datetime.now().isoformat()}
+
+    if config.get("discovery_enabled"):
+        if is_serverless:
+            from database import enqueue_scrape_steps
+            states = config.get("states") or ["MA", "RI", "CT"]
+            steps = [{"source": s, "state": st,
+                      "only_no_website": config.get("only_no_website", False),
+                      "only_new_businesses": False}
+                     for s in ("overpass", "nominatim", "yp") for st in states]
+            enqueue_scrape_steps(steps)
+            result["discovery"] = f"queued {len(steps)} steps"
+        else:
+            result["discovery"] = run_daily_discovery(config)
+
+    if config.get("sequence_enabled"):
+        followups = check_followups()
+        result["followups"] = followups.get("count", 0)
+
+    return result
+
+
 class AutomationScheduler:
     """Background thread scheduler for automated tasks."""
 
