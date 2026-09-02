@@ -38,74 +38,89 @@ instead of hunting through a list.
 
 ## PROMPT A — paste this into Workflow AI
 
+This is the canonical build. Every fix is already in it.
+
 ```
 Create a workflow named: VM Drop — Callback
 
 PURPOSE
-Send four pre-recorded ringless voicemail drops to a list of leads across
-roughly five weeks. This is a voice-only campaign. Do NOT add any SMS actions,
-email actions, or internal messages to the contact. Voicemail is the only
-outbound channel.
+Deliver four pre-recorded ringless voicemail drops to a list of cold leads
+across roughly five weeks, then tag the contact as finished. This is a
+VOICE-ONLY campaign. Voicemail is the only outbound channel.
 
 TRIGGER
-Type: Contact Tag
-Condition: Tag Added
-Tag: vm-drop
-No additional filters.
-
-ACTIONS — build in exactly this order:
-
-Step 1 — Voicemail
-  Audio file: VM-Drop-1
-  First touch. Fires immediately on entry. (Day 1)
-
-Step 2 — Wait
-  Duration: 7 days
-
-Step 3 — Voicemail
-  Audio file: VM-Drop-2
-  (Day 8)
-
-Step 4 — Wait
-  Duration: 10 days
-
-Step 5 — Voicemail
-  Audio file: VM-Drop-3
-  (Day 18)
-
-Step 6 — Wait
-  Duration: 14 days
-
-Step 7 — Voicemail
-  Audio file: VM-Drop-4
-  Final touch — the close-out. (Day 32)
-
-Step 8 — Wait
-  Duration: 2 days
-
-Step 9 — Remove Contact Tag
+  Type: Contact Tag
+  Condition: Tag Added
   Tag: vm-drop
 
-Step 10 — Add Contact Tag
-  Tag: vm-drop-complete
+TRIGGER FILTER — required, do not omit
+  Filter: Contact Tag
+  Operator: does not include
+  Value: vm-drop-complete
+
+  This prevents anyone who has already finished the sequence from ever
+  re-entering it on a future list import.
+
+ACTIONS — build in exactly this order, ten steps:
+
+  Step 1 — Voicemail
+    Audio file: VM-Drop-1
+    Fires immediately on entry. Lands day 1.
+
+  Step 2 — Wait
+    Duration: 7 days
+
+  Step 3 — Voicemail
+    Audio file: VM-Drop-2
+    Lands day 8.
+
+  Step 4 — Wait
+    Duration: 10 days
+
+  Step 5 — Voicemail
+    Audio file: VM-Drop-3
+    Lands day 18.
+
+  Step 6 — Wait
+    Duration: 14 days
+
+  Step 7 — Voicemail
+    Audio file: VM-Drop-4
+    The close-out. Lands day 32.
+
+  Step 8 — Wait
+    Duration: 2 days
+
+  Step 9 — Remove Contact Tag
+    Tag: vm-drop
+
+  Step 10 — Add Contact Tag
+    Tag: vm-drop-complete
 
 WORKFLOW SETTINGS
-Allow Re-Entry: OFF
-Stop on Response: ON — enable for every available channel, including
-  inbound call and inbound SMS
-Sending Window: 9:00 AM to 7:00 PM
-Timezone: Contact's timezone (not account timezone)
-Excluded days: Sunday
+  Allow Re-Entry: OFF
+  Stop on Response: ON — enable for every available channel, including
+    inbound call and inbound SMS
+  Sending Window: 9:00 AM to 7:00 PM
+  Timezone: Contact's timezone — NOT the account timezone
+  Excluded days: Sunday
 
-DO NOT ADD
-- No SMS actions of any kind
-- No email actions
-- No "if/else" branches
-- No AI or conversation actions
-- No appointment or calendar actions
+DO NOT ADD ANY OF THE FOLLOWING
+  - SMS or MMS actions of any kind
+  - Email actions
+  - If/Else branches, conditions, or goals
+  - AI, conversation, or chatbot actions
+  - Appointment, calendar, or booking actions
+  - Any action not listed in the ten steps above
 
-Keep the workflow linear: trigger, then the ten steps above in order. Do not
-shorten the wait durations — the long gaps are intentional.
+CRITICAL CONSTRAINTS
+  1. Use the VOICEMAIL action, not the Call action. Voicemail deposits a
+     recording without ringing the phone. A Call action rings the phone and
+     is wrong for this campaign.
+  2. Do NOT shorten the wait durations. 7, 10, and 14 days are deliberate.
+     Do not compress them to a 2-3 day cadence.
+  3. Keep the workflow strictly linear: trigger, then steps 1 through 10 in
+     order, with no branching.
 ```
 
 ---
@@ -122,7 +137,11 @@ match.
 | Trigger type | Contact Tag |
 | Event | Tag Added |
 | Tag | `vm-drop` |
-| Filters | none |
+| **Filter** | **`Contact Tag` · does not include · `vm-drop-complete`** |
+
+The filter is the piece the AI drops most often. Without it, step 9 strips the
+`vm-drop` tag and a future import can restart the whole five weeks for someone
+who already finished it.
 
 ### Action sequence
 
@@ -155,7 +174,7 @@ deliberate.
 
 ---
 
-## The three things the AI gets wrong most often
+## The four things the AI gets wrong most often
 
 **1. It builds a Call action instead of a Voicemail action.**
 These are different. A Call action dials and rings the phone. Voicemail deposits
@@ -169,9 +188,16 @@ practical difference is zero, but it silently breaks the send window the moment
 you add a lead outside Eastern.
 
 **3. Stop on Response is left off.**
-This is your entire exit condition. Without it, a lead who calls you back on
-day 2 still receives the "last one from me" close-out on day 9 — after you have
-already spoken. That single miss undoes more deals than a weak script does.
+This is your entire exit condition. Without it, a lead who calls you back in
+week one still receives the "this'll be my last message" close-out in week five,
+after you have already spoken. That single miss undoes more deals than a weak
+script does.
+
+**4. The trigger filter is dropped.**
+The AI treats the filter as optional decoration and builds a bare `Tag Added`
+trigger. Open the trigger node and confirm
+`Contact Tag · does not include · vm-drop-complete` is actually there. This is
+what makes re-sends structurally impossible rather than merely unlikely.
 
 ---
 
@@ -280,32 +306,59 @@ next run.
 
 ---
 
-## Optional second workflow — catch the callbacks
+## Second workflow — catch the callbacks (build this one too)
 
-Worth ten minutes once the main one is live.
+Not optional, and here is why: **Stop on Response halts the sequence mid-way, so
+a responder never reaches step 10 and never gets tagged `vm-drop-complete`.**
+That leaves them eligible to re-enter on a future import — the exact person you
+least want to cold-drop again is the one who already called you back.
+
+This workflow closes that loop.
 
 ```
 Create a workflow named: VM Drop — Responder
 
+PURPOSE
+Catch anyone who responds during the voicemail campaign, mark them so they
+can never re-enter it, and alert me immediately.
+
 TRIGGER
-Type: Customer Replied
-Channels: all available, including inbound call
+  Type: Customer Replied
+  Channels: all available, including inbound call and inbound SMS
+
+TRIGGER FILTER
+  Filter: Contact Tag
+  Operator: includes
+  Value: vm-drop
+
+  Only contacts currently in the voicemail campaign should hit this.
 
 ACTIONS
-Step 1 — Add Contact Tag: warm-lead
-Step 2 — Remove Contact Tag: vm-drop
-Step 3 — Internal Notification
-  Send to: my phone
-  Message: "Callback from {{contact.first_name}} {{contact.company_name}}
-  — {{contact.phone}}"
+  Step 1 — Add Contact Tag
+    Tag: warm-lead
 
-SETTINGS
-Allow Re-Entry: Off
+  Step 2 — Add Contact Tag
+    Tag: vm-drop-complete
+
+  Step 3 — Remove Contact Tag
+    Tag: vm-drop
+
+  Step 4 — Internal Notification
+    Send to: my phone
+    Message: "Callback from {{contact.first_name}} at
+    {{contact.company_name}} — {{contact.phone}}"
+
+WORKFLOW SETTINGS
+  Allow Re-Entry: OFF
 ```
 
-Speed to response is the highest-leverage variable in the whole campaign.
-Getting the alert on your phone the moment someone calls back is worth more than
-any script change.
+Step 2 is the one that matters for hygiene — it applies the same permanent
+marker the main workflow's step 10 would have, so the trigger filter on
+`VM Drop — Callback` will block them from every future import.
+
+Step 4 matters for revenue. Speed to response is the highest-leverage variable
+in the campaign: getting the alert on your phone the moment someone calls back
+beats any script change you could make.
 
 ---
 
