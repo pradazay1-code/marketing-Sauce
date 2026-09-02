@@ -26,6 +26,7 @@ from . import industries as ind
 from .consensus import build_consensus, to_lead
 from .dedupe import dedupe_batch
 from .sources import providers          # noqa: F401 -- registers the sources
+from .sources import licenses           # noqa: F401 -- registers StateLicenses
 from .sources.base import Candidate, get_sources, all_status
 
 # Confidence floors. "Balanced" is the default: it admits a business two decent

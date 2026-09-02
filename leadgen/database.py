@@ -208,6 +208,29 @@ def _init_db_inner():
             error TEXT DEFAULT ''
         );
 
+        -- Every paid API call, so credit spend is auditable rather than a
+        -- surprise on the invoice.
+        CREATE TABLE IF NOT EXISTS credit_ledger (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            provider TEXT DEFAULT 'firecrawl',
+            feature TEXT DEFAULT '',
+            credits INTEGER DEFAULT 1,
+            detail TEXT DEFAULT '',
+            spent_at TEXT DEFAULT CURRENT_TIMESTAMP
+        );
+
+        -- Paid fetches, keyed by URL. The only mechanism here that actually
+        -- saves credits rather than rationing them: the same page is never
+        -- bought twice.
+        CREATE TABLE IF NOT EXISTS scrape_cache (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cache_key TEXT NOT NULL,
+            url TEXT DEFAULT '',
+            kind TEXT DEFAULT 'scrape',
+            payload TEXT DEFAULT '{}',
+            fetched_at TEXT DEFAULT CURRENT_TIMESTAMP
+        );
+
         -- Work queue for serverless scraping.
         --
         -- On a long-lived server the scraper runs as one background process.
@@ -352,6 +375,8 @@ def _init_db_inner():
         CREATE INDEX IF NOT EXISTS idx_leads_segment ON leads(segment);
         CREATE INDEX IF NOT EXISTS idx_research_lead ON lead_research(lead_id);
         CREATE INDEX IF NOT EXISTS idx_scrape_queue_status ON scrape_queue(status);
+        CREATE INDEX IF NOT EXISTS idx_cache_key ON scrape_cache(cache_key);
+        CREATE INDEX IF NOT EXISTS idx_ledger_spent ON credit_ledger(spent_at);
     """)
 
     # Additive migrations for databases created before these columns existed.

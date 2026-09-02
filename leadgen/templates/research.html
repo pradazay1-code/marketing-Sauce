@@ -103,6 +103,65 @@
     {% endif %}
   </div>
 
+  <!-- ================= CREDIT BUDGET ================= -->
+  <div class="panel" id="budgetPanel">
+    <h2>Credit budget</h2>
+    <div class="sub">
+      Nothing in this app calls a paid API without checking here first. Set
+      <code>FIRECRAWL_CREDIT_BUDGET</code> to your remaining balance and a run
+      that cannot afford to finish will refuse to start.
+    </div>
+    <div id="budgetBody" class="dim">Loading…</div>
+  </div>
+
+  <!-- ================= NEWLY LICENSED ================= -->
+  <div class="panel">
+    <h2>Newly licensed agents <span class="badge">Free</span></h2>
+    <div class="sub">
+      State licensing boards publish licence issue dates publicly. An agent
+      licensed last month has a commission budget, no brand, no website, and no
+      marketing support from their brokerage — the highest-urgency segment in
+      the taxonomy, and nobody works it systematically.
+      <br><br>
+      <strong>This reads the board over plain HTTP first, which costs nothing.</strong>
+      Firecrawl is only used if you explicitly allow it, and never past the cap
+      you set.
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>State</label>
+        <select id="lState"><option>MA</option><option>RI</option><option>CT</option></select>
+      </div>
+      <div class="field">
+        <label>Licensed within</label>
+        <select id="lDays">
+          <option value="30">Last 30 days</option>
+          <option value="90" selected>Last 90 days</option>
+          <option value="180">Last 6 months</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Result pages</label>
+        <input type="number" id="lPages" value="1" min="1" max="5">
+      </div>
+      <div class="field">
+        <label>If free access fails</label>
+        <select id="lCredits">
+          <option value="0" selected>Stop — never spend credits</option>
+          <option value="2">Allow up to 2 credits</option>
+          <option value="5">Allow up to 5 credits</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn ghost" onclick="probeBoard()">Test connection (free)</button>
+    <button class="btn" id="lBtn" onclick="importLicensees()">Import licensees</button>
+    <div class="out" id="lOut"></div>
+  </div>
+
   <!-- ================= DISCOVER ================= -->
   <div class="panel">
     <h2>Find new prospects — multi-source consensus</h2>
@@ -254,6 +313,88 @@ async function loadSources(){
   } catch(e){ /* chips are cosmetic */ }
 }
 loadSources();
+
+// ---- credit budget ----
+async function loadBudget(){
+  try {
+    const d = await (await fetch('/api/research/budget')).json();
+    const s = d.status;
+    const cls = s.remaining <= 5 ? 'bad' : s.remaining <= 20 ? 'warn' : 'ok';
+    let h = `<div class="line"><span class="${cls}" style="font-size:19px;font-weight:800">
+             ${s.remaining}</span> <span class="dim">of ${s.budget} credits left
+             this month (${s.pct_used}% used)</span></div>`;
+    if (d.cache && d.cache.entries)
+      h += `<div class="line dim">Cache holds ${d.cache.entries} page${d.cache.entries===1?'':'s'}
+            — re-scraping any of them costs nothing.</div>`;
+    if ((d.by_feature||[]).length){
+      h += `<div class="line dim" style="margin-top:6px">Spent on:</div>`;
+      d.by_feature.forEach(f => h +=
+        `<div class="line">${esc(f.feature.replace(/_/g,' '))}
+         <span class="dim"> — ${f.credits} credit${f.credits===1?'':'s'} over ${f.calls} call${f.calls===1?'':'s'}</span></div>`);
+    } else {
+      h += `<div class="line ok">No credits spent yet this month.</div>`;
+    }
+    document.getElementById('budgetBody').innerHTML = h;
+  } catch(e){
+    document.getElementById('budgetBody').innerHTML =
+      '<span class="dim">Budget unavailable.</span>';
+  }
+}
+loadBudget();
+
+// ---- licensing boards ----
+async function probeBoard(){
+  out('lOut', '<div class="line dim">Testing the board over plain HTTP…</div>');
+  try {
+    const d = await (await fetch('/api/research/licenses/probe', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({state: lState.value})})).json();
+    let h = `<div class="line ${d.ok?'ok':'warn'}">${esc(d.verdict||'')}</div>`;
+    h += `<div class="line dim">${esc(d.label||'')} · ${d.bytes||0} bytes ·
+          ${d.credits_spent||0} credits</div>`;
+    if (d.url) h += `<div class="line dim mono" style="font-size:11px">${esc(d.url)}</div>`;
+    (d.sample||[]).forEach(r => h +=
+      `<div class="line">${esc(r.name)} <span class="dim">— ${esc(r.city||'?')},
+       issued ${esc(r.issue_date||'unknown')}</span></div>`);
+    if (!d.ok && d.portal) h += `<div class="line" style="margin-top:6px">
+      <a href="${esc(d.portal)}" target="_blank" rel="noopener" style="color:#60a5fa">
+      Open the board manually →</a> <span class="dim">then set LICENSE_BOARDS with a
+      working URL.</span></div>`;
+    out('lOut', h);
+  } catch(e){ out('lOut','<div class="line bad">Probe failed</div>'); }
+}
+
+async function importLicensees(){
+  busy('lBtn', true);
+  out('lOut', '<div class="line dim">Reading the licensing board…</div>');
+  const maxCredits = parseInt(lCredits.value)||0;
+  try {
+    const r = await fetch('/api/research/licenses', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({state:lState.value, days:parseInt(lDays.value)||90,
+                            pages:parseInt(lPages.value)||1,
+                            allow_credits: maxCredits>0, max_credits: maxCredits})});
+    const d = await r.json();
+    if (d.error) {
+      out('lOut', `<div class="line bad">${esc(d.error)}</div>` +
+        (d.budget ? `<div class="line dim">${d.budget.remaining} credits left</div>` : ''));
+      return;
+    }
+    let h = `<div class="line"><strong class="ok">Added ${d.added} newly licensed
+      ${d.added===1?'agent':'agents'}</strong> <span class="dim">— ${d.rows_found} on the
+      board, ${d.rows_recent} within ${d.days} days, ${d.duplicate_count} already in CRM ·
+      <strong>${d.credits_spent} credits used</strong></span></div>`;
+    (d.notes||[]).forEach(n => h += `<div class="line dim">${esc(n)}</div>`);
+    (d.preview||[]).forEach(p => h +=
+      `<div class="line">${esc(p.name)} <span class="dim">— ${esc(p.city||'?')}</span></div>`);
+    if (d.added) h += `<div class="line" style="margin-top:8px">
+      <a href="/leads?industry=real_estate_new" style="color:#60a5fa">
+      View them in All Leads →</a></div>`;
+    out('lOut', h);
+    loadBudget();
+  } catch(e){ out('lOut','<div class="line bad">Import failed</div>'); }
+  finally { busy('lBtn', false, 'Import licensees'); }
+}
 
 function confClass(c){ return c>=75 ? 'c-hi' : c>=50 ? 'c-mid' : 'c-lo'; }
 

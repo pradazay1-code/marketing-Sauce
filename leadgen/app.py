@@ -743,6 +743,119 @@ def api_research_discover():
     return jsonify(result)
 
 
+@app.route("/api/research/budget")
+@check_auth
+def api_research_budget():
+    from research import budget
+    return jsonify({
+        "status": budget.status(),
+        "by_feature": budget.by_feature(),
+        "cache": budget.cache_stats(),
+        "recent": budget.recent(limit=25),
+    })
+
+
+@app.route("/api/research/licenses/probe", methods=["POST"])
+@check_auth
+def api_license_probe():
+    """Test a licensing board endpoint and report exactly what came back.
+
+    Free by default. Only tries Firecrawl (1 credit) when explicitly allowed,
+    so diagnosing a broken board never costs anything by accident.
+    """
+    from research.sources import licenses
+    d = request.get_json() or {}
+    state = (d.get("state") or "MA").strip().upper()
+    if state not in {"MA", "RI", "CT"}:
+        return jsonify({"error": "State must be MA, RI or CT"}), 400
+    return jsonify(licenses.probe(state, use_credits=bool(d.get("use_credits"))))
+
+
+@app.route("/api/research/licenses", methods=["POST"])
+@check_auth
+def api_licenses():
+    """Import recently licensed professionals as leads.
+
+    Free HTTP first; Firecrawl only when allow_credits is set, and never beyond
+    max_credits. Deduped against the whole CRM before anything is written.
+    """
+    from research.sources import licenses
+    from research import budget
+    from research.dedupe import dedupe_batch
+
+    d = request.get_json() or {}
+    state = (d.get("state") or "MA").strip().upper()
+    if state not in {"MA", "RI", "CT"}:
+        return jsonify({"error": "State must be MA, RI or CT"}), 400
+
+    days = max(1, min(int(d.get("days", 90)), 365))
+    pages = max(1, min(int(d.get("pages", 1)), 5))
+    allow_credits = bool(d.get("allow_credits"))
+    max_credits = max(0, min(int(d.get("max_credits", 2)), 10))
+
+    if allow_credits:
+        ok, msg = budget.can_afford(max_credits)
+        if not ok:
+            return jsonify({"error": msg, "budget": budget.status()}), 402
+
+    res = licenses.fetch_licensees(state=state, pages=pages, days=days,
+                                   allow_credits=allow_credits,
+                                   max_credits=max_credits)
+    if not res.get("ok"):
+        return jsonify({**res, "budget": budget.status()}), 400
+
+    label = industries_mod.industry_label("real_estate_new")
+    leads = []
+    for r in res["rows"]:
+        if not r.get("name"):
+            continue
+        leads.append({
+            "business_name": r["name"],
+            "owner_name": r["name"],
+            "city": r.get("city", ""),
+            "state": r.get("state", state),
+            "industry": "real_estate_new",
+            "category": label,
+            "business_type": label,
+            "has_website": 0,
+            "priority": "high",
+            "status": "new",
+            "source": f"{state} licensing board",
+            "date_found": date.today().isoformat(),
+            "icp_score": 95,          # newly licensed is the highest-urgency segment
+            "notes": (f"Newly licensed. License #{r.get('license_number','?')}"
+                      f"{', issued ' + r['issue_date'] if r.get('issue_date') else ''}."
+                      " No website expected — lead with a starter site offer."),
+        })
+
+    unique, dupes = dedupe_batch(leads, all_lead_dedupe_fields())
+    added = 0
+    for lead in unique:
+        try:
+            if add_lead(lead):
+                added += 1
+        except Exception as e:                     # noqa: BLE001
+            print(f"[Licenses] add_lead failed: {str(e)[:120]}")
+
+    return jsonify({
+        "success": True,
+        "state": state,
+        "board": res.get("board", ""),
+        "rows_found": res["rows_found"],
+        "rows_recent": res["rows_recent"],
+        "days": days,
+        "added": added,
+        "duplicate_count": len(dupes),
+        "duplicates": [{"name": d[0]["business_name"], "reason": d[1]}
+                       for d in dupes[:15]],
+        "credits_spent": res["credits_spent"],
+        "notes": res["notes"],
+        "budget": budget.status(),
+        "preview": [{"name": l["business_name"], "city": l["city"],
+                     "notes": l["notes"]} for l in unique[:25]],
+    })
+
+
 @app.route("/api/research/sources")
 @check_auth
 def api_research_sources():
